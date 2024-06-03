@@ -1,3 +1,7 @@
+\c id-documents;
+
+BEGIN;
+
 CREATE SCHEMA IF NOT EXISTS "public";
 
 CREATE  TABLE "public".cities ( 
@@ -47,7 +51,7 @@ CREATE  TABLE "public".offices_kinds_relations (
 CREATE  TABLE "public".people ( 
 	id                   bigint  NOT NULL  ,
 	date_of_birth        date DEFAULT CURRENT_DATE NOT NULL  ,
-	data_of_death        date    ,
+	date_of_death        date    ,
 	CONSTRAINT pk_users PRIMARY KEY ( id )
  );
 
@@ -280,3 +284,5 @@ ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_passport FOREIGN KEY ( passpo
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_offices FOREIGN KEY ( inner_issuer ) REFERENCES "public".offices( id );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_visa_categories FOREIGN KEY ( "type", country ) REFERENCES "public".visa_categories( "type", country );
+
+END;
