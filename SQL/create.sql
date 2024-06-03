@@ -8,8 +8,8 @@ CREATE  TABLE "public".cities (
 	id                   integer  NOT NULL  ,
 	country                 varchar(100)  NOT NULL  ,
 	city 					varchar(100)  NOT NULL 	,
-	CONSTRAINT pk_countries PRIMARY KEY ( id ),
-	CONSTRAINT unq_countries_country_city ( country, city )
+	CONSTRAINT pk_cities PRIMARY KEY ( id ),
+	CONSTRAINT unq_cities_country_city UNIQUE ( country, city )
  );
 
 CREATE  TABLE "public".educational_certificetes_types ( 
@@ -261,7 +261,7 @@ ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person2 F
 
 ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person1 FOREIGN KEY ( person1 ) REFERENCES "public".people( id );
 
-ALTER TABLE "public".offices ADD CONSTRAINT fk_offices_countries FOREIGN KEY ( country ) REFERENCES "public".countries( id );
+ALTER TABLE "public".offices ADD CONSTRAINT fk_offices_cities FOREIGN KEY ( country ) REFERENCES "public".cities( id );
 
 ALTER TABLE "public".offices_kinds_relations ADD CONSTRAINT fk_offices_kinds_relations_kind FOREIGN KEY ( kind_id ) REFERENCES "public".offices_kinds( kind );
 
@@ -275,7 +275,7 @@ ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_owner FOREIGN
 
 ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
 
-ALTER TABLE "public".visa_categories ADD CONSTRAINT fk_visa_categories_country FOREIGN KEY ( country ) REFERENCES "public".countries( id );
+ALTER TABLE "public".visa_categories ADD CONSTRAINT fk_visa_categories_country FOREIGN KEY ( country ) REFERENCES "public".cities( id );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_visa_categories FOREIGN KEY ( "type", country ) REFERENCES "public".visa_categories( "type", country );
 
