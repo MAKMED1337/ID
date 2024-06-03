@@ -78,7 +78,7 @@ CREATE  TABLE "public".accounts (
 	login                varchar  NOT NULL  ,
 	hashed_password      varchar(200)  NOT NULL  ,
 	CONSTRAINT pk_accounts PRIMARY KEY ( id, login ),
-	CONSTRAINT unq_accounts_id UNIQUE ( id ) 
+	CONSTRAINT unq_accounts_id UNIQUE ( login ) 
  );
 
 CREATE  TABLE "public".administrators ( 
