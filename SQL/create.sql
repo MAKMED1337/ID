@@ -1,11 +1,15 @@
 \c id-documents;
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE SCHEMA IF NOT EXISTS "public";
 
-CREATE  TABLE "public".countries ( 
+CREATE  TABLE "public".cities ( 
 	id                   integer  NOT NULL  ,
-	name                 varchar(100)  NOT NULL  ,
-	CONSTRAINT pk_countries PRIMARY KEY ( id )
+	country                 varchar(100)  NOT NULL  ,
+	city 					varchar(100)  NOT NULL 	,
+	CONSTRAINT pk_countries PRIMARY KEY ( id ),
+	CONSTRAINT unq_countries_country_city ( country, city )
  );
 
 CREATE  TABLE "public".educational_certificetes_types ( 
