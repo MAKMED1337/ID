@@ -1,15 +1,12 @@
-\c id-documents;
-
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 CREATE SCHEMA IF NOT EXISTS "public";
 
 CREATE  TABLE "public".cities ( 
 	id                   integer  NOT NULL  ,
-	country                 varchar(100)  NOT NULL  ,
-	city 					varchar(100)  NOT NULL 	,
+	country              varchar(100)  NOT NULL  ,
+	city                 varchar(100)  NOT NULL  ,
 	CONSTRAINT pk_cities PRIMARY KEY ( id ),
-	CONSTRAINT unq_cities_country_city UNIQUE ( country, city )
+	CONSTRAINT unq_cities_country_city UNIQUE ( country, city ) ,
+	CONSTRAINT unq_cities_country UNIQUE ( country ) 
  );
 
 CREATE  TABLE "public".educational_certificetes_types ( 
@@ -27,10 +24,11 @@ CREATE  TABLE "public".educational_instances_types (
 CREATE  TABLE "public".offices ( 
 	id                   integer  NOT NULL  ,
 	office_type          varchar  NOT NULL  ,
-	country              integer  NOT NULL  ,
-	location             varchar(200)  NOT NULL  ,
-	CONSTRAINT pk_offices PRIMARY KEY ( id, country ),
-	CONSTRAINT unq_offices_id UNIQUE ( id ) 
+	country              varchar  NOT NULL  ,
+	address              varchar(200)  NOT NULL  ,
+	city                 varchar  NOT NULL  ,
+	CONSTRAINT unq_offices_id UNIQUE ( id ) ,
+	CONSTRAINT pk_offices PRIMARY KEY ( id, country, city )
  );
 
 CREATE  TABLE "public".offices_kinds ( 
@@ -69,7 +67,7 @@ CREATE  TABLE "public".visa_categories (
 	working_permit       boolean  NOT NULL  ,
 	residence_permit     boolean  NOT NULL  ,
 	duration             integer    ,
-	country              integer  NOT NULL  ,
+	country              varchar  NOT NULL  ,
 	CONSTRAINT pk_visa_categories PRIMARY KEY ( "type", country )
  );
 
@@ -77,8 +75,8 @@ CREATE  TABLE "public".accounts (
 	id                   bigint  NOT NULL  ,
 	login                varchar  NOT NULL  ,
 	hashed_password      varchar(200)  NOT NULL  ,
-	CONSTRAINT pk_accounts PRIMARY KEY ( id, login ),
-	CONSTRAINT unq_accounts_id UNIQUE ( login ) 
+	CONSTRAINT unq_accounts_id UNIQUE ( id ) ,
+	CONSTRAINT pk_accounts PRIMARY KEY ( id, login )
  );
 
 CREATE  TABLE "public".administrators ( 
@@ -176,7 +174,7 @@ CREATE  TABLE "public".visas (
 	passport             integer  NOT NULL  ,
 	issue_date           date  NOT NULL  ,
 	inner_issuer         integer  NOT NULL  ,
-	country              integer  NOT NULL  ,
+	country              varchar  NOT NULL  ,
 	CONSTRAINT pk_visas PRIMARY KEY ( id )
  );
 
@@ -189,7 +187,7 @@ CREATE  TABLE "public".divorces (
  );
 
 CREATE  TABLE "public".educational_certificates ( 
-	id                   integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	holder               integer  NOT NULL  ,
 	issue_date           date  NOT NULL  ,
@@ -261,7 +259,7 @@ ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person2 F
 
 ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person1 FOREIGN KEY ( person1 ) REFERENCES "public".people( id );
 
-ALTER TABLE "public".offices ADD CONSTRAINT fk_offices_cities FOREIGN KEY ( country ) REFERENCES "public".cities( id );
+ALTER TABLE "public".offices ADD CONSTRAINT fk_offices_cities FOREIGN KEY ( country ) REFERENCES "public".cities( country );
 
 ALTER TABLE "public".offices_kinds_relations ADD CONSTRAINT fk_offices_kinds_relations_kind FOREIGN KEY ( kind_id ) REFERENCES "public".offices_kinds( kind );
 
@@ -275,11 +273,10 @@ ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_owner FOREIGN
 
 ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
 
-ALTER TABLE "public".visa_categories ADD CONSTRAINT fk_visa_categories_country FOREIGN KEY ( country ) REFERENCES "public".cities( id );
-
-ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_visa_categories FOREIGN KEY ( "type", country ) REFERENCES "public".visa_categories( "type", country );
+ALTER TABLE "public".visa_categories ADD CONSTRAINT fk_visa_categories_cities FOREIGN KEY ( country ) REFERENCES "public".cities( country );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_passport FOREIGN KEY ( passport ) REFERENCES "public".international_passports( id );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_offices FOREIGN KEY ( inner_issuer ) REFERENCES "public".offices( id );
 
+ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_visa_categories FOREIGN KEY ( "type", country ) REFERENCES "public".visa_categories( "type", country );
