@@ -45,6 +45,7 @@ CREATE  TABLE "public".offices_kinds_relations (
 CREATE  TABLE "public".people ( 
 	id                   bigint  NOT NULL  ,
 	date_of_birth        date DEFAULT CURRENT_DATE NOT NULL  ,
+	data_of_death        date    ,
 	CONSTRAINT pk_users PRIMARY KEY ( id )
  );
 
@@ -95,7 +96,7 @@ CREATE  TABLE "public".birth_certificates (
  );
 
 CREATE  TABLE "public".death_certificates ( 
-	id                   integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	person               bigint  NOT NULL  ,
 	issue_date           date  NOT NULL  ,
@@ -103,7 +104,7 @@ CREATE  TABLE "public".death_certificates (
  );
 
 CREATE  TABLE "public".drivers_licences ( 
-	id                   integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
 	"type"               integer  NOT NULL  ,
 	person               bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
