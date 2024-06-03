@@ -11,3 +11,18 @@ BEGIN
     RETURNING id INTO v_user_id;
     RETURN TRUE;
 END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION log_in(
+    p_login VARCHAR(255),
+    p_password VARCHAR(255)
+) RETURNS INTEGER AS $$
+DECLARE
+    v_user_id INTEGER;
+BEGIN
+    SELECT id INTO v_user_id
+    FROM users
+    WHERE login = p_login
+    AND hashed_password = crypt(p_password, hashed_password);
+    RETURN v_user_id;
+END;
