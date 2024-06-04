@@ -1,5 +1,4 @@
-\c id-documents;
-
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- Function definitions
 
 -- Function used to create new user with given login, email and password. On success returns user id, otherwise raises exception
@@ -16,7 +15,7 @@ BEGIN
         FROM accounts
         WHERE login = p_login
     ) THEN
-        RAISE EXCEPTION 'User with given login already exists'; 
+        RAISE EXCEPTION 'User with given login already exists';
     END IF;
 
     INSERT INTO accounts (id, login, hashed_password)
@@ -51,7 +50,7 @@ BEGIN
         FROM divorces
         WHERE marriage_id = NEW.marriage_id
     ) THEN
-        RAISE EXCEPTION 'Divorce already exists for this marriage'; 
+        RAISE EXCEPTION 'Divorce already exists for this marriage';
     END IF;
     RETURN NEW;
 END;
@@ -71,7 +70,7 @@ BEGIN
         WHERE (person1 = NEW.person1 AND person2 = NEW.person2)
         OR (person1 = NEW.person2 AND person2 = NEW.person1)
     ) THEN
-        RAISE EXCEPTION 'Marriage already exists between these people'; 
+        RAISE EXCEPTION 'Marriage already exists between these people';
     END IF;
     RETURN NEW;
 END;
@@ -89,9 +88,9 @@ BEGIN
     SELECT marriage_date INTO v_marriage_date
     FROM marriages
     WHERE id = NEW.marriage_id;
-    
+
     IF v_marriage_date > NEW.divorce_date THEN
-        RAISE EXCEPTION 'Divorce date is before marriage date'; 
+        RAISE EXCEPTION 'Divorce date is before marriage date';
     END IF;
     RETURN NEW;
 END;
@@ -109,9 +108,9 @@ BEGIN
     SELECT marriage_date INTO v_marriage_date
     FROM marriages
     WHERE id = NEW.marriage_id;
-    
+
     IF v_marriage_date > NEW.marriage_certificate_date THEN
-        RAISE EXCEPTION 'Marriage certificate date is before marriage date'; 
+        RAISE EXCEPTION 'Marriage certificate date is before marriage date';
     END IF;
     RETURN NEW;
 END;
@@ -129,9 +128,9 @@ BEGIN
     SELECT divorce_date INTO v_divorce_date
     FROM divorces
     WHERE id = NEW.divorce_id;
-    
+
     IF v_divorce_date > NEW.divorce_certificate_date THEN
-        RAISE EXCEPTION 'Divorce certificate date is before divorce date'; 
+        RAISE EXCEPTION 'Divorce certificate date is before divorce date';
     END IF;
     RETURN NEW;
 END;
@@ -153,7 +152,7 @@ BEGIN
     WHERE id = NEW.issuer;
 
     IF v_educational_instance_date > NEW.date THEN
-        RAISE EXCEPTION 'Educational certificate date is before educational instance creation date'; 
+        RAISE EXCEPTION 'Educational certificate date is before educational instance creation date';
     END IF;
 
     RETURN NEW;
@@ -177,7 +176,7 @@ BEGIN
             FROM educational_certificates
             WHERE kind = v_prerequisite_kind AND holder = NEW.holder
         ) THEN
-            RAISE EXCEPTION 'Prerequisite educational certificate does not exist'; 
+            RAISE EXCEPTION 'Prerequisite educational certificate does not exist';
         END IF;
     END LOOP;
 
@@ -199,7 +198,7 @@ BEGIN
     WHERE id = NEW.holder;
 
     IF v_birth_date > NEW.date THEN
-        RAISE EXCEPTION 'Educational certificate was issued before the holder was born'; 
+        RAISE EXCEPTION 'Educational certificate was issued before the holder was born';
     END IF;
 
     RETURN NEW;
@@ -220,7 +219,7 @@ BEGIN
     WHERE id = NEW.holder;
 
     IF v_death_date IS NOT NULL THEN
-        RAISE EXCEPTION 'Educational certificate is issued to a dead person'; 
+        RAISE EXCEPTION 'Educational certificate is issued to a dead person';
     END IF;
 
     RETURN NEW;
@@ -241,7 +240,7 @@ BEGIN
     WHERE id = NEW.issuer;
 
     IF v_instance_kind <> NEW.kind THEN
-        RAISE EXCEPTION 'Educational certificate kind does not match educational instance kind'; 
+        RAISE EXCEPTION 'Educational certificate kind does not match educational instance kind';
     END IF;
 
     RETURN NEW;
@@ -264,7 +263,7 @@ BEGIN
     WHERE id = NEW.passport_owner;
 
     IF v_death_date IS NOT NULL THEN
-        RAISE EXCEPTION 'Passport is issued to a dead person'; 
+        RAISE EXCEPTION 'Passport is issued to a dead person';
     END IF;
 
     RETURN NEW;
@@ -290,7 +289,7 @@ BEGIN
     AND (expiration_date IS NULL OR expiration_date >= NEW.issue_date);
 
     IF v_passport_count >= 1 THEN
-        RAISE EXCEPTION 'Person already has 2 active passports'; 
+        RAISE EXCEPTION 'Person already has 2 active passports';
     END IF;
 
     RETURN NEW;
@@ -314,7 +313,7 @@ BEGIN
     AND (expiration_date IS NULL OR expiration_date >= NEW.issue_date);
 
     IF v_passport_count >= 2 THEN
-        RAISE EXCEPTION 'Person already has 2 active international passports'; 
+        RAISE EXCEPTION 'Person already has 2 active international passports';
     END IF;
 
     RETURN NEW;
@@ -323,4 +322,3 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER verify_international_passport_number BEFORE INSERT ON international_passports
     FOR EACH ROW EXECUTE FUNCTION verify_international_passport_number();
-
