@@ -7,8 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from .config import Base
 
 
-class Passports(Base):
-    __tablename__ = 'passports'
+class InternationalPassports(Base):
+    __tablename__ = 'international_passports'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     original_surname: Mapped[str]
@@ -22,6 +22,6 @@ class Passports(Base):
     passport_owner: Mapped[int]
 
     @staticmethod
-    async def get(db: AsyncSession, user_id: int) -> list['Passports']:
-        result = await db.execute(select(Passports).where(Passports.passport_owner == user_id))
+    async def get(db: AsyncSession, user_id: int) -> list['InternationalPassports']:
+        result = await db.execute(select(InternationalPassports).where(InternationalPassports.passport_owner == user_id))
         return result.scalars()  # type: ignore[return-type]

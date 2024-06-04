@@ -171,7 +171,7 @@ BEGIN
     FROM educational_instances
     WHERE id = NEW.issuer;
 
-    IF v_educational_instance_date > NEW.date THEN
+    IF v_educational_instance_date > NEW.issue_date THEN
         RAISE EXCEPTION 'Educational certificate date is before educational instance creation date';
     END IF;
 
@@ -189,9 +189,10 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_prerequisite_kind INTEGER;
 BEGIN
-    FOR v_prerequisite_kind IN (SELECT prerequirement FROM educational_certificates_types WHERE kind = NEW.kind)
+    FOR v_prerequisite_kind IN (SELECT prerequirement FROM educational_certificetes_types WHERE kind = NEW.kind)
     LOOP
-        IF NOT EXISTS (
+        IF v_prerequisite_kind IS NOT NULL 
+        AND NOT EXISTS (
             SELECT 1
             FROM educational_certificates
             WHERE kind = v_prerequisite_kind AND holder = NEW.holder
@@ -213,11 +214,11 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_birth_date DATE;
 BEGIN
-    SELECT birth_date INTO v_birth_date
+    SELECT date_of_birth INTO v_birth_date
     FROM people
     WHERE id = NEW.holder;
 
-    IF v_birth_date > NEW.date THEN
+    IF v_birth_date > NEW.issue_date THEN
         RAISE EXCEPTION 'Educational certificate was issued before the holder was born';
     END IF;
 
@@ -234,7 +235,7 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_death_date DATE;
 BEGIN
-    SELECT death_date INTO v_death_date
+    SELECT date_of_death INTO v_death_date
     FROM people
     WHERE id = NEW.holder;
 
@@ -278,7 +279,7 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_death_date DATE;
 BEGIN
-    SELECT death_date INTO v_death_date
+    SELECT date_of_death INTO v_death_date
     FROM people
     WHERE id = NEW.passport_owner;
 
@@ -309,7 +310,7 @@ BEGIN
     AND (expiration_date IS NULL OR expiration_date >= NEW.issue_date);
 
     IF v_passport_count >= 1 THEN
-        RAISE EXCEPTION 'Person already has 2 active passports';
+        RAISE EXCEPTION 'Person already has 1 active passports';
     END IF;
 
     RETURN NEW;
@@ -327,10 +328,10 @@ DECLARE
     v_passport_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO v_passport_count
-    FROM passports
+    FROM international_passports
     WHERE passport_owner = NEW.passport_owner
-    AND issue_date <= NEW.issue_date
-    AND (expiration_date IS NULL OR expiration_date >= NEW.issue_date);
+    AND issue_date <= CURRENT_DATE
+    AND (expiration_date IS NULL OR CURRENT_DATE >= NEW.issue_date);
 
     IF v_passport_count >= 2 THEN
         RAISE EXCEPTION 'Person already has 2 active international passports';

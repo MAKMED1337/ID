@@ -37,7 +37,7 @@ CREATE  TABLE "public".visa_categories (
 	description          varchar(100)    ,
 	working_permit       boolean  NOT NULL  ,
 	residence_permit     boolean  NOT NULL  ,
-	duration             integer    ,
+	duration             interval  NOT NULL ,
 	country              varchar  NOT NULL  ,
 	CONSTRAINT pk_visa_categories PRIMARY KEY ( "type", country )
  );
