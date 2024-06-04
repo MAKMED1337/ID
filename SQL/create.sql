@@ -46,7 +46,6 @@ CREATE  TABLE "public".accounts (
 	id                   bigint  NOT NULL  ,
 	login                varchar  NOT NULL  ,
 	hashed_password      varchar(200)  NOT NULL  ,
-	CONSTRAINT pk_accounts PRIMARY KEY ( id ),
 	CONSTRAINT pk_accounts PRIMARY KEY ( id )
  );
 
