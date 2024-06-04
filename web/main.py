@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.staticfiles import StaticFiles
 from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel
 
@@ -10,6 +11,8 @@ from db import Accounts
 from . import jwt_helper
 from .config import app
 from .helper import DB
+
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 
 class ReturnToken(BaseModel):
@@ -47,7 +50,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: DB
     return user
 
 
-@app.post('/token')
+@app.post('/login')
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB) -> ReturnToken:
     user = await get_user(db, form_data.username, form_data.password)
     if user is None:
