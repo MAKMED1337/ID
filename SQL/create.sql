@@ -5,7 +5,7 @@ CREATE  TABLE "public".cities (
 	country              varchar(100)  NOT NULL  ,
 	city                 varchar(100)  NOT NULL  ,
 	CONSTRAINT pk_cities PRIMARY KEY ( id ),
-	CONSTRAINT unq_cities_country_city UNIQUE ( country, city ) ,
+	CONSTRAINT unq_cities_country_city UNIQUE ( country, city )
  );
 
 CREATE  TABLE "public".educational_certificetes_types (
@@ -74,7 +74,6 @@ CREATE  TABLE "public".accounts (
 	id                   bigint  NOT NULL  ,
 	login                varchar  NOT NULL  ,
 	hashed_password      varchar(200)  NOT NULL  ,
-	CONSTRAINT pk_accounts PRIMARY KEY ( id ),
 	CONSTRAINT pk_accounts PRIMARY KEY ( id )
  );
 
