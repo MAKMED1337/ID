@@ -1,0 +1,1 @@
+g++-11 -o main script.cpp; ./main
