@@ -322,3 +322,22 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER verify_international_passport_number BEFORE INSERT ON international_passports
     FOR EACH ROW EXECUTE FUNCTION verify_international_passport_number();
+
+-- VISAS
+
+-- Trigger to ensure that visa is not issued to expired passport
+CREATE OR REPLACE FUNCTION verify_visa_passport_expiration_date()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_passport_expiration_date DATE;
+BEGIN
+    SELECT expiration_date INTO v_passport_expiration_date
+    FROM passports
+    WHERE id = NEW.passport;
+
+    IF v_passport_expiration_date < NEW.issue_date THEN
+        RAISE EXCEPTION 'Visa is issued to expired passport';
+    END IF;
+
+    RETURN NEW;
+END;

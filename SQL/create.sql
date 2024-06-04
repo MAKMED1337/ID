@@ -6,7 +6,6 @@ CREATE  TABLE "public".cities (
 	city                 varchar(100)  NOT NULL  ,
 	CONSTRAINT pk_cities PRIMARY KEY ( id ),
 	CONSTRAINT unq_cities_country_city UNIQUE ( country, city ) ,
-	CONSTRAINT unq_cities_city UNIQUE ( city, country )
  );
 
 CREATE  TABLE "public".educational_certificetes_types (
@@ -75,6 +74,7 @@ CREATE  TABLE "public".accounts (
 	id                   bigint  NOT NULL  ,
 	login                varchar  NOT NULL  ,
 	hashed_password      varchar(200)  NOT NULL  ,
+	CONSTRAINT pk_accounts PRIMARY KEY ( id ),
 	CONSTRAINT pk_accounts PRIMARY KEY ( id )
  );
 
@@ -117,9 +117,11 @@ CREATE  TABLE "public".drivers_licences (
 CREATE  TABLE "public".educational_instances (
 	id                   integer  NOT NULL  ,
 	name                 varchar(100)  NOT NULL  ,
-	location             varchar(200)  NOT NULL  ,
+	address              varchar(200)  NOT NULL  ,
 	creation_date        date  NOT NULL  ,
 	kind                 integer  NOT NULL  ,
+	country              varchar  NOT NULL  ,
+	city                 varchar  NOT NULL  ,
 	CONSTRAINT pk_educational_instances PRIMARY KEY ( id )
  );
 
@@ -248,6 +250,8 @@ ALTER TABLE "public".educational_certificetes_types ADD CONSTRAINT fk_educationa
 
 ALTER TABLE "public".educational_instances ADD CONSTRAINT fk_educational_instances_type FOREIGN KEY ( kind ) REFERENCES "public".educational_instances_types( kind );
 
+ALTER TABLE "public".educational_instances ADD CONSTRAINT fk_educational_instances FOREIGN KEY ( country, city ) REFERENCES "public".cities( country, city );
+
 ALTER TABLE "public".international_passports ADD CONSTRAINT fk_international_passports_owner FOREIGN KEY ( passport_owner ) REFERENCES "public".people( id );
 
 ALTER TABLE "public".international_passports ADD CONSTRAINT fk_international_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
@@ -260,6 +264,8 @@ ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person2 F
 
 ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person1 FOREIGN KEY ( person1 ) REFERENCES "public".people( id );
 
+ALTER TABLE "public".offices ADD CONSTRAINT fk_offices_cities FOREIGN KEY ( country, city ) REFERENCES "public".cities( country, city );
+
 ALTER TABLE "public".offices_kinds_relations ADD CONSTRAINT fk_offices_kinds_relations_kind FOREIGN KEY ( kind_id ) REFERENCES "public".offices_kinds( kind );
 
 ALTER TABLE "public".offices_kinds_relations ADD CONSTRAINT fk_offices_kinds_relations_offices FOREIGN KEY ( office_id ) REFERENCES "public".offices( id );
@@ -271,6 +277,8 @@ ALTER TABLE "public".passports ADD CONSTRAINT fk_passports_offices FOREIGN KEY (
 ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_owner FOREIGN KEY ( pet_owner ) REFERENCES "public".people( id );
 
 ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
+
+ALTER TABLE "public".visa_categories ADD CONSTRAINT fk_visa_categories_cities FOREIGN KEY ( country ) REFERENCES "public".cities( country );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_passport FOREIGN KEY ( passport ) REFERENCES "public".international_passports( id );
 
