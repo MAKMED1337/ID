@@ -5,8 +5,7 @@ CREATE  TABLE "public".cities (
 	country              varchar(100)  NOT NULL  ,
 	city                 varchar(100)  NOT NULL  ,
 	CONSTRAINT pk_cities PRIMARY KEY ( id ),
-	CONSTRAINT unq_cities_country_city UNIQUE ( country, city ) ,
-	CONSTRAINT unq_cities_city UNIQUE ( city, country )
+	CONSTRAINT unq_cities_country_city UNIQUE ( country, city )
  );
 
 CREATE  TABLE "public".educational_certificetes_types (
@@ -117,9 +116,11 @@ CREATE  TABLE "public".drivers_licences (
 CREATE  TABLE "public".educational_instances (
 	id                   integer  NOT NULL  ,
 	name                 varchar(100)  NOT NULL  ,
-	location             varchar(200)  NOT NULL  ,
+	address              varchar(200)  NOT NULL  ,
 	creation_date        date  NOT NULL  ,
 	kind                 integer  NOT NULL  ,
+	country              varchar  NOT NULL  ,
+	city                 varchar  NOT NULL  ,
 	CONSTRAINT pk_educational_instances PRIMARY KEY ( id )
  );
 
@@ -248,6 +249,8 @@ ALTER TABLE "public".educational_certificetes_types ADD CONSTRAINT fk_educationa
 
 ALTER TABLE "public".educational_instances ADD CONSTRAINT fk_educational_instances_type FOREIGN KEY ( kind ) REFERENCES "public".educational_instances_types( kind );
 
+ALTER TABLE "public".educational_instances ADD CONSTRAINT fk_educational_instances FOREIGN KEY ( country, city ) REFERENCES "public".cities( country, city );
+
 ALTER TABLE "public".international_passports ADD CONSTRAINT fk_international_passports_owner FOREIGN KEY ( passport_owner ) REFERENCES "public".people( id );
 
 ALTER TABLE "public".international_passports ADD CONSTRAINT fk_international_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
@@ -260,6 +263,8 @@ ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person2 F
 
 ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person1 FOREIGN KEY ( person1 ) REFERENCES "public".people( id );
 
+ALTER TABLE "public".offices ADD CONSTRAINT fk_offices_cities FOREIGN KEY ( country, city ) REFERENCES "public".cities( country, city );
+
 ALTER TABLE "public".offices_kinds_relations ADD CONSTRAINT fk_offices_kinds_relations_kind FOREIGN KEY ( kind_id ) REFERENCES "public".offices_kinds( kind );
 
 ALTER TABLE "public".offices_kinds_relations ADD CONSTRAINT fk_offices_kinds_relations_offices FOREIGN KEY ( office_id ) REFERENCES "public".offices( id );
@@ -271,6 +276,8 @@ ALTER TABLE "public".passports ADD CONSTRAINT fk_passports_offices FOREIGN KEY (
 ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_owner FOREIGN KEY ( pet_owner ) REFERENCES "public".people( id );
 
 ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
+
+ALTER TABLE "public".visa_categories ADD CONSTRAINT fk_visa_categories_cities FOREIGN KEY ( country ) REFERENCES "public".cities( country );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_passport FOREIGN KEY ( passport ) REFERENCES "public".international_passports( id );
 
@@ -319,6 +326,26 @@ BEGIN
     RETURN v_user_id;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Function that returns list of offices the given id is administrator at
+CREATE OR REPLACE FUNCTION get_administrated_offices(
+    p_administrator_id INTEGER
+) RETURNS TABLE (
+    id INTEGER,
+    office_type VARCHAR,
+    country VARCHAR,
+    city VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT offices.id, offices.office_type, offices.country, office.city
+    FROM offices
+    JOIN administrators ON offices.id = administrators.office_id
+    WHERE administrators.user_id = p_administrator_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- TRIGGERS
 
 -- Trigger used to verify that there does not exists a divorce for this marriage
 CREATE OR REPLACE FUNCTION verify_divorce_unique()
@@ -601,3 +628,23 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER verify_international_passport_number BEFORE INSERT ON international_passports
     FOR EACH ROW EXECUTE FUNCTION verify_international_passport_number();
+
+-- VISAS
+
+-- Trigger to ensure that visa is not issued to expired passport
+CREATE OR REPLACE FUNCTION verify_visa_passport_expiration_date()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_passport_expiration_date DATE;
+BEGIN
+    SELECT expiration_date INTO v_passport_expiration_date
+    FROM passports
+    WHERE id = NEW.passport;
+
+    IF v_passport_expiration_date < NEW.issue_date THEN
+        RAISE EXCEPTION 'Visa is issued to expired passport';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
