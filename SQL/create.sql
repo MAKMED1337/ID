@@ -121,9 +121,11 @@ CREATE  TABLE "public".drivers_licences (
 CREATE  TABLE "public".educational_instances ( 
 	id                   integer  NOT NULL  ,
 	name                 varchar(100)  NOT NULL  ,
-	location             varchar(200)  NOT NULL  ,
+	address              varchar(200)  NOT NULL  ,
 	creation_date        date  NOT NULL  ,
 	kind                 integer  NOT NULL  ,
+	country              varchar  NOT NULL  ,
+	city                 varchar  NOT NULL  ,
 	CONSTRAINT pk_educational_instances PRIMARY KEY ( id )
  );
 
@@ -251,6 +253,8 @@ ALTER TABLE "public".educational_certificates ADD CONSTRAINT fk_educational_cert
 ALTER TABLE "public".educational_certificetes_types ADD CONSTRAINT fk_educational_certificetes_types_prerequirement FOREIGN KEY ( prerequirement ) REFERENCES "public".educational_certificetes_types( kind );
 
 ALTER TABLE "public".educational_instances ADD CONSTRAINT fk_educational_instances_type FOREIGN KEY ( kind ) REFERENCES "public".educational_instances_types( kind );
+
+ALTER TABLE "public".educational_instances ADD CONSTRAINT fk_educational_instances FOREIGN KEY ( country, city ) REFERENCES "public".cities( country, city );
 
 ALTER TABLE "public".international_passports ADD CONSTRAINT fk_international_passports_owner FOREIGN KEY ( passport_owner ) REFERENCES "public".people( id );
 
