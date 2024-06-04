@@ -1,6 +1,7 @@
 from .accounts import Accounts
 from .administrators import Administrators
 from .config import make_session, start, stop
+from .passports import Passports
 from .people import People
 
 __all__ = [
@@ -10,4 +11,5 @@ __all__ = [
     'Accounts',
     'Administrators',
     'People',
+    'Passports',
 ]

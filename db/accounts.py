@@ -13,6 +13,6 @@ class Accounts(Base):
     hashed_password: Mapped[str]
 
     @staticmethod
-    async def login(db: AsyncSession, username: str, password: str) -> int | None:
+    async def find_account(db: AsyncSession, username: str, password: str) -> int | None:
         result = await db.execute(select(func.login(username, password)))
         return result.scalar()  # type: ignore[return-value]

@@ -1,7 +1,8 @@
+import pydantic
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass
 
 
 class DBSettings(BaseSettings):
@@ -26,8 +27,10 @@ connection_url = URL.create(
 
 
 class Base(
+    MappedAsDataclass,
     DeclarativeBase,
     AsyncAttrs,
+    dataclass_callable=pydantic.dataclasses.dataclass,
 ):
     pass
 
