@@ -41,6 +41,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Function that returns list of offices the given id is administrator at
+CREATE OR REPLACE FUNCTION get_administrated_offices(
+    p_administrator_id INTEGER
+) RETURNS TABLE (
+    id INTEGER,
+    office_type VARCHAR,
+    country VARCHAR,
+    city VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT offices.id, offices.office_type, offices.country, office.city
+    FROM offices
+    JOIN administrators ON offices.id = administrators.office_id
+    WHERE administrators.user_id = p_administrator_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- TRIGGERS
+
 -- Trigger used to verify that there does not exists a divorce for this marriage
 CREATE OR REPLACE FUNCTION verify_divorce_unique()
 RETURNS TRIGGER AS $$
