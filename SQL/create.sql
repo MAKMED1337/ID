@@ -1,7 +1,5 @@
 \c id-documents;
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 CREATE SCHEMA IF NOT EXISTS "public";
 
 CREATE  TABLE "public".cities ( 
@@ -10,8 +8,7 @@ CREATE  TABLE "public".cities (
 	city                 varchar(100)  NOT NULL  ,
 	CONSTRAINT pk_cities PRIMARY KEY ( id ),
 	CONSTRAINT unq_cities_country_city UNIQUE ( country, city ) ,
-	CONSTRAINT unq_cities_country UNIQUE ( country ) ,
-	CONSTRAINT unq_cities_city UNIQUE ( city ) 
+	CONSTRAINT unq_cities_city UNIQUE ( city, country ) 
  );
 
 CREATE  TABLE "public".educational_certificetes_types ( 
@@ -80,7 +77,6 @@ CREATE  TABLE "public".accounts (
 	id                   bigint  NOT NULL  ,
 	login                varchar  NOT NULL  ,
 	hashed_password      varchar(200)  NOT NULL  ,
-	CONSTRAINT unq_accounts_id UNIQUE ( id ) ,
 	CONSTRAINT pk_accounts PRIMARY KEY ( id )
  );
 
@@ -228,9 +224,7 @@ ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificate_peop
 
 ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificates_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
 
-ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificates_cities FOREIGN KEY ( country_of_birth ) REFERENCES "public".cities( country );
-
-ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificates_cities_0 FOREIGN KEY ( city_of_birth ) REFERENCES "public".cities( city );
+ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificates_cities FOREIGN KEY ( city_of_birth, country_of_birth ) REFERENCES "public".cities( city, country );
 
 ALTER TABLE "public".death_certificates ADD CONSTRAINT fk_death_certificates_people FOREIGN KEY ( person ) REFERENCES "public".people( id );
 
@@ -268,8 +262,6 @@ ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person2 F
 
 ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person1 FOREIGN KEY ( person1 ) REFERENCES "public".people( id );
 
-ALTER TABLE "public".offices ADD CONSTRAINT fk_offices_cities FOREIGN KEY ( country ) REFERENCES "public".cities( country );
-
 ALTER TABLE "public".offices_kinds_relations ADD CONSTRAINT fk_offices_kinds_relations_kind FOREIGN KEY ( kind_id ) REFERENCES "public".offices_kinds( kind );
 
 ALTER TABLE "public".offices_kinds_relations ADD CONSTRAINT fk_offices_kinds_relations_offices FOREIGN KEY ( office_id ) REFERENCES "public".offices( id );
@@ -281,8 +273,6 @@ ALTER TABLE "public".passports ADD CONSTRAINT fk_passports_offices FOREIGN KEY (
 ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_owner FOREIGN KEY ( pet_owner ) REFERENCES "public".people( id );
 
 ALTER TABLE "public".pet_passports ADD CONSTRAINT fk_pet_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
-
-ALTER TABLE "public".visa_categories ADD CONSTRAINT fk_visa_categories_cities FOREIGN KEY ( country ) REFERENCES "public".cities( country );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_passport FOREIGN KEY ( passport ) REFERENCES "public".international_passports( id );
 
