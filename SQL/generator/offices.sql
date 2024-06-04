@@ -1,0 +1,2 @@
+INSERT INTO offices(office_type,country,address,city,id) VALUES ('Passport office', 'Poland', 'al. 3 Maja, 5', 'Warsaw', 1);
+INSERT INTO offices(office_type,country,address,city,id) VALUES ('Passport office', 'Poland', 'al. 3 Maja, 6', 'Warsaw', 0);

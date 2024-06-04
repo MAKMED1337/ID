@@ -1,0 +1,33 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+        - id: trailing-whitespace
+        - id: end-of-file-fixer
+        - id: check-yaml
+        - id: check-added-large-files
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.7
+    hooks:
+    -   id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+
+# -   repo: local
+#     hooks:
+#     -   id: mypy
+#         name: mypy
+#         language: python
+#         language_version: "3.12"
+#         entry: mypy --strict
+#         additional_dependencies:
+#         -   mypy==1.7.1
+#         -   pydantic_settings==2.1.0
+#         -   pydantic==2.5.1
+#         -   fastapi==0.105.0
+#         -   python-multipart==0.0.6
+#         pass_filenames: false
+#         always_run: true
+#
