@@ -4,8 +4,9 @@
 
 -- Function used to create new user with given login, email and password. On success returns user id, otherwise raises exception
 CREATE OR REPLACE FUNCTION add_user(
-    p_login VARCHAR(255),
-    p_password VARCHAR(255)
+    p_id bigint,
+    p_login VARCHAR,
+    p_password VARCHAR
 ) RETURNS INTEGER AS $$
 DECLARE
     v_user_id INTEGER;
@@ -17,17 +18,9 @@ BEGIN
     ) THEN
         RAISE EXCEPTION 'User with given login already exists'; 
     END IF;
-    
-    IF EXISTS (
-        SELECT 1
-        FROM users
-        WHERE email = p_email
-    ) THEN
-        RAISE EXCEPTION 'User with given email already exists'; 
-    END IF;
 
-    INSERT INTO accounts (login, email, hashed_password)
-    VALUES (p_login, p_email, crypt(p_password, get_salt('bf')))
+    INSERT INTO accounts (id, login, hashed_password)
+    VALUES (p_id, p_login, crypt(p_password, gen_salt('bf')))
     RETURNING id INTO v_user_id;
     RETURN v_user_id;
 END;
