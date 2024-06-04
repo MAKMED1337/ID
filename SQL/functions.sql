@@ -27,7 +27,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Function used to log in user with given login and password. On success returns user id, otherwise returns NULL
-CREATE OR REPLACE FUNCTION log_in(
+CREATE OR REPLACE FUNCTION login(
     p_login VARCHAR(255),
     p_password VARCHAR(255)
 ) RETURNS INTEGER AS $$
