@@ -50,7 +50,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: DB
 @app.post('/token')
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB) -> ReturnToken:
     user = await get_user(db, form_data.username, form_data.password)
-    if not user:
+    if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Incorrect username or password',

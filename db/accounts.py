@@ -14,4 +14,5 @@ class Accounts(Base):
 
     @staticmethod
     async def login(db: AsyncSession, username: str, password: str) -> int | None:
-        return await db.execute(select(func.login(username, password)))  # type: ignore[return-value]
+        result = await db.execute(select(func.login(username, password)))
+        return result.scalar()  # type: ignore[return-value]
