@@ -782,7 +782,7 @@ CREATE TABLE public.visa_categories (
     description character varying(100),
     working_permit boolean NOT NULL,
     residence_permit boolean NOT NULL,
-    duration integer,
+    duration interval NOT NULL,
     country character varying NOT NULL
 );
 
@@ -1321,6 +1321,7 @@ COPY public.accounts (id, login, hashed_password) FROM stdin;
 COPY public.administrators (user_id, office_id) FROM stdin;
 351	236
 12	235
+420	1
 \.
 
 
@@ -1470,6 +1471,170 @@ COPY public.cities (id, country, city) FROM stdin;
 
 COPY public.countries (country, id) FROM stdin;
 Poland	0
+Afghanistan	1
+Albania	2
+Algeria	3
+Angola	4
+Argentina	5
+Armenia	6
+Aruba	7
+Australia	8
+Austria	9
+Azerbaijan	10
+Bahamas	11
+Bahrain	12
+Bangladesh	13
+Barbados	14
+Belarus	15
+Belgium	16
+Belize	17
+Benin	18
+Bermuda	19
+Bhutan	20
+Bolivia	21
+Botswana	22
+Brazil	23
+Brunei	24
+Bulgaria	25
+Burundi	26
+Cambodia	27
+Cameroon	28
+Canada	29
+Chad	30
+Chile	31
+China	32
+Colombia	33
+Comoros	34
+Croatia	35
+Cuba	36
+Curacao	37
+Cyprus	38
+Denmark	39
+Djibouti	40
+Dominica	41
+Ecuador	42
+Egypt	43
+Eritrea	44
+Estonia	45
+Ethiopia	46
+Fiji	47
+Finland	48
+France	49
+Gabon	50
+Gambia	51
+Georgia	52
+Germany	53
+Ghana	54
+Gibraltar	55
+Greece	56
+Greenland	57
+Guatemala	58
+Guinea	59
+Guyana	60
+Haiti	61
+Honduras	62
+Hungary	63
+Iceland	64
+India	65
+Indonesia	66
+Iran	67
+Iraq	68
+Ireland	69
+Israel	70
+Italy	71
+Jamaica	72
+Japan	73
+Jordan	74
+Kazakhstan	75
+Kenya	76
+Kiribati	77
+Kosovo	78
+Kyrgyzstan	79
+Laos	80
+Latvia	81
+Lebanon	82
+Lesotho	83
+Liberia	84
+Libya	85
+Liechtenstein	86
+Lithuania	87
+Luxembourg	88
+Macao	89
+Macedonia	90
+Madagascar	91
+Malawi	92
+Malaysia	93
+Maldives	94
+Mali	95
+Malta	96
+Martinique	97
+Mauritania	98
+Mauritius	99
+Mayotte	100
+Mexico	101
+Moldova	102
+Monaco	103
+Mongolia	104
+Montenegro	105
+Montserrat	106
+Morocco	107
+Mozambique	108
+Myanmar	109
+Namibia	110
+Nauru	111
+Nepal	112
+Netherlands	113
+Nicaragua	114
+Niger	115
+Nigeria	116
+Niue	117
+Norway	118
+Oman	119
+Pakistan	120
+Palau	121
+Panama	122
+Paraguay	123
+Peru	124
+Philippines	125
+Pitcairn	126
+Portugal	128
+Qatar	129
+Romania	130
+Russia	131
+Rwanda	132
+Samoa	133
+Senegal	134
+Serbia	135
+Seychelles	136
+Singapore	137
+Slovakia	138
+Slovenia	139
+Somalia	140
+Spain	141
+Sudan	142
+Suricountry	143
+Swaziland	144
+Sweden	145
+Switzerland	146
+Syria	147
+Taiwan	148
+Tajikistan	149
+Tanzania	150
+Thailand	151
+Togo	152
+Tunisia	153
+Turkey	154
+Turkmenistan	155
+Tuvalu	156
+Uganda	157
+Ukraine	158
+Uruguay	159
+Uzbekistan	160
+Venezuela	161
+Vietnam	162
+Yemen	163
+Zambia	164
+Zimbabwe	165
 \.
 
 
@@ -1555,8 +1720,10 @@ COPY public.educational_instances_types (kind, educational_level) FROM stdin;
 --
 
 COPY public.international_passports (id, original_name, original_surname, en_name, en_surname, issuer, issue_date, expiration_date, sex, passport_owner) FROM stdin;
-0	Stolitnii	Andrii	Andrii	Stolitnii	0	2021-04-01	2024-04-01	M	0
-1	Stolitnii	Andrii	Andrii	Stolitnii	0	2021-04-01	2024-04-01	M	0
+0	Stolitnii	Andrii	Andrii	Stolitnii	0	2021-04-01	2024-04-01	M	1
+1	Stolitnii	Andrii	Andrii	Stolitnii	0	2021-04-01	2024-04-01	M	1
+2	Tykhoniuk	Eduard	Eduard	Tykhoniuk	0	2021-04-01	2024-04-01	M	0
+3	Tykhoniuk	Eduard	Eduard	Tykhoniuk	0	2021-04-01	2024-04-01	M	0
 \.
 
 
@@ -1581,6 +1748,7 @@ COPY public.marriages (id, person1, person2, marriage_date) FROM stdin;
 --
 
 COPY public.offices (id, office_type, country, address, city) FROM stdin;
+1	Passport office	Poland	al. 3 Maja, 5	Warsaw
 0	Passport office	Poland	al. 3 Maja, 5	Kraków
 235	consulat	Poland	Poland Bartoszyce	Bartoszyce
 236	marriage agency	Poland	Poland Bemowo	Bemowo
@@ -2133,6 +2301,8 @@ COPY public.pet_passports (id, name, pet_owner, issuer, date_of_birth, species_i
 --
 
 COPY public.visa_categories (type, description, working_permit, residence_permit, duration, country) FROM stdin;
+1	Visa A	t	t	1 year	Poland
+1	Visa A	t	t	1 year	Ukraine
 \.
 
 
@@ -2141,6 +2311,10 @@ COPY public.visa_categories (type, description, working_permit, residence_permit
 --
 
 COPY public.visas (id, type, passport, issue_date, inner_issuer, country) FROM stdin;
+1	1	1	2023-02-20	1	Poland
+3	1	0	2023-02-20	1	Poland
+2	1	2	2023-02-20	0	Ukraine
+4	1	3	2023-02-20	1	Ukraine
 \.
 
 
