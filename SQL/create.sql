@@ -1,3 +1,5 @@
+\c id-documents;
+
 CREATE SCHEMA IF NOT EXISTS "public";
 
 CREATE  TABLE "public".cities ( 
