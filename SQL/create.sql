@@ -1,7 +1,3 @@
-\c id-documents;
-
-BEGIN;
-
 CREATE SCHEMA IF NOT EXISTS "public";
 
 CREATE  TABLE "public".cities ( 
@@ -10,7 +6,8 @@ CREATE  TABLE "public".cities (
 	city                 varchar(100)  NOT NULL  ,
 	CONSTRAINT pk_cities PRIMARY KEY ( id ),
 	CONSTRAINT unq_cities_country_city UNIQUE ( country, city ) ,
-	CONSTRAINT unq_cities_country UNIQUE ( country ) 
+	CONSTRAINT unq_cities_country UNIQUE ( country ) ,
+	CONSTRAINT unq_cities_city UNIQUE ( city ) 
  );
 
 CREATE  TABLE "public".educational_certificetes_types ( 
@@ -21,7 +18,7 @@ CREATE  TABLE "public".educational_certificetes_types (
 
 CREATE  TABLE "public".educational_instances_types ( 
 	kind                 integer  NOT NULL  ,
-	educational_level    integer  NOT NULL  ,
+	educational_level    varchar  NOT NULL  ,
 	CONSTRAINT pk_educational_instances_types PRIMARY KEY ( kind )
  );
 
@@ -80,15 +77,14 @@ CREATE  TABLE "public".accounts (
 	login                varchar  NOT NULL  ,
 	hashed_password      varchar(200)  NOT NULL  ,
 	CONSTRAINT unq_accounts_id UNIQUE ( id ) ,
-	CONSTRAINT pk_accounts PRIMARY KEY ( id, login )
+	CONSTRAINT pk_accounts PRIMARY KEY ( id )
  );
 
 CREATE  TABLE "public".administrators ( 
 	user_id              bigint  NOT NULL  ,
-	office_id            integer  NOT NULL  
+	office_id            integer  NOT NULL  ,
+	CONSTRAINT pk_administrators PRIMARY KEY ( user_id, office_id )
  );
-
-CREATE INDEX idx_administrators ON "public".administrators  ( user_id, office_id );
 
 CREATE  TABLE "public".birth_certificates ( 
 	id                   bigint  NOT NULL  ,
@@ -96,7 +92,8 @@ CREATE  TABLE "public".birth_certificates (
 	mother               bigint    ,
 	person               bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
-	place_of_birth       varchar(100)    ,
+	country_of_birth     varchar(100)    ,
+	city_of_birth        varchar(100)    ,
 	issue_date           date    ,
 	CONSTRAINT pk_birth_certificate PRIMARY KEY ( id )
  );
@@ -227,6 +224,10 @@ ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificate_peop
 
 ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificates_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
 
+ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificates_cities FOREIGN KEY ( country_of_birth ) REFERENCES "public".cities( country );
+
+ALTER TABLE "public".birth_certificates ADD CONSTRAINT fk_birth_certificates_cities_0 FOREIGN KEY ( city_of_birth ) REFERENCES "public".cities( city );
+
 ALTER TABLE "public".death_certificates ADD CONSTRAINT fk_death_certificates_people FOREIGN KEY ( person ) REFERENCES "public".people( id );
 
 ALTER TABLE "public".death_certificates ADD CONSTRAINT fk_death_certificates_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
@@ -284,5 +285,3 @@ ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_passport FOREIGN KEY ( passpo
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_offices FOREIGN KEY ( inner_issuer ) REFERENCES "public".offices( id );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_visa_categories FOREIGN KEY ( "type", country ) REFERENCES "public".visa_categories( "type", country );
-
-END;

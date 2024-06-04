@@ -12,7 +12,7 @@ DECLARE
 BEGIN
     IF EXISTS (
         SELECT 1
-        FROM users
+        FROM accounts
         WHERE login = p_login
     ) THEN
         RAISE EXCEPTION 'User with given login already exists'; 
@@ -26,7 +26,7 @@ BEGIN
         RAISE EXCEPTION 'User with given email already exists'; 
     END IF;
 
-    INSERT INTO users (login, email, hashed_password)
+    INSERT INTO accounts (login, email, hashed_password)
     VALUES (p_login, p_email, crypt(p_password, get_salt('bf')))
     RETURNING id INTO v_user_id;
     RETURN v_user_id;
@@ -42,7 +42,7 @@ DECLARE
     v_user_id INTEGER;
 BEGIN
     SELECT id INTO v_user_id
-    FROM users
+    FROM accounts
     WHERE login = p_login
     AND hashed_password = crypt(p_password, hashed_password);
     RETURN v_user_id;
@@ -157,7 +157,7 @@ DECLARE
 BEGIN
     SELECT creation_date INTO v_educational_instance_date
     FROM educational_instances
-    WHERE id = NEW.educational_instance_id;
+    WHERE id = NEW.issuer;
 
     IF v_educational_instance_date > NEW.date THEN
         RAISE EXCEPTION 'Educational certificate date is before educational instance creation date'; 
@@ -195,4 +195,139 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER verify_educational_certificate_prerequisites BEFORE INSERT ON educational_certificates
     FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_prerequisites();
 
--- Trigger used to check whether 
+-- Trigger used to check whether certificate was issued before the holder was born
+CREATE OR REPLACE FUNCTION verify_educational_certificate_birth_date()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_birth_date DATE;
+BEGIN
+    SELECT birth_date INTO v_birth_date
+    FROM people
+    WHERE id = NEW.holder;
+
+    IF v_birth_date > NEW.date THEN
+        RAISE EXCEPTION 'Educational certificate was issued before the holder was born'; 
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_educational_certificate_birth_date BEFORE INSERT ON educational_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_birth_date();
+
+-- Trigger used to ensure that educational certificate is not issued to a dead person
+CREATE OR REPLACE FUNCTION verify_educational_certificate_death_date()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_death_date DATE;
+BEGIN
+    SELECT death_date INTO v_death_date
+    FROM people
+    WHERE id = NEW.holder;
+
+    IF v_death_date IS NOT NULL THEN
+        RAISE EXCEPTION 'Educational certificate is issued to a dead person'; 
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_educational_certificate_death_date BEFORE INSERT ON educational_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_death_date();
+
+-- Trigger used to ensure that educational certificate kind was issued by the educational instance of the same kind
+CREATE OR REPLACE FUNCTION verify_educational_certificate_kind()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_instance_kind INTEGER;
+BEGIN
+    SELECT kind INTO v_instance_kind
+    FROM educational_instances
+    WHERE id = NEW.issuer;
+
+    IF v_instance_kind <> NEW.kind THEN
+        RAISE EXCEPTION 'Educational certificate kind does not match educational instance kind'; 
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_educational_certificate_kind BEFORE INSERT ON educational_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_kind();
+
+-- PASSPORTS
+
+-- Trigger used to ensure that passport is not issued to a dead person
+CREATE OR REPLACE FUNCTION verify_passport_death_date()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_death_date DATE;
+BEGIN
+    SELECT death_date INTO v_death_date
+    FROM people
+    WHERE id = NEW.passport_owner;
+
+    IF v_death_date IS NOT NULL THEN
+        RAISE EXCEPTION 'Passport is issued to a dead person'; 
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_passport_death_date BEFORE INSERT ON passports
+    FOR EACH ROW EXECUTE FUNCTION verify_passport_death_date();
+
+CREATE TRIGGER verify_passport_death_date BEFORE UPDATE ON international_passports
+    FOR EACH ROW EXECUTE FUNCTION verify_passport_death_date();
+
+-- Trigger used to ensure that passport is not issued to a person with more than 1 active passport
+CREATE OR REPLACE FUNCTION verify_passport_number()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_passport_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO v_passport_count
+    FROM passports
+    WHERE passport_owner = NEW.passport_owner
+    AND issue_date <= NEW.issue_date
+    AND (expiration_date IS NULL OR expiration_date >= NEW.issue_date);
+
+    IF v_passport_count >= 1 THEN
+        RAISE EXCEPTION 'Person already has 2 active passports'; 
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_passport_number BEFORE INSERT ON passports
+    FOR EACH ROW EXECUTE FUNCTION verify_passport_number();
+
+
+-- Trigger used to ensure that passport is not issued to a person with more than 2 active international passports
+CREATE OR REPLACE FUNCTION verify_international_passport_number()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_passport_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO v_passport_count
+    FROM passports
+    WHERE passport_owner = NEW.passport_owner
+    AND issue_date <= NEW.issue_date
+    AND (expiration_date IS NULL OR expiration_date >= NEW.issue_date);
+
+    IF v_passport_count >= 2 THEN
+        RAISE EXCEPTION 'Person already has 2 active international passports'; 
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_international_passport_number BEFORE INSERT ON international_passports
+    FOR EACH ROW EXECUTE FUNCTION verify_international_passport_number();
+
