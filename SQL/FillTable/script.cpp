@@ -51,6 +51,8 @@ struct country{
 };
 
 vector<pair <string, string>> cityToCountry;
+map <string, int> countryToId;
+map <int, string> idToCountry;
 vector<string> cities[2000]; /// contry ID
 
 vector <country> calcCountryes() {
@@ -72,6 +74,8 @@ vector <country> calcCountryes() {
         was = cntName;
     }
     for (country C : ret) {
+        countryToId[C.name] = C.id;
+        idToCountry[C.id] = C.name;
         cout << "INSERT INTO countries (id, country) VALUES (" <<
         C.id << ", " << STR(C.name) << ");\n";
     }
@@ -111,24 +115,27 @@ struct Office{
     string country, string city): id(id), offic_type(offic_type),
             country(country), city(city) {}
 };
+
 vector<Office> offices;
+map <string, vector <int>> OFF;
 
 void addOffices() {
     freopen("offices.sql", "w", stdout);
     cout << "--Offices\n";
     int id = 1;
-    string types[] = {"consulat", "marriage agency", "driver schools"};
+    string types[] = {"consulat", "marriage agency", "driver schools", "medical center"};
 
     for (country C : countries) {
         int type_id = 0;
-        for (int i = 0; i < min<int>(2, cities[C.id].size()); i++) {
+        for (int i = 0; i < min<int>(10, cities[C.id].size()); i++) {
             cout << "INSERT INTO offices (id, office_type, country, address, city) VALUES (" <<
             id << ", "<< "'" + types[type_id] + "'" << ", "
             << STR(C.name) << ", " << STR(C.name + " " + cities[C.id][i]) << ", "<< STR(cities[C.id][i]) << ");\n";
             offices.push_back(Office(id, types[type_id], C.name, cities[C.id][i]));
+            OFF[types[type_id]].push_back(id);
             id++;
-            type_id ++;
-            type_id %= 3;
+            type_id++;
+            type_id %= 4;
         }
     }
 }
@@ -173,7 +180,7 @@ void addDriversLicences() {
     for (int i = 0; i < 200; i++) {
         int t_id = getRand(0, 5);
         int pers_id = getRand(1, accs.size());
-        int issuer = getRand(1, offices.size());
+        int issuer = OFF["driver schools"][getRand(0, OFF["driver schools"].size() - 1)];
         int YY = getRand(1900, 2024);
         int MM = getRand(1, 12);
         int DD = getRand(1, 28);
@@ -323,6 +330,36 @@ void addEducCertificates() {
     }
 }
 
+
+void printBirth(int id, string father, string mother, int person, int issuer, string country, string city, string date) {
+    cout << "INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (" 
+    << id << ", " << father << ", " << mother << ", " << person << ", " << issuer << ", " << STR(country) << ", " << STR(city) << ", " << STR(date) << ");\n";
+}
+
+
+
+void addBirth() {
+    freopen("birth_certificates.sql", "w", stdout);
+    sort(IDs.begin(), IDs.end());
+    int i = 1;
+    int YY = 2024;
+    for (auto id : IDs) {
+        int issuer = OFF["medical center"][getRand(0, OFF["medical center"].size() - 1)];
+        int country_id = getRand(1, countries.size() - 1);
+        string CC = idToCountry[country_id];
+        string city = cities[country_id][getRand(0, (int)cities[country_id].size() - 1)];
+        string date = to_string(YY - getRand(0, 3)) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        string father = to_string(id << 1);
+        string mother = to_string(id << 1 | 1);
+        if ((id << 1) > IDs.size()) father = "null";
+        if ((id << 1 | 1) > IDs.size()) mother = "null";
+        printBirth(i, father, mother, id, issuer, CC, city, date);
+        i++;
+        if ((i&(i-1)) == 0) YY -= 25;
+    }
+}
+
+
 int main() {
     addPeople();
     addAccounts();
@@ -334,5 +371,6 @@ int main() {
     addEdType();
     addEdObjects();
     addEducCertificates();
+    addBirth();
     return 0;
 }
