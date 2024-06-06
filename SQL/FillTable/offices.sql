@@ -306,3 +306,5 @@ INSERT INTO offices (id, office_type, country, address, city) VALUES (304, 'cons
 INSERT INTO offices (id, office_type, country, address, city) VALUES (305, 'marriage agency', $$Zambia$$, $$Zambia Chingola$$, $$Chingola$$);
 INSERT INTO offices (id, office_type, country, address, city) VALUES (306, 'consulat', $$Zimbabwe$$, $$Zimbabwe Beitbridge$$, $$Beitbridge$$);
 INSERT INTO offices (id, office_type, country, address, city) VALUES (307, 'marriage agency', $$Zimbabwe$$, $$Zimbabwe Bindura$$, $$Bindura$$);
+INSERT INTO offices (id, office_type, country, address, city) VALUES (308, 'consulat', $$USA$$, $$USA New York$$, $$New York$$);
+INSERT INTO offices (id, office_type, country, address, city) VALUES (309, 'marriage agency', $$USA$$, $$USA Los Angeles$$, $$Los Angeles$$);

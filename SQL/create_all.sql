@@ -159,7 +159,7 @@ CREATE  TABLE "public".divorces (
 
 CREATE  TABLE "public".drivers_licences ( 
 	id                   bigint  NOT NULL  ,
-	"type"               integer  NOT NULL  ,
+	"type"               varchar  NOT NULL  ,
 	person               bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	issue_date           date  NOT NULL  ,

@@ -1,4 +1,4 @@
-\c id-documents;
+-- \c id-documents;
 
 BEGIN;
 

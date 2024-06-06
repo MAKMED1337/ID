@@ -2,10 +2,7 @@
 
 using namespace std;
 
-///INSERT INTO ankiety (id, nazwisko, wiek) VALUES (1, 'ob', 48);
-
 vector <int> IDs;
-
 
 mt19937_64 rng(228);
 
@@ -75,7 +72,7 @@ vector <country> calcCountryes() {
         was = cntName;
     }
     for (country C : ret) {
-        cout << "INSERT INTO cities (id, name) VALUES (" <<
+        cout << "INSERT INTO countries (id, country) VALUES (" <<
         C.id << ", " << STR(C.name) << ");\n";
     }
     return ret;
@@ -182,50 +179,149 @@ void addDriversLicences() {
         int DD = getRand(1, 28);
         string date = to_string(YY) + "-" + to_string(MM) + "-" + to_string(DD);
         string date1 = to_string(YY + 10) + "-" + to_string(MM) + "-" + to_string(DD);
-        cout << "INSERT INTO drivers_licences (id, type, person_id, issuer, issue_date, expiration_date) VALUES (" <<  
-        i + 1 << ", " << STR(types[t_id]) << ", " << issuer << ", " << STR(date) << ", " << STR(date1)  << ");\n";
+        cout << "INSERT INTO drivers_licences (id, type, person, issuer, issue_date, expiration_date) VALUES (" <<  
+        i + 1 << ", " << STR(types[t_id]) << ", " << pers_id << ", " <<  issuer << ", " << STR(date) << ", " << STR(date1)  << ");\n";
     }
 }
 
 void addEducationalCertificatesTypes() {
     freopen("educational_certificetes_types.sql", "w", stdout);
-    string types[] = {"Associate Degree", "Bachelor Degree", "Postgraduate Diploma", "Master Degree", "Doctoral Degree"};
-    int id = 1;
-    for (string s : types) {
+    cout << "INSERT INTO educational_certificetes_types (kind, prerequirement) VALUES (1, null);\n";
+    for (int id = 2; id < 20; id++) {
         cout << "INSERT INTO educational_certificetes_types (kind, prerequirement) VALUES (" <<  
-        id++<< ", " << STR(s) << ");\n";
+        id << ", " << id/2 << ");\n";
     }
 }
 
 void addEdType() {
     freopen("educational_instances_types.sql", "w", stdout);
-    string types[] = {"university", "school"};
+    string types[3] = {"school", "college", "university"};
     int id = 1;
-    for (string type : types) {
+    for (int id = 1; id <= 3; id++) {
         cout << "INSERT INTO educational_instances_types (kind, educational_level) VALUES (" <<  
-        id++<< ", " << STR(type) << ");\n";
+        id << ", " << STR(types[id - 1]) << ");\n";
     }
 }
 
-void addEdObjects() {
-    freopen("educational_instances.sql", "w", stdout);
-    array <string, 3> names[] = {{"Harvard University", "1636-09-08", "USA-Cambridge"}, {"Stanford University", "1885-10-01", "USA-Stanford"}, {"Massachusetts Institute of Technology", "1861-04-10", "USA-Cambridge"}, {"University of California, Berkeley", "1868-03-23", "USA-Berkeley"}, {"California Institute of Technology", "1891-09-23", "USA-Pasadena"}, {"University of Oxford", "1096-01-01", "UK-Oxford"}, {"University of Cambridge", "1209-01-01", "UK-Cambridge"}, {"Princeton University", "1746-10-22", "USA-Princeton"}, {"Yale University", "1701-10-09", "USA-New Haven"}, {"University of Chicago", "1890-07-09", "USA-Chicago"}, {"Columbia University", "1754-05-25", "USA-New York"}, {"University of Pennsylvania", "1740-11-14", "USA-Philadelphia"}, {"University of Michigan", "1817-08-26", "USA-Ann Arbor"}, {"Johns Hopkins University", "1876-02-22", "USA-Baltimore"}, {"University of California, Los Angeles", "1919-05-23", "USA-Los Angeles"}, {"Duke University", "1838-12-28", "USA-Durham"}, {"Northwestern University", "1851-01-28", "USA-Evanston"}, {"New York University", "1831-04-21", "USA-New York"}, {"University of California, San Diego", "1960-11-18", "USA-San Diego"}, {"University of Washington", "1861-11-04", "USA-Seattle"}, {"University of Toronto", "1827-03-15", "Canada-Toronto"}, {"Imperial College London", "1907-07-08", "UK-London"}, {"University College London", "1826-02-11", "UK-London"}, {"University of Edinburgh", "1582-04-14", "UK-Edinburgh"}, {"University of Melbourne", "1853-04-11", "Australia-Melbourne"}, {"Australian National University", "1946-08-01", "Australia-Canberra"}, {"University of Sydney", "1850-10-01", "Australia-Sydney"}, {"University of Queensland", "1909-12-16", "Australia-Brisbane"}, {"London School of Economics and Political Science", "1895-10-10", "UK-London"}, {"University of Hong Kong", "1911-03-30", "Hong Kong-Hong Kong"}, {"National University of Singapore", "1905-08-03", "Singapore-Singapore"}, {"ETH Zurich", "1855-10-16", "Switzerland-Zurich"}, {"Peking University", "1898-12-17", "China-Beijing"}, {"Tsinghua University", "1911-04-29", "China-Beijing"}, {"University of British Columbia", "1908-09-30", "Canada-Vancouver"}, {"University of Tokyo", "1877-04-12", "Japan-Tokyo"}, {"Seoul National University", "1946-08-22", "South Korea-Seoul"}, {"McGill University", "1821-03-31", "Canada-Montreal"}, {"University of Manchester", "1824-10-22", "UK-Manchester"}, {"University of Wisconsin-Madison", "1848-07-26", "USA-Madison"}, {"Cornell University", "1865-04-27", "USA-Ithaca"}, {"University of California, Davis", "1905-03-18", "USA-Davis"}, {"University of Illinois at Urbana-Champaign", "1867-03-02", "USA-Champaign"}, {"Carnegie Mellon University", "1900-11-15", "USA-Pittsburgh"}, {"University of Texas at Austin", "1883-09-15", "USA-Austin"}, {"University of Southern California", "1880-10-06", "USA-Los Angeles"}, {"King's College London", "1829-08-14", "UK-London"}, {"University of North Carolina at Chapel Hill", "1789-12-11", "USA-Chapel Hill"}, {"University of Minnesota", "1851-02-25", "USA-Minneapolis"}, {"Monash University", "1958-06-27", "Australia-Melbourne"}, {"Kyoto University", "1897-06-18", "Japan-Kyoto"}, {"University of Glasgow", "1451-01-07", "UK-Glasgow"}, {"University of Birmingham", "1900-03-09", "UK-Birmingham"}, {"University of Bristol", "1876-07-10", "UK-Bristol"}, {"University of Southampton", "1862-06-29", "UK-Southampton"}, {"University of Warwick", "1965-10-01", "UK-Coventry"}, {"University of Sheffield", "1905-05-31", "UK-Sheffield"}, {"University of Leeds", "1904-06-06", "UK-Leeds"}, {"University of Nottingham", "1881-06-17", "UK-Nottingham"}, {"University of Exeter", "1955-07-24", "UK-Exeter"}, {"University of St Andrews", "1413-02-28", "UK-St Andrews"}, {"University of Liverpool", "1881-07-16", "UK-Liverpool"}, {"University of York", "1963-10-09", "UK-York"}, {"Durham University", "1832-08-01", "UK-Durham"}, {"University of Aberdeen", "1495-09-10", "UK-Aberdeen"}, {"University of Dundee", "1881-07-25", "UK-Dundee"}, {"University of East Anglia", "1963-11-01", "UK-Norwich"}, {"University of Reading", "1892-03-17", "UK-Reading"}, {"University of Surrey", "1966-09-22", "UK-Guildford"}, {"University of Sussex", "1961-08-16", "UK-Falmer"}, {"University of Leicester", "1921-07-20", "UK-Leicester"}, {"Queen Mary University of London", "1887-10-11", "UK-London"}, {"City, University of London", "1894-05-14", "UK-London"}, {"Royal Holloway, University of London", "1849-06-30", "UK-Egham"}, {"Birkbeck, University of London", "1823-06-02", "UK-London"}, {"School of Oriental and African Studies", "1916-06-05", "UK-London"}, {"Goldsmiths, University of London", "1904-01-29", "UK-London"}, {"University of Strathclyde", "1796-07-01", "UK-Glasgow"}, {"Heriot-Watt University", "1821-10-16", "UK-Edinburgh"}, {"University of Kent", "1965-01-04", "UK-Canterbury"}, {"Loughborough University", "1909-07-18", "UK-Loughborough"}, {"University of Bath", "1966-10-25", "UK-Bath"}, {"University of Essex", "1964-09-11", "UK-Colchester"}, {"Lancaster University", "1964-08-20", "UK-Lancaster"}, {"Swansea University", "1920-05-19", "UK-Swansea"}, {"Cardiff University", "1883-10-24", "UK-Cardiff"}, {"University of Plymouth", "1862-04-10", "UK-Plymouth"}, {"University of Portsmouth", "1992-07-07", "UK-Portsmouth"}, {"University of Hull", "1927-10-11", "UK-Hull"}, {"Aberystwyth University", "1872-10-15", "UK-Aberystwyth"}, {"Bangor University", "1884-10-18", "UK-Bangor"}, {"University of Lincoln", "1861-02-14", "UK-Lincoln"}, {"University of Chester", "1839-04-15", "UK-Chester"}, {"University of Huddersfield", "1825-08-18", "UK-Huddersfield"}, {"University of Brighton", "1859-07-10", "UK-Brighton"}, {"University of Central Lancashire", "1828-09-20", "UK-Preston"}, {"University of Westminster", "1838-08-11", "UK-London"}, {"Phillips Exeter Academy", "1781-04-03", "USA-Exeter"}, {"Eton College", "1440-06-12", "UK-Windsor"}, {"Choate Rosemary Hall", "1890-10-24", "USA-Wallingford"}, {"Andover Phillips Academy", "1778-04-21", "USA-Andover"}, {"Rugby School", "1567-09-01", "UK-Rugby"}, {"The Lawrenceville School", "1810-06-15", "USA-Lawrenceville"}};
+int educational_instances_count = 1;
+pair <int, int> universityIds;
+void addUnivers() {
+    vector <array <string, 5>> universities = {
+        {"University of Warsaw", "1816-11-19", "Krakowskie Przedmieście 26/28, 00-927 Warsaw", "Warsaw", "Poland"},
+        {"Jagiellonian University", "1364-05-12", "Golebia 24, 31-007 Krakow", "Krakow", "Poland"},
+        {"Adam Mickiewicz University", "1919-05-07", "ul. Henryka Wieniawskiego 1, 61-712 Poznan", "Poznan", "Poland"},
+        {"AGH University of Science and Technology", "1919-04-20", "al. Mickiewicza 30, 30-059 Krakow", "Krakow", "Poland"},
+        {"Warsaw University of Technology", "1826-01-04", "Plac Politechniki 1, 00-661 Warsaw", "Warsaw", "Poland"},
+        {"University of Wroclaw", "1702-08-01", "pl. Uniwersytecki 1, 50-137 Wroclaw", "Wroclaw", "Poland"},
+        {"Gdansk University of Technology", "1904-10-06", "ul. Narutowicza 11/12, 80-233 Gdansk", "Gdansk", "Poland"},
+        {"Lodz University of Technology", "1945-05-24", "ul. Stefana Żeromskiego 116, 90-924 Lodz", "Lodz", "Poland"},
+        {"Nicolaus Copernicus University", "1945-10-15", "ul. Gagarina 11, 87-100 Torun", "Torun", "Poland"},
+        {"Medical University of Warsaw", "1950-12-01", "ul. Żwirki i Wigury 61, 02-091 Warsaw", "Warsaw", "Poland"},
+        {"Harvard University", "1636-09-08", "Massachusetts Hall, Cambridge, MA 02138", "Cambridge", "USA"},
+        {"Stanford University", "1885-11-11", "450 Serra Mall, Stanford, CA 94305", "Stanford", "USA"},
+        {"Massachusetts Institute of Technology", "1861-04-10", "77 Massachusetts Ave, Cambridge, MA 02139", "Cambridge", "USA"},
+        {"University of California, Berkeley", "1868-03-23", "200 California Hall, Berkeley, CA 94720", "Berkeley", "USA"},
+        {"California Institute of Technology", "1891-09-23", "1200 E California Blvd, Pasadena, CA 91125", "Pasadena", "USA"},
+        {"University of Chicago", "1890-10-01", "5801 S Ellis Ave, Chicago, IL 60637", "Chicago", "USA"},
+        {"Princeton University", "1746-10-22", "Princeton, NJ 08544", "Princeton", "USA"},
+        {"Columbia University", "1754-05-25", "116th St & Broadway, New York, NY 10027", "New York", "USA"},
+        {"Yale University", "1701-10-09", "New Haven, CT 06520", "New Haven", "USA"},
+        {"University of Pennsylvania", "1740-11-14", "Philadelphia, PA 19104", "Philadelphia", "USA"}
+    };
+    universityIds = {educational_instances_count, educational_instances_count + universities.size() - 1};
+    for (auto [name, date, adress, city, country] : universities) {
+        cout << "INSERT INTO educational_instances (id, name, address, creation_date, kind, country, city) VALUES (" <<  
+        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", 3, " << STR(country) << ", " << STR(city)  << ");\n";
+    }
+}
 
-    int id = 1;
-    for (auto [name, date, adress] : names) {
-        cout << "INSERT INTO educational_instances (id, name, location, creation_date, kind) VALUES (" <<  
-        id++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", 2"  << ");\n";    }
+pair <int, int> schoolsIds;
+
+void addSchools() {
+    vector<array <string, 5>> schools = {
+        {"John Paul II High School", "1957-09-01", "ul. Swietej Gertrudy 7, 31-046 Krakow", "Krakow", "Poland"},
+        {"High School No. 5 Krakow", "1945-09-01", "ul. Studencka 12, 31-116 Krakow", "Krakow", "Poland"},
+        {"International School of Krakow", "1993-09-01", "ul. Starowislna 26, 31-032 Krakow", "Krakow", "Poland"},
+        {"School Complex No. 1 Krakow", "1964-09-01", "ul. Ulanow 3, 31-450 Krakow", "Krakow", "Poland"},
+        {"High School No. 8 Krakow", "1928-09-01", "ul. Grzegorzecka 24, 31-532 Krakow", "Krakow", "Poland"},
+        {"School Complex No. 2 Krakow", "1959-09-01", "ul. Sobieskiego 15, 31-136 Krakow", "Krakow", "Poland"},
+        {"Bilingual High School No. 1 Warsaw", "1992-09-01", "ul. Syrokomli 20, 30-102 Warsaw", "Warsaw", "Poland"},
+        {"Lyceum No. 9 Warsaw", "1935-09-01", "ul. Nowosadecka 41, 30-383 Warsaw", "Warsaw", "Poland"},
+        {"Lyceum No. 3 Warsaw", "1910-09-01", "ul. Topolowa 22, 31-506 Warsaw", "Warsaw", "Poland"},
+        {"Catholic School Complex Warsaw", "1991-09-01", "ul. Bernardynska 5, 00-055 Warsaw", "Warsaw", "Poland"}
+    };
+    
+    schoolsIds = {educational_instances_count, educational_instances_count + schools.size() - 1};
+
+    for (auto [name, date, adress, city, country] : schools) {
+        cout << "INSERT INTO educational_instances (id, name, address, creation_date, kind, country, city) VALUES (" <<  
+        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", 1, " << STR(country) << ", " << STR(city)  << ");\n";
+    }
+}
+
+pair <int, int> collegesIds;
+
+void addColleges() {
+    vector <array <string, 5>> colleges = {
+        {"Cracow University of Technology", "1945-10-06", "ul. Warszawska 24, 31-155 Krakow", "Krakow", "Poland"},
+        {"AGH University of Science and Technology", "1919-04-20", "al. Mickiewicza 30, 30-059 Krakow", "Krakow", "Poland"},
+        {"Warsaw University of Technology", "1826-01-04", "Plac Politechniki 1, 00-661 Warsaw", "Warsaw", "Poland"},
+        {"University of Warsaw", "1816-11-19", "Krakowskie Przedmieście 26/28, 00-927 Warsaw", "Warsaw", "Poland"},
+        {"University of Social Sciences and Humanities", "1996-10-01", "ul. Chodakowska 19/31, 03-815 Warsaw", "Warsaw", "Poland"},
+        {"Warsaw School of Economics", "1906-10-30", "al. Niepodleglosci 162, 02-554 Warsaw", "Warsaw", "Poland"},
+        {"University of Information Technology and Management in Rzeszow", "1996-11-01", "ul. Sucharskiego 2, 35-225 Rzeszow", "Rzeszow", "Poland"},
+        {"Cracow University of Economics", "1925-10-01", "ul. Rakowicka 27, 31-510 Krakow", "Krakow", "Poland"},
+        {"Warsaw University of Life Sciences", "1816-09-23", "Nowoursynowska 166, 02-787 Warsaw", "Warsaw", "Poland"},
+        {"Academy of Fine Arts in Warsaw", "1945-10-22", "Krakowskie Przedmieście 5, 00-068 Warsaw", "Warsaw", "Poland"}
+    };
+
+    collegesIds = {educational_instances_count, educational_instances_count + colleges.size() - 1};
+
+    for (auto [name, date, adress, city, country] : colleges) {
+        cout << "INSERT INTO educational_instances (id, name, address, creation_date, kind, country, city) VALUES (" <<  
+        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", 2, " << STR(country) << ", " << STR(city)  << ");\n";
+    }
 }
 
 
+void addEdObjects() {
+    freopen("educational_instances.sql", "w", stdout);
+    addUnivers();
+    addSchools();
+    addColleges();
+}
 
-// void addEdCertificate() {
-//     freopen("educational_certificates.sql", "w", stdout);
-//     for (int i = 0; i < 100; i++) {
-//         int issuer = getRand(1, IDs.size());
-//         int 
-//     }
-// }
+int total = 1;
+
+void addCert(int issuer, int holder, string issue_date, int kind) {
+    cout << "INSERT INTO educational_certificates (id, issuer, holder, issue_date, kind) VALUES (" <<  
+    total++ << ", " << issuer << ", " << holder << ", " << STR(issue_date) << ", " << kind << ");\n";
+}
+
+/*
+* addEducCertificates logic works because prerequirement for all kind of 
+* educational_certificates_types is kind/2
+*/
+void addEducCertificates() {
+    freopen("educational_certificates.sql", "w", stdout);
+    for (auto id : IDs) {
+        int cntCert = getRand(0, 4);
+        int kind = 1;
+        int wasY = 1980; /// TODO: define with date of birth + 10
+        for (int i = 0; i < cntCert; i++) {
+            int issuer = getRand(universityIds.first, universityIds.second);
+            if (kind / 2 == 0) { 
+                issuer = getRand(schoolsIds.first, schoolsIds.second);
+            } else if (kind / 2 <= 1) {
+                issuer = getRand(collegesIds.first, collegesIds.second);
+            }
+            string date = to_string(wasY + getRand(4, 7)) + "-" + to_string(getRand(1, 12)) 
+            + "-" + to_string(getRand(1, 28));
+            addCert(issuer, id, date, kind);
+            kind = kind * 2 + getRand(0, 1); 
+        }
+    }
+}
 
 int main() {
     addPeople();
@@ -237,5 +333,6 @@ int main() {
     addEducationalCertificatesTypes();
     addEdType();
     addEdObjects();
+    addEducCertificates();
     return 0;
 }
