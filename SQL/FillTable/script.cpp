@@ -256,26 +256,35 @@ void addDriversLicences() {
 }
 
 void addEducationalCertificatesTypes() {
-    freopen("educational_certificetes_types.sql", "w", stdout);
-    cout << "INSERT INTO educational_certificetes_types (kind, prerequirement) VALUES (1, null);\n";
-    for (int id = 2; id < 20; id++) {
-        cout << "INSERT INTO educational_certificetes_types (kind, prerequirement) VALUES (" <<  
-        id << ", " << id/2 << ");\n";
+    freopen("educational_certificates_types.sql", "w", stdout);
+    string TT[] = {
+        "Certificate of Participation/Completion",
+        "High School Diploma or Equivalent (e.g., GED)",
+        "Vocational or Technical Certificates",
+        "Associate Degree",
+        "Bachelor's Degree",
+        "Graduate Certificates",
+        "Master's Degree",
+        "Professional Degrees",
+        "Doctoral Degree (Ph.D.)",
+        "Post-Doctoral Certifications/Fellowships"
+    };
+    cout << "INSERT INTO educational_certificates_types (id, prerequirement, name) VALUES (1, null,"<< STR(TT[0]) << ");\n";
+    for (int id = 2; id <= 10; id++) {
+        cout << "INSERT INTO educational_certificates_types (id, prerequirement, name) VALUES (" <<  
+        id << ", " << id/2 <<", " << STR(TT[id - 1]) << ");\n";
     }
 }
 
-void addEdType() {
-    freopen("educational_instances_types.sql", "w", stdout);
-    string types[3] = {"school", "college", "university"};
-    int id = 1;
-    for (int id = 1; id <= 3; id++) {
-        cout << "INSERT INTO educational_instances_types (kind, educational_level) VALUES (" <<  
-        id << ", " << STR(types[id - 1]) << ");\n";
-    }
-}
 
 int educational_instances_count = 1;
 pair <int, int> universityIds;
+
+void printEducInstTypRelation(int type_id, int instID) {
+    cout << "INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (" << 
+    type_id << ", " << instID << ");\n";
+}
+
 void addUnivers() {
     vector <array <string, 5>> universities = {
         {"University of Warsaw", "1816-11-19", "Krakowskie Przedmieście 26/28, 00-927 Warsaw", "Warsaw", "Poland"},
@@ -301,8 +310,9 @@ void addUnivers() {
     };
     universityIds = {educational_instances_count, educational_instances_count + universities.size() - 1};
     for (auto [name, date, adress, city, country] : universities) {
-        cout << "INSERT INTO educational_instances (id, name, address, creation_date, kind, country, city) VALUES (" <<  
-        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", 3, " << STR(country) << ", " << STR(city)  << ");\n";
+        cout << "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES (" <<  
+        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", " << STR(country) << ", " << STR(city)<< ");\n";
+        for (int i = 4; i <= 10; i++) printEducInstTypRelation(i, educational_instances_count - 1);
     }
 }
 
@@ -325,8 +335,9 @@ void addSchools() {
     schoolsIds = {educational_instances_count, educational_instances_count + schools.size() - 1};
 
     for (auto [name, date, adress, city, country] : schools) {
-        cout << "INSERT INTO educational_instances (id, name, address, creation_date, kind, country, city) VALUES (" <<  
-        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", 1, " << STR(country) << ", " << STR(city)  << ");\n";
+        cout << "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES (" <<  
+        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", " << STR(country) << ", " << STR(city)<< ");\n";
+        for (int i = 1; i <= 2; i++) printEducInstTypRelation(i, educational_instances_count - 1);
     }
 }
 
@@ -349,8 +360,9 @@ void addColleges() {
     collegesIds = {educational_instances_count, educational_instances_count + colleges.size() - 1};
 
     for (auto [name, date, adress, city, country] : colleges) {
-        cout << "INSERT INTO educational_instances (id, name, address, creation_date, kind, country, city) VALUES (" <<  
-        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", 2, " << STR(country) << ", " << STR(city)  << ");\n";
+        cout << "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES (" <<  
+        educational_instances_count++ << ", " << STR(name) << ", " << STR(adress) << ", " << STR(date) << ", " << STR(country) << ", " << STR(city)<< ");\n";
+        printEducInstTypRelation(3, educational_instances_count - 1);
     }
 }
 
@@ -376,9 +388,9 @@ void addCert(int issuer, int holder, string issue_date, int kind) {
 void addEducCertificates() {
     freopen("educational_certificates.sql", "w", stdout);
     for (auto id : IDs) {
-        int cntCert = getRand(0, 4);
+        int cntCert = getRand(0, 3);
         int kind = 1;
-        int wasY = 1980; /// TODO: define with date of birth + 10
+        int wasY = birth[id] + 10; /// TODO: define with date of birth + 10
         for (int i = 0; i < cntCert; i++) {
             int issuer = getRand(universityIds.first, universityIds.second);
             if (kind / 2 == 0) { 
@@ -520,10 +532,9 @@ int main() {
     setAllOficesItsTypes();
     addAdministrators();
     ///educ
-    // addEducationalCertificatesTypes();
-    // addEdType();
-    // addEdObjects();
-    // addEducCertificates();
+    addEducationalCertificatesTypes();
+    addEdObjects(); // also adding educational_instances_relation inside file educational_instance.sql
+    addEducCertificates();
     ///people
     addBirth();
     addDriversLicences();
