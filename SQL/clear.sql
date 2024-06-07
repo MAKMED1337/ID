@@ -28,5 +28,29 @@ DROP TABLE IF EXISTS divorce_certificates CASCADE;
 DROP TABLE IF EXISTS offices CASCADE;
 DROP TABLE IF EXISTS accounts CASCADE;
 DROP TABLE IF EXISTS administrators CASCADE;
+DROP TABLE IF EXISTS educational_certificates_types CASCADE;
+DROP TABLE IF EXISTS educational_instances_types_relation CASCADE;
+
+DROP FUNCTION IF EXISTS add_user(bigint,VARCHAR,VARCHAR);
+DROP FUNCTION IF EXISTS login;
+DROP FUNCTION IF EXISTS get_administrated_offices;
+DROP FUNCTION IF EXISTS verify_divorce_unique;
+DROP FUNCTION IF EXISTS verify_marriage_unique;
+DROP FUNCTION IF EXISTS verify_divorce_date;
+DROP FUNCTION IF EXISTS verify_marriage_certificate_date;
+DROP FUNCTION IF EXISTS verify_divorce_certificate_date;
+DROP FUNCTION IF EXISTS verify_educational_certificate_date;
+DROP FUNCTION IF EXISTS verify_educational_instance_date;
+DROP FUNCTION IF EXISTS verify_educational_certificate_prerequisites;
+DROP FUNCTION IF EXISTS verify_educational_certificate_birth_date;
+DROP FUNCTION IF EXISTS verify_educational_certificate_death_date;
+DROP FUNCTION IF EXISTS verify_educational_certificate_kind;
+DROP FUNCTION IF EXISTS verify_passport_death_date;
+DROP FUNCTION IF EXISTS verify_passport_birth_date;
+DROP FUNCTION IF EXISTS verify_passport_number;
+DROP FUNCTION IF EXISTS verify_international_passport_number;
+DROP FUNCTION IF EXISTS verify_visa_passport_expiration_date;
+
+DROP EXTENSION IF EXISTS pgcrypto;
 
 COMMIT;
