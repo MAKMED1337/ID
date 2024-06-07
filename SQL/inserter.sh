@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SQL="${SCRIPT_DIR}/FillTable/"
@@ -10,6 +11,7 @@ function add() {
 
 add "people"
 add "accounts"
+add "countries"
 add "cities"
 add "offices"
 add "administrators"
