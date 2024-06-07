@@ -565,6 +565,35 @@ void addPassport() {
     }
 }
 
+
+string visaTypes[] = {
+    "Tourist Visas", 
+    "Business Visas", 
+    "Work Visas", 
+    "Student Visas", 
+    "Transit Visas", 
+    "Family and Dependent Visas", 
+    "Immigrant Visas", 
+    "Refugee and Asylum Visas", 
+    "Special Purpose Visas"
+};
+
+void printVisaCat(int type, string description, bool work, bool resid, string country, int YYdur) {
+    cout << "INSERT INTO visa_categories (type, description, working_permit, residence_permit, duration, country) VALUES (" << 
+    type << ", " << STR(description)<< ", " << (work ? "true" : "false") 
+    << ", " << (resid ? "true" : "false") << ", " << "INTERVAL '" + to_string(YYdur) + " years'" << ", "<< STR(country) << ");\n";
+}
+
+void addVisaTypes() {
+    freopen("visa_categories.sql", "w", stdout);
+    int id = 1;
+    for (country C : countries) {
+        for (string desc : visaTypes) {
+            printVisaCat(id++, desc, bool(desc[0] != 'T'), desc[0] == 'I', C.name, getRand(5, 10));
+        }
+    }
+}
+
 int main() {
     fillBirthLocal();
     addPeople();
@@ -590,5 +619,6 @@ int main() {
     addDivorceCert();
     addDeath();
     addPassport();
+    addVisaTypes();
     return 0;
 }
