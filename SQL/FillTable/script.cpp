@@ -360,6 +360,22 @@ void addBirth() {
 }
 
 
+void printMarrige(int id, int person1, int person2, string date) {
+    cout << "INSERT INTO marriages (id, person1, person2, marriage_date) VALUES ("
+    << id << ", " << person1 << ", " << person2<< ", " << STR(date)<< ");\n";
+}
+
+void addMarriges() {
+    freopen("marriages.sql", "w", stdout);
+    int id = 1;
+    int YY = 2014;
+    for (int i = 2; i < IDs.size() && (i^1) < IDs.size(); i += 2) {
+        string date = to_string(YY - getRand(0, 2)) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        printMarrige(id++, i, (i ^ 1), date);
+        if ((i&(i-1)) == 0) YY -= 25;
+    }
+}
+
 int main() {
     addPeople();
     addAccounts();
@@ -372,5 +388,6 @@ int main() {
     addEdObjects();
     addEducCertificates();
     addBirth();
+    addMarriges();
     return 0;
 }
