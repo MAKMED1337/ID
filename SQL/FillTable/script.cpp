@@ -3,6 +3,11 @@
 using namespace std;
 
 vector <int> IDs;
+vector <string> names;
+vector <string> surnames;
+
+int birth[1000];
+string BirthData[1000];
 
 mt19937_64 rng(228);
 
@@ -14,13 +19,29 @@ int getRand(int l, int r) {
     return l + rng()%(r - l + 1);
 }
 
+void fillBirthLocal() {
+    int YY = 2024 + 25;
+    for (int i = 1; i <= 500; i++) {
+        if ((i&(i-1)) == 0) YY -= 25;
+        birth[i] = YY;
+        string date = to_string(birth[i]) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        BirthData[i] = date;
+    }
+}
+
 void addPeople() {
     freopen("people.sql", "w", stdout);
+    freopen("people_names.txt", "r", stdin);
+    // exit(0);
     cout << "--people\n";
     for (int id = 1; id <= 500; id++) { /// 200 users
-        string date = to_string(getRand(1900, 2024)) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
-        cout << "INSERT INTO people (id, date_of_birth) VALUES (" << id
-        << ", '" + date + "'::date);\n";
+        string name, surname; cin >> name >> surname;
+        name = name.substr(2, name.size() - 4);
+        surname = surname.substr(1, surname.size() - 3);
+        cout << "INSERT INTO people (id, date_of_birth, name, surname) VALUES (" << id
+        << ", '" + BirthData[id] + "'::date,"<< STR(name) << ", " << STR(surname) << ");\n";
+        names.push_back(name);
+        surnames.push_back(surname);
         IDs.push_back(id);
     }
 }
@@ -89,7 +110,7 @@ struct city {
     city(int a, string b, string c): id(a), cityname(b), country(c) {}
 };
 
-vector <country> countries = calcCountryes();
+vector <country> countries;
 map <pair <string, string>, int> IDCity;
 
 void addCities() {
@@ -107,12 +128,11 @@ void addCities() {
 
 struct Office{
     int id;
-    string offic_type;
     string country;
     string location;
     string city;
-    Office(int id, string offic_type, 
-    string country, string city): id(id), offic_type(offic_type),
+    Office(int id,
+    string country, string city): id(id),
             country(country), city(city) {}
 };
 
@@ -123,24 +143,67 @@ void addOffices() {
     freopen("offices.sql", "w", stdout);
     cout << "--Offices\n";
     int id = 1;
-    string types[] = {"consulat", "marriage agency", "driver schools", "medical center"};
-
     for (country C : countries) {
         int type_id = 0;
         for (int i = 0; i < min<int>(10, cities[C.id].size()); i++) {
-            cout << "INSERT INTO offices (id, office_type, country, address, city) VALUES (" <<
-            id << ", "<< "'" + types[type_id] + "'" << ", "
-            << STR(C.name) << ", " << STR(C.name + " " + cities[C.id][i]) << ", "<< STR(cities[C.id][i]) << ");\n";
-            offices.push_back(Office(id, types[type_id], C.name, cities[C.id][i]));
-            OFF[types[type_id]].push_back(id);
+            cout << "INSERT INTO offices (id, country, address, city) VALUES (" <<
+            id << ", " << STR(C.name) << ", " << STR(C.name + " " + cities[C.id][i]) << ", "<< STR(cities[C.id][i]) << ");\n";
+            offices.push_back(Office(id, C.name, cities[C.id][i]));
             id++;
-            type_id++;
-            type_id %= 4;
         }
     }
 }
 
+map <string, string> docTypesToOfTypes;
+map <string, int> docID;
+map <string, int> officeTypeID;
+vector<string> officesKinds = {"consulat", "marriage agency", "driver schools", "medical center"};
+void addDocxType() {
+    freopen("document_types.sql", "w", stdout);
+    docTypesToOfTypes["passports"] = "consulat";
+    docTypesToOfTypes["visa"] = "consulat";
+    docTypesToOfTypes["divorce certificate"] = "marriage agency";
+    docTypesToOfTypes["marriege certificate"] = "marriage agency";
+    docTypesToOfTypes["birth certificate"] = "medical center";
+    docTypesToOfTypes["death certificate"] = "medical center";
+    docTypesToOfTypes["driver licence"] = "driver schools";
+    int id = 1;
+    for (auto [a, b] : docTypesToOfTypes) {
+        cout << "INSERT INTO document_types (id, document) VALUES ("<< id++ << ", " << STR(a) << ");\n";
+        docID[a] = id - 1;
+    }
+}
 
+void addOfficeKinds() {
+    freopen("offices_kinds.sql", "w", stdout);
+    int id = 1;
+    for (auto a : officesKinds) {
+        cout << "INSERT INTO offices_kinds (kind, description) VALUES ("<< 
+        id++ << ", " << STR(a) << ");\n";
+        officeTypeID[a] = id - 1;
+    }
+}
+
+void addOfficesKindsDox() {
+    freopen("office_kinds_documents.sql", "w", stdout);
+    for (auto [a, b] : docTypesToOfTypes) {
+        cout << "INSERT INTO office_kinds_documents (kind_id, document_id) VALUES ("<< 
+        officeTypeID[b] << ", " << docID[a] << ");\n";
+    }
+}
+
+void setAllOficesItsTypes() {
+    freopen("offices_kinds_relations.sql", "w", stdout);
+    for (auto A : offices) {
+        int cnt = getRand(1, officesKinds.size());
+        shuffle(officesKinds.begin(), officesKinds.end(), rng);
+        for (int i = 0; i < cnt; i++) {
+            cout << "INSERT INTO offices_kinds_relations (office_id, kind_id) VALUES ("
+            << A.id << " " << officeTypeID[officesKinds[i]] << ");\n";
+            OFF[officesKinds[i]].push_back(A.id);
+        }
+    }
+}
 
 struct admin{
     int user_id;
@@ -178,12 +241,13 @@ void addDriversLicences() {
     freopen("drivers_licences.sql", "w", stdout);
     string types[] = {"A", "B1", "C1", "C", "D", "D1"};
     for (int i = 0; i < 200; i++) {
-        int t_id = getRand(0, 5);
         int pers_id = getRand(1, accs.size());
-        int issuer = OFF["driver schools"][getRand(0, OFF["driver schools"].size() - 1)];
-        int YY = getRand(1900, 2024);
+        while (birth[pers_id] + 16 > 2024) pers_id = getRand(1, accs.size());
+        int YY = getRand(birth[pers_id] + 16, 2024);
         int MM = getRand(1, 12);
         int DD = getRand(1, 28);
+        int t_id = getRand(0, 5);
+        int issuer = OFF["driver schools"][getRand(0, OFF["driver schools"].size() - 1)];
         string date = to_string(YY) + "-" + to_string(MM) + "-" + to_string(DD);
         string date1 = to_string(YY + 10) + "-" + to_string(MM) + "-" + to_string(DD);
         cout << "INSERT INTO drivers_licences (id, type, person, issuer, issue_date, expiration_date) VALUES (" <<  
@@ -348,17 +412,27 @@ void addBirth() {
         int country_id = getRand(1, countries.size() - 1);
         string CC = idToCountry[country_id];
         string city = cities[country_id][getRand(0, (int)cities[country_id].size() - 1)];
-        string date = to_string(YY - getRand(0, 3)) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
         string father = to_string(id << 1);
         string mother = to_string(id << 1 | 1);
         if ((id << 1) > IDs.size()) father = "null";
         if ((id << 1 | 1) > IDs.size()) mother = "null";
-        printBirth(i, father, mother, id, issuer, CC, city, date);
+        printBirth(i, father, mother, id, issuer, CC, city, BirthData[id]);
         i++;
         if ((i&(i-1)) == 0) YY -= 25;
     }
 }
 
+
+struct mariages{
+    int id;
+    int person1;
+    int person2;
+    int Year;
+    string date;
+    mariages(int id, int a, int b, int c, string d): id(id), person1(a), person2(b), Year(c), date(d) {}
+};
+
+vector <mariages> Mariges; /// person1, person2
 
 void printMarrige(int id, int person1, int person2, string date) {
     cout << "INSERT INTO marriages (id, person1, person2, marriage_date) VALUES ("
@@ -368,26 +442,94 @@ void printMarrige(int id, int person1, int person2, string date) {
 void addMarriges() {
     freopen("marriages.sql", "w", stdout);
     int id = 1;
-    int YY = 2014;
     for (int i = 2; i < IDs.size() && (i^1) < IDs.size(); i += 2) {
-        string date = to_string(YY - getRand(0, 2)) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        int YY = max(birth[i], birth[(i ^ 1)]) + getRand(16, 23);
+        string date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
         printMarrige(id++, i, (i ^ 1), date);
-        if ((i&(i-1)) == 0) YY -= 25;
+        Mariges.emplace_back(mariages(id - 1, i, (i^1), YY, date));
     }
 }
 
+void printMarriageCert(int id, int marriege_id, int issuer, string issue_date) {
+    cout << "INSERT INTO marriage_certificates (id, marriage_id, issuer, issue_date) VALUES ("
+    << id << ", " << marriege_id << ", " << issuer << ", " << STR(issue_date)<< ");\n";
+}
+
+void addMarriageCertificates() {
+    freopen("marriage_certificates.sql", "w", stdout);
+    int id = 1;
+    for (mariages A : Mariges) {
+        int issuer = OFF["marriage agency"][getRand(0, OFF["marriage agency"].size() - 1)];
+        printMarriageCert(id++, A.id, issuer, A.date);
+    }
+}
+
+
+void printDivorce(int id, int M_id, string date) {
+    cout << "INSERT INTO divorces (id, marriage_id, divorce_date) VALUES (" <<
+    id << ", " << M_id << ", " << STR(date)<< ");\n";
+}
+
+struct divorce{
+    int id;
+    int Year;
+    string date;
+    divorce(int id, int Y, string d): id(id), Year(Y), date(d) {}
+};
+
+vector <divorce> Divorces;
+void addDivorce() {
+    freopen("divorces.sql", "w", stdout);
+    int id = 1;
+    for (mariages A : Mariges) {
+        if (getRand(1, 7) <= 2) continue;
+        int YY = A.Year + getRand(1, 20);
+        string date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        printDivorce(id++, A.id, date);
+        Divorces.push_back(divorce(id - 1, YY, date));
+    }
+}
+
+
+void printDivCert(int id, int div_id, string date, int issuer) {
+    cout << "INSERT INTO divorce_certificates(id, divorce_id, issue_date, issuer) VALUES (" << 
+    id << ", " << div_id << ", " << STR(date) << ", " << issuer << ");\n";
+}
+
+void addDivorceCert() {
+    freopen("divorce_certificates.sql", "w", stdout);
+    int id = 1;
+    for (divorce A : Divorces) {
+        int issuer = OFF["marriage agency"][getRand(0, OFF["marriage agency"].size() - 1)];
+        printDivCert(id++, A.id, A.date, issuer);
+    }
+}
+
+
+
 int main() {
+    fillBirthLocal();
     addPeople();
+    countries = calcCountryes();
     addAccounts();
     addCities();
+    addDocxType();
+    addOfficeKinds();
+    addOfficesKindsDox();
     addOffices();
+    setAllOficesItsTypes();
     addAdministrators();
-    addDriversLicences();
-    addEducationalCertificatesTypes();
-    addEdType();
-    addEdObjects();
-    addEducCertificates();
+    ///educ
+    // addEducationalCertificatesTypes();
+    // addEdType();
+    // addEdObjects();
+    // addEducCertificates();
+    ///people
     addBirth();
+    addDriversLicences();
     addMarriges();
+    addMarriageCertificates();
+    addDivorce();
+    addDivorceCert();
     return 0;
 }
