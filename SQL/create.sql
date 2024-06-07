@@ -106,8 +106,7 @@ CREATE  TABLE "public".offices (
 CREATE  TABLE "public".offices_kinds_relations (
 	office_id            integer  NOT NULL  ,
 	kind_id              integer  NOT NULL  ,
-	CONSTRAINT pk_offices_kinds_relations PRIMARY KEY ( office_id, kind_id ),
-	CONSTRAINT unq_offices_kinds_relations_office_id UNIQUE ( office_id )
+	CONSTRAINT pk_offices_kinds_relations PRIMARY KEY ( office_id, kind_id )
  );
 
 CREATE  TABLE "public".passports (

@@ -499,7 +499,7 @@ DECLARE
 BEGIN
     SELECT date_of_birth INTO v_birth_date
     FROM people
-    WHERE id = NEW.driver;
+    WHERE id = NEW.person;
 
     IF v_birth_date > NEW.issue_date - INTERVAL '16 years' THEN
         RAISE EXCEPTION 'Driver license is issued to a person below 16 years old';
