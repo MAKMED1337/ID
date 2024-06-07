@@ -9,10 +9,10 @@ CREATE  TABLE "public".countries (
 
 CREATE  TABLE "public".educational_certificates_types ( 
 	id                   integer  NOT NULL  ,
-	description          varchar  NOT NULL  ,
+	name          varchar  NOT NULL  ,
 	prerequirement       integer    ,
 	CONSTRAINT pk_educational_certificates_types PRIMARY KEY ( id ),
-	CONSTRAINT unq_educational_certificates_types_kind UNIQUE ( description ) 
+	CONSTRAINT unq_educational_certificates_types_kind UNIQUE ( name ) 
  );
 
 CREATE  TABLE "public".educational_instances_types ( 
@@ -281,7 +281,7 @@ ALTER TABLE "public".international_passports ADD CONSTRAINT fk_international_pas
 
 ALTER TABLE "public".marriage_certificates ADD CONSTRAINT fk_marriage_certificates_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
 
-ALTER TABLE "public".marriage_certificates ADD CONSTRAINT fk_marriage_certificates FOREIGN KEY ( marriege_id ) REFERENCES "public".marriages( id );
+ALTER TABLE "public".marriage_certificates ADD CONSTRAINT fk_marriage_certificates FOREIGN KEY ( marriage_id ) REFERENCES "public".marriages( id );
 
 ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person1 FOREIGN KEY ( person1 ) REFERENCES "public".people( id );
 
