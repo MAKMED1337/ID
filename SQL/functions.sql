@@ -58,3 +58,21 @@ BEGIN
     WHERE administrators.user_id = p_administrator_id;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Return all documents type that could be issued by the given office
+CREATE OR REPLACE FUNCTION get_issued_documents_types(
+    p_office_id INTEGER
+) RETURNS TABLE (
+    id INTEGER,
+    document VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT documents_types.id, documents_types.document
+    FROM documents_types
+    JOIN office_kinds_documents ON documents_types.id = office_kinds_documents.document_id
+    JOIN office_kinds ON office_kinds_documents.kind_id = office_kinds.kind
+    JOIN offices_kinds_relations ON office_kinds.kind = offices_kinds_relations.kind_id
+    WHERE offices_kinds_relations.office_id = p_office_id;
+END;
+$$ LANGUAGE plpgsql;

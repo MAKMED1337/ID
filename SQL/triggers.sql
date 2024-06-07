@@ -341,20 +341,11 @@ $$ LANGUAGE plpgsql;
 -- Trigger to ensure that marriage certificated is issued by the office with such authority
 CREATE OR REPLACE FUNCTION verify_marriage_certificate_issuer()
 RETURNS TRIGGER AS $$
-DECLARE
-    v_marriage_office_id INTEGER;
 BEGIN
-    SELECT issuer INTO v_marriage_office_id
-    FROM marriage_certificates
-    WHERE id = NEW.marriage_id;
-
     IF NOT EXISTS (
         SELECT 1
-        FROM offices_kinds_relations
-        JOIN offices_kinds ON kind_id = kind
-        JOIN office_kinds_documents ON office_kinds_documents.kind_id = offices_kinds.kind_id
-        JOIN document_types ON document_types.id = office_kinds_documents.document_id
-        WHERE office_id = v_marriage_office_id AND document_types.name = 'Marriage certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        FROM get_issued_documents_types(NEW.issuer)
+        WHERE document = 'Marriage certificate' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Marriage certificate is issued by non-existing office';
     END IF;
@@ -362,3 +353,180 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_marriage_certificate_issuer BEFORE INSERT ON marriage_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_marriage_certificate_issuer();
+
+-- Trigger to ensure that divorce certificated is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_divorce_certificate_issuer()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM get_issued_documents_types(NEW.issuer)
+        WHERE document = 'Divorce certificate' -- CHANGE ACCORDING TO DATA IN FILE
+    ) THEN
+        RAISE EXCEPTION 'Divorce certificate is issued by office without enough authority';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_divorce_certificate_issuer BEFORE INSERT ON divorce_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_divorce_certificate_issuer();
+
+-- Trigger to ensure that death certificate is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_death_certificate_issuer()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM get_issued_documents_types(NEW.issuer)
+        WHERE document = 'Death certificate' -- CHANGE ACCORDING TO DATA IN FILE
+    ) THEN
+        RAISE EXCEPTION 'Death certificate is issued by office without enough authority';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_death_certificate_issuer BEFORE INSERT ON death_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_death_certificate_issuer();
+
+-- Trigger to ensure that birth certificate is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_birth_certificate_issuer()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM get_issued_documents_types(NEW.issuer)
+        WHERE document = 'Birth certificate' -- CHANGE ACCORDING TO DATA IN FILE
+    ) THEN
+        RAISE EXCEPTION 'Birth certificate is issued by office without enough authority';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_birth_certificate_issuer BEFORE INSERT ON birth_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_birth_certificate_issuer();
+
+-- Trigger to ensure that passport is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_passport_issuer()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM get_issued_documents_types(NEW.issuer)
+        WHERE document = 'Passport' -- CHANGE ACCORDING TO DATA IN FILE
+    ) THEN
+        RAISE EXCEPTION 'Passport is issued by office without enough authority';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_passport_issuer BEFORE INSERT ON passports
+    FOR EACH ROW EXECUTE FUNCTION verify_passport_issuer();
+
+-- Trigger to ensure that international passport is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_international_passport_issuer()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM get_issued_documents_types(NEW.issuer)
+        WHERE document = 'International passport' -- CHANGE ACCORDING TO DATA IN FILE
+    ) THEN
+        RAISE EXCEPTION 'International passport is issued by office without enough authority';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_international_passport_issuer BEFORE INSERT ON international_passports
+    FOR EACH ROW EXECUTE FUNCTION verify_international_passport_issuer();
+
+-- Trigger to ensure that driver license is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_driver_license_issuer()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM get_issued_documents_types(NEW.issuer)
+        WHERE document = 'Driver license' -- CHANGE ACCORDING TO DATA IN FILE
+    ) THEN
+        RAISE EXCEPTION 'Driver license is issued by office without enough authority';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_driver_license_issuer BEFORE INSERT ON driver_licenses
+    FOR EACH ROW EXECUTE FUNCTION verify_driver_license_issuer();
+
+-- Trigger to ensure that visa is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_visa_issuer()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM get_issued_documents_types(NEW.issuer)
+        WHERE document = 'Visa' -- CHANGE ACCORDING TO DATA IN FILE
+    ) THEN
+        RAISE EXCEPTION 'Visa is issued by office without enough authority';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_visa_issuer BEFORE INSERT ON visas
+    FOR EACH ROW EXECUTE FUNCTION verify_visa_issuer();
+
+-- Trigger to ensure that driver license is issued to a person above 16 years old
+CREATE OR REPLACE FUNCTION verify_driver_license_age()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_birth_date DATE;
+BEGIN
+    SELECT date_of_birth INTO v_birth_date
+    FROM people
+    WHERE id = NEW.driver;
+
+    IF v_birth_date > NEW.issue_date - INTERVAL '16 years' THEN
+        RAISE EXCEPTION 'Driver license is issued to a person below 16 years old';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_driver_license_age BEFORE INSERT ON driver_licenses
+    FOR EACH ROW EXECUTE FUNCTION verify_driver_license_age();
+
+-- Trigger to ensure that educational certificate is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_educational_certificate_issuer()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM educational_instances
+        JOIN educational_instances_types_relation ON educational_instances.id = educational_instances_types_relation.instance_id
+        WHERE educational_instances_types_relation.type_id = NEW.kind
+    ) THEN
+        RAISE EXCEPTION 'Educational certificate is issued by office without enough authority';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_educational_certificate_issuer BEFORE INSERT ON educational_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_issuer();
