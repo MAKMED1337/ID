@@ -517,6 +517,23 @@ void addDivorceCert() {
     }
 }
 
+void printDeath(int id, int issuer, int person, string date) {
+    cout << "INSERT INTO death_certificates (id, issuer, person, issue_date) VALUES (" << 
+    id << ", " << issuer<< ", " << person << ", " << STR(date)<< ");\n";
+}
+
+void addDeath() {
+    freopen("death_certificates.sql", "w", stdout);
+    int id = 1;
+    for (auto x : IDs) {
+        int YY = birth[x];
+        YY += getRand(50, 100);
+        if (YY > 2023) continue;
+        string date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        int issuer = OFF["medical center"][getRand(0, OFF["medical center"].size() - 1)];
+        printDeath(id++, issuer, x, date);
+    }
+}
 
 
 int main() {
@@ -542,5 +559,6 @@ int main() {
     addMarriageCertificates();
     addDivorce();
     addDivorceCert();
+    addDeath();
     return 0;
 }
