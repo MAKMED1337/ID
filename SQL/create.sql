@@ -9,22 +9,16 @@ CREATE  TABLE "public".countries (
 
 CREATE  TABLE "public".educational_certificates_types ( 
 	id                   integer  NOT NULL  ,
-	name          varchar  NOT NULL  ,
+	name                 varchar  NOT NULL  ,
 	prerequirement       integer    ,
 	CONSTRAINT pk_educational_certificates_types PRIMARY KEY ( id ),
 	CONSTRAINT unq_educational_certificates_types_kind UNIQUE ( name ) 
  );
 
-CREATE  TABLE "public".educational_instances_types ( 
-	kind                 integer  NOT NULL  ,
-	educational_level    varchar  NOT NULL  ,
-	CONSTRAINT pk_educational_instances_types PRIMARY KEY ( kind )
- );
-
 CREATE  TABLE "public".offices_kinds ( 
 	kind                 integer  NOT NULL  ,
 	description          varchar(100)  NOT NULL  ,
-	issue_permission     varchar  NOT NULL  ,
+	issuing_document     varchar  NOT NULL  ,
 	CONSTRAINT pk_offices_kinds PRIMARY KEY ( kind )
  );
 
@@ -271,7 +265,7 @@ ALTER TABLE "public".educational_instances ADD CONSTRAINT fk_educational_instanc
 
 ALTER TABLE "public".educational_instances_types_relation ADD CONSTRAINT fk_educational_instances_types_relation_educational_instances FOREIGN KEY ( instance_id ) REFERENCES "public".educational_instances( id );
 
-ALTER TABLE "public".educational_instances_types_relation ADD CONSTRAINT fk_educational_instances_types_relation_educational_instances_types FOREIGN KEY ( type_id ) REFERENCES "public".educational_instances_types( kind );
+ALTER TABLE "public".educational_instances_types_relation ADD CONSTRAINT fk_educational_instances_types_relation_educational_certificates_types FOREIGN KEY ( type_id ) REFERENCES "public".educational_certificates_types( id );
 
 ALTER TABLE "public".international_passports ADD CONSTRAINT fk_international_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
 
