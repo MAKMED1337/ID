@@ -110,6 +110,8 @@ CREATE  TABLE "public".passports (
 	sex                  char(1)  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	passport_owner       bigint  NOT NULL  ,
+	lost                 boolean  NOT NULL  ,
+	invalidated          boolean  NOT NULL  ,
 	CONSTRAINT pk_id_cards PRIMARY KEY ( id )
  );
 
@@ -163,7 +165,7 @@ CREATE  TABLE "public".divorces (
 
 CREATE  TABLE "public".drivers_licences ( 
 	id                   bigint  NOT NULL  ,
-	"type"               integer  NOT NULL  ,
+	"type"               varchar(3)  NOT NULL  ,
 	person               bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	issue_date           date  NOT NULL  ,
@@ -192,6 +194,9 @@ CREATE  TABLE "public".international_passports (
 	sex                  char(1)  NOT NULL  ,
 	passport_owner       bigint  NOT NULL  ,
 	country              varchar  NOT NULL  ,
+	lost                 boolean  NOT NULL  ,
+	invalidated          boolean  NOT NULL  ,
+	series               char(2)  NOT NULL  ,
 	CONSTRAINT pk_international_passports PRIMARY KEY ( id )
  );
 
@@ -265,7 +270,7 @@ ALTER TABLE "public".educational_instances ADD CONSTRAINT fk_educational_instanc
 
 ALTER TABLE "public".educational_instances_types_relation ADD CONSTRAINT fk_educational_instances_types_relation_educational_instances FOREIGN KEY ( instance_id ) REFERENCES "public".educational_instances( id );
 
-ALTER TABLE "public".educational_instances_types_relation ADD CONSTRAINT fk_educational_instances_types_relation_educational_certificates_types FOREIGN KEY ( type_id ) REFERENCES "public".educational_certificates_types( id );
+ALTER TABLE "public".educational_instances_types_relation ADD CONSTRAINT fk_educational_instances_types_relation_educational_certificate FOREIGN KEY ( type_id ) REFERENCES "public".educational_certificates_types( id );
 
 ALTER TABLE "public".international_passports ADD CONSTRAINT fk_international_passports_offices FOREIGN KEY ( issuer ) REFERENCES "public".offices( id );
 
@@ -302,3 +307,4 @@ ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_visa_categories FOREIGN KEY (
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_offices FOREIGN KEY ( inner_issuer ) REFERENCES "public".offices( id );
 
 ALTER TABLE "public".visas ADD CONSTRAINT fk_visas_passport FOREIGN KEY ( passport ) REFERENCES "public".international_passports( id );
+

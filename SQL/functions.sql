@@ -307,7 +307,8 @@ BEGIN
     FROM passports
     WHERE passport_owner = NEW.passport_owner
     AND issue_date <= NEW.issue_date
-    AND (expiration_date IS NULL OR expiration_date >= NEW.issue_date);
+    AND (expiration_date IS NULL OR expiration_date >= NEW.issue_date)
+    AND NOT passports.lost AND NOT passports.invalidated;
 
     IF v_passport_count >= 1 THEN
         RAISE EXCEPTION 'Person already has 1 active passports';
@@ -331,7 +332,8 @@ BEGIN
     FROM international_passports
     WHERE passport_owner = NEW.passport_owner
     AND issue_date <= CURRENT_DATE
-    AND (expiration_date IS NULL OR CURRENT_DATE >= NEW.issue_date);
+    AND (expiration_date IS NULL OR CURRENT_DATE >= NEW.issue_date)
+    AND NOT passports.lost AND NOT passports.invalidated;
 
     IF v_passport_count >= 2 THEN
         RAISE EXCEPTION 'Person already has 2 active international passports';
