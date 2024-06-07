@@ -337,3 +337,28 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Trigger to ensure that marriage certificated is issued by the office with such authority
+CREATE OR REPLACE FUNCTION verify_marriage_certificate_issuer()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_marriage_office_id INTEGER;
+BEGIN
+    SELECT issuer INTO v_marriage_office_id
+    FROM marriage_certificates
+    WHERE id = NEW.marriage_id;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM offices_kinds_relations
+        JOIN offices_kinds ON kind_id = kind
+        JOIN office_kinds_documents ON office_kinds_documents.kind_id = offices_kinds.kind_id
+        JOIN document_types ON document_types.id = office_kinds_documents.document_id
+        WHERE office_id = v_marriage_office_id AND document_types.name = 'Marriage certificate' -- CHANGE ACCORDING TO DATA IN FILE
+    ) THEN
+        RAISE EXCEPTION 'Marriage certificate is issued by non-existing office';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
