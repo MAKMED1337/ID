@@ -30,6 +30,8 @@ DROP TABLE IF EXISTS accounts CASCADE;
 DROP TABLE IF EXISTS administrators CASCADE;
 DROP TABLE IF EXISTS educational_certificates_types CASCADE;
 DROP TABLE IF EXISTS educational_instances_types_relation CASCADE;
+DROP TABLE IF EXISTS office_kinds_documents CASCADE;
+DROP TABLE IF EXISTS document_types CASCADE;
 
 DROP FUNCTION IF EXISTS add_user(bigint,VARCHAR,VARCHAR);
 DROP FUNCTION IF EXISTS login;

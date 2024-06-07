@@ -7,6 +7,13 @@ CREATE  TABLE "public".countries (
 	CONSTRAINT unq_countries_country UNIQUE ( country ) 
  );
 
+CREATE  TABLE "public".document_types ( 
+	id                   integer  NOT NULL  ,
+	document             integer  NOT NULL  ,
+	CONSTRAINT pk_document_types PRIMARY KEY ( id ),
+	CONSTRAINT unq_document_types UNIQUE ( document ) 
+ );
+
 CREATE  TABLE "public".educational_certificates_types ( 
 	id                   integer  NOT NULL  ,
 	name                 varchar  NOT NULL  ,
@@ -61,6 +68,7 @@ CREATE  TABLE "public".educational_instances (
 	name                 varchar(100)  NOT NULL  ,
 	address              varchar(200)  NOT NULL  ,
 	creation_date        date  NOT NULL  ,
+    closure_date         date    ,
 	country              varchar  NOT NULL  ,
 	city                 varchar  NOT NULL  ,
 	CONSTRAINT pk_educational_instances PRIMARY KEY ( id )
@@ -81,6 +89,12 @@ CREATE  TABLE "public".marriages (
  );
 
 ALTER TABLE "public".marriages ADD CONSTRAINT cns_marriage_certificates_different_people CHECK ( (person1 <> person2) );
+
+CREATE  TABLE "public".office_kinds_documents ( 
+	document_id          integer  NOT NULL  ,
+	kind_id              integer  NOT NULL  ,
+	CONSTRAINT pk_office_kinds_documents PRIMARY KEY ( document_id, kind_id )
+ );
 
 CREATE  TABLE "public".offices ( 
 	id                   integer  NOT NULL  ,
@@ -118,12 +132,12 @@ ALTER TABLE "public".passports ADD CONSTRAINT cns_passports_sex CHECK ( (sex = A
 ALTER TABLE "public".passports ADD CONSTRAINT cns_passports_issue_expiry CHECK ( (issue_date < expiration_date) );
 
 CREATE  TABLE "public".pet_passports ( 
-	id                   integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
 	name                 varchar(100)  NOT NULL  ,
 	pet_owner            bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	date_of_birth        date  NOT NULL  ,
-	species_id           integer    ,
+	species              varchar NOT NULL  ,
 	CONSTRAINT pk_animal_passports PRIMARY KEY ( id )
  );
 
@@ -154,8 +168,8 @@ CREATE  TABLE "public".death_certificates (
  );
 
 CREATE  TABLE "public".divorces ( 
-	id                   integer  NOT NULL  ,
-	marriage_id          integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
+	marriage_id          bigint  NOT NULL  ,
 	divorce_date         date  NOT NULL  ,
 	CONSTRAINT pk_divorces PRIMARY KEY ( id ),
 	CONSTRAINT unq_divorces_marriage_id UNIQUE ( marriage_id ) 
@@ -174,7 +188,7 @@ CREATE  TABLE "public".drivers_licences (
 CREATE  TABLE "public".educational_certificates ( 
 	id                   bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
-	holder               integer  NOT NULL  ,
+	holder               bigint  NOT NULL  ,
 	issue_date           date  NOT NULL  ,
 	kind                 integer  NOT NULL  ,
 	CONSTRAINT pk_educational_certificates PRIMARY KEY ( id )
@@ -201,17 +215,17 @@ CREATE  TABLE "public".international_passports (
 ALTER TABLE "public".international_passports ADD CONSTRAINT cns_international_passports_sex CHECK ( (sex = ANY (ARRAY['F'::bpchar, 'M'::bpchar])) );
 
 CREATE  TABLE "public".marriage_certificates ( 
-	id                   integer  NOT NULL  ,
-	marriage_id          integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
+	marriage_id          bigint  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	issue_date           date  NOT NULL  ,
 	CONSTRAINT pk_marriage_certificates_0 PRIMARY KEY ( id )
  );
 
 CREATE  TABLE "public".visas ( 
-	id                   integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
 	"type"               integer  NOT NULL  ,
-	passport             integer  NOT NULL  ,
+	passport             bigint  NOT NULL  ,
 	issue_date           date  NOT NULL  ,
 	inner_issuer         integer  NOT NULL  ,
 	country              varchar  NOT NULL  ,
@@ -219,8 +233,8 @@ CREATE  TABLE "public".visas (
  );
 
 CREATE  TABLE "public".divorce_certificates ( 
-	id                   integer  NOT NULL  ,
-	divorce_id           integer  NOT NULL  ,
+	id                   bigint  NOT NULL  ,
+	divorce_id           bigint  NOT NULL  ,
 	issue_date           date  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	CONSTRAINT pk_divorce_certificates PRIMARY KEY ( id )
@@ -283,6 +297,10 @@ ALTER TABLE "public".marriage_certificates ADD CONSTRAINT fk_marriage_certificat
 ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person1 FOREIGN KEY ( person1 ) REFERENCES "public".people( id );
 
 ALTER TABLE "public".marriages ADD CONSTRAINT fk_marriage_certificates_person2 FOREIGN KEY ( person2 ) REFERENCES "public".people( id );
+
+ALTER TABLE "public".office_kinds_documents ADD CONSTRAINT fk_office_kinds_documents_document_types FOREIGN KEY ( document_id ) REFERENCES "public".document_types( id );
+
+ALTER TABLE "public".office_kinds_documents ADD CONSTRAINT fk_office_kinds_documents_offices_kinds FOREIGN KEY ( kind_id ) REFERENCES "public".offices_kinds( kind );
 
 ALTER TABLE "public".offices ADD CONSTRAINT fk_offices_cities FOREIGN KEY ( country, city ) REFERENCES "public".cities( country, city );
 
