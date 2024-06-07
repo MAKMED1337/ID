@@ -106,7 +106,8 @@ CREATE  TABLE "public".offices (
 CREATE  TABLE "public".offices_kinds_relations (
 	office_id            integer  NOT NULL  ,
 	kind_id              integer  NOT NULL  ,
-	CONSTRAINT pk_offices_kinds_relations PRIMARY KEY ( office_id, kind_id )
+	CONSTRAINT pk_offices_kinds_relations PRIMARY KEY ( office_id, kind_id ),
+	CONSTRAINT unq_offices_kinds_relations_office_id UNIQUE ( office_id )
  );
 
 CREATE  TABLE "public".passports (
@@ -391,11 +392,11 @@ CREATE OR REPLACE FUNCTION get_issued_documents_types(
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT document_types.id, document_types.document
-    FROM document_types
-    JOIN office_kinds_documents ON document_types.id = office_kinds_documents.document_id
-    JOIN offices_kinds ON office_kinds_documents.kind_id = offices_kinds.kind
-    JOIN offices_kinds_relations ON offices_kinds.kind = offices_kinds_relations.kind_id
+    SELECT documents_types.id, documents_types.document
+    FROM documents_types
+    JOIN office_kinds_documents ON documents_types.id = office_kinds_documents.document_id
+    JOIN office_kinds ON office_kinds_documents.kind_id = office_kinds.kind
+    JOIN offices_kinds_relations ON office_kinds.kind = offices_kinds_relations.kind_id
     WHERE offices_kinds_relations.office_id = p_office_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -785,14 +786,14 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'death certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE document = 'Death certificate' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Death certificate is issued by office without enough authority';
     END IF;
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER verify_death_certificate_issuer BEFORE INSERT ON death_certificates
     FOR EACH ROW EXECUTE FUNCTION verify_death_certificate_issuer();
@@ -870,7 +871,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER verify_driver_license_issuer BEFORE INSERT ON driver_licenses
+CREATE TRIGGER verify_driver_license_issuer BEFORE INSERT ON drivers_licences
     FOR EACH ROW EXECUTE FUNCTION verify_driver_license_issuer();
 
 -- Trigger to ensure that visa is issued by the office with such authority
@@ -910,7 +911,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER verify_driver_license_age BEFORE INSERT ON driver_licenses
+CREATE TRIGGER verify_driver_license_age BEFORE INSERT ON drivers_licences
     FOR EACH ROW EXECUTE FUNCTION verify_driver_license_age();
 
 -- Trigger to ensure that educational certificate is issued by the office with such authority
