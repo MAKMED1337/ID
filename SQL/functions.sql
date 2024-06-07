@@ -271,6 +271,9 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER verify_educational_certificate_kind BEFORE INSERT ON educational_certificates
     FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_kind();
 
+-- Trigger to ensure there is no cycle in the prerequisites
+
+
 -- PASSPORTS
 
 -- Trigger used to ensure that passport is not issued to a dead person

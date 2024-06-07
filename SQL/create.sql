@@ -84,12 +84,10 @@ ALTER TABLE "public".marriages ADD CONSTRAINT cns_marriage_certificates_differen
 
 CREATE  TABLE "public".offices ( 
 	id                   integer  NOT NULL  ,
-	office_type          varchar  NOT NULL  ,
 	country              varchar  NOT NULL  ,
 	address              varchar(200)  NOT NULL  ,
 	city                 varchar  NOT NULL  ,
-	CONSTRAINT pk_offices PRIMARY KEY ( id, country, city ),
-	CONSTRAINT unq_offices_id UNIQUE ( id ) 
+	CONSTRAINT pk_offices PRIMARY KEY ( id )
  );
 
 CREATE  TABLE "public".offices_kinds_relations ( 
