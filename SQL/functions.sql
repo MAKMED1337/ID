@@ -71,8 +71,8 @@ BEGIN
     SELECT document_types.id, document_types.document
     FROM document_types
     JOIN office_kinds_documents ON document_types.id = office_kinds_documents.document_id
-    JOIN office_kinds ON office_kinds_documents.kind_id = offices_kinds.kind
-    JOIN offices_kinds_relations ON office_kinds.kind = offices_kinds_relations.kind_id
+    JOIN offices_kinds ON office_kinds_documents.kind_id = offices_kinds.kind
+    JOIN offices_kinds_relations ON offices_kinds.kind = offices_kinds_relations.kind_id
     WHERE offices_kinds_relations.office_id = p_office_id;
 END;
 $$ LANGUAGE plpgsql;
