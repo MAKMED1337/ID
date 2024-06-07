@@ -129,7 +129,7 @@ BEGIN
     FROM marriages
     WHERE id = NEW.marriage_id;
 
-    IF v_marriage_date > NEW.marriage_certificate_date THEN
+    IF v_marriage_date > NEW.issue_date THEN
         RAISE EXCEPTION 'Marriage certificate date is before marriage date';
     END IF;
     RETURN NEW;
@@ -149,7 +149,7 @@ BEGIN
     FROM divorces
     WHERE id = NEW.divorce_id;
 
-    IF v_divorce_date > NEW.divorce_certificate_date THEN
+    IF v_divorce_date > NEW.issue_date THEN
         RAISE EXCEPTION 'Divorce certificate date is before divorce date';
     END IF;
     RETURN NEW;
