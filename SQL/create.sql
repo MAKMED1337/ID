@@ -10,8 +10,7 @@ CREATE  TABLE "public".countries (
 CREATE  TABLE "public".document_types (
 	id                   integer  NOT NULL  ,
 	document             varchar  NOT NULL  ,
-	CONSTRAINT pk_document_types PRIMARY KEY ( id ),
-	CONSTRAINT unq_document_types UNIQUE ( document )
+	CONSTRAINT pk_document_types PRIMARY KEY ( id )
  );
 
 CREATE  TABLE "public".educational_certificates_types (
