@@ -25,7 +25,6 @@ CREATE  TABLE "public".educational_certificates_types (
 CREATE  TABLE "public".offices_kinds (
 	kind                 integer  NOT NULL  ,
 	description          varchar(100)  NOT NULL  ,
-	issuing_document     varchar  NOT NULL  ,
 	CONSTRAINT pk_offices_kinds PRIMARY KEY ( kind )
  );
 
