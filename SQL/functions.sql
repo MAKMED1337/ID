@@ -272,6 +272,39 @@ CREATE TRIGGER verify_educational_certificate_kind BEFORE INSERT ON educational_
     FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_kind();
 
 -- Trigger to ensure there is no cycle in the prerequisites
+CREATE OR REPLACE FUNCTION check_for_cycle()
+RETURNS TRIGGER AS $$
+DECLARE
+    visited_ids INTEGER[];
+    current_id INTEGER;
+    prereq_id INTEGER;
+BEGIN
+    visited_ids := ARRAY[NEW.id];
+    current_id := NEW.id;
+
+    LOOP
+        SELECT prerequirement INTO prereq_id
+        FROM educational_certificates_types
+        WHERE id = current_id;
+
+        IF prereq_id IS NULL THEN
+            EXIT;
+        END IF;
+
+        IF prereq_id = ANY (visited_ids) THEN
+            RAISE EXCEPTION 'Cycle detected involving id %', NEW.id;
+        END IF;
+        
+        visited_ids := array_append(visited_ids, prereq_id);
+        current_id := prereq_id;
+    END LOOP;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_for_cycle BEFORE INSERT OR UPDATE ON educational_certificates_types
+    FOR EACH ROW EXECUTE FUNCTION check_for_cycle();
 
 
 -- PASSPORTS

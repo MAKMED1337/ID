@@ -15,7 +15,7 @@ CREATE  TABLE "public".document_types (
  );
 
 CREATE  TABLE "public".educational_certificates_types ( 
-	id                   integer  NOT NULL  ,
+	id                   serial  NOT NULL  ,
 	name                 varchar  NOT NULL  ,
 	prerequirement       integer    ,
 	CONSTRAINT pk_educational_certificates_types PRIMARY KEY ( id ),
