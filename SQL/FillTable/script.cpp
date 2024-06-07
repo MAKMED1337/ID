@@ -199,7 +199,7 @@ void setAllOficesItsTypes() {
         shuffle(officesKinds.begin(), officesKinds.end(), rng);
         for (int i = 0; i < cnt; i++) {
             cout << "INSERT INTO offices_kinds_relations (office_id, kind_id) VALUES ("
-            << A.id << " " << officeTypeID[officesKinds[i]] << ");\n";
+            << A.id << ", " << officeTypeID[officesKinds[i]] << ");\n";
             OFF[officesKinds[i]].push_back(A.id);
         }
     }

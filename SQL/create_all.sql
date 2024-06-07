@@ -9,7 +9,7 @@ CREATE  TABLE "public".countries (
 
 CREATE  TABLE "public".document_types (
 	id                   integer  NOT NULL  ,
-	document             integer  NOT NULL  ,
+	document             varchar  NOT NULL  ,
 	CONSTRAINT pk_document_types PRIMARY KEY ( id ),
 	CONSTRAINT unq_document_types UNIQUE ( document )
  );
@@ -25,7 +25,6 @@ CREATE  TABLE "public".educational_certificates_types (
 CREATE  TABLE "public".offices_kinds (
 	kind                 integer  NOT NULL  ,
 	description          varchar(100)  NOT NULL  ,
-	issuing_document     varchar  NOT NULL  ,
 	CONSTRAINT pk_offices_kinds PRIMARY KEY ( kind )
  );
 
@@ -107,8 +106,7 @@ CREATE  TABLE "public".offices (
 CREATE  TABLE "public".offices_kinds_relations (
 	office_id            integer  NOT NULL  ,
 	kind_id              integer  NOT NULL  ,
-	CONSTRAINT pk_offices_kinds_relations PRIMARY KEY ( office_id, kind_id ),
-	CONSTRAINT unq_offices_kinds_relations_office_id UNIQUE ( office_id )
+	CONSTRAINT pk_offices_kinds_relations PRIMARY KEY ( office_id, kind_id )
  );
 
 CREATE  TABLE "public".passports (
@@ -690,7 +688,7 @@ BEGIN
     WHERE passport_owner = NEW.passport_owner
     AND issue_date <= CURRENT_DATE
     AND (expiration_date IS NULL OR CURRENT_DATE >= NEW.issue_date)
-    AND NOT passports.lost AND NOT passports.invalidated;
+    AND NOT international_passports.lost AND NOT international_passports.invalidated;
 
     IF v_passport_count >= 2 THEN
         RAISE EXCEPTION 'Person already has 2 active international passports';
