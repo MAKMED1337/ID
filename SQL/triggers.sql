@@ -193,12 +193,13 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_instance_kind INTEGER;
 BEGIN
-    SELECT kind INTO v_instance_kind
-    FROM educational_instances
-    WHERE id = NEW.issuer;
-
-    IF v_instance_kind <> NEW.kind THEN
-        RAISE EXCEPTION 'Educational certificate kind does not match educational instance kind';
+    IF NOT EXISTS (
+        SELECT 1
+        FROM educational_instances_types_relation
+        WHERE instance_id = NEW.issuer
+        AND type_id = NEW.kind
+    ) THEN
+        RAISE EXCEPTION 'Educational certificate kind was not issued by the educational instance of the same kind';
     END IF;
 
     RETURN NEW;
