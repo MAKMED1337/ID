@@ -305,7 +305,7 @@ BEGIN
     WHERE passport_owner = NEW.passport_owner
     AND issue_date <= CURRENT_DATE
     AND (expiration_date IS NULL OR CURRENT_DATE >= NEW.issue_date)
-    AND NOT passports.lost AND NOT passports.invalidated;
+    AND NOT international_passports.lost AND NOT international_passports.invalidated;
 
     IF v_passport_count >= 2 THEN
         RAISE EXCEPTION 'Person already has 2 active international passports';
