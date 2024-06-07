@@ -15,6 +15,13 @@ string STR(string S) {
     return "$$" + S + "$$";
 }
 
+string STR(char S) {
+    string s;
+    s.push_back(S);
+    s = "$$" + s + "$$";
+    return s;
+}
+
 int getRand(int l, int r) {
     return l + rng()%(r - l + 1);
 }
@@ -160,7 +167,7 @@ map <string, int> officeTypeID;
 vector<string> officesKinds = {"consulat", "marriage agency", "driver schools", "medical center"};
 void addDocxType() {
     freopen("document_types.sql", "w", stdout);
-    docTypesToOfTypes["passports"] = "consulat";
+    docTypesToOfTypes["passport"] = "consulat";
     docTypesToOfTypes["visa"] = "consulat";
     docTypesToOfTypes["divorce certificate"] = "marriage agency";
     docTypesToOfTypes["marriege certificate"] = "marriage agency";
@@ -196,6 +203,7 @@ void setAllOficesItsTypes() {
     freopen("offices_kinds_relations.sql", "w", stdout);
     for (auto A : offices) {
         int cnt = getRand(1, officesKinds.size());
+        // cnt = 4;
         shuffle(officesKinds.begin(), officesKinds.end(), rng);
         for (int i = 0; i < cnt; i++) {
             cout << "INSERT INTO offices_kinds_relations (office_id, kind_id) VALUES ("
@@ -406,13 +414,10 @@ void addEducCertificates() {
     }
 }
 
-
 void printBirth(int id, string father, string mother, int person, int issuer, string country, string city, string date) {
     cout << "INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (" 
     << id << ", " << father << ", " << mother << ", " << person << ", " << issuer << ", " << STR(country) << ", " << STR(city) << ", " << STR(date) << ");\n";
 }
-
-
 
 void addBirth() {
     freopen("birth_certificates.sql", "w", stdout);
@@ -535,6 +540,30 @@ void addDeath() {
     }
 }
 
+void printPassort(int id, string oName, string oSurname, string enName, 
+                string enSurname, string is_date, string exp_date, 
+                char sex, int issuer, int owner,
+                bool lost, bool invalided) {
+    cout << "INSERT INTO passports VALUES(" << 
+    id << ", " << STR(oName)<< ", " << STR(oSurname) << ", "
+    << STR(enName) << ", " << STR(enSurname) << ", " << STR(is_date) << ", " << STR(exp_date) << ", " <<
+    STR(sex) << ", "<< issuer << ", " << owner << ", " << (lost ? "true" : "false") << ", " << (invalided ? "true" : "false") << ");\n";
+}
+
+void addPassport() {
+    freopen("passports.sql", "w", stdout);
+    int id = 1;
+    for (auto x : IDs) {
+        string name = names[x];
+        string surname = surnames[x];
+        int YY = birth[x] + 8;
+        string is_date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        string exp_date = to_string(YY + 20) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        int issuer = OFF["consulat"][getRand(0, OFF["consulat"].size() - 1)];
+        printPassort(id, name, surname, name, surname, is_date, exp_date, ("MF"[x % 2]), issuer, x, false, false);
+        id++;
+    }
+}
 
 int main() {
     fillBirthLocal();
@@ -560,5 +589,6 @@ int main() {
     addDivorce();
     addDivorceCert();
     addDeath();
+    addPassport();
     return 0;
 }
