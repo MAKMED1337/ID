@@ -168,6 +168,7 @@ vector<string> officesKinds = {"consulat", "marriage agency", "driver schools", 
 void addDocxType() {
     freopen("document_types.sql", "w", stdout);
     docTypesToOfTypes["passport"] = "consulat";
+    docTypesToOfTypes["International passport"] = "consulat";
     docTypesToOfTypes["visa"] = "consulat";
     docTypesToOfTypes["divorce certificate"] = "marriage agency";
     docTypesToOfTypes["marriege certificate"] = "marriage agency";
@@ -594,6 +595,39 @@ void addVisaTypes() {
     }
 }
 
+void printIntPasprt(int id, string oName, string oSurname, string enName, 
+                string enSurname, string is_date, string exp_date, 
+                char sex, int issuer, int owner,
+                bool lost, bool invalided, string country, string series) {
+    cout << "INSERT INTO international_passports VALUES(" << 
+    id << ", " << STR(oName)<< ", " << STR(oSurname) << ", "
+    << STR(enName) << ", " << STR(enSurname) << ", " << issuer << ", " << STR(is_date) << ", " << STR(exp_date) << ", " <<
+    STR(sex) << ", " << owner<< ", " << STR(country)
+    << ", " << (lost ? "true" : "false") << ", " << (invalided ? "true" : "false") << ", " 
+    << STR(series) << ");\n";
+}
+
+void addIntPassp() {
+    freopen("international_passports.sql", "w", stdout);
+    int id = 1;
+    for (auto x : IDs) {
+        string name = names[x];
+        string surname = surnames[x];
+        int YY = birth[x] + getRand(12, 18);
+        string is_date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        string exp_date = to_string(YY + 20) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        string country = countries[getRand(0, countries.size() - 1)].name;
+        string series = "HB";
+        series[0] = 'A' + getRand(0, 25);
+        series[1] = 'A' + getRand(0, 25);
+        int issuer = OFF["consulat"][getRand(0, OFF["consulat"].size() - 1)];
+        printIntPasprt(id, name, surname, name, surname, is_date, exp_date, ("MF"[x % 2]), issuer, x, false, false, country, series);
+        id++;
+    }
+}
+
+
+
 int main() {
     fillBirthLocal();
     addPeople();
@@ -620,5 +654,6 @@ int main() {
     addDeath();
     addPassport();
     addVisaTypes();
+    addIntPassp();
     return 0;
 }
