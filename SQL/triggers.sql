@@ -469,7 +469,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER verify_driver_license_issuer BEFORE INSERT ON driver_licenses
+CREATE TRIGGER verify_driver_license_issuer BEFORE INSERT ON drivers_licences
     FOR EACH ROW EXECUTE FUNCTION verify_driver_license_issuer();
 
 -- Trigger to ensure that visa is issued by the office with such authority
@@ -509,7 +509,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER verify_driver_license_age BEFORE INSERT ON driver_licenses
+CREATE TRIGGER verify_driver_license_age BEFORE INSERT ON drivers_licences
     FOR EACH ROW EXECUTE FUNCTION verify_driver_license_age();
 
 -- Trigger to ensure that educational certificate is issued by the office with such authority
