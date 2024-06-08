@@ -96,6 +96,7 @@ CREATE  TABLE "public".office_kinds_documents (
 
 CREATE  TABLE "public".offices (
 	id                   integer  NOT NULL  ,
+	name 				 varchar  NOT NULL   ,
 	country              varchar  NOT NULL  ,
 	address              varchar(200)  NOT NULL  ,
 	city                 varchar  NOT NULL  ,

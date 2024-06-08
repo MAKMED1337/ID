@@ -96,6 +96,7 @@ CREATE  TABLE "public".office_kinds_documents (
 
 CREATE  TABLE "public".offices (
 	id                   integer  NOT NULL  ,
+	name 				 varchar  NOT NULL   ,
 	country              varchar  NOT NULL  ,
 	address              varchar(200)  NOT NULL  ,
 	city                 varchar  NOT NULL  ,
@@ -368,13 +369,12 @@ CREATE OR REPLACE FUNCTION get_administrated_offices(
     p_administrator_id INTEGER
 ) RETURNS TABLE (
     id INTEGER,
-    office_type VARCHAR,
     country VARCHAR,
     city VARCHAR
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT offices.id, offices.office_type, offices.country, office.city
+    SELECT offices.id, offices.country, offices.city
     FROM offices
     JOIN administrators ON offices.id = administrators.office_id
     WHERE administrators.user_id = p_administrator_id;
@@ -526,7 +526,7 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_prerequisite_kind INTEGER;
 BEGIN
-    FOR v_prerequisite_kind IN (SELECT prerequirement FROM educational_certificates_types WHERE kind = NEW.kind)
+    FOR v_prerequisite_kind IN (SELECT prerequirement FROM educational_certificates_types WHERE id = NEW.kind)
     LOOP
         IF v_prerequisite_kind IS NOT NULL
         AND NOT EXISTS (
@@ -878,7 +878,7 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1
-        FROM get_issued_documents_types(NEW.issuer)
+        FROM get_issued_documents_types(NEW.inner_issuer)
         WHERE document = 'Visa' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Visa is issued by office without enough authority';
