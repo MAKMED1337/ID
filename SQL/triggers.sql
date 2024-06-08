@@ -365,7 +365,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Divorce certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE document = 'divorce certificate' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Divorce certificate is issued by office without enough authority';
     END IF;
@@ -384,7 +384,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Death certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE document = 'death certificate' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Death certificate is issued by office without enough authority';
     END IF;
@@ -403,7 +403,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Birth certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE document = 'birth certificate' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Birth certificate is issued by office without enough authority';
     END IF;
@@ -422,7 +422,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Passport' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE document = 'passport' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Passport is issued by office without enough authority';
     END IF;
@@ -460,7 +460,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Driver license' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE document = 'driver license' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Driver license is issued by office without enough authority';
     END IF;
