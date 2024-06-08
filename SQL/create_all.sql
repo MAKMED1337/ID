@@ -931,6 +931,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER verify_educational_certificate_issuer BEFORE INSERT ON educational_certificates
     FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_issuer();
+
 -- View for educational certificates
 
 CREATE VIEW educational_certificates_view AS

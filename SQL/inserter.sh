@@ -3,7 +3,7 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SQL="${SCRIPT_DIR}/FillTable/"
-ID = "${SCRIPT_DIR}/../"
+ID="${SCRIPT_DIR}/../"
 
 function add() {
     echo "Inserting $1"
