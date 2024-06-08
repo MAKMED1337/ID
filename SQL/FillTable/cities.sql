@@ -1,5 +1,5 @@
 --Cities
-INSERT INTO cities (id, country, city) VALUES 
+INSERT INTO cities (id, country, city) VALUES
 (1, 'Afghanistan', 'Balkh'),
 (2, 'Afghanistan', 'Charikar'),
 (3, 'Afghanistan', 'Farah'),

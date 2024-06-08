@@ -1,5 +1,5 @@
 --Offices
-INSERT INTO offices (id, country, address, city) VALUES 
+INSERT INTO offices (id, country, address, city) VALUES
 (1, $$Afghanistan$$, $$Afghanistan Balkh$$, $$Balkh$$),
 (2, $$Afghanistan$$, $$Afghanistan Charikar$$, $$Charikar$$),
 (3, $$Afghanistan$$, $$Afghanistan Farah$$, $$Farah$$),

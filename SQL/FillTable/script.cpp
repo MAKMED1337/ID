@@ -58,7 +58,7 @@ void addPeople() {
     // exit(0);
     cout << "--people\n";
 
-    const string query = "INSERT INTO people (id, date_of_birth, name, surname) VALUES ";
+    const string query = "INSERT INTO people (id, date_of_birth, name, surname) VALUES";
     vector<string> vals;
     for (int id = 1; id <= 500; id++) { /// 200 users
         string name, surname;
@@ -122,7 +122,7 @@ vector<country> calcCountryes() {
         was = cntName;
     }
 
-    const string query = "INSERT INTO countries (id, country) VALUES ";
+    const string query = "INSERT INTO countries (id, country) VALUES";
     vector<string> vals;
     for (country C : ret) {
         countryToId[C.name] = C.id;
@@ -148,7 +148,7 @@ void addCities() {
     cout << "--Cities\n";
     int cnt = 1;
 
-    const string query = "INSERT INTO cities (id, country, city) VALUES ";
+    const string query = "INSERT INTO cities (id, country, city) VALUES";
     vector<string> vals;
     for (auto C : cityToCountry) {
         vals.push_back(to_string(cnt) + ", '" + C.second + "', '" + C.first + "'");
@@ -174,7 +174,7 @@ void addOffices() {
     cout << "--Offices\n";
     int id = 1;
 
-    const string query = "INSERT INTO offices (id, country, address, city) VALUES ";
+    const string query = "INSERT INTO offices (id, country, address, city) VALUES";
     vector<string> vals;
     for (country C : countries) {
         int type_id = 0;
@@ -204,7 +204,7 @@ void addDocxType() {
     docTypesToOfTypes["driver license"] = "driver schools";
     int id = 1;
 
-    const string query = "INSERT INTO document_types (id, document) VALUES ";
+    const string query = "INSERT INTO document_types (id, document) VALUES";
     vector<string> vals;
     for (auto [a, b] : docTypesToOfTypes) {
         vals.push_back(to_string(id++) + ", " + STR(a));
@@ -217,7 +217,7 @@ void addOfficeKinds() {
     freopen("offices_kinds.sql", "w", stdout);
     int id = 1;
 
-    const string query = "INSERT INTO offices_kinds (kind, description) VALUES ";
+    const string query = "INSERT INTO offices_kinds (kind, description) VALUES";
     vector<string> vals;
     for (auto a : officesKinds) {
         vals.push_back(to_string(id++) + ", " + STR(a));
@@ -229,7 +229,7 @@ void addOfficeKinds() {
 void addOfficesKindsDox() {
     freopen("office_kinds_documents.sql", "w", stdout);
 
-    const string query = "INSERT INTO office_kinds_documents (kind_id, document_id) VALUES ";
+    const string query = "INSERT INTO office_kinds_documents (kind_id, document_id) VALUES";
     vector<string> vals;
     for (auto [a, b] : docTypesToOfTypes) {
         vals.push_back(to_string(officeTypeID[b]) + ", " + to_string(docID[a]));
@@ -240,7 +240,7 @@ void addOfficesKindsDox() {
 void setAllOficesItsTypes() {
     freopen("offices_kinds_relations.sql", "w", stdout);
 
-    const string query = "INSERT INTO offices_kinds_relations (office_id, kind_id) VALUES ";
+    const string query = "INSERT INTO offices_kinds_relations (office_id, kind_id) VALUES";
     vector<string> vals;
     for (auto A : offices) {
         int cnt = getRand(1, officesKinds.size());
@@ -268,7 +268,7 @@ void addAdministrators() {
     shuffle(accs.begin(), accs.end(), rng);
     int c = 0;
 
-    const string query = "INSERT INTO administrators (user_id, office_id) VALUES ";
+    const string query = "INSERT INTO administrators (user_id, office_id) VALUES";
     vector<string> vals;
     for (Office OF : offices) {
         if (getRand(0, 10) != 10)
@@ -296,13 +296,13 @@ void addDriversLicences() {
     freopen("drivers_licences.sql", "w", stdout);
     string types[] = {"A", "B1", "C1", "C", "D", "D1"};
 
-    const string query = "INSERT INTO drivers_licences (id, type, person, issuer, issue_date, expiration_date) VALUES ";
+    const string query = "INSERT INTO drivers_licences (id, type, person, issuer, issue_date, expiration_date) VALUES";
     vector<string> vals;
     for (int i = 0; i < 200; i++) {
         int pers_id = getRand(1, accs.size());
-        while (birth[pers_id] + 16 > 2024)
+        while (birth[pers_id] + 17 > 2024)
             pers_id = getRand(1, accs.size());
-        int YY = getRand(birth[pers_id] + 16, 2024);
+        int YY = getRand(birth[pers_id] + 17, 2024);
         int MM = getRand(1, 12);
         int DD = getRand(1, 28);
         int t_id = getRand(0, 5);
@@ -328,7 +328,7 @@ void addEducationalCertificatesTypes() {
                    "Doctoral Degree (Ph.D.)",
                    "Post-Doctoral Certifications/Fellowships"};
 
-    const string query = "INSERT INTO educational_certificates_types (id, prerequirement, name) VALUES ";
+    const string query = "INSERT INTO educational_certificates_types (id, prerequirement, name) VALUES";
     vector<string> vals{"1, null, " + STR(TT[0])};
     for (int id = 2; id <= 10; id++) {
         vals.push_back(to_string(id) + ", " + to_string(id / 2) + ", " + STR(TT[id - 1]));
@@ -338,11 +338,11 @@ void addEducationalCertificatesTypes() {
 
 int educational_instances_count = 1;
 pair<int, int> universityIds;
-
+vector <pair <int, int>> educInstTypesRel;
 void printEducInstTypRelation(int type_id, int instID) {
     // TODO
     cout << "INSERT INTO educational_instances_types_relation (type_id, "
-            "instance_id) VALUES ("
+            "instance_id) VALUES("
          << type_id << ", " << instID << ");\n";
 }
 
@@ -374,18 +374,16 @@ void addUnivers() {
         {"University of Pennsylvania", "1740-11-14", "Philadelphia, PA 19104", "Philadelphia", "USA"}};
     universityIds = {educational_instances_count, educational_instances_count + universities.size() - 1};
 
-    const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES ";
+    const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES";
     vector<string> vals;
-    vector <pair <int, int>> Z;
     for (auto [name, date, adress, city, country] : universities) {
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
         for (int i = 4; i <= 10; i++) {
-            Z.emplace_back(i, educational_instances_count - 1);
+            educInstTypesRel.emplace_back(i, educational_instances_count - 1);
         }
     }
     cout << create_insert(query, vals) << "\n";
-    for (auto [a, b] : Z) printEducInstTypRelation(a, b);
 }
 
 pair<int, int> schoolsIds;
@@ -405,20 +403,16 @@ void addSchools() {
 
     schoolsIds = {educational_instances_count, educational_instances_count + schools.size() - 1};
 
-    const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES ";
+    const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES";
     vector<string> vals;
-    vector <pair <int, int>> Z;
     for (auto [name, date, adress, city, country] : schools) {
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
         for (int i = 1; i <= 2; i++) {
-            Z.emplace_back(i, educational_instances_count - 1);
+            educInstTypesRel.emplace_back(i, educational_instances_count - 1);
         }
     }
     cout << create_insert(query, vals) << "\n";
-    for (auto [a, b] : Z) {
-        printEducInstTypRelation(a, b);
-    }
 }
 
 pair<int, int> collegesIds;
@@ -442,16 +436,15 @@ void addColleges() {
 
     collegesIds = {educational_instances_count, educational_instances_count + colleges.size() - 1};
 
-    const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES ";
+    const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES";
     vector<string> vals;
     vector <pair <int, int>> Z;
     for (auto [name, date, adress, city, country] : colleges) {
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
-        Z.emplace_back(3, educational_instances_count - 1);
+        educInstTypesRel.emplace_back(3, educational_instances_count - 1);
     }
     cout << create_insert(query, vals) << "\n";
-    for (auto [a, b] : Z) printEducInstTypRelation(a, b);
 }
 
 void addEdObjects() {
@@ -459,6 +452,12 @@ void addEdObjects() {
     addUnivers();
     addSchools();
     addColleges();
+    vector <string> S;
+    for (auto [a, b] : educInstTypesRel) {
+        S.push_back(to_string(a) + ", " + to_string(b));
+    }
+    string query = "INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES";
+    cout << create_insert(query, S) << "\n";
 }
 
 int total = 1;
@@ -470,7 +469,7 @@ int total = 1;
 void addEducCertificates() {
     freopen("educational_certificates.sql", "w", stdout);
 
-    const string query = "INSERT INTO educational_certificates (id, issuer, holder, issue_date, kind) VALUES ";
+    const string query = "INSERT INTO educational_certificates (id, issuer, holder, issue_date, kind) VALUES";
     vector<string> vals;
     for (auto id : IDs) {
         int cntCert = getRand(0, 3);
@@ -493,13 +492,12 @@ void addEducCertificates() {
     cout << create_insert(query, vals) << "\n";
 }
 
-void printBirth(int id, string father, string mother, int person, int issuer, string country, string city,
+string printBirth(int id, string father, string mother, int person, int issuer, string country, string city,
                 string date) {
     // TODO
-    cout << "INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, "
-            "issue_date) VALUES ("
-         << id << ", " << father << ", " << mother << ", " << person << ", " << issuer << ", " << STR(country) << ", "
-         << STR(city) << ", " << STR(date) << ");\n";
+    return to_string(id)+ ", " + father + ", " + mother + ", " + to_string(person) + ", "
+     + to_string(issuer) + ", " + STR(country) + ", "
+        + STR(city) + ", " + STR(date);
 }
 
 void addBirth() {
@@ -507,6 +505,8 @@ void addBirth() {
     sort(IDs.begin(), IDs.end());
     int i = 1;
     int YY = 2024;
+    string query = "INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES";
+    vector<string> S;
     for (auto id : IDs) {
         int issuer = OFF["medical center"][getRand(0, OFF["medical center"].size() - 1)];
         int country_id = getRand(1, countries.size() - 1);
@@ -518,11 +518,12 @@ void addBirth() {
             father = "null";
         if ((id << 1 | 1) > IDs.size())
             mother = "null";
-        printBirth(i, father, mother, id, issuer, CC, city, BirthData[id]);
+        S.push_back(printBirth(i, father, mother, id, issuer, CC, city, BirthData[id]));
         i++;
         if ((i & (i - 1)) == 0)
             YY -= 25;
     }
+    cout << create_insert(query, S) << "\n";
 }
 
 struct mariages {
@@ -540,7 +541,7 @@ void addMarriges() {
     freopen("marriages.sql", "w", stdout);
     int id = 1;
 
-    const string query = "INSERT INTO marriages (id, person1, person2, marriage_date) VALUES ";
+    const string query = "INSERT INTO marriages (id, person1, person2, marriage_date) VALUES";
     vector<string> vals;
     for (int i = 2; i < IDs.size() && (i ^ 1) < IDs.size(); i += 2) {
         int YY = max(birth[i], birth[(i ^ 1)]) + getRand(16, 23);
@@ -551,26 +552,26 @@ void addMarriges() {
     cout << create_insert(query, vals) << "\n";
 }
 
-void printMarriageCert(int id, int marriege_id, int issuer, string issue_date) {
+string printMarriageCert(int id, int marriege_id, int issuer, string issue_date) {
     // TODO
-    cout << "INSERT INTO marriage_certificates (id, marriage_id, issuer, "
-            "issue_date) VALUES ("
-         << id << ", " << marriege_id << ", " << issuer << ", " << STR(issue_date) << ");\n";
+    return to_string(id) + ", " + to_string(marriege_id) + ", " + to_string(issuer) + ", " + STR(issue_date);
 }
 
 void addMarriageCertificates() {
     freopen("marriage_certificates.sql", "w", stdout);
+    string query = "INSERT INTO marriage_certificates (id, marriage_id, issuer, issue_date) VALUES";
+    vector <string> S;
     int id = 1;
     for (mariages A : Mariges) {
         int issuer = OFF["marriage agency"][getRand(0, OFF["marriage agency"].size() - 1)];
-        printMarriageCert(id++, A.id, issuer, A.date);
+        S.push_back(printMarriageCert(id++, A.id, issuer, A.date));
     }
+    cout << create_insert(query, S) << "\n";
 }
 
-void printDivorce(int id, int M_id, string date) {
+string printDivorce(int id, int M_id, string date) {
     // TODO
-    cout << "INSERT INTO divorces (id, marriage_id, divorce_date) VALUES (" << id << ", " << M_id << ", " << STR(date)
-         << ");\n";
+    return  to_string(id) + ", " + to_string(M_id) + ", " + STR(date);
 }
 
 struct divorce {
@@ -583,43 +584,49 @@ struct divorce {
 vector<divorce> Divorces;
 void addDivorce() {
     freopen("divorces.sql", "w", stdout);
+    string query = "INSERT INTO divorces (id, marriage_id, divorce_date) VALUES";
+    vector <string> S;
     int id = 1;
     for (mariages A : Mariges) {
         if (getRand(1, 7) <= 2)
             continue;
         int YY = A.Year + getRand(1, 20);
         string date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
-        printDivorce(id++, A.id, date);
+        S.push_back(printDivorce(id++, A.id, date));
         Divorces.push_back(divorce(id - 1, YY, date));
     }
+    cout << create_insert(query, S) << "\n";
 }
 
-void printDivCert(int id, int div_id, string date, int issuer) {
+string printDivCert(int id, int div_id, string date, int issuer) {
     // TODO
-    cout << "INSERT INTO divorce_certificates(id, divorce_id, issue_date, "
-            "issuer) VALUES ("
-         << id << ", " << div_id << ", " << STR(date) << ", " << issuer << ");\n";
+    return to_string(id) + ", " + to_string(div_id) + ", " + STR(date) + ", " + to_string(issuer);
 }
 
 void addDivorceCert() {
     freopen("divorce_certificates.sql", "w", stdout);
     int id = 1;
+    string query = "INSERT INTO divorce_certificates(id, divorce_id, issue_date, issuer) VALUES";
+    vector<string> S;
     for (divorce A : Divorces) {
         int issuer = OFF["marriage agency"][getRand(0, OFF["marriage agency"].size() - 1)];
-        printDivCert(id++, A.id, A.date, issuer);
+        S.push_back(printDivCert(id++, A.id, A.date, issuer));
     }
+    cout << create_insert(query, S) << "\n";
 }
 
 void printDeath(int id, int issuer, int person, string date) {
     // TODO
     cout << "INSERT INTO death_certificates (id, issuer, person, issue_date) "
-            "VALUES ("
+            "VALUES("
          << id << ", " << issuer << ", " << person << ", " << STR(date) << ");\n";
 }
 
 void addDeath() {
     freopen("death_certificates.sql", "w", stdout);
     int id = 1;
+    string query = "INSERT INTO death_certificates (id, issuer, person, issue_date) VALUES";
+    vector <string > S;
     for (auto x : IDs) {
         int YY = birth[x];
         YY += getRand(50, 100);
@@ -627,22 +634,24 @@ void addDeath() {
             continue;
         string date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
         int issuer = OFF["medical center"][getRand(0, OFF["medical center"].size() - 1)];
-        printDeath(id++, issuer, x, date);
+        S.push_back(to_string(id++) +", "+ to_string(issuer) +", " + to_string(x) + ", " + STR(date));
     }
+    cout << create_insert(query, S) << "\n";
 }
 
-void printPassort(int id, string oName, string oSurname, string enName, string enSurname, string is_date,
+string printPassort(int id, string oName, string oSurname, string enName, string enSurname, string is_date,
                   string exp_date, char sex, int issuer, int owner, bool lost, bool invalided) {
     // TODO
-    cout << "INSERT INTO passports VALUES(" << id << ", " << STR(oName) << ", " << STR(oSurname) << ", " << STR(enName)
-         << ", " << STR(enSurname) << ", " << STR(is_date) << ", " << STR(exp_date) << ", " << STR(sex) << ", "
-         << issuer << ", " << owner << ", " << (lost ? "true" : "false") << ", " << (invalided ? "true" : "false")
-         << ");\n";
+    return to_string(id) + ", " + STR(oName) + ", " + STR(oSurname) + ", " + STR(enName)
+         + ", " + STR(enSurname) + ", " + STR(is_date) + ", " + STR(exp_date) + ", " + STR(sex) + ", "
+         + to_string(issuer) + ", " + to_string(owner) + ", " + (lost ? "true" : "false") + ", " + (invalided ? "true" : "false");
 }
 
 void addPassport() {
     freopen("passports.sql", "w", stdout);
     int id = 1;
+    string query = "INSERT INTO passports VALUES";
+    vector<string> S;
     for (auto x : IDs) {
         string name = names[x];
         string surname = surnames[x];
@@ -650,9 +659,10 @@ void addPassport() {
         string is_date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
         string exp_date = to_string(YY + 20) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
         int issuer = OFF["consulat"][getRand(0, OFF["consulat"].size() - 1)];
-        printPassort(id, name, surname, name, surname, is_date, exp_date, ("MF"[x % 2]), issuer, x, false, false);
+        S.push_back(printPassort(id, name, surname, name, surname, is_date, exp_date, ("MF"[x % 2]), issuer, x, false, false));
         id++;
     }
+    cout << create_insert(query, S) << "\n";
 }
 
 string visaTypes[] = {"Tourist Visas",        "Business Visas",
@@ -661,30 +671,31 @@ string visaTypes[] = {"Tourist Visas",        "Business Visas",
                       "Immigrant Visas",      "Refugee and Asylum Visas",
                       "Special Purpose Visas"};
 
-void printVisaCat(int type, string description, bool work, bool resid, string country, int YYdur) {
-    cout << "INSERT INTO visa_categories (type, description, working_permit, residence_permit, duration, country) "
-            "VALUES ("
-         << type << ", " << STR(description) << ", " << (work ? "true" : "false") << ", " << (resid ? "true" : "false")
-         << ", " << "INTERVAL '" + to_string(YYdur) + " years'" << ", " << STR(country) << ");\n";
+string printVisaCat(int type, string description, bool work, bool resid, string country, int YYdur) {
+    return to_string(type) + ", " + STR(description) + ", " + (work ? "true" : "false") + ", " + (resid ? "true" : "false")
+        + ", " + "INTERVAL '" + to_string(YYdur) + " years'" + ", " + STR(country);
 }
 
 void addVisaTypes() {
     freopen("visa_categories.sql", "w", stdout);
+    string query = "INSERT INTO visa_categories (type, description, working_permit, residence_permit, duration, country) VALUES";
+    vector <string> S; 
     for (country C : countries) {
         int id = 1;
         for (string desc : visaTypes) {
-            printVisaCat(id++, desc, bool(desc[0] != 'T'), desc[0] == 'I', C.name, getRand(5, 10));
+            S.push_back(printVisaCat(id++, desc, bool(desc[0] != 'T'), desc[0] == 'I', C.name, getRand(5, 10)));
         }
     }
+    cout << create_insert(query, S) << "\n";
 }
 
-void printIntPasprt(int id, string oName, string oSurname, string enName, string enSurname, string is_date,
+string printIntPasprt(int id, string oName, string oSurname, string enName, string enSurname, string is_date,
                     string exp_date, char sex, int issuer, int owner, bool lost, bool invalided, string country,
                     string series) {
-    cout << "INSERT INTO international_passports VALUES(" << id << ", " << STR(oName) << ", " << STR(oSurname) << ", "
-         << STR(enName) << ", " << STR(enSurname) << ", " << issuer << ", " << STR(is_date) << ", " << STR(exp_date)
-         << ", " << STR(sex) << ", " << owner << ", " << STR(country) << ", " << (lost ? "true" : "false") << ", "
-         << (invalided ? "true" : "false") << ", " << STR(series) << ");\n";
+    return to_string(id) + ", " + STR(oName) + ", " + STR(oSurname) + ", "
+         + STR(enName) + ", " + STR(enSurname) + ", " + to_string(issuer) + ", " + STR(is_date) + ", " + STR(exp_date)
+         + ", " + STR(sex) + ", " + to_string(owner) + ", " + STR(country) + ", " + (lost ? "true" : "false") + ", "
+         + (invalided ? "true" : "false") + ", " + STR(series);
 }
 
 int cntIntPass;
@@ -693,6 +704,8 @@ int YYIntPass[10000];
 void addIntPassp() {
     freopen("international_passports.sql", "w", stdout);
     int id = 1;
+    string query = "INSERT INTO international_passports VALUES";
+    vector<string> S;
     for (auto x : IDs) {
         string name = names[x];
         string surname = surnames[x];
@@ -705,29 +718,34 @@ void addIntPassp() {
         series[0] = 'A' + getRand(0, 25);
         series[1] = 'A' + getRand(0, 25);
         int issuer = OFF["consulat"][getRand(0, OFF["consulat"].size() - 1)];
-        printIntPasprt(id, name, surname, name, surname, is_date, exp_date, ("MF"[x % 2]), issuer, x, false, false,
-                       country, series);
+        S.push_back(printIntPasprt(id, name, surname, name, surname, is_date, exp_date, ("MF"[x % 2]), issuer, x, false, false,
+                       country, series));
         id++;
     }
+    cout << create_insert(query, S) << "\n";
     cntIntPass = id - 1;
 }
 
-void printVisa(int id, int type, int passport, string issue_date, int issuer, string country) {
-    cout << "INSERT INTO visas VALUES (" << id << ", " << type << ", " << passport << ", " << STR(issue_date) << ", "
-         << issuer << ", " << STR(country) << ");\n";
+string printVisa(int id, int type, int passport, string issue_date, int issuer, string country) {
+    return to_string(id) + ", " + to_string(type) + ", " + to_string(passport) + ", " + STR(issue_date) + ", "
+    + to_string(issuer) +", " + STR(country);
+    
 }
 
 void addVisas() {
     freopen("visas.sql", "w", stdout);
     int id = 1;
+    string query = "INSERT INTO visas VALUES";
+    vector<string> S;
     for (int passId = 1; passId <= cntIntPass; passId++) {
         int tp = getRand(1, 9);
         string date = to_string(YYIntPass[passId] + getRand(1, 3)) + "-" + to_string(getRand(1, 12)) + "-" +
                       to_string(getRand(1, 28));
         int issuer = OFF["consulat"][getRand(0, OFF["consulat"].size() - 1)];
         string country = countries[getRand(0, countries.size() - 1)].name;
-        printVisa(id++, tp, passId, date, issuer, country);
+        S.push_back(printVisa(id++, tp, passId, date, issuer, country));
     }
+    cout << create_insert(query, S);
 }
 
 int main() {

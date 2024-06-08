@@ -1,5 +1,5 @@
 --people
-INSERT INTO people (id, date_of_birth, name, surname) VALUES 
+INSERT INTO people (id, date_of_birth, name, surname) VALUES
 (1, '2024-5-10'::date, $$Ralph$$, $$Mahoney$$),
 (2, '1999-4-6'::date, $$Sandra$$, $$Frye$$),
 (3, '1999-9-19'::date, $$Tyler$$, $$Brandt$$),

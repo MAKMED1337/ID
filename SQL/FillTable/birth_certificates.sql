@@ -1,500 +1,501 @@
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (1, 2, 3, 1, 500, $$Gabon$$, $$Oyem$$, $$2024-5-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (2, 4, 5, 2, 1123, $$Philippines$$, $$Narra$$, $$1999-4-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (3, 6, 7, 3, 485, $$Zimbabwe$$, $$Chinhoyi$$, $$1999-9-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (4, 8, 9, 4, 1073, $$Fiji$$, $$Suva$$, $$1974-12-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (5, 10, 11, 5, 112, $$Panama$$, $$Tocumen$$, $$1974-9-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (6, 12, 13, 6, 514, $$Macedonia$$, $$Struga$$, $$1974-3-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (7, 14, 15, 7, 510, $$Burundi$$, $$Gitega$$, $$1974-5-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (8, 16, 17, 8, 579, $$Gibraltar$$, $$Gibraltar$$, $$1949-7-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (9, 18, 19, 9, 736, $$Swaziland$$, $$Lobamba$$, $$1949-7-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (10, 20, 21, 10, 124, $$Guinea$$, $$Siguiri$$, $$1949-6-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (11, 22, 23, 11, 361, $$Estonia$$, $$Tartu$$, $$1949-3-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (12, 24, 25, 12, 1242, $$Kosovo$$, $$Leposaviq$$, $$1949-9-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (13, 26, 27, 13, 598, $$Sweden$$, $$Boo$$, $$1949-9-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (14, 28, 29, 14, 1140, $$Seychelles$$, $$Victoria$$, $$1949-10-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (15, 30, 31, 15, 308, $$Uruguay$$, $$Young$$, $$1949-2-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (16, 32, 33, 16, 806, $$Switzerland$$, $$Herisau$$, $$1924-10-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (17, 34, 35, 17, 767, $$Japan$$, $$Mombetsu$$, $$1924-5-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (18, 36, 37, 18, 351, $$Martinique$$, $$Ducos$$, $$1924-4-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (19, 38, 39, 19, 249, $$Cuba$$, $$Fomento$$, $$1924-7-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (20, 40, 41, 20, 1155, $$Australia$$, $$Essendon$$, $$1924-4-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (21, 42, 43, 21, 204, $$Bhutan$$, $$Thimphu$$, $$1924-8-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (22, 44, 45, 22, 488, $$Finland$$, $$Varkaus$$, $$1924-3-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (23, 46, 47, 23, 389, $$Mozambique$$, $$Macia$$, $$1924-12-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (24, 48, 49, 24, 702, $$Singapore$$, $$Singapore$$, $$1924-6-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (25, 50, 51, 25, 793, $$Iraq$$, $$Zaxo$$, $$1924-7-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (26, 52, 53, 26, 757, $$France$$, $$Yutz$$, $$1924-3-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (27, 54, 55, 27, 258, $$Brazil$$, $$Goianira$$, $$1924-12-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (28, 56, 57, 28, 984, $$Benin$$, $$Malanville$$, $$1924-3-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (29, 58, 59, 29, 15, $$Montenegro$$, $$Cetinje$$, $$1924-3-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (30, 60, 61, 30, 1187, $$Italy$$, $$Teramo$$, $$1924-8-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (31, 62, 63, 31, 38, $$Malaysia$$, $$Jerantut$$, $$1924-3-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (32, 64, 65, 32, 5, $$Brazil$$, $$Toritama$$, $$1899-7-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (33, 66, 67, 33, 1250, $$Bhutan$$, $$Thimphu$$, $$1899-11-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (34, 68, 69, 34, 566, $$Turkmenistan$$, $$Annau$$, $$1899-12-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (35, 70, 71, 35, 687, $$Haiti$$, $$Kenscoff$$, $$1899-5-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (36, 72, 73, 36, 876, $$Sudan$$, $$Shendi$$, $$1899-10-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (37, 74, 75, 37, 125, $$Moldova$$, $$Bender$$, $$1899-5-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (38, 76, 77, 38, 105, $$Macao$$, $$Macau$$, $$1899-1-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (39, 78, 79, 39, 24, $$Madagascar$$, $$Antananarivo$$, $$1899-11-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (40, 80, 81, 40, 635, $$Turkey$$, $$Kozluk$$, $$1899-5-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (41, 82, 83, 41, 705, $$Samoa$$, $$Apia$$, $$1899-8-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (42, 84, 85, 42, 548, $$Comoros$$, $$Moutsamoudou$$, $$1899-6-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (43, 86, 87, 43, 1223, $$Guinea$$, $$Kankan$$, $$1899-2-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (44, 88, 89, 44, 1221, $$Cyprus$$, $$Nicosia$$, $$1899-12-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (45, 90, 91, 45, 725, $$Suriname$$, $$Lelydorp$$, $$1899-1-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (46, 92, 93, 46, 378, $$Serbia$$, $$Valjevo$$, $$1899-1-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (47, 94, 95, 47, 930, $$Guyana$$, $$Linden$$, $$1899-10-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (48, 96, 97, 48, 1120, $$Liberia$$, $$Harper$$, $$1899-2-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (49, 98, 99, 49, 350, $$Poland$$, $$Gubin$$, $$1899-7-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (50, 100, 101, 50, 595, $$Israel$$, $$Nahariya$$, $$1899-7-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (51, 102, 103, 51, 328, $$Kosovo$$, $$Orahovac$$, $$1899-12-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (52, 104, 105, 52, 350, $$Luxembourg$$, $$Dudelange$$, $$1899-11-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (53, 106, 107, 53, 492, $$Mexico$$, $$Valladolid$$, $$1899-1-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (54, 108, 109, 54, 543, $$Ukraine$$, $$Kherson$$, $$1899-9-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (55, 110, 111, 55, 1067, $$Oman$$, $$Sur$$, $$1899-3-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (56, 112, 113, 56, 801, $$Sweden$$, $$Skara$$, $$1899-7-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (57, 114, 115, 57, 1041, $$India$$, $$Jashpurnagar$$, $$1899-1-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (58, 116, 117, 58, 1062, $$Portugal$$, $$Leiria$$, $$1899-2-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (59, 118, 119, 59, 801, $$Mexico$$, $$Saltillo$$, $$1899-4-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (60, 120, 121, 60, 637, $$Yemen$$, $$Aden$$, $$1899-7-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (61, 122, 123, 61, 637, $$Nigeria$$, $$Gombi$$, $$1899-6-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (62, 124, 125, 62, 1027, $$Paraguay$$, $$Pilar$$, $$1899-10-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (63, 126, 127, 63, 478, $$Austria$$, $$Traun$$, $$1899-2-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (64, 128, 129, 64, 844, $$China$$, $$Wenzhou$$, $$1874-3-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (65, 130, 131, 65, 1223, $$Cyprus$$, $$Paphos$$, $$1874-3-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (66, 132, 133, 66, 807, $$Qatar$$, $$Doha$$, $$1874-9-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (67, 134, 135, 67, 586, $$Ghana$$, $$Achiaman$$, $$1874-11-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (68, 136, 137, 68, 399, $$Honduras$$, $$Tocoa$$, $$1874-10-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (69, 138, 139, 69, 135, $$Colombia$$, $$Flandes$$, $$1874-12-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (70, 140, 141, 70, 536, $$Ukraine$$, $$Lozova$$, $$1874-11-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (71, 142, 143, 71, 404, $$Thailand$$, $$Sattahip$$, $$1874-1-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (72, 144, 145, 72, 200, $$Slovenia$$, $$Koper$$, $$1874-2-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (73, 146, 147, 73, 181, $$India$$, $$Phillaur$$, $$1874-12-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (74, 148, 149, 74, 291, $$Uganda$$, $$Mbarara$$, $$1874-2-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (75, 150, 151, 75, 803, $$Kosovo$$, $$Ferizaj$$, $$1874-10-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (76, 152, 153, 76, 576, $$Egypt$$, $$Suez$$, $$1874-5-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (77, 154, 155, 77, 423, $$Tuvalu$$, $$Funafuti$$, $$1874-3-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (78, 156, 157, 78, 541, $$Samoa$$, $$Apia$$, $$1874-3-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (79, 158, 159, 79, 322, $$Honduras$$, $$Tocoa$$, $$1874-3-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (80, 160, 161, 80, 1102, $$Mauritius$$, $$Goodlands$$, $$1874-6-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (81, 162, 163, 81, 769, $$Liechtenstein$$, $$Vaduz$$, $$1874-7-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (82, 164, 165, 82, 936, $$Barbados$$, $$Bridgetown$$, $$1874-3-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (83, 166, 167, 83, 1100, $$Kazakhstan$$, $$Zhangatas$$, $$1874-4-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (84, 168, 169, 84, 979, $$Guyana$$, $$Georgetown$$, $$1874-3-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (85, 170, 171, 85, 1129, $$Belgium$$, $$Harelbeke$$, $$1874-8-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (86, 172, 173, 86, 706, $$Bahrain$$, $$Sitrah$$, $$1874-1-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (87, 174, 175, 87, 636, $$Iceland$$, $$Akureyri$$, $$1874-6-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (88, 176, 177, 88, 162, $$Italy$$, $$Montichiari$$, $$1874-7-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (89, 178, 179, 89, 84, $$Greenland$$, $$Nuuk$$, $$1874-12-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (90, 180, 181, 90, 1080, $$Brunei$$, $$Tutong$$, $$1874-3-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (91, 182, 183, 91, 445, $$Guatemala$$, $$Tiquisate$$, $$1874-12-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (92, 184, 185, 92, 479, $$Cambodia$$, $$Battambang$$, $$1874-8-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (93, 186, 187, 93, 437, $$Latvia$$, $$Valmiera$$, $$1874-10-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (94, 188, 189, 94, 728, $$Bolivia$$, $$Mizque$$, $$1874-4-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (95, 190, 191, 95, 1145, $$Aruba$$, $$Angochi$$, $$1874-3-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (96, 192, 193, 96, 922, $$Algeria$$, $$Baraki$$, $$1874-3-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (97, 194, 195, 97, 247, $$Uzbekistan$$, $$Piskent$$, $$1874-3-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (98, 196, 197, 98, 819, $$Mexico$$, $$Teapa$$, $$1874-10-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (99, 198, 199, 99, 374, $$Albania$$, $$Tirana$$, $$1874-10-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (100, 200, 201, 100, 134, $$Bulgaria$$, $$Troyan$$, $$1874-1-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (101, 202, 203, 101, 984, $$Malta$$, $$Qormi$$, $$1874-8-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (102, 204, 205, 102, 470, $$Moldova$$, $$Cahul$$, $$1874-5-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (103, 206, 207, 103, 1201, $$Malaysia$$, $$Raub$$, $$1874-12-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (104, 208, 209, 104, 299, $$Macedonia$$, $$Kavadarci$$, $$1874-6-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (105, 210, 211, 105, 995, $$Kiribati$$, $$Tarawa$$, $$1874-10-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (106, 212, 213, 106, 1129, $$Nepal$$, $$Malangwa$$, $$1874-11-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (107, 214, 215, 107, 1195, $$Austria$$, $$Linz$$, $$1874-9-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (108, 216, 217, 108, 769, $$Tuvalu$$, $$Funafuti$$, $$1874-11-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (109, 218, 219, 109, 710, $$Bhutan$$, $$Thimphu$$, $$1874-4-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (110, 220, 221, 110, 131, $$Bahrain$$, $$Manama$$, $$1874-7-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (111, 222, 223, 111, 130, $$Hungary$$, $$Sopron$$, $$1874-7-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (112, 224, 225, 112, 801, $$Serbia$$, $$Kikinda$$, $$1874-5-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (113, 226, 227, 113, 88, $$Taiwan$$, $$Taipei$$, $$1874-11-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (114, 228, 229, 114, 640, $$Niger$$, $$Nguigmi$$, $$1874-12-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (115, 230, 231, 115, 724, $$Argentina$$, $$Viedma$$, $$1874-8-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (116, 232, 233, 116, 239, $$Tunisia$$, $$Tunis$$, $$1874-1-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (117, 234, 235, 117, 367, $$Djibouti$$, $$Obock$$, $$1874-9-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (118, 236, 237, 118, 258, $$Slovakia$$, $$Martin$$, $$1874-12-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (119, 238, 239, 119, 454, $$Thailand$$, $$Phichit$$, $$1874-12-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (120, 240, 241, 120, 391, $$Somalia$$, $$Qandala$$, $$1874-9-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (121, 242, 243, 121, 24, $$Montenegro$$, $$Podgorica$$, $$1874-5-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (122, 244, 245, 122, 302, $$Zimbabwe$$, $$Chipinge$$, $$1874-1-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (123, 246, 247, 123, 303, $$Yemen$$, $$Aden$$, $$1874-6-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (124, 248, 249, 124, 151, $$Slovenia$$, $$Kranj$$, $$1874-9-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (125, 250, 251, 125, 1123, $$Mauritius$$, $$Vacoas$$, $$1874-4-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (126, 252, 253, 126, 979, $$Romania$$, $$Petrila$$, $$1874-2-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (127, 254, 255, 127, 153, $$Tuvalu$$, $$Funafuti$$, $$1874-12-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (128, 256, 257, 128, 1117, $$Libya$$, $$Zliten$$, $$1849-4-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (129, 258, 259, 129, 573, $$Slovenia$$, $$Trbovlje$$, $$1849-11-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (130, 260, 261, 130, 1118, $$Niue$$, $$Alofi$$, $$1849-10-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (131, 262, 263, 131, 88, $$Gambia$$, $$Farafenni$$, $$1849-8-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (132, 264, 265, 132, 978, $$Pitcairn$$, $$Adamstown$$, $$1849-4-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (133, 266, 267, 133, 405, $$Niue$$, $$Alofi$$, $$1849-10-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (134, 268, 269, 134, 1156, $$Laos$$, $$Vientiane$$, $$1849-1-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (135, 270, 271, 135, 983, $$Curacao$$, $$Willemstad$$, $$1849-10-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (136, 272, 273, 136, 699, $$Bolivia$$, $$Montero$$, $$1849-11-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (137, 274, 275, 137, 456, $$Malawi$$, $$Dedza$$, $$1849-9-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (138, 276, 277, 138, 1214, $$Poland$$, $$Grajewo$$, $$1849-8-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (139, 278, 279, 139, 1129, $$Cuba$$, $$Gibara$$, $$1849-4-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (140, 280, 281, 140, 135, $$Panama$$, $$Veracruz$$, $$1849-1-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (141, 282, 283, 141, 765, $$Angola$$, $$Huambo$$, $$1849-3-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (142, 284, 285, 142, 989, $$Niger$$, $$Nguigmi$$, $$1849-3-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (143, 286, 287, 143, 14, $$Slovenia$$, $$Ljubljana$$, $$1849-5-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (144, 288, 289, 144, 260, $$Monaco$$, $$Monaco$$, $$1849-6-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (145, 290, 291, 145, 1183, $$Chad$$, $$Fada$$, $$1849-11-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (146, 292, 293, 146, 1099, $$Lithuania$$, $$Druskininkai$$, $$1849-5-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (147, 294, 295, 147, 338, $$Malta$$, $$Valletta$$, $$1849-6-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (148, 296, 297, 148, 502, $$Cameroon$$, $$Penja$$, $$1849-8-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (149, 298, 299, 149, 1158, $$Botswana$$, $$Mochudi$$, $$1849-8-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (150, 300, 301, 150, 1163, $$Tanzania$$, $$Nanyamba$$, $$1849-12-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (151, 302, 303, 151, 14, $$Lesotho$$, $$Leribe$$, $$1849-1-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (152, 304, 305, 152, 784, $$Greece$$, $$Rethymno$$, $$1849-2-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (153, 306, 307, 153, 11, $$Mexico$$, $$Compostela$$, $$1849-11-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (154, 308, 309, 154, 418, $$Oman$$, $$Yanqul$$, $$1849-7-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (155, 310, 311, 155, 700, $$Australia$$, $$Marrickville$$, $$1849-2-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (156, 312, 313, 156, 1245, $$Guinea$$, $$Kamsar$$, $$1849-2-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (157, 314, 315, 157, 603, $$Suriname$$, $$Paramaribo$$, $$1849-4-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (158, 316, 317, 158, 750, $$Dominica$$, $$Roseau$$, $$1849-6-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (159, 318, 319, 159, 283, $$Albania$$, $$Fier$$, $$1849-5-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (160, 320, 321, 160, 561, $$Bangladesh$$, $$Rangpur$$, $$1849-7-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (161, 322, 323, 161, 222, $$Cuba$$, $$Boyeros$$, $$1849-3-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (162, 324, 325, 162, 692, $$Austria$$, $$Leoben$$, $$1849-5-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (163, 326, 327, 163, 700, $$Niger$$, $$Alaghsas$$, $$1849-1-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (164, 328, 329, 164, 1111, $$Syria$$, $$Idlib$$, $$1849-1-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (165, 330, 331, 165, 505, $$Afghanistan$$, $$Gereshk$$, $$1849-9-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (166, 332, 333, 166, 801, $$Zambia$$, $$Petauke$$, $$1849-12-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (167, 334, 335, 167, 905, $$Spain$$, $$Almozara$$, $$1849-9-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (168, 336, 337, 168, 848, $$Honduras$$, $$Tela$$, $$1849-7-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (169, 338, 339, 169, 96, $$Belize$$, $$Belmopan$$, $$1849-4-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (170, 340, 341, 170, 74, $$Jamaica$$, $$Kingston$$, $$1849-8-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (171, 342, 343, 171, 379, $$Honduras$$, $$Tocoa$$, $$1849-5-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (172, 344, 345, 172, 428, $$Turkey$$, $$Kula$$, $$1849-10-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (173, 346, 347, 173, 260, $$Jamaica$$, $$Portmore$$, $$1849-2-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (174, 348, 349, 174, 953, $$Mayotte$$, $$Dzaoudzi$$, $$1849-10-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (175, 350, 351, 175, 136, $$Germany$$, $$Gescher$$, $$1849-5-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (176, 352, 353, 176, 547, $$Burundi$$, $$Makamba$$, $$1849-6-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (177, 354, 355, 177, 946, $$Germany$$, $$Sonneberg$$, $$1849-11-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (178, 356, 357, 178, 744, $$Israel$$, $$Netivot$$, $$1849-10-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (179, 358, 359, 179, 38, $$Montenegro$$, $$Podgorica$$, $$1849-2-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (180, 360, 361, 180, 1060, $$Cameroon$$, $$Tiko$$, $$1849-7-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (181, 362, 363, 181, 643, $$Martinique$$, $$Ducos$$, $$1849-12-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (182, 364, 365, 182, 878, $$Palau$$, $$Melekeok$$, $$1849-8-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (183, 366, 367, 183, 553, $$Namibia$$, $$Keetmanshoop$$, $$1849-2-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (184, 368, 369, 184, 1179, $$Nigeria$$, $$Gumel$$, $$1849-9-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (185, 370, 371, 185, 688, $$Belize$$, $$Belmopan$$, $$1849-12-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (186, 372, 373, 186, 1164, $$Paraguay$$, $$Nemby$$, $$1849-7-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (187, 374, 375, 187, 283, $$Uganda$$, $$Entebbe$$, $$1849-3-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (188, 376, 377, 188, 1243, $$Gambia$$, $$Banjul$$, $$1849-5-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (189, 378, 379, 189, 1111, $$Bulgaria$$, $$Pazardzhik$$, $$1849-8-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (190, 380, 381, 190, 750, $$Honduras$$, $$Villanueva$$, $$1849-10-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (191, 382, 383, 191, 270, $$Namibia$$, $$Okahandja$$, $$1849-1-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (192, 384, 385, 192, 813, $$Bahrain$$, $$Manama$$, $$1849-10-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (193, 386, 387, 193, 1242, $$Jamaica$$, $$Portmore$$, $$1849-11-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (194, 388, 389, 194, 620, $$Sudan$$, $$Atbara$$, $$1849-3-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (195, 390, 391, 195, 25, $$Uzbekistan$$, $$Tashkent$$, $$1849-12-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (196, 392, 393, 196, 136, $$Myanmar$$, $$Mawlamyine$$, $$1849-2-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (197, 394, 395, 197, 418, $$Bolivia$$, $$Llallagua$$, $$1849-3-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (198, 396, 397, 198, 281, $$Haiti$$, $$Tigwav$$, $$1849-5-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (199, 398, 399, 199, 1099, $$Honduras$$, $$Villanueva$$, $$1849-2-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (200, 400, 401, 200, 674, $$Senegal$$, $$Kolda$$, $$1849-9-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (201, 402, 403, 201, 272, $$Netherlands$$, $$Houten$$, $$1849-2-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (202, 404, 405, 202, 928, $$Colombia$$, $$Zarzal$$, $$1849-8-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (203, 406, 407, 203, 827, $$Montserrat$$, $$Plymouth$$, $$1849-1-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (204, 408, 409, 204, 1210, $$France$$, $$Arras$$, $$1849-7-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (205, 410, 411, 205, 475, $$Ghana$$, $$Swedru$$, $$1849-10-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (206, 412, 413, 206, 579, $$Russia$$, $$Shumikha$$, $$1849-1-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (207, 414, 415, 207, 1135, $$Cambodia$$, $$Battambang$$, $$1849-8-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (208, 416, 417, 208, 1151, $$Singapore$$, $$Singapore$$, $$1849-11-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (209, 418, 419, 209, 429, $$Laos$$, $$Phonsavan$$, $$1849-11-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (210, 420, 421, 210, 723, $$Bahamas$$, $$Freeport$$, $$1849-3-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (211, 422, 423, 211, 189, $$Sweden$$, $$Eskilstuna$$, $$1849-7-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (212, 424, 425, 212, 158, $$Curacao$$, $$Willemstad$$, $$1849-2-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (213, 426, 427, 213, 680, $$Brunei$$, $$Seria$$, $$1849-2-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (214, 428, 429, 214, 279, $$Comoros$$, $$Moroni$$, $$1849-3-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (215, 430, 431, 215, 36, $$Brazil$$, $$Catanduva$$, $$1849-2-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (216, 432, 433, 216, 512, $$Spain$$, $$Coslada$$, $$1849-9-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (217, 434, 435, 217, 939, $$France$$, $$Nantes$$, $$1849-8-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (218, 436, 437, 218, 688, $$France$$, $$Saintes$$, $$1849-11-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (219, 438, 439, 219, 426, $$Bolivia$$, $$Cochabamba$$, $$1849-1-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (220, 440, 441, 220, 342, $$Greenland$$, $$Nuuk$$, $$1849-12-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (221, 442, 443, 221, 137, $$Burundi$$, $$Rutana$$, $$1849-3-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (222, 444, 445, 222, 1131, $$Argentina$$, $$Lincoln$$, $$1849-3-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (223, 446, 447, 223, 1250, $$Chile$$, $$Coihaique$$, $$1849-2-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (224, 448, 449, 224, 503, $$Chad$$, $$Doba$$, $$1849-4-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (225, 450, 451, 225, 78, $$Turkey$$, $$Nizip$$, $$1849-2-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (226, 452, 453, 226, 496, $$Uruguay$$, $$Mercedes$$, $$1849-1-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (227, 454, 455, 227, 71, $$Bolivia$$, $$Tupiza$$, $$1849-9-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (228, 456, 457, 228, 523, $$Singapore$$, $$Singapore$$, $$1849-3-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (229, 458, 459, 229, 999, $$Mozambique$$, $$Lichinga$$, $$1849-11-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (230, 460, 461, 230, 456, $$Niue$$, $$Alofi$$, $$1849-11-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (231, 462, 463, 231, 135, $$Canada$$, $$Ajax$$, $$1849-2-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (232, 464, 465, 232, 75, $$Macao$$, $$Macau$$, $$1849-11-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (233, 466, 467, 233, 952, $$Madagascar$$, $$Sambava$$, $$1849-8-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (234, 468, 469, 234, 521, $$Uganda$$, $$Mbarara$$, $$1849-4-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (235, 470, 471, 235, 1105, $$Bulgaria$$, $$Berkovitsa$$, $$1849-10-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (236, 472, 473, 236, 24, $$Armenia$$, $$Ararat$$, $$1849-4-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (237, 474, 475, 237, 1236, $$Portugal$$, $$Peniche$$, $$1849-2-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (238, 476, 477, 238, 867, $$Samoa$$, $$Apia$$, $$1849-4-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (239, 478, 479, 239, 1003, $$Laos$$, $$Phonsavan$$, $$1849-3-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (240, 480, 481, 240, 267, $$Kiribati$$, $$Tarawa$$, $$1849-8-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (241, 482, 483, 241, 1218, $$Somalia$$, $$Hargeysa$$, $$1849-10-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (242, 484, 485, 242, 586, $$Malawi$$, $$Mchinji$$, $$1849-10-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (243, 486, 487, 243, 1231, $$Greece$$, $$Athens$$, $$1849-1-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (244, 488, 489, 244, 1160, $$Guatemala$$, $$Zacapa$$, $$1849-11-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (245, 490, 491, 245, 595, $$Bhutan$$, $$Phuntsholing$$, $$1849-10-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (246, 492, 493, 246, 1145, $$Ireland$$, $$Letterkenny$$, $$1849-10-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (247, 494, 495, 247, 299, $$Curacao$$, $$Willemstad$$, $$1849-7-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (248, 496, 497, 248, 637, $$Liberia$$, $$Kakata$$, $$1849-11-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (249, 498, 499, 249, 1025, $$Morocco$$, $$Chefchaouene$$, $$1849-12-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (250, 500, null, 250, 271, $$Bulgaria$$, $$Haskovo$$, $$1849-3-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (251, null, null, 251, 85, $$Malaysia$$, $$Temerluh$$, $$1849-12-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (252, null, null, 252, 727, $$Malta$$, $$Birkirkara$$, $$1849-2-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (253, null, null, 253, 818, $$Malta$$, $$Qormi$$, $$1849-7-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (254, null, null, 254, 106, $$Malta$$, $$Qormi$$, $$1849-10-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (255, null, null, 255, 953, $$Estonia$$, $$Rakvere$$, $$1849-6-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (256, null, null, 256, 1210, $$Honduras$$, $$Tocoa$$, $$1824-11-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (257, null, null, 257, 1158, $$Qatar$$, $$Doha$$, $$1824-6-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (258, null, null, 258, 823, $$Mozambique$$, $$Tete$$, $$1824-8-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (259, null, null, 259, 1011, $$Lithuania$$, $$Taurage$$, $$1824-10-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (260, null, null, 260, 776, $$Seychelles$$, $$Victoria$$, $$1824-1-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (261, null, null, 261, 291, $$Ireland$$, $$Balbriggan$$, $$1824-9-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (262, null, null, 262, 1222, $$Mexico$$, $$Ojinaga$$, $$1824-4-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (263, null, null, 263, 491, $$Cyprus$$, $$Protaras$$, $$1824-2-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (264, null, null, 264, 428, $$Cyprus$$, $$Nicosia$$, $$1824-4-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (265, null, null, 265, 812, $$Macao$$, $$Macau$$, $$1824-12-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (266, null, null, 266, 278, $$Samoa$$, $$Apia$$, $$1824-8-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (267, null, null, 267, 414, $$Moldova$$, $$Drochia$$, $$1824-2-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (268, null, null, 268, 631, $$Azerbaijan$$, $$Shamakhi$$, $$1824-5-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (269, null, null, 269, 54, $$Brunei$$, $$Tutong$$, $$1824-8-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (270, null, null, 270, 1022, $$Cambodia$$, $$Pursat$$, $$1824-10-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (271, null, null, 271, 253, $$Tanzania$$, $$Tukuyu$$, $$1824-9-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (272, null, null, 272, 1214, $$Colombia$$, $$Sevilla$$, $$1824-12-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (273, null, null, 273, 816, $$Panama$$, $$Veracruz$$, $$1824-10-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (274, null, null, 274, 249, $$Zambia$$, $$Monze$$, $$1824-5-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (275, null, null, 275, 929, $$Peru$$, $$Piura$$, $$1824-11-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (276, null, null, 276, 796, $$Gambia$$, $$Bakau$$, $$1824-2-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (277, null, null, 277, 263, $$Nepal$$, $$Bhadrapur$$, $$1824-3-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (278, null, null, 278, 729, $$Israel$$, $$Eilat$$, $$1824-6-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (279, null, null, 279, 878, $$Cyprus$$, $$Limassol$$, $$1824-6-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (280, null, null, 280, 801, $$Samoa$$, $$Apia$$, $$1824-1-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (281, null, null, 281, 493, $$Bulgaria$$, $$Shumen$$, $$1824-9-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (282, null, null, 282, 723, $$Ireland$$, $$Celbridge$$, $$1824-11-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (283, null, null, 283, 812, $$Moldova$$, $$Soroca$$, $$1824-10-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (284, null, null, 284, 601, $$Qatar$$, $$Doha$$, $$1824-7-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (285, null, null, 285, 739, $$Austria$$, $$Lustenau$$, $$1824-2-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (286, null, null, 286, 691, $$Dominica$$, $$Roseau$$, $$1824-1-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (287, null, null, 287, 674, $$Latvia$$, $$Riga$$, $$1824-1-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (288, null, null, 288, 731, $$Israel$$, $$Ofaqim$$, $$1824-8-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (289, null, null, 289, 964, $$Mongolia$$, $$Bayanhongor$$, $$1824-10-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (290, null, null, 290, 887, $$Argentina$$, $$Saladas$$, $$1824-12-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (291, null, null, 291, 1042, $$Malta$$, $$Valletta$$, $$1824-11-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (292, null, null, 292, 229, $$Egypt$$, $$Zagazig$$, $$1824-3-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (293, null, null, 293, 1175, $$Guyana$$, $$Linden$$, $$1824-8-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (294, null, null, 294, 260, $$Angola$$, $$Menongue$$, $$1824-4-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (295, null, null, 295, 396, $$Afghanistan$$, $$Balkh$$, $$1824-2-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (296, null, null, 296, 1119, $$Greece$$, $$Piraeus$$, $$1824-2-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (297, null, null, 297, 583, $$Guatemala$$, $$Chichicastenango$$, $$1824-9-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (298, null, null, 298, 679, $$Panama$$, $$Chepo$$, $$1824-9-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (299, null, null, 299, 1122, $$Egypt$$, $$Kousa$$, $$1824-10-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (300, null, null, 300, 1238, $$Japan$$, $$Ashiya$$, $$1824-3-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (301, null, null, 301, 737, $$Jordan$$, $$Safi$$, $$1824-4-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (302, null, null, 302, 744, $$Samoa$$, $$Apia$$, $$1824-10-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (303, null, null, 303, 333, $$Vietnam$$, $$Pleiku$$, $$1824-7-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (304, null, null, 304, 268, $$Ethiopia$$, $$Axum$$, $$1824-10-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (305, null, null, 305, 156, $$Netherlands$$, $$Rhenen$$, $$1824-1-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (306, null, null, 306, 157, $$Dominica$$, $$Roseau$$, $$1824-1-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (307, null, null, 307, 514, $$Belarus$$, $$Navahrudak$$, $$1824-11-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (308, null, null, 308, 841, $$Pitcairn$$, $$Adamstown$$, $$1824-1-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (309, null, null, 309, 1123, $$Kenya$$, $$Webuye$$, $$1824-10-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (310, null, null, 310, 253, $$Italy$$, $$Gaeta$$, $$1824-9-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (311, null, null, 311, 54, $$Singapore$$, $$Singapore$$, $$1824-2-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (312, null, null, 312, 371, $$Senegal$$, $$Louga$$, $$1824-3-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (313, null, null, 313, 1229, $$Mauritius$$, $$Goodlands$$, $$1824-10-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (314, null, null, 314, 1166, $$France$$, $$Bourgoin$$, $$1824-9-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (315, null, null, 315, 861, $$Bahamas$$, $$Nassau$$, $$1824-4-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (316, null, null, 316, 763, $$Lesotho$$, $$Mafeteng$$, $$1824-8-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (317, null, null, 317, 378, $$Samoa$$, $$Apia$$, $$1824-7-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (318, null, null, 318, 1201, $$Mauritania$$, $$Kiffa$$, $$1824-8-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (319, null, null, 319, 814, $$Malawi$$, $$Balaka$$, $$1824-2-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (320, null, null, 320, 98, $$China$$, $$Zibo$$, $$1824-6-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (321, null, null, 321, 1195, $$Kazakhstan$$, $$Baykonyr$$, $$1824-6-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (322, null, null, 322, 843, $$Niger$$, $$Gaya$$, $$1824-5-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (323, null, null, 323, 815, $$Tanzania$$, $$Mwandiga$$, $$1824-1-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (324, null, null, 324, 168, $$Poland$$, $$Otwock$$, $$1824-10-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (325, null, null, 325, 297, $$Palau$$, $$Melekeok$$, $$1824-3-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (326, null, null, 326, 865, $$Indonesia$$, $$Bantul$$, $$1824-9-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (327, null, null, 327, 905, $$Zambia$$, $$Sesheke$$, $$1824-12-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (328, null, null, 328, 970, $$Kosovo$$, $$Dragash$$, $$1824-12-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (329, null, null, 329, 256, $$Albania$$, $$Tirana$$, $$1824-10-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (330, null, null, 330, 174, $$Egypt$$, $$Fuwwah$$, $$1824-11-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (331, null, null, 331, 378, $$Ireland$$, $$Dundalk$$, $$1824-3-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (332, null, null, 332, 251, $$Tanzania$$, $$Kahama$$, $$1824-4-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (333, null, null, 333, 685, $$Jamaica$$, $$Linstead$$, $$1824-4-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (334, null, null, 334, 202, $$India$$, $$Jarwal$$, $$1824-3-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (335, null, null, 335, 296, $$Belarus$$, $$Bykhaw$$, $$1824-2-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (336, null, null, 336, 717, $$Mexico$$, $$Guanajuato$$, $$1824-2-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (337, null, null, 337, 630, $$Bulgaria$$, $$Pazardzhik$$, $$1824-9-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (338, null, null, 338, 536, $$Madagascar$$, $$Beroroha$$, $$1824-3-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (339, null, null, 339, 1022, $$Bahrain$$, $$Sitrah$$, $$1824-7-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (340, null, null, 340, 441, $$Latvia$$, $$Salaspils$$, $$1824-12-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (341, null, null, 341, 396, $$Slovenia$$, $$Kranj$$, $$1824-8-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (342, null, null, 342, 643, $$Uzbekistan$$, $$Chiroqchi$$, $$1824-5-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (343, null, null, 343, 256, $$Latvia$$, $$Riga$$, $$1824-6-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (344, null, null, 344, 856, $$Gibraltar$$, $$Gibraltar$$, $$1824-9-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (345, null, null, 345, 1158, $$Laos$$, $$Vientiane$$, $$1824-1-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (346, null, null, 346, 679, $$Qatar$$, $$Doha$$, $$1824-11-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (347, null, null, 347, 725, $$Albania$$, $$Elbasan$$, $$1824-1-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (348, null, null, 348, 643, $$Bhutan$$, $$Phuntsholing$$, $$1824-11-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (349, null, null, 349, 799, $$Montserrat$$, $$Plymouth$$, $$1824-10-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (350, null, null, 350, 212, $$Rwanda$$, $$Musanze$$, $$1824-10-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (351, null, null, 351, 598, $$Kenya$$, $$Lodwar$$, $$1824-6-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (352, null, null, 352, 84, $$Guyana$$, $$Linden$$, $$1824-5-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (353, null, null, 353, 132, $$Malaysia$$, $$Limbang$$, $$1824-6-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (354, null, null, 354, 710, $$Nicaragua$$, $$Siuna$$, $$1824-11-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (355, null, null, 355, 623, $$Malaysia$$, $$Bidur$$, $$1824-11-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (356, null, null, 356, 763, $$Bermuda$$, $$Hamilton$$, $$1824-12-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (357, null, null, 357, 431, $$Italy$$, $$Milazzo$$, $$1824-3-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (358, null, null, 358, 512, $$Switzerland$$, $$Sierre$$, $$1824-8-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (359, null, null, 359, 969, $$Peru$$, $$Mollendo$$, $$1824-4-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (360, null, null, 360, 354, $$Kiribati$$, $$Tarawa$$, $$1824-8-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (361, null, null, 361, 858, $$Finland$$, $$Laukaa$$, $$1824-4-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (362, null, null, 362, 514, $$Kenya$$, $$Migori$$, $$1824-8-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (363, null, null, 363, 69, $$Bulgaria$$, $$Asenovgrad$$, $$1824-9-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (364, null, null, 364, 1082, $$Bulgaria$$, $$Dimitrovgrad$$, $$1824-6-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (365, null, null, 365, 268, $$Cuba$$, $$Condado$$, $$1824-9-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (366, null, null, 366, 29, $$Lebanon$$, $$Tripoli$$, $$1824-5-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (367, null, null, 367, 695, $$Tajikistan$$, $$Yovon$$, $$1824-7-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (368, null, null, 368, 613, $$Lithuania$$, $$Alytus$$, $$1824-5-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (369, null, null, 369, 1212, $$Argentina$$, $$Lincoln$$, $$1824-6-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (370, null, null, 370, 512, $$Samoa$$, $$Apia$$, $$1824-8-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (371, null, null, 371, 980, $$Slovakia$$, $$Pezinok$$, $$1824-6-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (372, null, null, 372, 490, $$Vietnam$$, $$Hanoi$$, $$1824-9-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (373, null, null, 373, 812, $$Martinique$$, $$Ducos$$, $$1824-9-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (374, null, null, 374, 403, $$China$$, $$Zhaotong$$, $$1824-12-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (375, null, null, 375, 951, $$Israel$$, $$Tirah$$, $$1824-9-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (376, null, null, 376, 796, $$Bangladesh$$, $$Sylhet$$, $$1824-1-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (377, null, null, 377, 1150, $$Kyrgyzstan$$, $$Suluktu$$, $$1824-7-15$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (378, null, null, 378, 1086, $$Kazakhstan$$, $$Sorang$$, $$1824-4-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (379, null, null, 379, 322, $$Niue$$, $$Alofi$$, $$1824-11-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (380, null, null, 380, 502, $$Belarus$$, $$Navahrudak$$, $$1824-4-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (381, null, null, 381, 360, $$Lesotho$$, $$Quthing$$, $$1824-8-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (382, null, null, 382, 1224, $$Malaysia$$, $$Pekan$$, $$1824-11-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (383, null, null, 383, 342, $$Suriname$$, $$Lelydorp$$, $$1824-1-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (384, null, null, 384, 548, $$Poland$$, $$Zgorzelec$$, $$1824-7-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (385, null, null, 385, 573, $$Jamaica$$, $$Mandeville$$, $$1824-12-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (386, null, null, 386, 209, $$Ecuador$$, $$Naranjal$$, $$1824-4-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (387, null, null, 387, 948, $$Israel$$, $$Haifa$$, $$1824-5-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (388, null, null, 388, 1155, $$Kosovo$$, $$Shtime$$, $$1824-3-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (389, null, null, 389, 984, $$Lithuania$$, $$Mazeikiai$$, $$1824-11-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (390, null, null, 390, 212, $$Nicaragua$$, $$Matagalpa$$, $$1824-6-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (391, null, null, 391, 74, $$Taiwan$$, $$Kaohsiung$$, $$1824-4-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (392, null, null, 392, 98, $$Mozambique$$, $$Chibuto$$, $$1824-5-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (393, null, null, 393, 595, $$Macao$$, $$Macau$$, $$1824-12-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (394, null, null, 394, 153, $$Luxembourg$$, $$Luxembourg$$, $$1824-2-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (395, null, null, 395, 301, $$Kyrgyzstan$$, $$Toktogul$$, $$1824-10-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (396, null, null, 396, 412, $$Vietnam$$, $$Hanoi$$, $$1824-10-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (397, null, null, 397, 111, $$France$$, $$Fontaine$$, $$1824-9-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (398, null, null, 398, 1210, $$Gambia$$, $$Sukuta$$, $$1824-5-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (399, null, null, 399, 917, $$Jordan$$, $$Russeifa$$, $$1824-2-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (400, null, null, 400, 674, $$Iraq$$, $$Mosul$$, $$1824-9-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (401, null, null, 401, 551, $$Jordan$$, $$Irbid$$, $$1824-8-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (402, null, null, 402, 467, $$Gabon$$, $$Moanda$$, $$1824-6-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (403, null, null, 403, 497, $$Suriname$$, $$Lelydorp$$, $$1824-2-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (404, null, null, 404, 2, $$Seychelles$$, $$Victoria$$, $$1824-2-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (405, null, null, 405, 435, $$Liechtenstein$$, $$Vaduz$$, $$1824-2-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (406, null, null, 406, 219, $$Kiribati$$, $$Tarawa$$, $$1824-2-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (407, null, null, 407, 1000, $$Denmark$$, $$Nyborg$$, $$1824-12-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (408, null, null, 408, 730, $$Uruguay$$, $$Pando$$, $$1824-8-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (409, null, null, 409, 743, $$Cyprus$$, $$Famagusta$$, $$1824-4-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (410, null, null, 410, 995, $$Madagascar$$, $$Soavinandriana$$, $$1824-11-18$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (411, null, null, 411, 1218, $$Botswana$$, $$Gaborone$$, $$1824-3-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (412, null, null, 412, 180, $$Iraq$$, $$Balad$$, $$1824-11-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (413, null, null, 413, 1128, $$Bhutan$$, $$Phuntsholing$$, $$1824-12-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (414, null, null, 414, 989, $$Croatia$$, $$Vukovar$$, $$1824-8-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (415, null, null, 415, 1236, $$Ukraine$$, $$Netishyn$$, $$1824-2-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (416, null, null, 416, 1067, $$Lithuania$$, $$Aleksotas$$, $$1824-6-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (417, null, null, 417, 1075, $$Ecuador$$, $$Ibarra$$, $$1824-4-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (418, null, null, 418, 210, $$Mali$$, $$Gao$$, $$1824-7-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (419, null, null, 419, 110, $$Mauritius$$, $$Triolet$$, $$1824-5-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (420, null, null, 420, 1167, $$Sweden$$, $$Eskilstuna$$, $$1824-10-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (421, null, null, 421, 310, $$Bahrain$$, $$Manama$$, $$1824-8-7$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (422, null, null, 422, 898, $$Ghana$$, $$Bolgatanga$$, $$1824-4-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (423, null, null, 423, 1029, $$Tuvalu$$, $$Funafuti$$, $$1824-5-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (424, null, null, 424, 512, $$Ghana$$, $$Berekum$$, $$1824-11-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (425, null, null, 425, 541, $$France$$, $$Beauvais$$, $$1824-7-13$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (426, null, null, 426, 466, $$Gibraltar$$, $$Gibraltar$$, $$1824-5-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (427, null, null, 427, 574, $$Slovakia$$, $$Detva$$, $$1824-9-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (428, null, null, 428, 774, $$Macedonia$$, $$Shtip$$, $$1824-6-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (429, null, null, 429, 939, $$Croatia$$, $$Zagreb$$, $$1824-4-17$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (430, null, null, 430, 537, $$Libya$$, $$Murzuq$$, $$1824-2-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (431, null, null, 431, 986, $$Iraq$$, $$Kirkuk$$, $$1824-4-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (432, null, null, 432, 4, $$Austria$$, $$Bregenz$$, $$1824-5-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (433, null, null, 433, 310, $$Albania$$, $$Berat$$, $$1824-1-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (434, null, null, 434, 400, $$Samoa$$, $$Apia$$, $$1824-12-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (435, null, null, 435, 691, $$Denmark$$, $$Ballerup$$, $$1824-12-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (436, null, null, 436, 193, $$Guyana$$, $$Georgetown$$, $$1824-3-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (437, null, null, 437, 991, $$Thailand$$, $$Chumphon$$, $$1824-5-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (438, null, null, 438, 1037, $$Peru$$, $$Catacaos$$, $$1824-8-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (439, null, null, 439, 702, $$Serbia$$, $$Zemun$$, $$1824-4-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (440, null, null, 440, 900, $$Bahrain$$, $$Sitrah$$, $$1824-4-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (441, null, null, 441, 1164, $$Myanmar$$, $$Mawlaik$$, $$1824-11-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (442, null, null, 442, 306, $$Belarus$$, $$Kalinkavichy$$, $$1824-4-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (443, null, null, 443, 699, $$Latvia$$, $$Daugavpils$$, $$1824-10-3$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (444, null, null, 444, 271, $$Zimbabwe$$, $$Kwekwe$$, $$1824-1-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (445, null, null, 445, 88, $$Luxembourg$$, $$Luxembourg$$, $$1824-5-11$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (446, null, null, 446, 479, $$Pitcairn$$, $$Adamstown$$, $$1824-11-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (447, null, null, 447, 721, $$Samoa$$, $$Apia$$, $$1824-4-1$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (448, null, null, 448, 958, $$Barbados$$, $$Bridgetown$$, $$1824-8-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (449, null, null, 449, 418, $$Israel$$, $$Dimona$$, $$1824-1-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (450, null, null, 450, 677, $$Panama$$, $$Chilibre$$, $$1824-3-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (451, null, null, 451, 1067, $$Aruba$$, $$Babijn$$, $$1824-5-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (452, null, null, 452, 302, $$Zimbabwe$$, $$Norton$$, $$1824-2-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (453, null, null, 453, 1207, $$Jamaica$$, $$Portmore$$, $$1824-5-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (454, null, null, 454, 1203, $$Uruguay$$, $$Pando$$, $$1824-4-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (455, null, null, 455, 548, $$Angola$$, $$Cuito$$, $$1824-3-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (456, null, null, 456, 653, $$Philippines$$, $$Gapan$$, $$1824-11-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (457, null, null, 457, 67, $$Dominica$$, $$Roseau$$, $$1824-7-20$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (458, null, null, 458, 607, $$Nepal$$, $$Kathmandu$$, $$1824-9-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (459, null, null, 459, 1164, $$Botswana$$, $$Francistown$$, $$1824-7-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (460, null, null, 460, 1204, $$Senegal$$, $$Louga$$, $$1824-7-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (461, null, null, 461, 82, $$Turkmenistan$$, $$Gazojak$$, $$1824-5-28$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (462, null, null, 462, 28, $$Bolivia$$, $$Sucre$$, $$1824-6-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (463, null, null, 463, 1170, $$Georgia$$, $$Tbilisi$$, $$1824-3-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (464, null, null, 464, 225, $$Laos$$, $$Vangviang$$, $$1824-7-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (465, null, null, 465, 373, $$Kenya$$, $$Maralal$$, $$1824-2-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (466, null, null, 466, 814, $$Thailand$$, $$Phetchaburi$$, $$1824-1-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (467, null, null, 467, 119, $$Jordan$$, $$Irbid$$, $$1824-8-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (468, null, null, 468, 185, $$Liberia$$, $$Buchanan$$, $$1824-1-25$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (469, null, null, 469, 661, $$Djibouti$$, $$Obock$$, $$1824-10-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (470, null, null, 470, 1195, $$Oman$$, $$Rustaq$$, $$1824-1-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (471, null, null, 471, 1193, $$Mali$$, $$Bougouni$$, $$1824-8-2$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (472, null, null, 472, 40, $$Bhutan$$, $$Thimphu$$, $$1824-6-23$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (473, null, null, 473, 196, $$Cyprus$$, $$Nicosia$$, $$1824-6-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (474, null, null, 474, 296, $$Qatar$$, $$Doha$$, $$1824-5-12$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (475, null, null, 475, 966, $$Jamaica$$, $$Linstead$$, $$1824-5-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (476, null, null, 476, 1081, $$Russia$$, $$Zherdevka$$, $$1824-9-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (477, null, null, 477, 725, $$Kazakhstan$$, $$Khromtau$$, $$1824-4-24$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (478, null, null, 478, 466, $$Nauru$$, $$Yaren$$, $$1824-3-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (479, null, null, 479, 1209, $$Dominica$$, $$Roseau$$, $$1824-4-26$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (480, null, null, 480, 63, $$Greece$$, $$Chios$$, $$1824-7-21$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (481, null, null, 481, 921, $$Portugal$$, $$Barreiro$$, $$1824-1-10$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (482, null, null, 482, 1080, $$Mauritania$$, $$Rosso$$, $$1824-3-4$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (483, null, null, 483, 209, $$Egypt$$, $$Damietta$$, $$1824-9-6$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (484, null, null, 484, 627, $$Iran$$, $$Zarand$$, $$1824-4-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (485, null, null, 485, 306, $$Swaziland$$, $$Lobamba$$, $$1824-7-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (486, null, null, 486, 1086, $$Albania$$, $$Berat$$, $$1824-9-14$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (487, null, null, 487, 78, $$Myanmar$$, $$Martaban$$, $$1824-7-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (488, null, null, 488, 168, $$Seychelles$$, $$Victoria$$, $$1824-6-22$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (489, null, null, 489, 930, $$Philippines$$, $$Tabaco$$, $$1824-12-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (490, null, null, 490, 715, $$Moldova$$, $$Drochia$$, $$1824-2-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (491, null, null, 491, 156, $$Curacao$$, $$Willemstad$$, $$1824-7-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (492, null, null, 492, 808, $$Bhutan$$, $$Tsirang$$, $$1824-2-8$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (493, null, null, 493, 917, $$Senegal$$, $$Ziguinchor$$, $$1824-5-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (494, null, null, 494, 503, $$Slovenia$$, $$Velenje$$, $$1824-6-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (495, null, null, 495, 722, $$Laos$$, $$Vientiane$$, $$1824-2-5$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (496, null, null, 496, 226, $$Ghana$$, $$Apam$$, $$1824-6-19$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (497, null, null, 497, 767, $$Algeria$$, $$Djamaa$$, $$1824-3-16$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (498, null, null, 498, 1209, $$Kazakhstan$$, $$Lisakovsk$$, $$1824-7-9$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (499, null, null, 499, 1008, $$Serbia$$, $$Knjazevac$$, $$1824-9-27$$);
-INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES (500, null, null, 500, 328, $$Jordan$$, $$Irbid$$, $$1824-9-12$$);
+INSERT INTO birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) VALUES
+(1, 2, 3, 1, 1124, $$Bahrain$$, $$Manama$$, $$2024-5-10$$),
+(2, 4, 5, 2, 888, $$Liberia$$, $$Bensonville$$, $$1999-4-6$$),
+(3, 6, 7, 3, 495, $$Vietnam$$, $$Vinh$$, $$1999-9-19$$),
+(4, 8, 9, 4, 532, $$Bahrain$$, $$Manama$$, $$1974-12-8$$),
+(5, 10, 11, 5, 637, $$Bahrain$$, $$Manama$$, $$1974-9-12$$),
+(6, 12, 13, 6, 822, $$India$$, $$Manoharpur$$, $$1974-3-26$$),
+(7, 14, 15, 7, 47, $$Tuvalu$$, $$Funafuti$$, $$1974-5-24$$),
+(8, 16, 17, 8, 668, $$Mozambique$$, $$Chibuto$$, $$1949-7-25$$),
+(9, 18, 19, 9, 644, $$Kiribati$$, $$Tarawa$$, $$1949-7-21$$),
+(10, 20, 21, 10, 428, $$Ireland$$, $$Ennis$$, $$1949-6-22$$),
+(11, 22, 23, 11, 812, $$Myanmar$$, $$Sagaing$$, $$1949-3-11$$),
+(12, 24, 25, 12, 269, $$Albania$$, $$Burrel$$, $$1949-9-17$$),
+(13, 26, 27, 13, 272, $$Pakistan$$, $$Gwadar$$, $$1949-9-19$$),
+(14, 28, 29, 14, 712, $$Japan$$, $$Maizuru$$, $$1949-10-27$$),
+(15, 30, 31, 15, 77, $$Macedonia$$, $$Struga$$, $$1949-2-26$$),
+(16, 32, 33, 16, 822, $$Montserrat$$, $$Plymouth$$, $$1924-10-21$$),
+(17, 34, 35, 17, 757, $$Qatar$$, $$Doha$$, $$1924-5-27$$),
+(18, 36, 37, 18, 752, $$Ethiopia$$, $$Waliso$$, $$1924-4-5$$),
+(19, 38, 39, 19, 624, $$Montenegro$$, $$Bar$$, $$1924-7-19$$),
+(20, 40, 41, 20, 733, $$Cyprus$$, $$Paphos$$, $$1924-4-12$$),
+(21, 42, 43, 21, 449, $$Estonia$$, $$Viljandi$$, $$1924-8-11$$),
+(22, 44, 45, 22, 743, $$Malaysia$$, $$Putrajaya$$, $$1924-3-21$$),
+(23, 46, 47, 23, 1199, $$Argentina$$, $$Campana$$, $$1924-12-26$$),
+(24, 48, 49, 24, 30, $$Tanzania$$, $$Katumba$$, $$1924-6-23$$),
+(25, 50, 51, 25, 595, $$Gambia$$, $$Lamin$$, $$1924-7-14$$),
+(26, 52, 53, 26, 563, $$Egypt$$, $$Juhaynah$$, $$1924-3-24$$),
+(27, 54, 55, 27, 374, $$Italy$$, $$Brescia$$, $$1924-12-9$$),
+(28, 56, 57, 28, 372, $$Pakistan$$, $$Pabbi$$, $$1924-3-9$$),
+(29, 58, 59, 29, 368, $$Canada$$, $$Barrie$$, $$1924-3-22$$),
+(30, 60, 61, 30, 700, $$Kyrgyzstan$$, $$Balykchy$$, $$1924-8-3$$),
+(31, 62, 63, 31, 310, $$Palau$$, $$Melekeok$$, $$1924-3-6$$),
+(32, 64, 65, 32, 294, $$Sweden$$, $$Uddevalla$$, $$1899-7-27$$),
+(33, 66, 67, 33, 619, $$Cameroon$$, $$Bali$$, $$1899-11-26$$),
+(34, 68, 69, 34, 330, $$Tuvalu$$, $$Funafuti$$, $$1899-12-26$$),
+(35, 70, 71, 35, 363, $$Cyprus$$, $$Paphos$$, $$1899-5-16$$),
+(36, 72, 73, 36, 35, $$Peru$$, $$Marcavelica$$, $$1899-10-19$$),
+(37, 74, 75, 37, 1181, $$Singapore$$, $$Singapore$$, $$1899-5-3$$),
+(38, 76, 77, 38, 446, $$Tanzania$$, $$Musoma$$, $$1899-1-2$$),
+(39, 78, 79, 39, 1105, $$Kyrgyzstan$$, $$Tokmok$$, $$1899-11-22$$),
+(40, 80, 81, 40, 954, $$Nepal$$, $$Janakpur$$, $$1899-5-19$$),
+(41, 82, 83, 41, 450, $$Egypt$$, $$Rosetta$$, $$1899-8-21$$),
+(42, 84, 85, 42, 1030, $$Japan$$, $$Tsuyama$$, $$1899-6-23$$),
+(43, 86, 87, 43, 920, $$Bhutan$$, $$Tsirang$$, $$1899-2-23$$),
+(44, 88, 89, 44, 599, $$Oman$$, $$Sohar$$, $$1899-12-28$$),
+(45, 90, 91, 45, 398, $$Nicaragua$$, $$Diriamba$$, $$1899-1-23$$),
+(46, 92, 93, 46, 521, $$Iraq$$, $$Balad$$, $$1899-1-23$$),
+(47, 94, 95, 47, 1234, $$Albania$$, $$Fier$$, $$1899-10-13$$),
+(48, 96, 97, 48, 527, $$Ukraine$$, $$Ovruch$$, $$1899-2-27$$),
+(49, 98, 99, 49, 330, $$Curacao$$, $$Willemstad$$, $$1899-7-21$$),
+(50, 100, 101, 50, 131, $$Tajikistan$$, $$Moskovskiy$$, $$1899-7-10$$),
+(51, 102, 103, 51, 647, $$Tanzania$$, $$Katumba$$, $$1899-12-2$$),
+(52, 104, 105, 52, 1112, $$Cuba$$, $$Palmira$$, $$1899-11-5$$),
+(53, 106, 107, 53, 796, $$Monaco$$, $$Monaco$$, $$1899-1-18$$),
+(54, 108, 109, 54, 712, $$Italy$$, $$Terzigno$$, $$1899-9-13$$),
+(55, 110, 111, 55, 23, $$Bermuda$$, $$Hamilton$$, $$1899-3-1$$),
+(56, 112, 113, 56, 362, $$Iraq$$, $$Baghdad$$, $$1899-7-24$$),
+(57, 114, 115, 57, 1053, $$India$$, $$Budaun$$, $$1899-1-5$$),
+(58, 116, 117, 58, 186, $$Turkey$$, $$Kozluk$$, $$1899-2-17$$),
+(59, 118, 119, 59, 1032, $$Greenland$$, $$Nuuk$$, $$1899-4-12$$),
+(60, 120, 121, 60, 901, $$Latvia$$, $$Tukums$$, $$1899-7-15$$),
+(61, 122, 123, 61, 424, $$Azerbaijan$$, $$Qazax$$, $$1899-6-5$$),
+(62, 124, 125, 62, 510, $$Namibia$$, $$Okahandja$$, $$1899-10-19$$),
+(63, 126, 127, 63, 529, $$Nepal$$, $$Ithari$$, $$1899-2-12$$),
+(64, 128, 129, 64, 1102, $$Suriname$$, $$Paramaribo$$, $$1874-3-23$$),
+(65, 130, 131, 65, 552, $$Algeria$$, $$Constantine$$, $$1874-3-19$$),
+(66, 132, 133, 66, 730, $$Lithuania$$, $$Palanga$$, $$1874-9-17$$),
+(67, 134, 135, 67, 299, $$Tanzania$$, $$Usevia$$, $$1874-11-17$$),
+(68, 136, 137, 68, 630, $$Colombia$$, $$Tame$$, $$1874-10-28$$),
+(69, 138, 139, 69, 807, $$Kazakhstan$$, $$Aral$$, $$1874-12-15$$),
+(70, 140, 141, 70, 939, $$Mongolia$$, $$Khovd$$, $$1874-11-21$$),
+(71, 142, 143, 71, 691, $$Martinique$$, $$Ducos$$, $$1874-1-13$$),
+(72, 144, 145, 72, 628, $$Austria$$, $$Steyr$$, $$1874-2-6$$),
+(73, 146, 147, 73, 126, $$Nepal$$, $$Bhadrapur$$, $$1874-12-14$$),
+(74, 148, 149, 74, 776, $$Pitcairn$$, $$Adamstown$$, $$1874-2-7$$),
+(75, 150, 151, 75, 891, $$Tajikistan$$, $$Khorugh$$, $$1874-10-5$$),
+(76, 152, 153, 76, 466, $$Mayotte$$, $$Mamoudzou$$, $$1874-5-2$$),
+(77, 154, 155, 77, 134, $$Pitcairn$$, $$Adamstown$$, $$1874-3-8$$),
+(78, 156, 157, 78, 903, $$Mongolia$$, $$Bayanhongor$$, $$1874-3-11$$),
+(79, 158, 159, 79, 404, $$Estonia$$, $$Rakvere$$, $$1874-3-24$$),
+(80, 160, 161, 80, 1180, $$Azerbaijan$$, $$Barda$$, $$1874-6-23$$),
+(81, 162, 163, 81, 353, $$Guatemala$$, $$Jacaltenango$$, $$1874-7-6$$),
+(82, 164, 165, 82, 792, $$Qatar$$, $$Doha$$, $$1874-3-27$$),
+(83, 166, 167, 83, 1214, $$Algeria$$, $$Mansourah$$, $$1874-4-11$$),
+(84, 168, 169, 84, 336, $$Gibraltar$$, $$Gibraltar$$, $$1874-3-10$$),
+(85, 170, 171, 85, 947, $$Yemen$$, $$Ataq$$, $$1874-8-28$$),
+(86, 172, 173, 86, 247, $$Bolivia$$, $$Tarija$$, $$1874-1-19$$),
+(87, 174, 175, 87, 556, $$Sudan$$, $$Omdurman$$, $$1874-6-12$$),
+(88, 176, 177, 88, 664, $$Bangladesh$$, $$Rangpur$$, $$1874-7-4$$),
+(89, 178, 179, 89, 751, $$Iran$$, $$Chabahar$$, $$1874-12-10$$),
+(90, 180, 181, 90, 778, $$Ghana$$, $$Tamale$$, $$1874-3-6$$),
+(91, 182, 183, 91, 463, $$Ghana$$, $$Kumasi$$, $$1874-12-20$$),
+(92, 184, 185, 92, 35, $$Fiji$$, $$Lautoka$$, $$1874-8-21$$),
+(93, 186, 187, 93, 49, $$India$$, $$Kanpur$$, $$1874-10-8$$),
+(94, 188, 189, 94, 160, $$Zimbabwe$$, $$Zvishavane$$, $$1874-4-5$$),
+(95, 190, 191, 95, 680, $$Bhutan$$, $$Phuntsholing$$, $$1874-3-19$$),
+(96, 192, 193, 96, 1079, $$Slovakia$$, $$Pezinok$$, $$1874-3-27$$),
+(97, 194, 195, 97, 160, $$Brunei$$, $$Seria$$, $$1874-3-23$$),
+(98, 196, 197, 98, 455, $$Uzbekistan$$, $$Koson$$, $$1874-10-9$$),
+(99, 198, 199, 99, 687, $$Romania$$, $$Dej$$, $$1874-10-17$$),
+(100, 200, 201, 100, 218, $$Guyana$$, $$Georgetown$$, $$1874-1-18$$),
+(101, 202, 203, 101, 924, $$Belarus$$, $$Kobryn$$, $$1874-8-16$$),
+(102, 204, 205, 102, 1195, $$Spain$$, $$Alcoy$$, $$1874-5-20$$),
+(103, 206, 207, 103, 298, $$Martinique$$, $$Ducos$$, $$1874-12-21$$),
+(104, 208, 209, 104, 127, $$Aruba$$, $$Angochi$$, $$1874-6-5$$),
+(105, 210, 211, 105, 516, $$Sweden$$, $$Tumba$$, $$1874-10-17$$),
+(106, 212, 213, 106, 750, $$Monaco$$, $$Monaco$$, $$1874-11-14$$),
+(107, 214, 215, 107, 782, $$Latvia$$, $$Tukums$$, $$1874-9-7$$),
+(108, 216, 217, 108, 202, $$Kiribati$$, $$Tarawa$$, $$1874-11-3$$),
+(109, 218, 219, 109, 950, $$Mongolia$$, $$Darhan$$, $$1874-4-6$$),
+(110, 220, 221, 110, 447, $$Armenia$$, $$Ararat$$, $$1874-7-8$$),
+(111, 222, 223, 111, 807, $$Benin$$, $$Bohicon$$, $$1874-7-28$$),
+(112, 224, 225, 112, 188, $$Chad$$, $$Sagh$$, $$1874-5-17$$),
+(113, 226, 227, 113, 1238, $$Myanmar$$, $$Myanaung$$, $$1874-11-7$$),
+(114, 228, 229, 114, 524, $$Serbia$$, $$Jagodina$$, $$1874-12-23$$),
+(115, 230, 231, 115, 792, $$Gabon$$, $$Oyem$$, $$1874-8-3$$),
+(116, 232, 233, 116, 928, $$France$$, $$Voiron$$, $$1874-1-16$$),
+(117, 234, 235, 117, 854, $$Somalia$$, $$Burao$$, $$1874-9-5$$),
+(118, 236, 237, 118, 1139, $$Morocco$$, $$Chefchaouene$$, $$1874-12-1$$),
+(119, 238, 239, 119, 972, $$Iceland$$, $$Akureyri$$, $$1874-12-6$$),
+(120, 240, 241, 120, 755, $$Kyrgyzstan$$, $$Talas$$, $$1874-9-24$$),
+(121, 242, 243, 121, 273, $$Djibouti$$, $$Tadjoura$$, $$1874-5-15$$),
+(122, 244, 245, 122, 541, $$Samoa$$, $$Apia$$, $$1874-1-25$$),
+(123, 246, 247, 123, 1038, $$Curacao$$, $$Willemstad$$, $$1874-6-7$$),
+(124, 248, 249, 124, 7, $$Myanmar$$, $$Mawlamyinegyunn$$, $$1874-9-25$$),
+(125, 250, 251, 125, 167, $$Bermuda$$, $$Hamilton$$, $$1874-4-13$$),
+(126, 252, 253, 126, 1176, $$Togo$$, $$Bassar$$, $$1874-2-22$$),
+(127, 254, 255, 127, 237, $$India$$, $$Holalkere$$, $$1874-12-27$$),
+(128, 256, 257, 128, 944, $$Tunisia$$, $$Zaghouan$$, $$1849-4-24$$),
+(129, 258, 259, 129, 923, $$Armenia$$, $$Spitak$$, $$1849-11-15$$),
+(130, 260, 261, 130, 1103, $$Germany$$, $$Heusenstamm$$, $$1849-10-9$$),
+(131, 262, 263, 131, 1045, $$Serbia$$, $$Kraljevo$$, $$1849-8-25$$),
+(132, 264, 265, 132, 723, $$Estonia$$, $$Viljandi$$, $$1849-4-16$$),
+(133, 266, 267, 133, 168, $$Rwanda$$, $$Byumba$$, $$1849-10-23$$),
+(134, 268, 269, 134, 36, $$Thailand$$, $$Sukhothai$$, $$1849-1-21$$),
+(135, 270, 271, 135, 650, $$Mali$$, $$Sagalo$$, $$1849-10-8$$),
+(136, 272, 273, 136, 1030, $$Colombia$$, $$Arauca$$, $$1849-11-26$$),
+(137, 274, 275, 137, 950, $$Belize$$, $$Belmopan$$, $$1849-9-1$$),
+(138, 276, 277, 138, 753, $$Burundi$$, $$Gitega$$, $$1849-8-19$$),
+(139, 278, 279, 139, 995, $$Switzerland$$, $$Littau$$, $$1849-4-23$$),
+(140, 280, 281, 140, 1097, $$Turkmenistan$$, $$Abadan$$, $$1849-1-18$$),
+(141, 282, 283, 141, 722, $$Turkey$$, $$Arsin$$, $$1849-3-19$$),
+(142, 284, 285, 142, 792, $$Guyana$$, $$Georgetown$$, $$1849-3-12$$),
+(143, 286, 287, 143, 540, $$Cuba$$, $$Corralillo$$, $$1849-5-4$$),
+(144, 288, 289, 144, 837, $$Kiribati$$, $$Tarawa$$, $$1849-6-20$$),
+(145, 290, 291, 145, 1061, $$Swaziland$$, $$Mbabane$$, $$1849-11-21$$),
+(146, 292, 293, 146, 978, $$Liberia$$, $$Buchanan$$, $$1849-5-12$$),
+(147, 294, 295, 147, 183, $$Netherlands$$, $$Haarlem$$, $$1849-6-16$$),
+(148, 296, 297, 148, 270, $$Latvia$$, $$Riga$$, $$1849-8-19$$),
+(149, 298, 299, 149, 1229, $$Ireland$$, $$Luimneach$$, $$1849-8-20$$),
+(150, 300, 301, 150, 342, $$Malta$$, $$Mosta$$, $$1849-12-16$$),
+(151, 302, 303, 151, 156, $$Macedonia$$, $$Gostivar$$, $$1849-1-23$$),
+(152, 304, 305, 152, 1234, $$Egypt$$, $$Luxor$$, $$1849-2-28$$),
+(153, 306, 307, 153, 446, $$Germany$$, $$Humboldtkolonie$$, $$1849-11-25$$),
+(154, 308, 309, 154, 1033, $$Honduras$$, $$Tocoa$$, $$1849-7-27$$),
+(155, 310, 311, 155, 84, $$Mongolia$$, $$Ulaangom$$, $$1849-2-23$$),
+(156, 312, 313, 156, 246, $$Turkey$$, $$Batman$$, $$1849-2-16$$),
+(157, 314, 315, 157, 449, $$Afghanistan$$, $$Khulm$$, $$1849-4-22$$),
+(158, 316, 317, 158, 241, $$Swaziland$$, $$Lobamba$$, $$1849-6-18$$),
+(159, 318, 319, 159, 476, $$Australia$$, $$Canberra$$, $$1849-5-23$$),
+(160, 320, 321, 160, 524, $$Armenia$$, $$Gavarr$$, $$1849-7-24$$),
+(161, 322, 323, 161, 85, $$Indonesia$$, $$Demak$$, $$1849-3-15$$),
+(162, 324, 325, 162, 1169, $$Guyana$$, $$Linden$$, $$1849-5-20$$),
+(163, 326, 327, 163, 1003, $$Botswana$$, $$Tonota$$, $$1849-1-16$$),
+(164, 328, 329, 164, 540, $$Iran$$, $$Karaj$$, $$1849-1-25$$),
+(165, 330, 331, 165, 1178, $$Burundi$$, $$Kayanza$$, $$1849-9-21$$),
+(166, 332, 333, 166, 127, $$Vietnam$$, $$Hanoi$$, $$1849-12-2$$),
+(167, 334, 335, 167, 119, $$Bolivia$$, $$Mizque$$, $$1849-9-7$$),
+(168, 336, 337, 168, 923, $$Argentina$$, $$Salta$$, $$1849-7-21$$),
+(169, 338, 339, 169, 372, $$Botswana$$, $$Mochudi$$, $$1849-4-8$$),
+(170, 340, 341, 170, 107, $$Malawi$$, $$Karonga$$, $$1849-8-10$$),
+(171, 342, 343, 171, 599, $$Pitcairn$$, $$Adamstown$$, $$1849-5-13$$),
+(172, 344, 345, 172, 501, $$Madagascar$$, $$Toliara$$, $$1849-10-22$$),
+(173, 346, 347, 173, 780, $$Israel$$, $$Dimona$$, $$1849-2-1$$),
+(174, 348, 349, 174, 1129, $$Seychelles$$, $$Victoria$$, $$1849-10-17$$),
+(175, 350, 351, 175, 1029, $$Nauru$$, $$Yaren$$, $$1849-5-19$$),
+(176, 352, 353, 176, 426, $$Cyprus$$, $$Larnaca$$, $$1849-6-13$$),
+(177, 354, 355, 177, 1005, $$Ethiopia$$, $$Kombolcha$$, $$1849-11-6$$),
+(178, 356, 357, 178, 720, $$Bangladesh$$, $$Paltan$$, $$1849-10-17$$),
+(179, 358, 359, 179, 978, $$Malta$$, $$Birkirkara$$, $$1849-2-26$$),
+(180, 360, 361, 180, 538, $$Indonesia$$, $$Balapulang$$, $$1849-7-7$$),
+(181, 362, 363, 181, 312, $$Israel$$, $$Ashqelon$$, $$1849-12-28$$),
+(182, 364, 365, 182, 530, $$Argentina$$, $$Ushuaia$$, $$1849-8-15$$),
+(183, 366, 367, 183, 852, $$Germany$$, $$Teltow$$, $$1849-2-7$$),
+(184, 368, 369, 184, 251, $$Ghana$$, $$Suhum$$, $$1849-9-7$$),
+(185, 370, 371, 185, 995, $$Somalia$$, $$Baidoa$$, $$1849-12-3$$),
+(186, 372, 373, 186, 365, $$Thailand$$, $$Sukhothai$$, $$1849-7-6$$),
+(187, 374, 375, 187, 389, $$Egypt$$, $$Tanda$$, $$1849-3-4$$),
+(188, 376, 377, 188, 264, $$Bhutan$$, $$Tsirang$$, $$1849-5-26$$),
+(189, 378, 379, 189, 713, $$Cambodia$$, $$Takeo$$, $$1849-8-13$$),
+(190, 380, 381, 190, 370, $$Sweden$$, $$Karlshamn$$, $$1849-10-25$$),
+(191, 382, 383, 191, 536, $$Bahrain$$, $$Sitrah$$, $$1849-1-17$$),
+(192, 384, 385, 192, 362, $$Taiwan$$, $$Yilan$$, $$1849-10-27$$),
+(193, 386, 387, 193, 165, $$Latvia$$, $$Jelgava$$, $$1849-11-7$$),
+(194, 388, 389, 194, 648, $$Switzerland$$, $$Lancy$$, $$1849-3-23$$),
+(195, 390, 391, 195, 792, $$Kosovo$$, $$Prizren$$, $$1849-12-2$$),
+(196, 392, 393, 196, 160, $$Mauritania$$, $$Kiffa$$, $$1849-2-24$$),
+(197, 394, 395, 197, 363, $$Laos$$, $$Vangviang$$, $$1849-3-21$$),
+(198, 396, 397, 198, 835, $$Cameroon$$, $$Yagoua$$, $$1849-5-28$$),
+(199, 398, 399, 199, 1087, $$Romania$$, $$Dorohoi$$, $$1849-2-28$$),
+(200, 400, 401, 200, 129, $$Poland$$, $$Ropczyce$$, $$1849-9-28$$),
+(201, 402, 403, 201, 979, $$Liberia$$, $$Harper$$, $$1849-2-28$$),
+(202, 404, 405, 202, 796, $$Mexico$$, $$Santiago$$, $$1849-8-1$$),
+(203, 406, 407, 203, 368, $$Ireland$$, $$Drogheda$$, $$1849-1-20$$),
+(204, 408, 409, 204, 707, $$Oman$$, $$Khasab$$, $$1849-7-4$$),
+(205, 410, 411, 205, 110, $$Belarus$$, $$Polatsk$$, $$1849-10-2$$),
+(206, 412, 413, 206, 226, $$Tunisia$$, $$Gremda$$, $$1849-1-7$$),
+(207, 414, 415, 207, 258, $$Pitcairn$$, $$Adamstown$$, $$1849-8-26$$),
+(208, 416, 417, 208, 482, $$Latvia$$, $$Riga$$, $$1849-11-28$$),
+(209, 418, 419, 209, 253, $$Kosovo$$, $$Leposaviq$$, $$1849-11-5$$),
+(210, 420, 421, 210, 880, $$Georgia$$, $$Gori$$, $$1849-3-2$$),
+(211, 422, 423, 211, 777, $$Iran$$, $$Kerman$$, $$1849-7-11$$),
+(212, 424, 425, 212, 489, $$Malawi$$, $$Blantyre$$, $$1849-2-12$$),
+(213, 426, 427, 213, 958, $$Bermuda$$, $$Hamilton$$, $$1849-2-9$$),
+(214, 428, 429, 214, 993, $$Latvia$$, $$Daugavpils$$, $$1849-3-1$$),
+(215, 430, 431, 215, 528, $$Kosovo$$, $$Prizren$$, $$1849-2-2$$),
+(216, 432, 433, 216, 1166, $$Montserrat$$, $$Brades$$, $$1849-9-1$$),
+(217, 434, 435, 217, 321, $$Philippines$$, $$Malilipot$$, $$1849-8-14$$),
+(218, 436, 437, 218, 482, $$Bermuda$$, $$Hamilton$$, $$1849-11-7$$),
+(219, 438, 439, 219, 1218, $$Kosovo$$, $$Glogovac$$, $$1849-1-5$$),
+(220, 440, 441, 220, 751, $$Romania$$, $$Petrila$$, $$1849-12-17$$),
+(221, 442, 443, 221, 328, $$Lebanon$$, $$Baalbek$$, $$1849-3-22$$),
+(222, 444, 445, 222, 752, $$Kyrgyzstan$$, $$Talas$$, $$1849-3-23$$),
+(223, 446, 447, 223, 687, $$Hungary$$, $$Sopron$$, $$1849-2-9$$),
+(224, 448, 449, 224, 441, $$Switzerland$$, $$Kreuzlingen$$, $$1849-4-28$$),
+(225, 450, 451, 225, 1033, $$Guyana$$, $$Georgetown$$, $$1849-2-26$$),
+(226, 452, 453, 226, 217, $$Kenya$$, $$Mumias$$, $$1849-1-9$$),
+(227, 454, 455, 227, 47, $$Mozambique$$, $$Maxixe$$, $$1849-9-13$$),
+(228, 456, 457, 228, 521, $$Denmark$$, $$Glostrup$$, $$1849-3-20$$),
+(229, 458, 459, 229, 169, $$Monaco$$, $$Monaco$$, $$1849-11-20$$),
+(230, 460, 461, 230, 20, $$Swaziland$$, $$Lobamba$$, $$1849-11-5$$),
+(231, 462, 463, 231, 72, $$Albania$$, $$Tirana$$, $$1849-2-1$$),
+(232, 464, 465, 232, 733, $$Bolivia$$, $$Yacuiba$$, $$1849-11-17$$),
+(233, 466, 467, 233, 600, $$Bahrain$$, $$Sitrah$$, $$1849-8-26$$),
+(234, 468, 469, 234, 409, $$Philippines$$, $$Parang$$, $$1849-4-19$$),
+(235, 470, 471, 235, 360, $$Tajikistan$$, $$Chubek$$, $$1849-10-10$$),
+(236, 472, 473, 236, 430, $$Indonesia$$, $$Pamekasan$$, $$1849-4-16$$),
+(237, 474, 475, 237, 945, $$Yemen$$, $$Ibb$$, $$1849-2-14$$),
+(238, 476, 477, 238, 901, $$Uruguay$$, $$Durazno$$, $$1849-4-3$$),
+(239, 478, 479, 239, 148, $$Austria$$, $$Baden$$, $$1849-3-26$$),
+(240, 480, 481, 240, 700, $$Namibia$$, $$Grootfontein$$, $$1849-8-28$$),
+(241, 482, 483, 241, 529, $$Switzerland$$, $$Dietikon$$, $$1849-10-6$$),
+(242, 484, 485, 242, 333, $$Bhutan$$, $$Tsirang$$, $$1849-10-11$$),
+(243, 486, 487, 243, 428, $$Libya$$, $$Yafran$$, $$1849-1-17$$),
+(244, 488, 489, 244, 247, $$Slovenia$$, $$Velenje$$, $$1849-11-25$$),
+(245, 490, 491, 245, 490, $$Peru$$, $$Tumbes$$, $$1849-10-26$$),
+(246, 492, 493, 246, 91, $$Switzerland$$, $$Baden$$, $$1849-10-15$$),
+(247, 494, 495, 247, 1206, $$Israel$$, $$Ramla$$, $$1849-7-18$$),
+(248, 496, 497, 248, 854, $$Panama$$, $$Pedregal$$, $$1849-11-15$$),
+(249, 498, 499, 249, 471, $$Niger$$, $$Magaria$$, $$1849-12-14$$),
+(250, 500, null, 250, 469, $$Namibia$$, $$Gobabis$$, $$1849-3-15$$),
+(251, null, null, 251, 844, $$Panama$$, $$Tocumen$$, $$1849-12-1$$),
+(252, null, null, 252, 149, $$Sudan$$, $$Atbara$$, $$1849-2-3$$),
+(253, null, null, 253, 630, $$Iran$$, $$Marand$$, $$1849-7-4$$),
+(254, null, null, 254, 129, $$Kiribati$$, $$Tarawa$$, $$1849-10-18$$),
+(255, null, null, 255, 577, $$Zambia$$, $$Kafue$$, $$1849-6-16$$),
+(256, null, null, 256, 766, $$Bhutan$$, $$Thimphu$$, $$1824-11-10$$),
+(257, null, null, 257, 1156, $$Kiribati$$, $$Tarawa$$, $$1824-6-21$$),
+(258, null, null, 258, 960, $$Tunisia$$, $$Tunis$$, $$1824-8-5$$),
+(259, null, null, 259, 590, $$Cambodia$$, $$Takeo$$, $$1824-10-10$$),
+(260, null, null, 260, 702, $$Russia$$, $$Starominskaya$$, $$1824-1-3$$),
+(261, null, null, 261, 1190, $$Cuba$$, $$Bejucal$$, $$1824-9-15$$),
+(262, null, null, 262, 49, $$Chile$$, $$Vallenar$$, $$1824-4-6$$),
+(263, null, null, 263, 17, $$Bhutan$$, $$Phuntsholing$$, $$1824-2-17$$),
+(264, null, null, 264, 322, $$Kiribati$$, $$Tarawa$$, $$1824-4-1$$),
+(265, null, null, 265, 10, $$Lithuania$$, $$Silute$$, $$1824-12-20$$),
+(266, null, null, 266, 594, $$Guyana$$, $$Georgetown$$, $$1824-8-9$$),
+(267, null, null, 267, 1060, $$Ukraine$$, $$Energodar$$, $$1824-2-19$$),
+(268, null, null, 268, 1000, $$Belize$$, $$Belmopan$$, $$1824-5-28$$),
+(269, null, null, 269, 87, $$Croatia$$, $$Koprivnica$$, $$1824-8-28$$),
+(270, null, null, 270, 180, $$Switzerland$$, $$Bellinzona$$, $$1824-10-28$$),
+(271, null, null, 271, 1244, $$Mauritania$$, $$Nouakchott$$, $$1824-9-2$$),
+(272, null, null, 272, 639, $$Nauru$$, $$Yaren$$, $$1824-12-15$$),
+(273, null, null, 273, 538, $$Malawi$$, $$Balaka$$, $$1824-10-28$$),
+(274, null, null, 274, 1129, $$Fiji$$, $$Labasa$$, $$1824-5-15$$),
+(275, null, null, 275, 891, $$Haiti$$, $$Jacmel$$, $$1824-11-6$$),
+(276, null, null, 276, 148, $$Canada$$, $$Brossard$$, $$1824-2-15$$),
+(277, null, null, 277, 380, $$Madagascar$$, $$Mahajanga$$, $$1824-3-4$$),
+(278, null, null, 278, 188, $$Uganda$$, $$Yumbe$$, $$1824-6-4$$),
+(279, null, null, 279, 1005, $$Nicaragua$$, $$Somoto$$, $$1824-6-13$$),
+(280, null, null, 280, 1190, $$Djibouti$$, $$Tadjoura$$, $$1824-1-26$$),
+(281, null, null, 281, 1206, $$Chad$$, $$Doba$$, $$1824-9-7$$),
+(282, null, null, 282, 230, $$Algeria$$, $$Kolea$$, $$1824-11-15$$),
+(283, null, null, 283, 218, $$Tunisia$$, $$Midoun$$, $$1824-10-20$$),
+(284, null, null, 284, 48, $$Austria$$, $$Wels$$, $$1824-7-3$$),
+(285, null, null, 285, 225, $$Liberia$$, $$Voinjama$$, $$1824-2-7$$),
+(286, null, null, 286, 424, $$Syria$$, $$Binnish$$, $$1824-1-23$$),
+(287, null, null, 287, 633, $$Malaysia$$, $$Putrajaya$$, $$1824-1-17$$),
+(288, null, null, 288, 437, $$Montenegro$$, $$Podgorica$$, $$1824-8-16$$),
+(289, null, null, 289, 362, $$Burundi$$, $$Muyinga$$, $$1824-10-22$$),
+(290, null, null, 290, 738, $$Samoa$$, $$Apia$$, $$1824-12-20$$),
+(291, null, null, 291, 622, $$Cameroon$$, $$Bali$$, $$1824-11-14$$),
+(292, null, null, 292, 1219, $$Bahrain$$, $$Manama$$, $$1824-3-28$$),
+(293, null, null, 293, 1060, $$Macedonia$$, $$Bitola$$, $$1824-8-12$$),
+(294, null, null, 294, 54, $$Chile$$, $$Collipulli$$, $$1824-4-28$$),
+(295, null, null, 295, 809, $$Argentina$$, $$Rawson$$, $$1824-2-18$$),
+(296, null, null, 296, 950, $$Tuvalu$$, $$Funafuti$$, $$1824-2-20$$),
+(297, null, null, 297, 997, $$Pakistan$$, $$Shahkot$$, $$1824-9-16$$),
+(298, null, null, 298, 134, $$Bahamas$$, $$Nassau$$, $$1824-9-26$$),
+(299, null, null, 299, 57, $$Germany$$, $$Achern$$, $$1824-10-6$$),
+(300, null, null, 300, 246, $$Japan$$, $$Otofuke$$, $$1824-3-17$$),
+(301, null, null, 301, 1052, $$Brazil$$, $$Esperantina$$, $$1824-4-23$$),
+(302, null, null, 302, 407, $$Guatemala$$, $$Chicacao$$, $$1824-10-7$$),
+(303, null, null, 303, 1015, $$Pitcairn$$, $$Adamstown$$, $$1824-7-8$$),
+(304, null, null, 304, 999, $$Jordan$$, $$Irbid$$, $$1824-10-20$$),
+(305, null, null, 305, 561, $$Uganda$$, $$Jinja$$, $$1824-1-3$$),
+(306, null, null, 306, 942, $$Somalia$$, $$Mogadishu$$, $$1824-1-17$$),
+(307, null, null, 307, 792, $$Spain$$, $$Antequera$$, $$1824-11-12$$),
+(308, null, null, 308, 442, $$Tunisia$$, $$Sousse$$, $$1824-1-7$$),
+(309, null, null, 309, 706, $$Norway$$, $$Arendal$$, $$1824-10-9$$),
+(310, null, null, 310, 706, $$Lesotho$$, $$Leribe$$, $$1824-9-20$$),
+(311, null, null, 311, 396, $$Curacao$$, $$Willemstad$$, $$1824-2-3$$),
+(312, null, null, 312, 650, $$Latvia$$, $$Ventspils$$, $$1824-3-17$$),
+(313, null, null, 313, 1109, $$China$$, $$Meihekou$$, $$1824-10-17$$),
+(314, null, null, 314, 276, $$Jamaica$$, $$Mandeville$$, $$1824-9-12$$),
+(315, null, null, 315, 720, $$Egypt$$, $$Damietta$$, $$1824-4-11$$),
+(316, null, null, 316, 407, $$Moldova$$, $$Orhei$$, $$1824-8-11$$),
+(317, null, null, 317, 406, $$Pakistan$$, $$Kunri$$, $$1824-7-17$$),
+(318, null, null, 318, 94, $$Mali$$, $$Sikasso$$, $$1824-8-15$$),
+(319, null, null, 319, 42, $$Denmark$$, $$Nyborg$$, $$1824-2-22$$),
+(320, null, null, 320, 809, $$Uruguay$$, $$Artigas$$, $$1824-6-11$$),
+(321, null, null, 321, 1023, $$Brazil$$, $$Batatais$$, $$1824-6-1$$),
+(322, null, null, 322, 285, $$Zambia$$, $$Kawambwa$$, $$1824-5-22$$),
+(323, null, null, 323, 1072, $$Iceland$$, $$Akureyri$$, $$1824-1-10$$),
+(324, null, null, 324, 590, $$Guatemala$$, $$Retalhuleu$$, $$1824-10-11$$),
+(325, null, null, 325, 253, $$Ecuador$$, $$Loja$$, $$1824-3-22$$),
+(326, null, null, 326, 234, $$Greece$$, $$Piraeus$$, $$1824-9-4$$),
+(327, null, null, 327, 1075, $$Bahrain$$, $$Manama$$, $$1824-12-22$$),
+(328, null, null, 328, 1241, $$Armenia$$, $$Kapan$$, $$1824-12-19$$),
+(329, null, null, 329, 527, $$Tanzania$$, $$Namanyere$$, $$1824-10-14$$),
+(330, null, null, 330, 984, $$Zambia$$, $$Petauke$$, $$1824-11-26$$),
+(331, null, null, 331, 66, $$Guinea$$, $$Siguiri$$, $$1824-3-27$$),
+(332, null, null, 332, 352, $$Tunisia$$, $$Manouba$$, $$1824-4-4$$),
+(333, null, null, 333, 366, $$Cuba$$, $$Yara$$, $$1824-4-8$$),
+(334, null, null, 334, 1218, $$Lesotho$$, $$Maseru$$, $$1824-3-2$$),
+(335, null, null, 335, 748, $$Gabon$$, $$Mouila$$, $$1824-2-17$$),
+(336, null, null, 336, 672, $$Bangladesh$$, $$Rangpur$$, $$1824-2-21$$),
+(337, null, null, 337, 1046, $$Cambodia$$, $$Pailin$$, $$1824-9-9$$),
+(338, null, null, 338, 111, $$Norway$$, $$Moss$$, $$1824-3-4$$),
+(339, null, null, 339, 792, $$Nigeria$$, $$Akwanga$$, $$1824-7-24$$),
+(340, null, null, 340, 270, $$Namibia$$, $$Windhoek$$, $$1824-12-17$$),
+(341, null, null, 341, 5, $$Tajikistan$$, $$Vahdat$$, $$1824-8-28$$),
+(342, null, null, 342, 801, $$Uruguay$$, $$Canelones$$, $$1824-5-22$$),
+(343, null, null, 343, 237, $$Uruguay$$, $$Florida$$, $$1824-6-21$$),
+(344, null, null, 344, 751, $$Mali$$, $$Bamako$$, $$1824-9-7$$),
+(345, null, null, 345, 1173, $$Peru$$, $$Sullana$$, $$1824-1-3$$),
+(346, null, null, 346, 303, $$Uzbekistan$$, $$Galaosiyo$$, $$1824-11-28$$),
+(347, null, null, 347, 544, $$Chile$$, $$Melipilla$$, $$1824-1-23$$),
+(348, null, null, 348, 841, $$Australia$$, $$Cheltenham$$, $$1824-11-27$$),
+(349, null, null, 349, 773, $$Montserrat$$, $$Plymouth$$, $$1824-10-13$$),
+(350, null, null, 350, 1247, $$Germany$$, $$Sonneberg$$, $$1824-10-14$$),
+(351, null, null, 351, 644, $$Kosovo$$, $$Orahovac$$, $$1824-6-5$$),
+(352, null, null, 352, 1228, $$Bhutan$$, $$Tsirang$$, $$1824-5-3$$),
+(353, null, null, 353, 679, $$Bhutan$$, $$Thimphu$$, $$1824-6-22$$),
+(354, null, null, 354, 696, $$India$$, $$Contai$$, $$1824-11-10$$),
+(355, null, null, 355, 986, $$Bangladesh$$, $$Sakhipur$$, $$1824-11-18$$),
+(356, null, null, 356, 371, $$Poland$$, $$Sosnowiec$$, $$1824-12-14$$),
+(357, null, null, 357, 1048, $$Albania$$, $$Burrel$$, $$1824-3-3$$),
+(358, null, null, 358, 474, $$Canada$$, $$Leduc$$, $$1824-8-4$$),
+(359, null, null, 359, 9, $$Kosovo$$, $$Pristina$$, $$1824-4-18$$),
+(360, null, null, 360, 867, $$Malta$$, $$Valletta$$, $$1824-8-2$$),
+(361, null, null, 361, 1032, $$Cyprus$$, $$Famagusta$$, $$1824-4-16$$),
+(362, null, null, 362, 839, $$Netherlands$$, $$Zaandam$$, $$1824-8-28$$),
+(363, null, null, 363, 796, $$Seychelles$$, $$Victoria$$, $$1824-9-22$$),
+(364, null, null, 364, 650, $$Denmark$$, $$Silkeborg$$, $$1824-6-1$$),
+(365, null, null, 365, 1118, $$Morocco$$, $$Azemmour$$, $$1824-9-6$$),
+(366, null, null, 366, 170, $$Liechtenstein$$, $$Vaduz$$, $$1824-5-2$$),
+(367, null, null, 367, 310, $$Monaco$$, $$Monaco$$, $$1824-7-8$$),
+(368, null, null, 368, 351, $$Nicaragua$$, $$Somotillo$$, $$1824-5-15$$),
+(369, null, null, 369, 25, $$Laos$$, $$Vientiane$$, $$1824-6-15$$),
+(370, null, null, 370, 593, $$China$$, $$Shangzhi$$, $$1824-8-19$$),
+(371, null, null, 371, 506, $$Denmark$$, $$Ringsted$$, $$1824-6-25$$),
+(372, null, null, 372, 691, $$Niger$$, $$Tahoua$$, $$1824-9-26$$),
+(373, null, null, 373, 99, $$Turkey$$, $$Osmaniye$$, $$1824-9-8$$),
+(374, null, null, 374, 407, $$Jordan$$, $$Judita$$, $$1824-12-2$$),
+(375, null, null, 375, 417, $$Bulgaria$$, $$Smolyan$$, $$1824-9-24$$),
+(376, null, null, 376, 106, $$Gambia$$, $$Brikama$$, $$1824-1-17$$),
+(377, null, null, 377, 26, $$Mozambique$$, $$Manjacaze$$, $$1824-7-15$$),
+(378, null, null, 378, 920, $$Montserrat$$, $$Brades$$, $$1824-4-6$$),
+(379, null, null, 379, 133, $$Tajikistan$$, $$Chkalov$$, $$1824-11-24$$),
+(380, null, null, 380, 270, $$Kazakhstan$$, $$Astana$$, $$1824-4-6$$),
+(381, null, null, 381, 81, $$Madagascar$$, $$Sakaraha$$, $$1824-8-28$$),
+(382, null, null, 382, 362, $$Ireland$$, $$Dublin$$, $$1824-11-13$$),
+(383, null, null, 383, 451, $$Moldova$$, $$Orhei$$, $$1824-1-16$$),
+(384, null, null, 384, 21, $$Azerbaijan$$, $$Barda$$, $$1824-7-21$$),
+(385, null, null, 385, 926, $$Malaysia$$, $$Mentekab$$, $$1824-12-17$$),
+(386, null, null, 386, 687, $$Turkmenistan$$, $$Atamyrat$$, $$1824-4-1$$),
+(387, null, null, 387, 11, $$Niue$$, $$Alofi$$, $$1824-5-9$$),
+(388, null, null, 388, 270, $$Martinique$$, $$Ducos$$, $$1824-3-8$$),
+(389, null, null, 389, 596, $$Myanmar$$, $$Yamethin$$, $$1824-11-22$$),
+(390, null, null, 390, 679, $$Cuba$$, $$Abreus$$, $$1824-6-4$$),
+(391, null, null, 391, 498, $$Malaysia$$, $$Kuang$$, $$1824-4-16$$),
+(392, null, null, 392, 178, $$Ethiopia$$, $$Tippi$$, $$1824-5-21$$),
+(393, null, null, 393, 753, $$Brunei$$, $$Tutong$$, $$1824-12-8$$),
+(394, null, null, 394, 474, $$Paraguay$$, $$Nemby$$, $$1824-2-1$$),
+(395, null, null, 395, 642, $$Serbia$$, $$Kikinda$$, $$1824-10-3$$),
+(396, null, null, 396, 329, $$Pakistan$$, $$Digri$$, $$1824-10-20$$),
+(397, null, null, 397, 4, $$Malaysia$$, $$Paka$$, $$1824-9-16$$),
+(398, null, null, 398, 184, $$Barbados$$, $$Bridgetown$$, $$1824-5-21$$),
+(399, null, null, 399, 533, $$Belgium$$, $$Frameries$$, $$1824-2-2$$),
+(400, null, null, 400, 1048, $$Nicaragua$$, $$Masaya$$, $$1824-9-26$$),
+(401, null, null, 401, 1198, $$Maldives$$, $$Male$$, $$1824-8-16$$),
+(402, null, null, 402, 452, $$Moldova$$, $$Tiraspolul$$, $$1824-6-23$$),
+(403, null, null, 403, 687, $$Latvia$$, $$Jelgava$$, $$1824-2-3$$),
+(404, null, null, 404, 821, $$Senegal$$, $$Tambacounda$$, $$1824-2-13$$),
+(405, null, null, 405, 840, $$Madagascar$$, $$Maevatanana$$, $$1824-2-27$$),
+(406, null, null, 406, 665, $$Nepal$$, $$Mahendranagar$$, $$1824-2-17$$),
+(407, null, null, 407, 81, $$Bermuda$$, $$Hamilton$$, $$1824-12-19$$),
+(408, null, null, 408, 269, $$Libya$$, $$Benghazi$$, $$1824-8-2$$),
+(409, null, null, 409, 780, $$Latvia$$, $$Salaspils$$, $$1824-4-2$$),
+(410, null, null, 410, 1059, $$Liechtenstein$$, $$Vaduz$$, $$1824-11-18$$),
+(411, null, null, 411, 314, $$Bangladesh$$, $$Azimpur$$, $$1824-3-2$$),
+(412, null, null, 412, 394, $$Mauritania$$, $$Nouakchott$$, $$1824-11-27$$),
+(413, null, null, 413, 307, $$Macedonia$$, $$Strumica$$, $$1824-12-26$$),
+(414, null, null, 414, 272, $$Maldives$$, $$Male$$, $$1824-8-26$$),
+(415, null, null, 415, 127, $$Bahrain$$, $$Sitrah$$, $$1824-2-21$$),
+(416, null, null, 416, 629, $$Swaziland$$, $$Lobamba$$, $$1824-6-9$$),
+(417, null, null, 417, 573, $$Gabon$$, $$Moanda$$, $$1824-4-6$$),
+(418, null, null, 418, 821, $$Yemen$$, $$Aden$$, $$1824-7-19$$),
+(419, null, null, 419, 875, $$Cambodia$$, $$Pursat$$, $$1824-5-8$$),
+(420, null, null, 420, 1054, $$Bhutan$$, $$Thimphu$$, $$1824-10-5$$),
+(421, null, null, 421, 108, $$Philippines$$, $$Pantubig$$, $$1824-8-7$$),
+(422, null, null, 422, 676, $$Swaziland$$, $$Mbabane$$, $$1824-4-6$$),
+(423, null, null, 423, 184, $$Peru$$, $$Mala$$, $$1824-5-23$$),
+(424, null, null, 424, 544, $$Cuba$$, $$Fomento$$, $$1824-11-16$$),
+(425, null, null, 425, 168, $$Mongolia$$, $$Uliastay$$, $$1824-7-13$$),
+(426, null, null, 426, 559, $$Martinique$$, $$Ducos$$, $$1824-5-14$$),
+(427, null, null, 427, 266, $$Malaysia$$, $$Kertih$$, $$1824-9-4$$),
+(428, null, null, 428, 548, $$Kiribati$$, $$Tarawa$$, $$1824-6-26$$),
+(429, null, null, 429, 976, $$Algeria$$, $$Arbatache$$, $$1824-4-17$$),
+(430, null, null, 430, 1103, $$Bermuda$$, $$Hamilton$$, $$1824-2-5$$),
+(431, null, null, 431, 1146, $$Gibraltar$$, $$Gibraltar$$, $$1824-4-16$$),
+(432, null, null, 432, 1051, $$Brazil$$, $$Santos$$, $$1824-5-21$$),
+(433, null, null, 433, 344, $$Montenegro$$, $$Cetinje$$, $$1824-1-26$$),
+(434, null, null, 434, 1048, $$Mali$$, $$Gao$$, $$1824-12-2$$),
+(435, null, null, 435, 1027, $$Laos$$, $$Phonsavan$$, $$1824-12-26$$),
+(436, null, null, 436, 72, $$Cambodia$$, $$Pursat$$, $$1824-3-4$$),
+(437, null, null, 437, 440, $$Slovenia$$, $$Kranj$$, $$1824-5-22$$),
+(438, null, null, 438, 653, $$China$$, $$Lichuan$$, $$1824-8-28$$),
+(439, null, null, 439, 757, $$Montenegro$$, $$Budva$$, $$1824-4-1$$),
+(440, null, null, 440, 694, $$Ecuador$$, $$Jipijapa$$, $$1824-4-23$$),
+(441, null, null, 441, 289, $$Curacao$$, $$Willemstad$$, $$1824-11-24$$),
+(442, null, null, 442, 91, $$Azerbaijan$$, $$Fizuli$$, $$1824-4-10$$),
+(443, null, null, 443, 539, $$Iceland$$, $$Akureyri$$, $$1824-10-3$$),
+(444, null, null, 444, 1024, $$Albania$$, $$Elbasan$$, $$1824-1-9$$),
+(445, null, null, 445, 247, $$Bhutan$$, $$Phuntsholing$$, $$1824-5-11$$),
+(446, null, null, 446, 428, $$Swaziland$$, $$Mbabane$$, $$1824-11-27$$),
+(447, null, null, 447, 828, $$Paraguay$$, $$Pilar$$, $$1824-4-1$$),
+(448, null, null, 448, 825, $$Palau$$, $$Melekeok$$, $$1824-8-28$$),
+(449, null, null, 449, 1115, $$Azerbaijan$$, $$Geoktschai$$, $$1824-1-16$$),
+(450, null, null, 450, 489, $$Somalia$$, $$Bosaso$$, $$1824-3-28$$),
+(451, null, null, 451, 597, $$Georgia$$, $$Khashuri$$, $$1824-5-8$$),
+(452, null, null, 452, 1207, $$Latvia$$, $$Daugavpils$$, $$1824-2-12$$),
+(453, null, null, 453, 1101, $$Netherlands$$, $$Breda$$, $$1824-5-25$$),
+(454, null, null, 454, 4, $$Oman$$, $$Khasab$$, $$1824-4-10$$),
+(455, null, null, 455, 329, $$Angola$$, $$Luena$$, $$1824-3-22$$),
+(456, null, null, 456, 37, $$Barbados$$, $$Bridgetown$$, $$1824-11-6$$),
+(457, null, null, 457, 135, $$Iraq$$, $$Ramadi$$, $$1824-7-20$$),
+(458, null, null, 458, 222, $$Mongolia$$, $$Bulgan$$, $$1824-9-12$$),
+(459, null, null, 459, 292, $$Benin$$, $$Nikki$$, $$1824-7-28$$),
+(460, null, null, 460, 227, $$Hungary$$, $$Kazincbarcika$$, $$1824-7-19$$),
+(461, null, null, 461, 76, $$Angola$$, $$Lobito$$, $$1824-5-28$$),
+(462, null, null, 462, 1054, $$Paraguay$$, $$Nemby$$, $$1824-6-22$$),
+(463, null, null, 463, 466, $$Moldova$$, $$Orhei$$, $$1824-3-21$$),
+(464, null, null, 464, 861, $$Peru$$, $$Rioja$$, $$1824-7-21$$),
+(465, null, null, 465, 1188, $$Afghanistan$$, $$Gereshk$$, $$1824-2-6$$),
+(466, null, null, 466, 645, $$Barbados$$, $$Bridgetown$$, $$1824-1-10$$),
+(467, null, null, 467, 413, $$Pakistan$$, $$Surkhpur$$, $$1824-8-21$$),
+(468, null, null, 468, 1178, $$Martinique$$, $$Ducos$$, $$1824-1-25$$),
+(469, null, null, 469, 1153, $$Burundi$$, $$Ruyigi$$, $$1824-10-8$$),
+(470, null, null, 470, 708, $$Morocco$$, $$Rabat$$, $$1824-1-26$$),
+(471, null, null, 471, 407, $$Gabon$$, $$Koulamoutou$$, $$1824-8-2$$),
+(472, null, null, 472, 332, $$Cuba$$, $$Colombia$$, $$1824-6-23$$),
+(473, null, null, 473, 318, $$Bermuda$$, $$Hamilton$$, $$1824-6-5$$),
+(474, null, null, 474, 981, $$Nigeria$$, $$Itu$$, $$1824-5-12$$),
+(475, null, null, 475, 1045, $$Albania$$, $$Tirana$$, $$1824-5-26$$),
+(476, null, null, 476, 184, $$Norway$$, $$Steinkjer$$, $$1824-9-26$$),
+(477, null, null, 477, 1072, $$Botswana$$, $$Maun$$, $$1824-4-24$$),
+(478, null, null, 478, 186, $$Botswana$$, $$Mosopa$$, $$1824-3-27$$),
+(479, null, null, 479, 1110, $$Denmark$$, $$Viborg$$, $$1824-4-26$$),
+(480, null, null, 480, 594, $$Denmark$$, $$Horsens$$, $$1824-7-21$$),
+(481, null, null, 481, 471, $$Mali$$, $$Sikasso$$, $$1824-1-10$$),
+(482, null, null, 482, 534, $$Canada$$, $$Edmonton$$, $$1824-3-4$$),
+(483, null, null, 483, 697, $$Gambia$$, $$Banjul$$, $$1824-9-6$$),
+(484, null, null, 484, 916, $$Ukraine$$, $$Luhansk$$, $$1824-4-8$$),
+(485, null, null, 485, 1024, $$Latvia$$, $$Jelgava$$, $$1824-7-22$$),
+(486, null, null, 486, 972, $$Denmark$$, $$Randers$$, $$1824-9-14$$),
+(487, null, null, 487, 253, $$Montserrat$$, $$Brades$$, $$1824-7-22$$),
+(488, null, null, 488, 652, $$Cuba$$, $$Esmeralda$$, $$1824-6-22$$),
+(489, null, null, 489, 273, $$Eritrea$$, $$Asmara$$, $$1824-12-16$$),
+(490, null, null, 490, 858, $$Albania$$, $$Tirana$$, $$1824-2-8$$),
+(491, null, null, 491, 1046, $$Nigeria$$, $$Malumfashi$$, $$1824-7-16$$),
+(492, null, null, 492, 403, $$Eritrea$$, $$Asmara$$, $$1824-2-8$$),
+(493, null, null, 493, 476, $$Tuvalu$$, $$Funafuti$$, $$1824-5-27$$),
+(494, null, null, 494, 921, $$Colombia$$, $$Pivijay$$, $$1824-6-19$$),
+(495, null, null, 495, 49, $$Maldives$$, $$Male$$, $$1824-2-5$$),
+(496, null, null, 496, 207, $$Taiwan$$, $$Hsinchu$$, $$1824-6-19$$),
+(497, null, null, 497, 452, $$Bhutan$$, $$Thimphu$$, $$1824-3-16$$),
+(498, null, null, 498, 1230, $$Azerbaijan$$, $$Yelenendorf$$, $$1824-7-9$$),
+(499, null, null, 499, 949, $$Philippines$$, $$Solano$$, $$1824-9-27$$),
+(500, null, null, 500, 1194, $$Hungary$$, $$Szombathely$$, $$1824-9-12$$);

@@ -1,500 +1,501 @@
-INSERT INTO visas VALUES (1, 8, 1, $$2044-3-6$$, 1023, $$Israel$$);
-INSERT INTO visas VALUES (2, 5, 2, $$2016-12-25$$, 899, $$Macedonia$$);
-INSERT INTO visas VALUES (3, 6, 3, $$2019-11-18$$, 282, $$Chile$$);
-INSERT INTO visas VALUES (4, 9, 4, $$1992-10-18$$, 628, $$Mexico$$);
-INSERT INTO visas VALUES (5, 6, 5, $$1993-3-13$$, 1158, $$Greenland$$);
-INSERT INTO visas VALUES (6, 1, 6, $$1991-4-11$$, 1060, $$Myanmar$$);
-INSERT INTO visas VALUES (7, 1, 7, $$1993-12-19$$, 687, $$Gambia$$);
-INSERT INTO visas VALUES (8, 4, 8, $$1967-6-10$$, 1185, $$Denmark$$);
-INSERT INTO visas VALUES (9, 9, 9, $$1966-11-4$$, 52, $$Ireland$$);
-INSERT INTO visas VALUES (10, 3, 10, $$1968-12-24$$, 557, $$Yemen$$);
-INSERT INTO visas VALUES (11, 7, 11, $$1963-8-12$$, 1056, $$Greenland$$);
-INSERT INTO visas VALUES (12, 2, 12, $$1967-3-25$$, 86, $$Lithuania$$);
-INSERT INTO visas VALUES (13, 3, 13, $$1963-12-5$$, 786, $$Zimbabwe$$);
-INSERT INTO visas VALUES (14, 9, 14, $$1967-9-3$$, 1152, $$Uzbekistan$$);
-INSERT INTO visas VALUES (15, 5, 15, $$1967-5-5$$, 1147, $$Uruguay$$);
-INSERT INTO visas VALUES (16, 9, 16, $$1944-3-2$$, 979, $$Nauru$$);
-INSERT INTO visas VALUES (17, 5, 17, $$1941-4-15$$, 1070, $$Libya$$);
-INSERT INTO visas VALUES (18, 8, 18, $$1944-10-8$$, 998, $$Bhutan$$);
-INSERT INTO visas VALUES (19, 9, 19, $$1943-11-12$$, 796, $$Maldives$$);
-INSERT INTO visas VALUES (20, 3, 20, $$1940-6-17$$, 277, $$Gabon$$);
-INSERT INTO visas VALUES (21, 2, 21, $$1941-1-6$$, 109, $$Belarus$$);
-INSERT INTO visas VALUES (22, 6, 22, $$1939-11-21$$, 809, $$Mayotte$$);
-INSERT INTO visas VALUES (23, 1, 23, $$1941-11-28$$, 724, $$Uruguay$$);
-INSERT INTO visas VALUES (24, 8, 24, $$1941-5-8$$, 503, $$Dominica$$);
-INSERT INTO visas VALUES (25, 2, 25, $$1942-11-12$$, 1236, $$Zimbabwe$$);
-INSERT INTO visas VALUES (26, 8, 26, $$1939-8-9$$, 633, $$Bhutan$$);
-INSERT INTO visas VALUES (27, 1, 27, $$1939-9-24$$, 253, $$Estonia$$);
-INSERT INTO visas VALUES (28, 5, 28, $$1941-8-15$$, 585, $$Syria$$);
-INSERT INTO visas VALUES (29, 9, 29, $$1940-2-17$$, 1197, $$Qatar$$);
-INSERT INTO visas VALUES (30, 3, 30, $$1944-12-12$$, 1159, $$Gabon$$);
-INSERT INTO visas VALUES (31, 6, 31, $$1940-3-28$$, 742, $$Dominica$$);
-INSERT INTO visas VALUES (32, 6, 32, $$1917-5-26$$, 1198, $$Hungary$$);
-INSERT INTO visas VALUES (33, 8, 33, $$1913-6-4$$, 222, $$Jordan$$);
-INSERT INTO visas VALUES (34, 6, 34, $$1917-3-27$$, 644, $$Italy$$);
-INSERT INTO visas VALUES (35, 8, 35, $$1914-7-13$$, 219, $$Romania$$);
-INSERT INTO visas VALUES (36, 4, 36, $$1920-8-6$$, 354, $$Norway$$);
-INSERT INTO visas VALUES (37, 1, 37, $$1918-2-10$$, 954, $$Belize$$);
-INSERT INTO visas VALUES (38, 4, 38, $$1913-9-16$$, 700, $$Sudan$$);
-INSERT INTO visas VALUES (39, 7, 39, $$1918-7-23$$, 429, $$Romania$$);
-INSERT INTO visas VALUES (40, 3, 40, $$1913-2-2$$, 702, $$USA$$);
-INSERT INTO visas VALUES (41, 7, 41, $$1915-1-11$$, 206, $$Seychelles$$);
-INSERT INTO visas VALUES (42, 5, 42, $$1917-1-4$$, 682, $$Azerbaijan$$);
-INSERT INTO visas VALUES (43, 7, 43, $$1917-10-19$$, 765, $$Sudan$$);
-INSERT INTO visas VALUES (44, 3, 44, $$1916-3-8$$, 281, $$Botswana$$);
-INSERT INTO visas VALUES (45, 4, 45, $$1918-12-9$$, 890, $$Syria$$);
-INSERT INTO visas VALUES (46, 6, 46, $$1913-12-6$$, 573, $$Vietnam$$);
-INSERT INTO visas VALUES (47, 1, 47, $$1917-2-27$$, 1155, $$Singapore$$);
-INSERT INTO visas VALUES (48, 2, 48, $$1918-8-7$$, 661, $$Malaysia$$);
-INSERT INTO visas VALUES (49, 5, 49, $$1914-5-3$$, 440, $$Namibia$$);
-INSERT INTO visas VALUES (50, 5, 50, $$1914-7-3$$, 1079, $$Honduras$$);
-INSERT INTO visas VALUES (51, 9, 51, $$1918-2-10$$, 647, $$Djibouti$$);
-INSERT INTO visas VALUES (52, 4, 52, $$1915-4-2$$, 766, $$Poland$$);
-INSERT INTO visas VALUES (53, 3, 53, $$1919-5-6$$, 979, $$Niue$$);
-INSERT INTO visas VALUES (54, 1, 54, $$1917-4-16$$, 1025, $$Liberia$$);
-INSERT INTO visas VALUES (55, 3, 55, $$1913-8-12$$, 595, $$Ecuador$$);
-INSERT INTO visas VALUES (56, 8, 56, $$1917-4-17$$, 1150, $$Madagascar$$);
-INSERT INTO visas VALUES (57, 7, 57, $$1918-4-1$$, 757, $$Iceland$$);
-INSERT INTO visas VALUES (58, 2, 58, $$1917-8-25$$, 490, $$Norway$$);
-INSERT INTO visas VALUES (59, 4, 59, $$1920-4-3$$, 222, $$Montserrat$$);
-INSERT INTO visas VALUES (60, 5, 60, $$1913-5-21$$, 163, $$Djibouti$$);
-INSERT INTO visas VALUES (61, 7, 61, $$1914-4-16$$, 194, $$Myanmar$$);
-INSERT INTO visas VALUES (62, 2, 62, $$1916-2-5$$, 661, $$Botswana$$);
-INSERT INTO visas VALUES (63, 8, 63, $$1915-9-5$$, 1050, $$Ireland$$);
-INSERT INTO visas VALUES (64, 3, 64, $$1891-12-21$$, 1057, $$Afghanistan$$);
-INSERT INTO visas VALUES (65, 2, 65, $$1888-8-28$$, 265, $$Haiti$$);
-INSERT INTO visas VALUES (66, 6, 66, $$1889-8-12$$, 1028, $$Estonia$$);
-INSERT INTO visas VALUES (67, 8, 67, $$1891-10-10$$, 626, $$Iraq$$);
-INSERT INTO visas VALUES (68, 7, 68, $$1892-8-17$$, 328, $$Rwanda$$);
-INSERT INTO visas VALUES (69, 1, 69, $$1891-12-3$$, 785, $$Argentina$$);
-INSERT INTO visas VALUES (70, 6, 70, $$1892-4-25$$, 840, $$Benin$$);
-INSERT INTO visas VALUES (71, 7, 71, $$1893-12-11$$, 745, $$Yemen$$);
-INSERT INTO visas VALUES (72, 2, 72, $$1893-4-17$$, 827, $$Bahamas$$);
-INSERT INTO visas VALUES (73, 2, 73, $$1892-10-7$$, 1093, $$Myanmar$$);
-INSERT INTO visas VALUES (74, 8, 74, $$1891-8-16$$, 128, $$Guinea$$);
-INSERT INTO visas VALUES (75, 7, 75, $$1891-9-20$$, 1107, $$Martinique$$);
-INSERT INTO visas VALUES (76, 8, 76, $$1889-9-2$$, 765, $$Iceland$$);
-INSERT INTO visas VALUES (77, 1, 77, $$1892-3-4$$, 1144, $$Uzbekistan$$);
-INSERT INTO visas VALUES (78, 9, 78, $$1891-5-16$$, 185, $$Bolivia$$);
-INSERT INTO visas VALUES (79, 8, 79, $$1892-5-13$$, 1181, $$Gambia$$);
-INSERT INTO visas VALUES (80, 8, 80, $$1889-1-16$$, 802, $$Fiji$$);
-INSERT INTO visas VALUES (81, 3, 81, $$1888-7-23$$, 912, $$Maldives$$);
-INSERT INTO visas VALUES (82, 3, 82, $$1888-6-15$$, 610, $$Canada$$);
-INSERT INTO visas VALUES (83, 1, 83, $$1891-2-8$$, 1184, $$Slovakia$$);
-INSERT INTO visas VALUES (84, 3, 84, $$1892-6-21$$, 938, $$Cuba$$);
-INSERT INTO visas VALUES (85, 3, 85, $$1894-7-25$$, 21, $$Kenya$$);
-INSERT INTO visas VALUES (86, 2, 86, $$1892-8-18$$, 720, $$Gabon$$);
-INSERT INTO visas VALUES (87, 1, 87, $$1889-7-3$$, 384, $$Tajikistan$$);
-INSERT INTO visas VALUES (88, 5, 88, $$1895-6-4$$, 685, $$Australia$$);
-INSERT INTO visas VALUES (89, 1, 89, $$1892-9-19$$, 599, $$Nicaragua$$);
-INSERT INTO visas VALUES (90, 3, 90, $$1891-4-10$$, 465, $$Malaysia$$);
-INSERT INTO visas VALUES (91, 9, 91, $$1891-8-10$$, 913, $$Uzbekistan$$);
-INSERT INTO visas VALUES (92, 4, 92, $$1889-12-27$$, 365, $$Mauritania$$);
-INSERT INTO visas VALUES (93, 4, 93, $$1888-4-14$$, 1183, $$Nepal$$);
-INSERT INTO visas VALUES (94, 8, 94, $$1894-11-1$$, 509, $$Austria$$);
-INSERT INTO visas VALUES (95, 9, 95, $$1889-6-24$$, 1070, $$Albania$$);
-INSERT INTO visas VALUES (96, 9, 96, $$1889-5-20$$, 986, $$Namibia$$);
-INSERT INTO visas VALUES (97, 1, 97, $$1891-1-1$$, 705, $$Ireland$$);
-INSERT INTO visas VALUES (98, 1, 98, $$1893-7-1$$, 125, $$Luxembourg$$);
-INSERT INTO visas VALUES (99, 1, 99, $$1889-7-18$$, 657, $$Guatemala$$);
-INSERT INTO visas VALUES (100, 5, 100, $$1892-4-21$$, 596, $$Comoros$$);
-INSERT INTO visas VALUES (101, 1, 101, $$1894-8-16$$, 1132, $$Eritrea$$);
-INSERT INTO visas VALUES (102, 3, 102, $$1892-5-5$$, 630, $$Uruguay$$);
-INSERT INTO visas VALUES (103, 7, 103, $$1890-8-14$$, 637, $$Singapore$$);
-INSERT INTO visas VALUES (104, 4, 104, $$1889-9-12$$, 497, $$Uzbekistan$$);
-INSERT INTO visas VALUES (105, 8, 105, $$1891-4-1$$, 827, $$Gibraltar$$);
-INSERT INTO visas VALUES (106, 9, 106, $$1887-6-19$$, 879, $$Malaysia$$);
-INSERT INTO visas VALUES (107, 4, 107, $$1889-6-22$$, 726, $$Samoa$$);
-INSERT INTO visas VALUES (108, 7, 108, $$1895-2-21$$, 252, $$Montserrat$$);
-INSERT INTO visas VALUES (109, 4, 109, $$1888-7-13$$, 994, $$Maldives$$);
-INSERT INTO visas VALUES (110, 3, 110, $$1892-11-22$$, 965, $$Maldives$$);
-INSERT INTO visas VALUES (111, 6, 111, $$1895-8-18$$, 661, $$Mauritania$$);
-INSERT INTO visas VALUES (112, 6, 112, $$1893-1-15$$, 113, $$Georgia$$);
-INSERT INTO visas VALUES (113, 3, 113, $$1892-8-21$$, 935, $$China$$);
-INSERT INTO visas VALUES (114, 4, 114, $$1891-8-24$$, 549, $$Mayotte$$);
-INSERT INTO visas VALUES (115, 3, 115, $$1895-10-13$$, 125, $$USA$$);
-INSERT INTO visas VALUES (116, 3, 116, $$1894-9-4$$, 832, $$Fiji$$);
-INSERT INTO visas VALUES (117, 7, 117, $$1891-7-26$$, 1197, $$Ecuador$$);
-INSERT INTO visas VALUES (118, 2, 118, $$1895-3-15$$, 962, $$Ukraine$$);
-INSERT INTO visas VALUES (119, 2, 119, $$1889-8-8$$, 185, $$Tajikistan$$);
-INSERT INTO visas VALUES (120, 2, 120, $$1889-10-5$$, 184, $$Liechtenstein$$);
-INSERT INTO visas VALUES (121, 9, 121, $$1888-11-28$$, 736, $$Qatar$$);
-INSERT INTO visas VALUES (122, 1, 122, $$1891-1-10$$, 391, $$Curacao$$);
-INSERT INTO visas VALUES (123, 4, 123, $$1892-5-15$$, 480, $$Switzerland$$);
-INSERT INTO visas VALUES (124, 5, 124, $$1894-12-27$$, 689, $$Ethiopia$$);
-INSERT INTO visas VALUES (125, 4, 125, $$1890-10-3$$, 1033, $$Nepal$$);
-INSERT INTO visas VALUES (126, 4, 126, $$1890-5-9$$, 308, $$Comoros$$);
-INSERT INTO visas VALUES (127, 7, 127, $$1895-12-24$$, 1039, $$Sweden$$);
-INSERT INTO visas VALUES (128, 5, 128, $$1867-8-26$$, 837, $$Brazil$$);
-INSERT INTO visas VALUES (129, 8, 129, $$1865-10-26$$, 912, $$Georgia$$);
-INSERT INTO visas VALUES (130, 2, 130, $$1866-5-13$$, 667, $$Senegal$$);
-INSERT INTO visas VALUES (131, 9, 131, $$1862-11-18$$, 763, $$Montenegro$$);
-INSERT INTO visas VALUES (132, 7, 132, $$1868-8-20$$, 665, $$Morocco$$);
-INSERT INTO visas VALUES (133, 6, 133, $$1868-8-11$$, 582, $$Romania$$);
-INSERT INTO visas VALUES (134, 3, 134, $$1863-4-21$$, 454, $$Argentina$$);
-INSERT INTO visas VALUES (135, 8, 135, $$1864-1-27$$, 328, $$Bermuda$$);
-INSERT INTO visas VALUES (136, 3, 136, $$1863-5-3$$, 27, $$Austria$$);
-INSERT INTO visas VALUES (137, 1, 137, $$1866-1-5$$, 969, $$Bermuda$$);
-INSERT INTO visas VALUES (138, 4, 138, $$1864-7-13$$, 657, $$Vietnam$$);
-INSERT INTO visas VALUES (139, 5, 139, $$1866-4-28$$, 125, $$Nicaragua$$);
-INSERT INTO visas VALUES (140, 7, 140, $$1867-7-14$$, 866, $$Eritrea$$);
-INSERT INTO visas VALUES (141, 5, 141, $$1865-3-12$$, 280, $$Sudan$$);
-INSERT INTO visas VALUES (142, 4, 142, $$1864-8-23$$, 259, $$Jamaica$$);
-INSERT INTO visas VALUES (143, 7, 143, $$1867-8-11$$, 486, $$Cambodia$$);
-INSERT INTO visas VALUES (144, 4, 144, $$1865-8-3$$, 768, $$Madagascar$$);
-INSERT INTO visas VALUES (145, 9, 145, $$1867-4-14$$, 206, $$Venezuela$$);
-INSERT INTO visas VALUES (146, 2, 146, $$1870-10-26$$, 690, $$Suriname$$);
-INSERT INTO visas VALUES (147, 4, 147, $$1868-5-16$$, 1191, $$Malawi$$);
-INSERT INTO visas VALUES (148, 9, 148, $$1867-7-8$$, 1100, $$Pakistan$$);
-INSERT INTO visas VALUES (149, 6, 149, $$1865-3-4$$, 727, $$Aruba$$);
-INSERT INTO visas VALUES (150, 1, 150, $$1864-8-24$$, 760, $$Liberia$$);
-INSERT INTO visas VALUES (151, 4, 151, $$1863-3-27$$, 134, $$Macao$$);
-INSERT INTO visas VALUES (152, 7, 152, $$1864-9-1$$, 977, $$Myanmar$$);
-INSERT INTO visas VALUES (153, 8, 153, $$1870-8-8$$, 1027, $$Bulgaria$$);
-INSERT INTO visas VALUES (154, 9, 154, $$1870-8-19$$, 506, $$Malta$$);
-INSERT INTO visas VALUES (155, 7, 155, $$1868-1-4$$, 568, $$Burundi$$);
-INSERT INTO visas VALUES (156, 5, 156, $$1863-7-7$$, 638, $$Botswana$$);
-INSERT INTO visas VALUES (157, 8, 157, $$1868-6-13$$, 133, $$Honduras$$);
-INSERT INTO visas VALUES (158, 3, 158, $$1866-3-22$$, 364, $$Ethiopia$$);
-INSERT INTO visas VALUES (159, 9, 159, $$1870-2-6$$, 946, $$Latvia$$);
-INSERT INTO visas VALUES (160, 5, 160, $$1864-8-4$$, 718, $$Colombia$$);
-INSERT INTO visas VALUES (161, 2, 161, $$1864-3-26$$, 124, $$Algeria$$);
-INSERT INTO visas VALUES (162, 5, 162, $$1868-11-11$$, 1153, $$Rwanda$$);
-INSERT INTO visas VALUES (163, 8, 163, $$1869-6-28$$, 1239, $$Nicaragua$$);
-INSERT INTO visas VALUES (164, 6, 164, $$1865-4-25$$, 1, $$Uganda$$);
-INSERT INTO visas VALUES (165, 2, 165, $$1866-2-7$$, 354, $$Italy$$);
-INSERT INTO visas VALUES (166, 9, 166, $$1869-4-17$$, 452, $$Montenegro$$);
-INSERT INTO visas VALUES (167, 3, 167, $$1870-8-13$$, 557, $$Kosovo$$);
-INSERT INTO visas VALUES (168, 1, 168, $$1865-12-26$$, 133, $$Peru$$);
-INSERT INTO visas VALUES (169, 3, 169, $$1865-1-20$$, 511, $$Lithuania$$);
-INSERT INTO visas VALUES (170, 9, 170, $$1865-11-15$$, 628, $$Ireland$$);
-INSERT INTO visas VALUES (171, 3, 171, $$1863-1-21$$, 21, $$Jordan$$);
-INSERT INTO visas VALUES (172, 3, 172, $$1867-10-19$$, 335, $$Mongolia$$);
-INSERT INTO visas VALUES (173, 8, 173, $$1865-11-19$$, 559, $$Switzerland$$);
-INSERT INTO visas VALUES (174, 5, 174, $$1868-5-10$$, 1026, $$Netherlands$$);
-INSERT INTO visas VALUES (175, 3, 175, $$1870-12-3$$, 682, $$Singapore$$);
-INSERT INTO visas VALUES (176, 2, 176, $$1867-4-18$$, 277, $$Peru$$);
-INSERT INTO visas VALUES (177, 8, 177, $$1868-1-25$$, 106, $$Barbados$$);
-INSERT INTO visas VALUES (178, 5, 178, $$1865-7-25$$, 858, $$Turkmenistan$$);
-INSERT INTO visas VALUES (179, 5, 179, $$1866-4-4$$, 456, $$Gambia$$);
-INSERT INTO visas VALUES (180, 5, 180, $$1863-6-11$$, 37, $$Macao$$);
-INSERT INTO visas VALUES (181, 9, 181, $$1865-5-28$$, 574, $$Syria$$);
-INSERT INTO visas VALUES (182, 5, 182, $$1867-5-20$$, 827, $$Haiti$$);
-INSERT INTO visas VALUES (183, 8, 183, $$1866-4-19$$, 1247, $$Lesotho$$);
-INSERT INTO visas VALUES (184, 2, 184, $$1862-10-9$$, 890, $$Paraguay$$);
-INSERT INTO visas VALUES (185, 3, 185, $$1869-12-1$$, 665, $$Bahrain$$);
-INSERT INTO visas VALUES (186, 2, 186, $$1864-11-5$$, 809, $$Taiwan$$);
-INSERT INTO visas VALUES (187, 6, 187, $$1863-6-24$$, 793, $$Guinea$$);
-INSERT INTO visas VALUES (188, 5, 188, $$1864-4-23$$, 832, $$Cambodia$$);
-INSERT INTO visas VALUES (189, 6, 189, $$1865-4-19$$, 1083, $$Greece$$);
-INSERT INTO visas VALUES (190, 2, 190, $$1862-8-11$$, 906, $$Jordan$$);
-INSERT INTO visas VALUES (191, 6, 191, $$1867-2-7$$, 1161, $$Chile$$);
-INSERT INTO visas VALUES (192, 8, 192, $$1864-7-8$$, 731, $$Romania$$);
-INSERT INTO visas VALUES (193, 4, 193, $$1863-7-19$$, 644, $$Thailand$$);
-INSERT INTO visas VALUES (194, 8, 194, $$1864-1-5$$, 478, $$Estonia$$);
-INSERT INTO visas VALUES (195, 7, 195, $$1867-2-28$$, 821, $$USA$$);
-INSERT INTO visas VALUES (196, 6, 196, $$1865-5-27$$, 453, $$Pitcairn$$);
-INSERT INTO visas VALUES (197, 4, 197, $$1868-9-10$$, 1089, $$Venezuela$$);
-INSERT INTO visas VALUES (198, 5, 198, $$1866-4-27$$, 302, $$Mali$$);
-INSERT INTO visas VALUES (199, 2, 199, $$1862-3-13$$, 585, $$Nepal$$);
-INSERT INTO visas VALUES (200, 5, 200, $$1867-11-2$$, 829, $$Mexico$$);
-INSERT INTO visas VALUES (201, 3, 201, $$1863-8-26$$, 972, $$Mozambique$$);
-INSERT INTO visas VALUES (202, 5, 202, $$1865-11-13$$, 1188, $$Bolivia$$);
-INSERT INTO visas VALUES (203, 7, 203, $$1869-1-11$$, 1148, $$Malawi$$);
-INSERT INTO visas VALUES (204, 8, 204, $$1865-9-17$$, 777, $$Liechtenstein$$);
-INSERT INTO visas VALUES (205, 2, 205, $$1867-7-13$$, 539, $$Cameroon$$);
-INSERT INTO visas VALUES (206, 5, 206, $$1865-6-18$$, 104, $$Croatia$$);
-INSERT INTO visas VALUES (207, 5, 207, $$1863-2-16$$, 629, $$Mauritania$$);
-INSERT INTO visas VALUES (208, 3, 208, $$1865-5-8$$, 874, $$Honduras$$);
-INSERT INTO visas VALUES (209, 7, 209, $$1870-6-8$$, 780, $$Monaco$$);
-INSERT INTO visas VALUES (210, 9, 210, $$1866-6-8$$, 1132, $$Cameroon$$);
-INSERT INTO visas VALUES (211, 8, 211, $$1863-9-22$$, 704, $$Yemen$$);
-INSERT INTO visas VALUES (212, 6, 212, $$1863-10-17$$, 919, $$Niue$$);
-INSERT INTO visas VALUES (213, 4, 213, $$1865-3-14$$, 519, $$Italy$$);
-INSERT INTO visas VALUES (214, 8, 214, $$1865-10-21$$, 1121, $$Montenegro$$);
-INSERT INTO visas VALUES (215, 9, 215, $$1868-10-11$$, 104, $$Switzerland$$);
-INSERT INTO visas VALUES (216, 2, 216, $$1865-6-8$$, 712, $$Kosovo$$);
-INSERT INTO visas VALUES (217, 3, 217, $$1865-7-5$$, 799, $$Azerbaijan$$);
-INSERT INTO visas VALUES (218, 9, 218, $$1869-11-28$$, 317, $$Ukraine$$);
-INSERT INTO visas VALUES (219, 8, 219, $$1865-11-19$$, 261, $$Chad$$);
-INSERT INTO visas VALUES (220, 6, 220, $$1867-7-17$$, 473, $$Syria$$);
-INSERT INTO visas VALUES (221, 7, 221, $$1867-2-22$$, 814, $$Brunei$$);
-INSERT INTO visas VALUES (222, 7, 222, $$1865-7-14$$, 99, $$Qatar$$);
-INSERT INTO visas VALUES (223, 2, 223, $$1869-4-23$$, 908, $$Mozambique$$);
-INSERT INTO visas VALUES (224, 6, 224, $$1867-7-4$$, 610, $$Belarus$$);
-INSERT INTO visas VALUES (225, 5, 225, $$1867-6-10$$, 642, $$Brunei$$);
-INSERT INTO visas VALUES (226, 7, 226, $$1866-8-24$$, 943, $$Honduras$$);
-INSERT INTO visas VALUES (227, 6, 227, $$1865-5-11$$, 1056, $$Sweden$$);
-INSERT INTO visas VALUES (228, 1, 228, $$1867-5-5$$, 437, $$Netherlands$$);
-INSERT INTO visas VALUES (229, 8, 229, $$1865-1-22$$, 1198, $$Mozambique$$);
-INSERT INTO visas VALUES (230, 6, 230, $$1863-2-11$$, 599, $$Bahrain$$);
-INSERT INTO visas VALUES (231, 2, 231, $$1865-11-13$$, 895, $$Montserrat$$);
-INSERT INTO visas VALUES (232, 9, 232, $$1863-11-19$$, 781, $$Argentina$$);
-INSERT INTO visas VALUES (233, 3, 233, $$1868-3-20$$, 626, $$Georgia$$);
-INSERT INTO visas VALUES (234, 2, 234, $$1863-2-9$$, 147, $$Switzerland$$);
-INSERT INTO visas VALUES (235, 9, 235, $$1864-6-15$$, 536, $$Malawi$$);
-INSERT INTO visas VALUES (236, 5, 236, $$1863-7-6$$, 147, $$Turkmenistan$$);
-INSERT INTO visas VALUES (237, 7, 237, $$1868-7-14$$, 52, $$Barbados$$);
-INSERT INTO visas VALUES (238, 3, 238, $$1866-1-1$$, 233, $$Jordan$$);
-INSERT INTO visas VALUES (239, 2, 239, $$1868-2-6$$, 9, $$Aruba$$);
-INSERT INTO visas VALUES (240, 7, 240, $$1865-11-12$$, 231, $$Bangladesh$$);
-INSERT INTO visas VALUES (241, 4, 241, $$1866-2-7$$, 322, $$Montenegro$$);
-INSERT INTO visas VALUES (242, 2, 242, $$1865-5-18$$, 700, $$Luxembourg$$);
-INSERT INTO visas VALUES (243, 3, 243, $$1867-11-22$$, 1180, $$Guinea$$);
-INSERT INTO visas VALUES (244, 2, 244, $$1870-6-12$$, 224, $$Iraq$$);
-INSERT INTO visas VALUES (245, 3, 245, $$1867-12-1$$, 5, $$Colombia$$);
-INSERT INTO visas VALUES (246, 8, 246, $$1867-2-3$$, 275, $$Mexico$$);
-INSERT INTO visas VALUES (247, 6, 247, $$1864-3-28$$, 1089, $$Botswana$$);
-INSERT INTO visas VALUES (248, 1, 248, $$1867-3-6$$, 1183, $$Bolivia$$);
-INSERT INTO visas VALUES (249, 3, 249, $$1865-9-22$$, 205, $$Cameroon$$);
-INSERT INTO visas VALUES (250, 6, 250, $$1869-2-3$$, 709, $$Albania$$);
-INSERT INTO visas VALUES (251, 3, 251, $$1866-4-10$$, 1039, $$Tunisia$$);
-INSERT INTO visas VALUES (252, 2, 252, $$1864-2-26$$, 1247, $$Gibraltar$$);
-INSERT INTO visas VALUES (253, 1, 253, $$1865-8-26$$, 830, $$Namibia$$);
-INSERT INTO visas VALUES (254, 5, 254, $$1868-3-10$$, 291, $$Azerbaijan$$);
-INSERT INTO visas VALUES (255, 4, 255, $$1864-2-26$$, 1097, $$Iraq$$);
-INSERT INTO visas VALUES (256, 4, 256, $$1842-10-28$$, 967, $$Cameroon$$);
-INSERT INTO visas VALUES (257, 5, 257, $$1837-4-26$$, 147, $$Latvia$$);
-INSERT INTO visas VALUES (258, 5, 258, $$1837-1-19$$, 863, $$Barbados$$);
-INSERT INTO visas VALUES (259, 3, 259, $$1840-3-1$$, 490, $$Bermuda$$);
-INSERT INTO visas VALUES (260, 9, 260, $$1843-10-8$$, 586, $$Vietnam$$);
-INSERT INTO visas VALUES (261, 1, 261, $$1839-8-11$$, 300, $$Tanzania$$);
-INSERT INTO visas VALUES (262, 9, 262, $$1842-8-20$$, 410, $$Honduras$$);
-INSERT INTO visas VALUES (263, 1, 263, $$1841-10-12$$, 84, $$Seychelles$$);
-INSERT INTO visas VALUES (264, 9, 264, $$1839-1-21$$, 75, $$Belgium$$);
-INSERT INTO visas VALUES (265, 1, 265, $$1839-3-15$$, 571, $$Nauru$$);
-INSERT INTO visas VALUES (266, 7, 266, $$1840-10-13$$, 141, $$Nicaragua$$);
-INSERT INTO visas VALUES (267, 5, 267, $$1840-3-11$$, 736, $$Aruba$$);
-INSERT INTO visas VALUES (268, 1, 268, $$1839-3-12$$, 530, $$Mali$$);
-INSERT INTO visas VALUES (269, 1, 269, $$1840-1-20$$, 729, $$Finland$$);
-INSERT INTO visas VALUES (270, 3, 270, $$1840-2-13$$, 739, $$Mongolia$$);
-INSERT INTO visas VALUES (271, 6, 271, $$1839-4-23$$, 1170, $$Djibouti$$);
-INSERT INTO visas VALUES (272, 8, 272, $$1840-2-8$$, 156, $$Brunei$$);
-INSERT INTO visas VALUES (273, 4, 273, $$1837-6-12$$, 203, $$Ghana$$);
-INSERT INTO visas VALUES (274, 7, 274, $$1843-2-4$$, 257, $$Lithuania$$);
-INSERT INTO visas VALUES (275, 3, 275, $$1841-9-25$$, 313, $$Bermuda$$);
-INSERT INTO visas VALUES (276, 7, 276, $$1839-9-4$$, 1234, $$Mexico$$);
-INSERT INTO visas VALUES (277, 6, 277, $$1841-11-3$$, 1198, $$Bahrain$$);
-INSERT INTO visas VALUES (278, 8, 278, $$1840-9-6$$, 638, $$Dominica$$);
-INSERT INTO visas VALUES (279, 1, 279, $$1842-10-4$$, 626, $$Fiji$$);
-INSERT INTO visas VALUES (280, 6, 280, $$1840-10-20$$, 760, $$Djibouti$$);
-INSERT INTO visas VALUES (281, 6, 281, $$1839-8-28$$, 1145, $$Armenia$$);
-INSERT INTO visas VALUES (282, 7, 282, $$1844-8-18$$, 731, $$Angola$$);
-INSERT INTO visas VALUES (283, 7, 283, $$1839-8-28$$, 453, $$Malta$$);
-INSERT INTO visas VALUES (284, 9, 284, $$1842-8-17$$, 558, $$Malaysia$$);
-INSERT INTO visas VALUES (285, 6, 285, $$1840-10-11$$, 825, $$Afghanistan$$);
-INSERT INTO visas VALUES (286, 4, 286, $$1843-5-27$$, 719, $$Guinea$$);
-INSERT INTO visas VALUES (287, 8, 287, $$1839-4-16$$, 524, $$Bangladesh$$);
-INSERT INTO visas VALUES (288, 3, 288, $$1839-4-25$$, 1246, $$Nepal$$);
-INSERT INTO visas VALUES (289, 5, 289, $$1839-12-22$$, 600, $$Syria$$);
-INSERT INTO visas VALUES (290, 1, 290, $$1839-2-27$$, 566, $$Austria$$);
-INSERT INTO visas VALUES (291, 9, 291, $$1844-10-5$$, 799, $$Dominica$$);
-INSERT INTO visas VALUES (292, 5, 292, $$1840-3-15$$, 1190, $$Barbados$$);
-INSERT INTO visas VALUES (293, 8, 293, $$1841-5-8$$, 1154, $$Italy$$);
-INSERT INTO visas VALUES (294, 1, 294, $$1837-4-14$$, 724, $$Comoros$$);
-INSERT INTO visas VALUES (295, 2, 295, $$1843-4-28$$, 765, $$Pakistan$$);
-INSERT INTO visas VALUES (296, 6, 296, $$1844-10-23$$, 428, $$Venezuela$$);
-INSERT INTO visas VALUES (297, 4, 297, $$1839-2-5$$, 822, $$Turkmenistan$$);
-INSERT INTO visas VALUES (298, 7, 298, $$1842-12-28$$, 966, $$Kosovo$$);
-INSERT INTO visas VALUES (299, 4, 299, $$1838-5-7$$, 667, $$Barbados$$);
-INSERT INTO visas VALUES (300, 9, 300, $$1839-9-16$$, 854, $$Turkmenistan$$);
-INSERT INTO visas VALUES (301, 9, 301, $$1840-4-23$$, 36, $$Niue$$);
-INSERT INTO visas VALUES (302, 9, 302, $$1837-8-10$$, 1071, $$Kyrgyzstan$$);
-INSERT INTO visas VALUES (303, 7, 303, $$1845-10-18$$, 1052, $$Namibia$$);
-INSERT INTO visas VALUES (304, 7, 304, $$1838-5-23$$, 793, $$Kazakhstan$$);
-INSERT INTO visas VALUES (305, 3, 305, $$1837-12-12$$, 157, $$Tuvalu$$);
-INSERT INTO visas VALUES (306, 2, 306, $$1840-5-23$$, 232, $$Pitcairn$$);
-INSERT INTO visas VALUES (307, 1, 307, $$1844-11-23$$, 1150, $$Montenegro$$);
-INSERT INTO visas VALUES (308, 4, 308, $$1838-5-15$$, 1203, $$Algeria$$);
-INSERT INTO visas VALUES (309, 6, 309, $$1844-10-17$$, 1046, $$Canada$$);
-INSERT INTO visas VALUES (310, 6, 310, $$1842-1-22$$, 1050, $$Iceland$$);
-INSERT INTO visas VALUES (311, 8, 311, $$1842-11-12$$, 388, $$Armenia$$);
-INSERT INTO visas VALUES (312, 2, 312, $$1843-7-22$$, 86, $$Finland$$);
-INSERT INTO visas VALUES (313, 3, 313, $$1840-2-19$$, 86, $$Uganda$$);
-INSERT INTO visas VALUES (314, 8, 314, $$1838-2-10$$, 918, $$Iran$$);
-INSERT INTO visas VALUES (315, 2, 315, $$1838-3-11$$, 1005, $$Honduras$$);
-INSERT INTO visas VALUES (316, 7, 316, $$1842-11-12$$, 247, $$Brazil$$);
-INSERT INTO visas VALUES (317, 3, 317, $$1840-2-27$$, 463, $$Algeria$$);
-INSERT INTO visas VALUES (318, 3, 318, $$1841-7-18$$, 421, $$Peru$$);
-INSERT INTO visas VALUES (319, 4, 319, $$1839-6-24$$, 950, $$Liechtenstein$$);
-INSERT INTO visas VALUES (320, 2, 320, $$1841-10-11$$, 17, $$Greece$$);
-INSERT INTO visas VALUES (321, 4, 321, $$1840-4-26$$, 592, $$Canada$$);
-INSERT INTO visas VALUES (322, 8, 322, $$1840-12-21$$, 872, $$Nicaragua$$);
-INSERT INTO visas VALUES (323, 3, 323, $$1843-9-10$$, 441, $$Panama$$);
-INSERT INTO visas VALUES (324, 1, 324, $$1839-3-10$$, 465, $$Haiti$$);
-INSERT INTO visas VALUES (325, 7, 325, $$1843-6-23$$, 523, $$Suriname$$);
-INSERT INTO visas VALUES (326, 4, 326, $$1838-7-14$$, 1146, $$Somalia$$);
-INSERT INTO visas VALUES (327, 3, 327, $$1839-12-7$$, 342, $$Panama$$);
-INSERT INTO visas VALUES (328, 4, 328, $$1840-11-8$$, 594, $$Morocco$$);
-INSERT INTO visas VALUES (329, 7, 329, $$1840-1-27$$, 1096, $$Brunei$$);
-INSERT INTO visas VALUES (330, 4, 330, $$1838-6-9$$, 1206, $$Zimbabwe$$);
-INSERT INTO visas VALUES (331, 7, 331, $$1842-10-9$$, 67, $$Nicaragua$$);
-INSERT INTO visas VALUES (332, 3, 332, $$1841-3-7$$, 1152, $$Uzbekistan$$);
-INSERT INTO visas VALUES (333, 2, 333, $$1842-5-27$$, 115, $$Indonesia$$);
-INSERT INTO visas VALUES (334, 9, 334, $$1840-12-5$$, 105, $$Chad$$);
-INSERT INTO visas VALUES (335, 3, 335, $$1843-7-23$$, 179, $$Egypt$$);
-INSERT INTO visas VALUES (336, 5, 336, $$1839-1-9$$, 974, $$Greece$$);
-INSERT INTO visas VALUES (337, 1, 337, $$1843-9-14$$, 942, $$Spain$$);
-INSERT INTO visas VALUES (338, 6, 338, $$1841-10-3$$, 535, $$Guinea$$);
-INSERT INTO visas VALUES (339, 5, 339, $$1839-12-14$$, 746, $$Algeria$$);
-INSERT INTO visas VALUES (340, 1, 340, $$1843-8-14$$, 1116, $$Monaco$$);
-INSERT INTO visas VALUES (341, 8, 341, $$1839-8-1$$, 281, $$Ireland$$);
-INSERT INTO visas VALUES (342, 5, 342, $$1840-1-10$$, 602, $$Azerbaijan$$);
-INSERT INTO visas VALUES (343, 3, 343, $$1840-6-28$$, 1023, $$Guatemala$$);
-INSERT INTO visas VALUES (344, 1, 344, $$1842-7-14$$, 436, $$Oman$$);
-INSERT INTO visas VALUES (345, 8, 345, $$1841-10-13$$, 967, $$Sweden$$);
-INSERT INTO visas VALUES (346, 1, 346, $$1845-1-22$$, 959, $$Malawi$$);
-INSERT INTO visas VALUES (347, 2, 347, $$1838-3-26$$, 1058, $$Russia$$);
-INSERT INTO visas VALUES (348, 5, 348, $$1840-10-22$$, 1039, $$Montserrat$$);
-INSERT INTO visas VALUES (349, 7, 349, $$1842-4-18$$, 1051, $$Brazil$$);
-INSERT INTO visas VALUES (350, 9, 350, $$1839-9-12$$, 524, $$Brunei$$);
-INSERT INTO visas VALUES (351, 6, 351, $$1842-2-6$$, 978, $$Russia$$);
-INSERT INTO visas VALUES (352, 2, 352, $$1838-12-2$$, 979, $$Mali$$);
-INSERT INTO visas VALUES (353, 6, 353, $$1841-7-18$$, 55, $$Paraguay$$);
-INSERT INTO visas VALUES (354, 8, 354, $$1845-7-11$$, 332, $$Gibraltar$$);
-INSERT INTO visas VALUES (355, 7, 355, $$1839-12-23$$, 719, $$Italy$$);
-INSERT INTO visas VALUES (356, 3, 356, $$1842-8-5$$, 569, $$Maldives$$);
-INSERT INTO visas VALUES (357, 7, 357, $$1843-3-5$$, 151, $$Brunei$$);
-INSERT INTO visas VALUES (358, 3, 358, $$1840-3-28$$, 205, $$Nauru$$);
-INSERT INTO visas VALUES (359, 4, 359, $$1840-1-21$$, 1121, $$Palau$$);
-INSERT INTO visas VALUES (360, 3, 360, $$1843-9-27$$, 590, $$Pakistan$$);
-INSERT INTO visas VALUES (361, 2, 361, $$1840-3-7$$, 666, $$Sudan$$);
-INSERT INTO visas VALUES (362, 8, 362, $$1839-11-17$$, 918, $$India$$);
-INSERT INTO visas VALUES (363, 3, 363, $$1839-1-10$$, 429, $$Montenegro$$);
-INSERT INTO visas VALUES (364, 1, 364, $$1839-2-28$$, 882, $$Uzbekistan$$);
-INSERT INTO visas VALUES (365, 7, 365, $$1844-8-21$$, 618, $$Haiti$$);
-INSERT INTO visas VALUES (366, 7, 366, $$1840-1-26$$, 1213, $$Angola$$);
-INSERT INTO visas VALUES (367, 7, 367, $$1839-8-18$$, 277, $$USA$$);
-INSERT INTO visas VALUES (368, 7, 368, $$1839-1-2$$, 753, $$Fiji$$);
-INSERT INTO visas VALUES (369, 5, 369, $$1841-12-19$$, 306, $$Kosovo$$);
-INSERT INTO visas VALUES (370, 9, 370, $$1839-3-15$$, 426, $$Curacao$$);
-INSERT INTO visas VALUES (371, 7, 371, $$1843-9-6$$, 610, $$Qatar$$);
-INSERT INTO visas VALUES (372, 4, 372, $$1843-1-16$$, 437, $$Ireland$$);
-INSERT INTO visas VALUES (373, 9, 373, $$1843-4-13$$, 1028, $$Venezuela$$);
-INSERT INTO visas VALUES (374, 5, 374, $$1844-10-1$$, 616, $$Egypt$$);
-INSERT INTO visas VALUES (375, 4, 375, $$1841-7-28$$, 454, $$Guinea$$);
-INSERT INTO visas VALUES (376, 8, 376, $$1841-12-18$$, 867, $$Morocco$$);
-INSERT INTO visas VALUES (377, 4, 377, $$1840-8-20$$, 634, $$Guyana$$);
-INSERT INTO visas VALUES (378, 7, 378, $$1839-7-3$$, 578, $$Madagascar$$);
-INSERT INTO visas VALUES (379, 7, 379, $$1839-9-8$$, 736, $$Lesotho$$);
-INSERT INTO visas VALUES (380, 3, 380, $$1844-9-20$$, 1121, $$Mexico$$);
-INSERT INTO visas VALUES (381, 3, 381, $$1844-10-26$$, 67, $$Brazil$$);
-INSERT INTO visas VALUES (382, 5, 382, $$1841-8-18$$, 401, $$Liechtenstein$$);
-INSERT INTO visas VALUES (383, 8, 383, $$1840-12-6$$, 727, $$Ireland$$);
-INSERT INTO visas VALUES (384, 5, 384, $$1840-1-21$$, 1068, $$Kyrgyzstan$$);
-INSERT INTO visas VALUES (385, 4, 385, $$1839-12-4$$, 640, $$Macedonia$$);
-INSERT INTO visas VALUES (386, 4, 386, $$1837-3-12$$, 906, $$Mali$$);
-INSERT INTO visas VALUES (387, 6, 387, $$1837-8-25$$, 298, $$Slovakia$$);
-INSERT INTO visas VALUES (388, 4, 388, $$1842-9-3$$, 1062, $$Mauritania$$);
-INSERT INTO visas VALUES (389, 1, 389, $$1840-6-18$$, 940, $$Paraguay$$);
-INSERT INTO visas VALUES (390, 3, 390, $$1843-6-9$$, 136, $$Greenland$$);
-INSERT INTO visas VALUES (391, 7, 391, $$1838-1-19$$, 1009, $$Nigeria$$);
-INSERT INTO visas VALUES (392, 6, 392, $$1839-1-12$$, 32, $$Colombia$$);
-INSERT INTO visas VALUES (393, 4, 393, $$1843-7-6$$, 563, $$Croatia$$);
-INSERT INTO visas VALUES (394, 9, 394, $$1839-7-6$$, 38, $$Egypt$$);
-INSERT INTO visas VALUES (395, 6, 395, $$1839-2-24$$, 362, $$Zimbabwe$$);
-INSERT INTO visas VALUES (396, 9, 396, $$1841-8-9$$, 779, $$Mongolia$$);
-INSERT INTO visas VALUES (397, 9, 397, $$1841-2-24$$, 790, $$Ireland$$);
-INSERT INTO visas VALUES (398, 2, 398, $$1839-9-3$$, 523, $$Philippines$$);
-INSERT INTO visas VALUES (399, 4, 399, $$1839-5-20$$, 421, $$Norway$$);
-INSERT INTO visas VALUES (400, 5, 400, $$1844-3-5$$, 710, $$Myanmar$$);
-INSERT INTO visas VALUES (401, 8, 401, $$1844-4-27$$, 88, $$Honduras$$);
-INSERT INTO visas VALUES (402, 8, 402, $$1839-3-28$$, 1161, $$Bhutan$$);
-INSERT INTO visas VALUES (403, 4, 403, $$1840-3-5$$, 687, $$Vietnam$$);
-INSERT INTO visas VALUES (404, 9, 404, $$1839-9-24$$, 377, $$Kenya$$);
-INSERT INTO visas VALUES (405, 6, 405, $$1842-4-15$$, 1152, $$Switzerland$$);
-INSERT INTO visas VALUES (406, 2, 406, $$1840-7-20$$, 983, $$Eritrea$$);
-INSERT INTO visas VALUES (407, 3, 407, $$1842-6-3$$, 1207, $$Rwanda$$);
-INSERT INTO visas VALUES (408, 7, 408, $$1839-6-26$$, 565, $$Macao$$);
-INSERT INTO visas VALUES (409, 3, 409, $$1845-9-28$$, 1085, $$Cameroon$$);
-INSERT INTO visas VALUES (410, 6, 410, $$1843-12-15$$, 539, $$Venezuela$$);
-INSERT INTO visas VALUES (411, 4, 411, $$1844-7-14$$, 1063, $$Kiribati$$);
-INSERT INTO visas VALUES (412, 3, 412, $$1839-11-5$$, 1025, $$Mongolia$$);
-INSERT INTO visas VALUES (413, 7, 413, $$1839-4-11$$, 131, $$Gabon$$);
-INSERT INTO visas VALUES (414, 1, 414, $$1845-12-24$$, 273, $$Turkmenistan$$);
-INSERT INTO visas VALUES (415, 7, 415, $$1843-5-20$$, 315, $$Sudan$$);
-INSERT INTO visas VALUES (416, 3, 416, $$1842-5-7$$, 479, $$Peru$$);
-INSERT INTO visas VALUES (417, 4, 417, $$1844-1-4$$, 303, $$Nauru$$);
-INSERT INTO visas VALUES (418, 3, 418, $$1841-1-12$$, 913, $$Venezuela$$);
-INSERT INTO visas VALUES (419, 3, 419, $$1843-9-27$$, 1234, $$Canada$$);
-INSERT INTO visas VALUES (420, 3, 420, $$1837-12-27$$, 546, $$Macao$$);
-INSERT INTO visas VALUES (421, 8, 421, $$1838-11-26$$, 1148, $$Laos$$);
-INSERT INTO visas VALUES (422, 2, 422, $$1837-10-2$$, 771, $$Libya$$);
-INSERT INTO visas VALUES (423, 8, 423, $$1842-5-11$$, 1095, $$Russia$$);
-INSERT INTO visas VALUES (424, 9, 424, $$1840-7-12$$, 1022, $$Chad$$);
-INSERT INTO visas VALUES (425, 8, 425, $$1840-2-8$$, 410, $$Cyprus$$);
-INSERT INTO visas VALUES (426, 2, 426, $$1842-2-10$$, 569, $$Cameroon$$);
-INSERT INTO visas VALUES (427, 5, 427, $$1843-4-21$$, 1110, $$Cambodia$$);
-INSERT INTO visas VALUES (428, 5, 428, $$1843-1-26$$, 485, $$Mali$$);
-INSERT INTO visas VALUES (429, 9, 429, $$1842-12-2$$, 319, $$Pakistan$$);
-INSERT INTO visas VALUES (430, 5, 430, $$1842-8-11$$, 586, $$Egypt$$);
-INSERT INTO visas VALUES (431, 3, 431, $$1844-1-2$$, 469, $$Barbados$$);
-INSERT INTO visas VALUES (432, 6, 432, $$1838-1-6$$, 936, $$Lebanon$$);
-INSERT INTO visas VALUES (433, 5, 433, $$1841-9-8$$, 1201, $$Somalia$$);
-INSERT INTO visas VALUES (434, 7, 434, $$1838-7-5$$, 308, $$Namibia$$);
-INSERT INTO visas VALUES (435, 4, 435, $$1841-10-22$$, 171, $$Guinea$$);
-INSERT INTO visas VALUES (436, 9, 436, $$1842-5-23$$, 895, $$Gabon$$);
-INSERT INTO visas VALUES (437, 7, 437, $$1845-8-8$$, 934, $$Burundi$$);
-INSERT INTO visas VALUES (438, 1, 438, $$1840-6-13$$, 687, $$Philippines$$);
-INSERT INTO visas VALUES (439, 2, 439, $$1842-12-16$$, 523, $$Liberia$$);
-INSERT INTO visas VALUES (440, 1, 440, $$1842-10-18$$, 441, $$Cuba$$);
-INSERT INTO visas VALUES (441, 8, 441, $$1844-9-28$$, 391, $$Romania$$);
-INSERT INTO visas VALUES (442, 6, 442, $$1842-7-21$$, 598, $$Mauritius$$);
-INSERT INTO visas VALUES (443, 6, 443, $$1843-9-17$$, 722, $$USA$$);
-INSERT INTO visas VALUES (444, 9, 444, $$1838-12-28$$, 205, $$Macedonia$$);
-INSERT INTO visas VALUES (445, 8, 445, $$1840-4-19$$, 698, $$Samoa$$);
-INSERT INTO visas VALUES (446, 3, 446, $$1841-2-8$$, 306, $$Honduras$$);
-INSERT INTO visas VALUES (447, 2, 447, $$1841-7-9$$, 1153, $$Tuvalu$$);
-INSERT INTO visas VALUES (448, 4, 448, $$1842-4-21$$, 328, $$Mexico$$);
-INSERT INTO visas VALUES (449, 7, 449, $$1840-3-10$$, 911, $$Tunisia$$);
-INSERT INTO visas VALUES (450, 7, 450, $$1843-1-19$$, 646, $$Ukraine$$);
-INSERT INTO visas VALUES (451, 5, 451, $$1841-3-21$$, 1033, $$Mauritania$$);
-INSERT INTO visas VALUES (452, 1, 452, $$1843-3-7$$, 979, $$Fiji$$);
-INSERT INTO visas VALUES (453, 7, 453, $$1841-6-6$$, 377, $$China$$);
-INSERT INTO visas VALUES (454, 7, 454, $$1839-11-10$$, 821, $$Bahamas$$);
-INSERT INTO visas VALUES (455, 5, 455, $$1844-5-10$$, 768, $$Malta$$);
-INSERT INTO visas VALUES (456, 5, 456, $$1844-4-21$$, 632, $$Syria$$);
-INSERT INTO visas VALUES (457, 9, 457, $$1842-5-23$$, 632, $$Spain$$);
-INSERT INTO visas VALUES (458, 4, 458, $$1842-7-16$$, 827, $$Montserrat$$);
-INSERT INTO visas VALUES (459, 6, 459, $$1842-5-19$$, 1183, $$Panama$$);
-INSERT INTO visas VALUES (460, 4, 460, $$1838-10-27$$, 243, $$Kazakhstan$$);
-INSERT INTO visas VALUES (461, 7, 461, $$1838-1-4$$, 1158, $$Colombia$$);
-INSERT INTO visas VALUES (462, 5, 462, $$1837-3-23$$, 143, $$Haiti$$);
-INSERT INTO visas VALUES (463, 9, 463, $$1841-4-19$$, 261, $$Serbia$$);
-INSERT INTO visas VALUES (464, 1, 464, $$1841-12-15$$, 1093, $$Netherlands$$);
-INSERT INTO visas VALUES (465, 7, 465, $$1841-8-2$$, 583, $$Cameroon$$);
-INSERT INTO visas VALUES (466, 8, 466, $$1843-3-20$$, 143, $$Oman$$);
-INSERT INTO visas VALUES (467, 7, 467, $$1837-8-3$$, 899, $$Malawi$$);
-INSERT INTO visas VALUES (468, 2, 468, $$1840-11-22$$, 920, $$Myanmar$$);
-INSERT INTO visas VALUES (469, 1, 469, $$1844-2-19$$, 27, $$Sudan$$);
-INSERT INTO visas VALUES (470, 8, 470, $$1839-7-23$$, 32, $$Aruba$$);
-INSERT INTO visas VALUES (471, 5, 471, $$1839-3-18$$, 927, $$Estonia$$);
-INSERT INTO visas VALUES (472, 7, 472, $$1843-12-18$$, 597, $$Liberia$$);
-INSERT INTO visas VALUES (473, 1, 473, $$1840-8-20$$, 1050, $$Bhutan$$);
-INSERT INTO visas VALUES (474, 2, 474, $$1843-5-20$$, 720, $$Montenegro$$);
-INSERT INTO visas VALUES (475, 9, 475, $$1840-5-16$$, 110, $$Austria$$);
-INSERT INTO visas VALUES (476, 4, 476, $$1844-12-19$$, 61, $$Bolivia$$);
-INSERT INTO visas VALUES (477, 5, 477, $$1843-3-5$$, 538, $$Laos$$);
-INSERT INTO visas VALUES (478, 1, 478, $$1840-11-15$$, 1004, $$Uzbekistan$$);
-INSERT INTO visas VALUES (479, 6, 479, $$1839-2-17$$, 1212, $$Pakistan$$);
-INSERT INTO visas VALUES (480, 8, 480, $$1842-2-17$$, 1143, $$Comoros$$);
-INSERT INTO visas VALUES (481, 8, 481, $$1842-6-15$$, 341, $$Jamaica$$);
-INSERT INTO visas VALUES (482, 8, 482, $$1841-2-26$$, 1001, $$Martinique$$);
-INSERT INTO visas VALUES (483, 8, 483, $$1842-7-11$$, 103, $$Ecuador$$);
-INSERT INTO visas VALUES (484, 1, 484, $$1837-11-16$$, 1184, $$Slovakia$$);
-INSERT INTO visas VALUES (485, 7, 485, $$1837-3-25$$, 661, $$Maldives$$);
-INSERT INTO visas VALUES (486, 7, 486, $$1844-3-8$$, 616, $$Chile$$);
-INSERT INTO visas VALUES (487, 3, 487, $$1841-7-24$$, 1171, $$Lebanon$$);
-INSERT INTO visas VALUES (488, 1, 488, $$1842-11-22$$, 538, $$Macedonia$$);
-INSERT INTO visas VALUES (489, 2, 489, $$1842-5-7$$, 358, $$Serbia$$);
-INSERT INTO visas VALUES (490, 2, 490, $$1839-11-18$$, 329, $$Cyprus$$);
-INSERT INTO visas VALUES (491, 7, 491, $$1839-6-7$$, 422, $$Brunei$$);
-INSERT INTO visas VALUES (492, 3, 492, $$1839-6-21$$, 507, $$Fiji$$);
-INSERT INTO visas VALUES (493, 9, 493, $$1840-5-16$$, 1180, $$Uganda$$);
-INSERT INTO visas VALUES (494, 5, 494, $$1839-9-23$$, 531, $$Paraguay$$);
-INSERT INTO visas VALUES (495, 5, 495, $$1838-3-18$$, 461, $$Togo$$);
-INSERT INTO visas VALUES (496, 1, 496, $$1838-4-12$$, 94, $$Bangladesh$$);
-INSERT INTO visas VALUES (497, 3, 497, $$1844-1-28$$, 891, $$Guyana$$);
-INSERT INTO visas VALUES (498, 2, 498, $$1843-1-27$$, 166, $$Aruba$$);
-INSERT INTO visas VALUES (499, 4, 499, $$1842-1-25$$, 727, $$Croatia$$);
-INSERT INTO visas VALUES (500, 1, 500, $$1844-8-21$$, 712, $$Niger$$);
+INSERT INTO visas VALUES
+(1, 4, 1, $$2040-2-15$$, 905, $$Cambodia$$),
+(2, 5, 2, $$2016-5-1$$, 313, $$Djibouti$$),
+(3, 2, 3, $$2018-5-23$$, 933, $$Malawi$$),
+(4, 4, 4, $$1994-11-12$$, 1176, $$Barbados$$),
+(5, 5, 5, $$1989-6-3$$, 820, $$Niue$$),
+(6, 5, 6, $$1987-12-20$$, 293, $$Mauritius$$),
+(7, 4, 7, $$1992-12-27$$, 160, $$Peru$$),
+(8, 5, 8, $$1968-1-20$$, 334, $$Nicaragua$$),
+(9, 4, 9, $$1967-9-22$$, 1018, $$Samoa$$),
+(10, 8, 10, $$1969-6-4$$, 330, $$Niger$$),
+(11, 6, 11, $$1966-1-7$$, 433, $$Colombia$$),
+(12, 6, 12, $$1968-5-20$$, 398, $$Palau$$),
+(13, 7, 13, $$1965-10-1$$, 649, $$Yemen$$),
+(14, 1, 14, $$1965-2-3$$, 487, $$Swaziland$$),
+(15, 8, 15, $$1964-12-28$$, 1140, $$Kiribati$$),
+(16, 5, 16, $$1942-2-13$$, 66, $$Serbia$$),
+(17, 2, 17, $$1943-12-17$$, 365, $$Denmark$$),
+(18, 8, 18, $$1941-3-11$$, 847, $$Indonesia$$),
+(19, 9, 19, $$1943-12-15$$, 614, $$Martinique$$),
+(20, 8, 20, $$1938-1-17$$, 892, $$Albania$$),
+(21, 6, 21, $$1938-11-9$$, 354, $$Kenya$$),
+(22, 4, 22, $$1940-3-19$$, 1042, $$Estonia$$),
+(23, 9, 23, $$1938-11-27$$, 750, $$Angola$$),
+(24, 4, 24, $$1941-4-2$$, 1021, $$Thailand$$),
+(25, 1, 25, $$1943-6-19$$, 401, $$Australia$$),
+(26, 2, 26, $$1938-12-9$$, 1064, $$Kyrgyzstan$$),
+(27, 8, 27, $$1937-8-24$$, 1165, $$Finland$$),
+(28, 4, 28, $$1939-3-24$$, 21, $$Bangladesh$$),
+(29, 8, 29, $$1943-4-26$$, 214, $$Jamaica$$),
+(30, 1, 30, $$1942-10-28$$, 912, $$Georgia$$),
+(31, 5, 31, $$1937-11-26$$, 1184, $$Estonia$$),
+(32, 8, 32, $$1917-10-25$$, 330, $$USA$$),
+(33, 7, 33, $$1913-5-14$$, 170, $$Somalia$$),
+(34, 9, 34, $$1918-8-7$$, 321, $$Jamaica$$),
+(35, 8, 35, $$1917-11-27$$, 1250, $$Myanmar$$),
+(36, 5, 36, $$1920-8-18$$, 122, $$Cuba$$),
+(37, 4, 37, $$1914-6-14$$, 571, $$Bulgaria$$),
+(38, 6, 38, $$1919-12-15$$, 1185, $$Palau$$),
+(39, 3, 39, $$1916-3-12$$, 666, $$Paraguay$$),
+(40, 2, 40, $$1913-1-6$$, 975, $$Somalia$$),
+(41, 9, 41, $$1916-10-3$$, 81, $$Azerbaijan$$),
+(42, 9, 42, $$1913-10-26$$, 88, $$Bermuda$$),
+(43, 4, 43, $$1914-4-17$$, 250, $$Iceland$$),
+(44, 4, 44, $$1919-10-23$$, 574, $$Indonesia$$),
+(45, 9, 45, $$1916-3-28$$, 801, $$Nepal$$),
+(46, 6, 46, $$1913-1-4$$, 305, $$Bulgaria$$),
+(47, 9, 47, $$1915-7-22$$, 854, $$Bhutan$$),
+(48, 3, 48, $$1915-5-2$$, 393, $$Brunei$$),
+(49, 2, 49, $$1920-5-4$$, 205, $$Lebanon$$),
+(50, 9, 50, $$1914-7-21$$, 319, $$Panama$$),
+(51, 3, 51, $$1912-3-11$$, 1024, $$France$$),
+(52, 4, 52, $$1918-12-17$$, 533, $$Belize$$),
+(53, 3, 53, $$1913-8-28$$, 324, $$Gambia$$),
+(54, 3, 54, $$1915-11-3$$, 878, $$Fiji$$),
+(55, 8, 55, $$1918-12-5$$, 1040, $$Bermuda$$),
+(56, 8, 56, $$1918-4-6$$, 572, $$Uganda$$),
+(57, 5, 57, $$1913-3-2$$, 812, $$Ecuador$$),
+(58, 6, 58, $$1913-12-7$$, 404, $$Namibia$$),
+(59, 5, 59, $$1919-2-27$$, 443, $$Kyrgyzstan$$),
+(60, 4, 60, $$1912-11-5$$, 76, $$Dominica$$),
+(61, 3, 61, $$1918-5-1$$, 330, $$Netherlands$$),
+(62, 8, 62, $$1915-11-10$$, 936, $$Norway$$),
+(63, 2, 63, $$1919-1-13$$, 345, $$Montserrat$$),
+(64, 6, 64, $$1891-2-26$$, 443, $$Cambodia$$),
+(65, 7, 65, $$1889-6-7$$, 902, $$Tajikistan$$),
+(66, 7, 66, $$1889-11-21$$, 130, $$Angola$$),
+(67, 7, 67, $$1889-9-7$$, 498, $$Belgium$$),
+(68, 5, 68, $$1891-3-16$$, 617, $$Netherlands$$),
+(69, 4, 69, $$1893-5-4$$, 420, $$Bahrain$$),
+(70, 1, 70, $$1894-4-25$$, 1052, $$Colombia$$),
+(71, 1, 71, $$1891-5-25$$, 212, $$Japan$$),
+(72, 6, 72, $$1888-2-1$$, 1056, $$China$$),
+(73, 7, 73, $$1889-9-22$$, 1227, $$Martinique$$),
+(74, 6, 74, $$1894-1-14$$, 726, $$Cambodia$$),
+(75, 9, 75, $$1894-10-25$$, 432, $$Haiti$$),
+(76, 1, 76, $$1891-4-11$$, 4, $$Portugal$$),
+(77, 3, 77, $$1895-12-14$$, 369, $$Switzerland$$),
+(78, 9, 78, $$1895-4-18$$, 253, $$Rwanda$$),
+(79, 3, 79, $$1890-2-18$$, 181, $$Mauritania$$),
+(80, 1, 80, $$1890-12-7$$, 79, $$Samoa$$),
+(81, 7, 81, $$1891-8-5$$, 1077, $$Jordan$$),
+(82, 8, 82, $$1895-1-27$$, 154, $$Morocco$$),
+(83, 7, 83, $$1893-8-17$$, 862, $$Haiti$$),
+(84, 2, 84, $$1890-8-24$$, 17, $$Niger$$),
+(85, 6, 85, $$1890-2-22$$, 62, $$Israel$$),
+(86, 3, 86, $$1891-1-19$$, 62, $$Ecuador$$),
+(87, 5, 87, $$1889-12-26$$, 212, $$Syria$$),
+(88, 2, 88, $$1894-5-10$$, 821, $$Gibraltar$$),
+(89, 6, 89, $$1893-1-18$$, 708, $$USA$$),
+(90, 1, 90, $$1892-1-21$$, 371, $$Iraq$$),
+(91, 2, 91, $$1893-11-4$$, 988, $$Moldova$$),
+(92, 9, 92, $$1893-3-3$$, 861, $$Azerbaijan$$),
+(93, 1, 93, $$1894-3-12$$, 1176, $$Moldova$$),
+(94, 4, 94, $$1891-2-15$$, 27, $$Brazil$$),
+(95, 2, 95, $$1890-1-25$$, 1145, $$Zambia$$),
+(96, 1, 96, $$1890-7-2$$, 129, $$Afghanistan$$),
+(97, 4, 97, $$1893-3-5$$, 473, $$Latvia$$),
+(98, 7, 98, $$1891-7-18$$, 734, $$Spain$$),
+(99, 6, 99, $$1894-5-4$$, 108, $$Tanzania$$),
+(100, 3, 100, $$1894-1-8$$, 25, $$Belarus$$),
+(101, 6, 101, $$1888-3-16$$, 413, $$Pakistan$$),
+(102, 4, 102, $$1889-6-23$$, 394, $$Martinique$$),
+(103, 7, 103, $$1895-7-19$$, 2, $$Iceland$$),
+(104, 8, 104, $$1889-11-6$$, 41, $$Denmark$$),
+(105, 9, 105, $$1890-9-2$$, 217, $$Tanzania$$),
+(106, 6, 106, $$1894-12-22$$, 140, $$Bermuda$$),
+(107, 6, 107, $$1889-12-1$$, 626, $$Suriname$$),
+(108, 7, 108, $$1894-10-23$$, 1158, $$Bangladesh$$),
+(109, 5, 109, $$1890-1-25$$, 869, $$Jamaica$$),
+(110, 4, 110, $$1893-6-24$$, 508, $$Nepal$$),
+(111, 9, 111, $$1891-1-3$$, 820, $$Bulgaria$$),
+(112, 6, 112, $$1893-1-26$$, 160, $$Afghanistan$$),
+(113, 2, 113, $$1892-7-24$$, 935, $$Somalia$$),
+(114, 6, 114, $$1893-9-19$$, 993, $$Kenya$$),
+(115, 2, 115, $$1890-7-17$$, 799, $$Belize$$),
+(116, 6, 116, $$1889-11-13$$, 541, $$Barbados$$),
+(117, 6, 117, $$1892-1-19$$, 755, $$Mauritania$$),
+(118, 1, 118, $$1893-9-7$$, 940, $$Montserrat$$),
+(119, 1, 119, $$1894-9-18$$, 775, $$Botswana$$),
+(120, 2, 120, $$1892-2-22$$, 1129, $$Poland$$),
+(121, 7, 121, $$1892-3-25$$, 1157, $$France$$),
+(122, 6, 122, $$1892-8-19$$, 210, $$Cameroon$$),
+(123, 5, 123, $$1889-3-17$$, 849, $$Gambia$$),
+(124, 3, 124, $$1891-9-10$$, 97, $$Uganda$$),
+(125, 9, 125, $$1891-10-18$$, 954, $$Guinea$$),
+(126, 7, 126, $$1890-7-23$$, 905, $$Afghanistan$$),
+(127, 6, 127, $$1889-9-20$$, 38, $$Monaco$$),
+(128, 5, 128, $$1868-5-8$$, 52, $$Monaco$$),
+(129, 9, 129, $$1864-2-22$$, 43, $$Germany$$),
+(130, 9, 130, $$1864-8-11$$, 1209, $$Kenya$$),
+(131, 6, 131, $$1866-2-16$$, 941, $$Pakistan$$),
+(132, 5, 132, $$1868-12-11$$, 558, $$Tanzania$$),
+(133, 9, 133, $$1866-8-10$$, 999, $$Mozambique$$),
+(134, 8, 134, $$1864-5-22$$, 723, $$Canada$$),
+(135, 7, 135, $$1869-7-19$$, 473, $$Brazil$$),
+(136, 1, 136, $$1866-11-13$$, 1242, $$Tuvalu$$),
+(137, 3, 137, $$1869-7-16$$, 675, $$Chile$$),
+(138, 6, 138, $$1866-1-21$$, 999, $$Iraq$$),
+(139, 1, 139, $$1868-9-10$$, 809, $$Palau$$),
+(140, 8, 140, $$1865-10-26$$, 1235, $$Mayotte$$),
+(141, 2, 141, $$1863-12-8$$, 62, $$Slovenia$$),
+(142, 3, 142, $$1869-2-15$$, 882, $$Poland$$),
+(143, 3, 143, $$1863-11-7$$, 689, $$Niger$$),
+(144, 3, 144, $$1864-12-13$$, 722, $$USA$$),
+(145, 7, 145, $$1865-3-1$$, 1153, $$Greece$$),
+(146, 9, 146, $$1867-4-1$$, 820, $$Greenland$$),
+(147, 9, 147, $$1865-7-12$$, 693, $$Suriname$$),
+(148, 8, 148, $$1865-12-7$$, 27, $$Dominica$$),
+(149, 8, 149, $$1869-11-4$$, 747, $$Montserrat$$),
+(150, 3, 150, $$1869-10-2$$, 475, $$Niue$$),
+(151, 7, 151, $$1862-12-26$$, 1123, $$Liberia$$),
+(152, 9, 152, $$1865-5-6$$, 330, $$Guyana$$),
+(153, 3, 153, $$1863-6-26$$, 1050, $$Jamaica$$),
+(154, 6, 154, $$1864-4-17$$, 549, $$Germany$$),
+(155, 3, 155, $$1865-2-6$$, 1192, $$Sudan$$),
+(156, 8, 156, $$1862-10-17$$, 898, $$Greenland$$),
+(157, 5, 157, $$1864-1-2$$, 29, $$Zimbabwe$$),
+(158, 1, 158, $$1869-9-20$$, 923, $$Bulgaria$$),
+(159, 8, 159, $$1865-8-23$$, 417, $$Greece$$),
+(160, 4, 160, $$1867-6-20$$, 698, $$Thailand$$),
+(161, 8, 161, $$1865-7-27$$, 640, $$Mali$$),
+(162, 4, 162, $$1867-9-20$$, 219, $$Ukraine$$),
+(163, 7, 163, $$1865-1-16$$, 1161, $$Kiribati$$),
+(164, 4, 164, $$1866-4-22$$, 775, $$Eritrea$$),
+(165, 7, 165, $$1865-8-15$$, 1224, $$Ghana$$),
+(166, 4, 166, $$1865-10-12$$, 660, $$Angola$$),
+(167, 6, 167, $$1866-3-22$$, 393, $$Paraguay$$),
+(168, 4, 168, $$1868-3-20$$, 721, $$Turkey$$),
+(169, 8, 169, $$1863-1-9$$, 546, $$Spain$$),
+(170, 4, 170, $$1864-11-17$$, 175, $$Brazil$$),
+(171, 9, 171, $$1868-12-27$$, 861, $$Estonia$$),
+(172, 5, 172, $$1865-1-28$$, 1150, $$Canada$$),
+(173, 5, 173, $$1864-3-2$$, 601, $$Montserrat$$),
+(174, 4, 174, $$1870-8-2$$, 1023, $$Belarus$$),
+(175, 3, 175, $$1862-10-5$$, 133, $$Lebanon$$),
+(176, 3, 176, $$1865-6-13$$, 394, $$Malawi$$),
+(177, 5, 177, $$1866-2-3$$, 764, $$Uzbekistan$$),
+(178, 1, 178, $$1866-8-10$$, 632, $$Algeria$$),
+(179, 7, 179, $$1870-1-13$$, 324, $$Uganda$$),
+(180, 9, 180, $$1868-6-27$$, 798, $$Liechtenstein$$),
+(181, 3, 181, $$1867-1-5$$, 130, $$Romania$$),
+(182, 1, 182, $$1868-1-18$$, 1076, $$Sudan$$),
+(183, 5, 183, $$1869-6-23$$, 1024, $$Togo$$),
+(184, 3, 184, $$1866-1-26$$, 95, $$Croatia$$),
+(185, 1, 185, $$1866-1-24$$, 1219, $$Norway$$),
+(186, 9, 186, $$1866-11-3$$, 695, $$Palau$$),
+(187, 6, 187, $$1868-1-21$$, 851, $$Germany$$),
+(188, 9, 188, $$1864-7-10$$, 330, $$Sudan$$),
+(189, 9, 189, $$1865-8-24$$, 578, $$Samoa$$),
+(190, 5, 190, $$1869-7-17$$, 1225, $$Samoa$$),
+(191, 5, 191, $$1867-7-8$$, 728, $$Togo$$),
+(192, 7, 192, $$1867-9-9$$, 1123, $$Bahamas$$),
+(193, 1, 193, $$1862-7-21$$, 751, $$Somalia$$),
+(194, 5, 194, $$1866-9-13$$, 174, $$Belize$$),
+(195, 4, 195, $$1865-8-28$$, 298, $$Zambia$$),
+(196, 1, 196, $$1866-10-7$$, 566, $$Kenya$$),
+(197, 1, 197, $$1867-12-22$$, 368, $$Serbia$$),
+(198, 6, 198, $$1866-6-24$$, 971, $$Jordan$$),
+(199, 3, 199, $$1867-5-19$$, 888, $$Nauru$$),
+(200, 3, 200, $$1863-1-13$$, 631, $$Senegal$$),
+(201, 7, 201, $$1865-1-20$$, 1021, $$Poland$$),
+(202, 3, 202, $$1864-3-5$$, 446, $$Spain$$),
+(203, 2, 203, $$1866-3-9$$, 1080, $$Nepal$$),
+(204, 4, 204, $$1866-10-18$$, 398, $$Qatar$$),
+(205, 5, 205, $$1867-9-6$$, 1095, $$Sweden$$),
+(206, 5, 206, $$1868-4-15$$, 22, $$Zimbabwe$$),
+(207, 9, 207, $$1864-11-22$$, 286, $$Liechtenstein$$),
+(208, 4, 208, $$1867-4-15$$, 1088, $$Lithuania$$),
+(209, 6, 209, $$1868-12-20$$, 798, $$Belgium$$),
+(210, 4, 210, $$1868-6-9$$, 159, $$Cambodia$$),
+(211, 4, 211, $$1866-7-2$$, 777, $$Switzerland$$),
+(212, 1, 212, $$1868-10-20$$, 777, $$Russia$$),
+(213, 7, 213, $$1864-1-23$$, 236, $$Azerbaijan$$),
+(214, 2, 214, $$1864-12-8$$, 202, $$Eritrea$$),
+(215, 4, 215, $$1863-10-9$$, 599, $$Gambia$$),
+(216, 8, 216, $$1863-1-21$$, 314, $$Brazil$$),
+(217, 5, 217, $$1863-12-1$$, 440, $$Bahrain$$),
+(218, 4, 218, $$1865-2-27$$, 1002, $$Israel$$),
+(219, 6, 219, $$1868-6-22$$, 515, $$Estonia$$),
+(220, 5, 220, $$1864-5-15$$, 867, $$Honduras$$),
+(221, 2, 221, $$1866-8-17$$, 247, $$Samoa$$),
+(222, 8, 222, $$1869-10-25$$, 312, $$Ukraine$$),
+(223, 8, 223, $$1864-11-26$$, 94, $$Nigeria$$),
+(224, 1, 224, $$1869-5-18$$, 757, $$China$$),
+(225, 2, 225, $$1868-8-16$$, 950, $$Nicaragua$$),
+(226, 1, 226, $$1866-3-27$$, 1184, $$Dominica$$),
+(227, 2, 227, $$1865-3-8$$, 1170, $$Samoa$$),
+(228, 3, 228, $$1869-10-1$$, 586, $$Madagascar$$),
+(229, 2, 229, $$1863-11-19$$, 662, $$Yemen$$),
+(230, 9, 230, $$1867-2-28$$, 862, $$Senegal$$),
+(231, 5, 231, $$1865-6-10$$, 365, $$Greenland$$),
+(232, 5, 232, $$1870-3-27$$, 174, $$Malawi$$),
+(233, 3, 233, $$1866-9-10$$, 722, $$Mongolia$$),
+(234, 1, 234, $$1864-12-28$$, 978, $$Egypt$$),
+(235, 9, 235, $$1868-12-7$$, 617, $$Guyana$$),
+(236, 7, 236, $$1867-7-17$$, 475, $$Kiribati$$),
+(237, 3, 237, $$1862-8-15$$, 662, $$Australia$$),
+(238, 3, 238, $$1867-12-27$$, 508, $$Bolivia$$),
+(239, 7, 239, $$1863-10-13$$, 354, $$Eritrea$$),
+(240, 7, 240, $$1868-3-18$$, 475, $$Nicaragua$$),
+(241, 4, 241, $$1865-11-28$$, 398, $$Togo$$),
+(242, 1, 242, $$1868-3-2$$, 998, $$Mozambique$$),
+(243, 6, 243, $$1867-3-12$$, 1227, $$Uruguay$$),
+(244, 9, 244, $$1867-6-3$$, 598, $$Singapore$$),
+(245, 8, 245, $$1863-1-23$$, 815, $$Comoros$$),
+(246, 1, 246, $$1864-4-7$$, 1147, $$Benin$$),
+(247, 1, 247, $$1864-9-27$$, 1193, $$Barbados$$),
+(248, 8, 248, $$1870-2-12$$, 681, $$Honduras$$),
+(249, 5, 249, $$1864-10-28$$, 559, $$Madagascar$$),
+(250, 5, 250, $$1867-9-26$$, 46, $$Mayotte$$),
+(251, 2, 251, $$1868-9-8$$, 127, $$Serbia$$),
+(252, 7, 252, $$1866-11-5$$, 147, $$Macedonia$$),
+(253, 6, 253, $$1864-10-24$$, 563, $$France$$),
+(254, 9, 254, $$1864-11-24$$, 453, $$Tuvalu$$),
+(255, 3, 255, $$1868-10-23$$, 525, $$Albania$$),
+(256, 1, 256, $$1840-1-14$$, 1246, $$Zambia$$),
+(257, 3, 257, $$1841-5-3$$, 1016, $$Uruguay$$),
+(258, 9, 258, $$1838-4-1$$, 750, $$Comoros$$),
+(259, 5, 259, $$1838-3-15$$, 970, $$Palau$$),
+(260, 8, 260, $$1844-7-22$$, 551, $$Bolivia$$),
+(261, 7, 261, $$1839-8-28$$, 652, $$Belgium$$),
+(262, 3, 262, $$1838-11-1$$, 428, $$Algeria$$),
+(263, 6, 263, $$1840-2-28$$, 259, $$Gambia$$),
+(264, 3, 264, $$1843-5-10$$, 541, $$Bahrain$$),
+(265, 4, 265, $$1842-5-21$$, 980, $$Peru$$),
+(266, 3, 266, $$1843-3-1$$, 212, $$Latvia$$),
+(267, 4, 267, $$1842-12-11$$, 803, $$Ecuador$$),
+(268, 2, 268, $$1839-2-7$$, 534, $$Luxembourg$$),
+(269, 9, 269, $$1842-12-12$$, 208, $$Mozambique$$),
+(270, 4, 270, $$1843-5-16$$, 1202, $$Australia$$),
+(271, 7, 271, $$1839-3-8$$, 398, $$Curacao$$),
+(272, 8, 272, $$1842-6-5$$, 1036, $$Ethiopia$$),
+(273, 2, 273, $$1841-2-4$$, 175, $$Angola$$),
+(274, 1, 274, $$1840-2-25$$, 1162, $$Netherlands$$),
+(275, 2, 275, $$1839-1-21$$, 422, $$Bahamas$$),
+(276, 9, 276, $$1843-5-18$$, 740, $$Belgium$$),
+(277, 4, 277, $$1839-10-27$$, 714, $$Martinique$$),
+(278, 4, 278, $$1842-6-17$$, 464, $$Albania$$),
+(279, 5, 279, $$1844-11-11$$, 62, $$Qatar$$),
+(280, 3, 280, $$1838-3-9$$, 899, $$Brunei$$),
+(281, 2, 281, $$1844-2-20$$, 1246, $$Palau$$),
+(282, 6, 282, $$1841-8-8$$, 621, $$Bahamas$$),
+(283, 3, 283, $$1843-10-19$$, 761, $$Djibouti$$),
+(284, 6, 284, $$1838-9-1$$, 170, $$Cambodia$$),
+(285, 7, 285, $$1844-5-10$$, 328, $$Niger$$),
+(286, 6, 286, $$1841-2-5$$, 613, $$Martinique$$),
+(287, 7, 287, $$1842-1-19$$, 349, $$Cambodia$$),
+(288, 4, 288, $$1842-10-12$$, 250, $$Montserrat$$),
+(289, 3, 289, $$1841-11-16$$, 744, $$Mauritius$$),
+(290, 1, 290, $$1842-9-2$$, 1, $$Fiji$$),
+(291, 5, 291, $$1840-5-26$$, 1033, $$Nigeria$$),
+(292, 9, 292, $$1842-2-14$$, 967, $$Armenia$$),
+(293, 7, 293, $$1843-7-27$$, 1184, $$Niger$$),
+(294, 6, 294, $$1843-6-24$$, 1054, $$Portugal$$),
+(295, 4, 295, $$1837-3-27$$, 602, $$Samoa$$),
+(296, 3, 296, $$1840-3-26$$, 1170, $$Kazakhstan$$),
+(297, 6, 297, $$1841-4-4$$, 1150, $$Nicaragua$$),
+(298, 2, 298, $$1843-2-22$$, 540, $$Martinique$$),
+(299, 7, 299, $$1844-1-8$$, 105, $$Belgium$$),
+(300, 4, 300, $$1842-1-7$$, 946, $$Finland$$),
+(301, 8, 301, $$1839-7-19$$, 1053, $$Mauritius$$),
+(302, 6, 302, $$1842-12-17$$, 1214, $$Kosovo$$),
+(303, 6, 303, $$1843-2-19$$, 15, $$Niger$$),
+(304, 3, 304, $$1840-3-22$$, 21, $$Cuba$$),
+(305, 4, 305, $$1844-1-3$$, 651, $$Laos$$),
+(306, 1, 306, $$1840-3-16$$, 764, $$Niue$$),
+(307, 6, 307, $$1841-4-27$$, 81, $$Nigeria$$),
+(308, 1, 308, $$1841-8-21$$, 1051, $$Bhutan$$),
+(309, 6, 309, $$1840-11-21$$, 29, $$Mexico$$),
+(310, 6, 310, $$1841-1-12$$, 214, $$Iraq$$),
+(311, 6, 311, $$1838-6-2$$, 57, $$Oman$$),
+(312, 2, 312, $$1843-6-25$$, 210, $$Yemen$$),
+(313, 3, 313, $$1842-1-5$$, 535, $$Kazakhstan$$),
+(314, 9, 314, $$1844-5-4$$, 364, $$Japan$$),
+(315, 4, 315, $$1839-12-12$$, 694, $$Guyana$$),
+(316, 9, 316, $$1843-4-5$$, 596, $$Mexico$$),
+(317, 8, 317, $$1839-6-5$$, 990, $$Armenia$$),
+(318, 4, 318, $$1838-10-19$$, 540, $$Guyana$$),
+(319, 5, 319, $$1838-1-23$$, 809, $$Somalia$$),
+(320, 7, 320, $$1841-10-14$$, 835, $$Hungary$$),
+(321, 9, 321, $$1839-7-26$$, 748, $$Oman$$),
+(322, 4, 322, $$1840-11-16$$, 246, $$USA$$),
+(323, 4, 323, $$1844-9-25$$, 239, $$Senegal$$),
+(324, 9, 324, $$1839-12-28$$, 1033, $$Greenland$$),
+(325, 1, 325, $$1840-11-15$$, 94, $$Guatemala$$),
+(326, 7, 326, $$1837-4-24$$, 739, $$Tuvalu$$),
+(327, 4, 327, $$1838-12-3$$, 687, $$Brazil$$),
+(328, 8, 328, $$1841-5-13$$, 156, $$Vietnam$$),
+(329, 7, 329, $$1844-2-22$$, 377, $$Netherlands$$),
+(330, 7, 330, $$1840-1-23$$, 1236, $$Liberia$$),
+(331, 4, 331, $$1840-6-2$$, 558, $$Bahrain$$),
+(332, 4, 332, $$1841-6-24$$, 1224, $$Hungary$$),
+(333, 3, 333, $$1842-2-7$$, 368, $$Kyrgyzstan$$),
+(334, 7, 334, $$1840-5-18$$, 675, $$Afghanistan$$),
+(335, 2, 335, $$1844-12-4$$, 524, $$Nicaragua$$),
+(336, 8, 336, $$1844-8-12$$, 960, $$Azerbaijan$$),
+(337, 4, 337, $$1842-4-21$$, 1126, $$Bermuda$$),
+(338, 7, 338, $$1840-11-27$$, 66, $$Mayotte$$),
+(339, 5, 339, $$1837-6-26$$, 472, $$Liechtenstein$$),
+(340, 6, 340, $$1842-4-5$$, 616, $$Pakistan$$),
+(341, 3, 341, $$1841-2-11$$, 239, $$Mongolia$$),
+(342, 7, 342, $$1840-3-2$$, 220, $$Pakistan$$),
+(343, 9, 343, $$1842-6-26$$, 262, $$Seychelles$$),
+(344, 8, 344, $$1843-5-21$$, 1054, $$Spain$$),
+(345, 7, 345, $$1841-8-2$$, 983, $$Nauru$$),
+(346, 7, 346, $$1840-4-27$$, 417, $$Croatia$$),
+(347, 7, 347, $$1842-8-3$$, 216, $$Pakistan$$),
+(348, 6, 348, $$1844-11-6$$, 1216, $$Angola$$),
+(349, 9, 349, $$1843-6-4$$, 422, $$Suriname$$),
+(350, 7, 350, $$1837-12-28$$, 1209, $$Colombia$$),
+(351, 5, 351, $$1839-11-27$$, 605, $$Cuba$$),
+(352, 8, 352, $$1843-10-24$$, 377, $$Martinique$$),
+(353, 4, 353, $$1840-10-2$$, 581, $$Bahamas$$),
+(354, 6, 354, $$1841-9-3$$, 496, $$Pitcairn$$),
+(355, 9, 355, $$1838-1-6$$, 517, $$Israel$$),
+(356, 2, 356, $$1841-10-12$$, 1160, $$Gibraltar$$),
+(357, 3, 357, $$1841-1-12$$, 499, $$Sweden$$),
+(358, 6, 358, $$1843-9-7$$, 1119, $$Montenegro$$),
+(359, 2, 359, $$1842-10-24$$, 717, $$Libya$$),
+(360, 9, 360, $$1841-4-2$$, 962, $$Hungary$$),
+(361, 8, 361, $$1844-8-5$$, 527, $$Gibraltar$$),
+(362, 5, 362, $$1841-2-4$$, 45, $$Sudan$$),
+(363, 6, 363, $$1844-10-28$$, 1133, $$Israel$$),
+(364, 5, 364, $$1841-4-22$$, 442, $$Somalia$$),
+(365, 9, 365, $$1839-9-26$$, 76, $$Ireland$$),
+(366, 8, 366, $$1838-7-27$$, 594, $$Greece$$),
+(367, 1, 367, $$1843-12-23$$, 259, $$Senegal$$),
+(368, 8, 368, $$1843-2-13$$, 970, $$Comoros$$),
+(369, 1, 369, $$1845-3-20$$, 587, $$Benin$$),
+(370, 6, 370, $$1841-9-23$$, 1194, $$Nauru$$),
+(371, 5, 371, $$1844-10-27$$, 446, $$Australia$$),
+(372, 9, 372, $$1842-2-27$$, 1080, $$Denmark$$),
+(373, 5, 373, $$1839-2-2$$, 663, $$Gibraltar$$),
+(374, 8, 374, $$1843-9-4$$, 1029, $$Mauritius$$),
+(375, 2, 375, $$1843-11-7$$, 159, $$Greece$$),
+(376, 4, 376, $$1842-2-7$$, 690, $$Morocco$$),
+(377, 2, 377, $$1838-12-18$$, 878, $$Lithuania$$),
+(378, 7, 378, $$1839-1-28$$, 275, $$Vietnam$$),
+(379, 7, 379, $$1843-1-2$$, 477, $$Maldives$$),
+(380, 9, 380, $$1843-6-15$$, 735, $$Kenya$$),
+(381, 4, 381, $$1842-7-22$$, 783, $$Haiti$$),
+(382, 1, 382, $$1840-7-7$$, 1250, $$Philippines$$),
+(383, 4, 383, $$1838-2-23$$, 630, $$Brunei$$),
+(384, 6, 384, $$1843-4-12$$, 626, $$Australia$$),
+(385, 6, 385, $$1840-6-1$$, 119, $$Malawi$$),
+(386, 3, 386, $$1845-12-21$$, 991, $$Myanmar$$),
+(387, 7, 387, $$1844-3-16$$, 123, $$Kyrgyzstan$$),
+(388, 9, 388, $$1839-11-13$$, 619, $$Nauru$$),
+(389, 7, 389, $$1840-3-16$$, 756, $$Ghana$$),
+(390, 4, 390, $$1843-10-5$$, 1013, $$Cuba$$),
+(391, 7, 391, $$1839-11-19$$, 1094, $$India$$),
+(392, 2, 392, $$1843-10-5$$, 967, $$Belarus$$),
+(393, 3, 393, $$1838-8-19$$, 389, $$Norway$$),
+(394, 1, 394, $$1839-12-5$$, 290, $$Comoros$$),
+(395, 2, 395, $$1841-12-28$$, 1054, $$Macao$$),
+(396, 6, 396, $$1840-12-11$$, 245, $$Guyana$$),
+(397, 2, 397, $$1839-4-1$$, 440, $$Norway$$),
+(398, 5, 398, $$1844-7-23$$, 617, $$Djibouti$$),
+(399, 9, 399, $$1844-10-4$$, 739, $$Pakistan$$),
+(400, 5, 400, $$1840-5-20$$, 387, $$Ecuador$$),
+(401, 2, 401, $$1842-1-18$$, 847, $$Montenegro$$),
+(402, 9, 402, $$1841-7-1$$, 892, $$France$$),
+(403, 4, 403, $$1838-11-25$$, 879, $$Iceland$$),
+(404, 7, 404, $$1839-4-1$$, 429, $$Luxembourg$$),
+(405, 4, 405, $$1843-5-23$$, 259, $$Serbia$$),
+(406, 7, 406, $$1842-3-17$$, 194, $$Mongolia$$),
+(407, 4, 407, $$1842-12-11$$, 663, $$Jamaica$$),
+(408, 8, 408, $$1837-8-3$$, 809, $$Chad$$),
+(409, 4, 409, $$1838-4-6$$, 477, $$Kenya$$),
+(410, 5, 410, $$1843-9-2$$, 76, $$Nepal$$),
+(411, 9, 411, $$1843-3-19$$, 599, $$Latvia$$),
+(412, 4, 412, $$1843-6-11$$, 77, $$Benin$$),
+(413, 2, 413, $$1840-4-16$$, 695, $$Malta$$),
+(414, 8, 414, $$1843-12-13$$, 325, $$Serbia$$),
+(415, 4, 415, $$1841-1-6$$, 733, $$Tajikistan$$),
+(416, 7, 416, $$1839-2-7$$, 744, $$Paraguay$$),
+(417, 6, 417, $$1840-3-17$$, 1190, $$Portugal$$),
+(418, 2, 418, $$1841-9-23$$, 1084, $$Niue$$),
+(419, 7, 419, $$1839-4-3$$, 657, $$Gabon$$),
+(420, 4, 420, $$1844-3-3$$, 206, $$Cyprus$$),
+(421, 8, 421, $$1838-5-23$$, 1101, $$Luxembourg$$),
+(422, 1, 422, $$1843-2-3$$, 516, $$Comoros$$),
+(423, 2, 423, $$1839-3-10$$, 979, $$Russia$$),
+(424, 7, 424, $$1841-4-25$$, 320, $$Georgia$$),
+(425, 4, 425, $$1839-6-2$$, 1170, $$Cameroon$$),
+(426, 8, 426, $$1840-10-9$$, 306, $$Austria$$),
+(427, 2, 427, $$1841-3-11$$, 996, $$Luxembourg$$),
+(428, 6, 428, $$1839-5-15$$, 866, $$Romania$$),
+(429, 5, 429, $$1841-7-10$$, 880, $$Luxembourg$$),
+(430, 7, 430, $$1839-6-6$$, 610, $$Slovakia$$),
+(431, 4, 431, $$1842-10-28$$, 1037, $$Mozambique$$),
+(432, 6, 432, $$1842-12-18$$, 510, $$Argentina$$),
+(433, 3, 433, $$1844-11-21$$, 539, $$Mexico$$),
+(434, 4, 434, $$1843-5-4$$, 1086, $$Hungary$$),
+(435, 8, 435, $$1842-3-20$$, 1095, $$Latvia$$),
+(436, 7, 436, $$1841-6-15$$, 869, $$Afghanistan$$),
+(437, 5, 437, $$1842-10-27$$, 156, $$Malta$$),
+(438, 5, 438, $$1840-1-4$$, 449, $$Egypt$$),
+(439, 4, 439, $$1840-2-7$$, 165, $$Bangladesh$$),
+(440, 7, 440, $$1840-12-28$$, 42, $$Senegal$$),
+(441, 3, 441, $$1842-3-22$$, 869, $$Greenland$$),
+(442, 3, 442, $$1839-3-2$$, 744, $$Egypt$$),
+(443, 9, 443, $$1839-6-27$$, 1160, $$Madagascar$$),
+(444, 5, 444, $$1843-5-28$$, 1219, $$Mali$$),
+(445, 5, 445, $$1838-11-6$$, 971, $$Belize$$),
+(446, 4, 446, $$1843-11-6$$, 931, $$Eritrea$$),
+(447, 6, 447, $$1838-6-15$$, 707, $$Guyana$$),
+(448, 6, 448, $$1840-6-8$$, 616, $$Portugal$$),
+(449, 6, 449, $$1844-7-19$$, 280, $$France$$),
+(450, 2, 450, $$1844-3-17$$, 1133, $$Gibraltar$$),
+(451, 6, 451, $$1844-5-24$$, 715, $$Nicaragua$$),
+(452, 7, 452, $$1842-6-6$$, 1244, $$Cyprus$$),
+(453, 5, 453, $$1843-7-1$$, 975, $$Thailand$$),
+(454, 9, 454, $$1840-3-4$$, 812, $$Cambodia$$),
+(455, 8, 455, $$1837-4-9$$, 66, $$Finland$$),
+(456, 3, 456, $$1843-11-8$$, 1013, $$Palau$$),
+(457, 3, 457, $$1839-9-15$$, 1023, $$Kazakhstan$$),
+(458, 1, 458, $$1844-6-3$$, 801, $$Austria$$),
+(459, 8, 459, $$1844-7-10$$, 206, $$Croatia$$),
+(460, 4, 460, $$1841-12-14$$, 581, $$Bolivia$$),
+(461, 5, 461, $$1843-12-19$$, 965, $$Belarus$$),
+(462, 6, 462, $$1841-8-9$$, 426, $$Mauritania$$),
+(463, 4, 463, $$1841-10-5$$, 563, $$Uruguay$$),
+(464, 9, 464, $$1843-9-18$$, 312, $$Mali$$),
+(465, 2, 465, $$1837-8-27$$, 1157, $$Thailand$$),
+(466, 9, 466, $$1838-9-18$$, 830, $$Laos$$),
+(467, 1, 467, $$1842-10-9$$, 1171, $$Bulgaria$$),
+(468, 1, 468, $$1842-3-11$$, 888, $$Switzerland$$),
+(469, 6, 469, $$1840-1-14$$, 1229, $$Tanzania$$),
+(470, 6, 470, $$1841-1-2$$, 506, $$Uganda$$),
+(471, 7, 471, $$1840-10-17$$, 470, $$Morocco$$),
+(472, 4, 472, $$1844-9-3$$, 1084, $$Malawi$$),
+(473, 3, 473, $$1841-5-7$$, 596, $$USA$$),
+(474, 1, 474, $$1842-10-24$$, 1235, $$Djibouti$$),
+(475, 4, 475, $$1843-9-19$$, 140, $$Nepal$$),
+(476, 4, 476, $$1842-9-20$$, 27, $$Romania$$),
+(477, 6, 477, $$1840-5-11$$, 492, $$Greece$$),
+(478, 1, 478, $$1842-1-13$$, 353, $$Bahamas$$),
+(479, 8, 479, $$1841-5-6$$, 396, $$Greece$$),
+(480, 4, 480, $$1839-4-1$$, 505, $$Singapore$$),
+(481, 2, 481, $$1840-12-3$$, 965, $$Iceland$$),
+(482, 3, 482, $$1841-6-13$$, 447, $$Curacao$$),
+(483, 1, 483, $$1841-3-16$$, 970, $$Zambia$$),
+(484, 8, 484, $$1844-8-1$$, 1185, $$Mali$$),
+(485, 9, 485, $$1839-4-26$$, 30, $$Ethiopia$$),
+(486, 8, 486, $$1838-6-24$$, 869, $$Laos$$),
+(487, 5, 487, $$1840-10-23$$, 818, $$Macao$$),
+(488, 1, 488, $$1841-10-14$$, 577, $$Tunisia$$),
+(489, 2, 489, $$1844-7-4$$, 746, $$Switzerland$$),
+(490, 9, 490, $$1843-2-20$$, 1247, $$Myanmar$$),
+(491, 2, 491, $$1839-1-1$$, 386, $$Barbados$$),
+(492, 6, 492, $$1845-5-12$$, 866, $$Lebanon$$),
+(493, 5, 493, $$1838-8-28$$, 839, $$Japan$$),
+(494, 1, 494, $$1844-12-6$$, 983, $$Gibraltar$$),
+(495, 5, 495, $$1837-7-16$$, 81, $$Chad$$),
+(496, 8, 496, $$1839-7-16$$, 744, $$Dominica$$),
+(497, 4, 497, $$1844-8-1$$, 259, $$Kiribati$$),
+(498, 4, 498, $$1838-2-4$$, 1150, $$Greece$$),
+(499, 9, 499, $$1844-8-18$$, 1038, $$Bolivia$$),
+(500, 7, 500, $$1840-5-27$$, 614, $$Latvia$$);

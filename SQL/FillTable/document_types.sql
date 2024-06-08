@@ -1,4 +1,4 @@
-INSERT INTO document_types (id, document) VALUES 
+INSERT INTO document_types (id, document) VALUES
 (1, $$International passport$$),
 (2, $$Marriage certificate$$),
 (3, $$Visa$$),

@@ -1,4 +1,4 @@
-INSERT INTO educational_certificates_types (id, prerequirement, name) VALUES 
+INSERT INTO educational_certificates_types (id, prerequirement, name) VALUES
 (1, null, $$Certificate of Participation/Completion$$),
 (2, 1, $$High School Diploma or Equivalent (e.g., GED)$$),
 (3, 1, $$Vocational or Technical Certificates$$),

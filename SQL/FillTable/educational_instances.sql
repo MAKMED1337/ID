@@ -1,4 +1,4 @@
-INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES 
+INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES
 (1, $$University of Warsaw$$, $$Krakowskie Przedmieście 26/28, 00-927 Warsaw$$, $$1816-11-19$$, $$Poland$$, $$Warsaw$$),
 (2, $$Jagiellonian University$$, $$Golebia 24, 31-007 Krakow$$, $$1364-05-12$$, $$Poland$$, $$Krakow$$),
 (3, $$Adam Mickiewicz University$$, $$ul. Henryka Wieniawskiego 1, 61-712 Poznan$$, $$1919-05-07$$, $$Poland$$, $$Poznan$$),
@@ -19,147 +19,7 @@ INSERT INTO educational_instances (id, name, address, creation_date, country, ci
 (18, $$Columbia University$$, $$116th St & Broadway, New York, NY 10027$$, $$1754-05-25$$, $$USA$$, $$New York$$),
 (19, $$Yale University$$, $$New Haven, CT 06520$$, $$1701-10-09$$, $$USA$$, $$New Haven$$),
 (20, $$University of Pennsylvania$$, $$Philadelphia, PA 19104$$, $$1740-11-14$$, $$USA$$, $$Philadelphia$$);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 1);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 1);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 1);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 1);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 1);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 1);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 1);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 2);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 2);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 2);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 2);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 2);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 2);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 2);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 3);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 3);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 3);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 3);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 3);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 3);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 3);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 4);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 4);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 4);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 4);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 4);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 4);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 4);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 5);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 5);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 5);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 5);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 5);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 5);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 5);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 6);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 6);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 6);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 6);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 6);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 6);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 6);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 7);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 7);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 7);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 7);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 7);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 7);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 7);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 8);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 8);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 8);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 8);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 8);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 8);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 8);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 9);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 9);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 9);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 9);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 9);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 9);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 9);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 10);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 10);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 10);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 10);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 10);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 10);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 10);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 11);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 11);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 11);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 11);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 11);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 11);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 11);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 12);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 12);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 12);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 12);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 12);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 12);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 12);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 13);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 13);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 13);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 13);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 13);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 13);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 13);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 14);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 14);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 14);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 14);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 14);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 14);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 14);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 15);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 15);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 15);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 15);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 15);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 15);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 15);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 16);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 16);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 16);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 16);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 16);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 16);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 16);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 17);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 17);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 17);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 17);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 17);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 17);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 17);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 18);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 18);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 18);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 18);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 18);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 18);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 18);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 19);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 19);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 19);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 19);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 19);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 19);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 19);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (4, 20);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (5, 20);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (6, 20);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (7, 20);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (8, 20);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (9, 20);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (10, 20);
-INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES 
+INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES
 (21, $$John Paul II High School$$, $$ul. Swietej Gertrudy 7, 31-046 Krakow$$, $$1957-09-01$$, $$Poland$$, $$Krakow$$),
 (22, $$High School No. 5 Krakow$$, $$ul. Studencka 12, 31-116 Krakow$$, $$1945-09-01$$, $$Poland$$, $$Krakow$$),
 (23, $$International School of Krakow$$, $$ul. Starowislna 26, 31-032 Krakow$$, $$1993-09-01$$, $$Poland$$, $$Krakow$$),
@@ -170,27 +30,7 @@ INSERT INTO educational_instances (id, name, address, creation_date, country, ci
 (28, $$Lyceum No. 9 Warsaw$$, $$ul. Nowosadecka 41, 30-383 Warsaw$$, $$1935-09-01$$, $$Poland$$, $$Warsaw$$),
 (29, $$Lyceum No. 3 Warsaw$$, $$ul. Topolowa 22, 31-506 Warsaw$$, $$1910-09-01$$, $$Poland$$, $$Warsaw$$),
 (30, $$Catholic School Complex Warsaw$$, $$ul. Bernardynska 5, 00-055 Warsaw$$, $$1991-09-01$$, $$Poland$$, $$Warsaw$$);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 21);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 21);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 22);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 22);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 23);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 23);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 24);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 24);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 25);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 25);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 26);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 26);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 27);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 27);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 28);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 28);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 29);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 29);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (1, 30);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (2, 30);
-INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES 
+INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES
 (31, $$Cracow University of Technology$$, $$ul. Warszawska 24, 31-155 Krakow$$, $$1945-10-06$$, $$Poland$$, $$Krakow$$),
 (32, $$AGH University of Science and Technology$$, $$al. Mickiewicza 30, 30-059 Krakow$$, $$1919-04-20$$, $$Poland$$, $$Krakow$$),
 (33, $$Warsaw University of Technology$$, $$Plac Politechniki 1, 00-661 Warsaw$$, $$1826-01-04$$, $$Poland$$, $$Warsaw$$),
@@ -201,13 +41,174 @@ INSERT INTO educational_instances (id, name, address, creation_date, country, ci
 (38, $$Cracow University of Economics$$, $$ul. Rakowicka 27, 31-510 Krakow$$, $$1925-10-01$$, $$Poland$$, $$Krakow$$),
 (39, $$Warsaw University of Life Sciences$$, $$Nowoursynowska 166, 02-787 Warsaw$$, $$1816-09-23$$, $$Poland$$, $$Warsaw$$),
 (40, $$Academy of Fine Arts in Warsaw$$, $$Krakowskie Przedmieście 5, 00-068 Warsaw$$, $$1945-10-22$$, $$Poland$$, $$Warsaw$$);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 31);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 32);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 33);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 34);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 35);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 36);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 37);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 38);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 39);
-INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES (3, 40);
+INSERT INTO educational_instances_types_relation (type_id, instance_id) VALUES
+(4, 1),
+(5, 1),
+(6, 1),
+(7, 1),
+(8, 1),
+(9, 1),
+(10, 1),
+(4, 2),
+(5, 2),
+(6, 2),
+(7, 2),
+(8, 2),
+(9, 2),
+(10, 2),
+(4, 3),
+(5, 3),
+(6, 3),
+(7, 3),
+(8, 3),
+(9, 3),
+(10, 3),
+(4, 4),
+(5, 4),
+(6, 4),
+(7, 4),
+(8, 4),
+(9, 4),
+(10, 4),
+(4, 5),
+(5, 5),
+(6, 5),
+(7, 5),
+(8, 5),
+(9, 5),
+(10, 5),
+(4, 6),
+(5, 6),
+(6, 6),
+(7, 6),
+(8, 6),
+(9, 6),
+(10, 6),
+(4, 7),
+(5, 7),
+(6, 7),
+(7, 7),
+(8, 7),
+(9, 7),
+(10, 7),
+(4, 8),
+(5, 8),
+(6, 8),
+(7, 8),
+(8, 8),
+(9, 8),
+(10, 8),
+(4, 9),
+(5, 9),
+(6, 9),
+(7, 9),
+(8, 9),
+(9, 9),
+(10, 9),
+(4, 10),
+(5, 10),
+(6, 10),
+(7, 10),
+(8, 10),
+(9, 10),
+(10, 10),
+(4, 11),
+(5, 11),
+(6, 11),
+(7, 11),
+(8, 11),
+(9, 11),
+(10, 11),
+(4, 12),
+(5, 12),
+(6, 12),
+(7, 12),
+(8, 12),
+(9, 12),
+(10, 12),
+(4, 13),
+(5, 13),
+(6, 13),
+(7, 13),
+(8, 13),
+(9, 13),
+(10, 13),
+(4, 14),
+(5, 14),
+(6, 14),
+(7, 14),
+(8, 14),
+(9, 14),
+(10, 14),
+(4, 15),
+(5, 15),
+(6, 15),
+(7, 15),
+(8, 15),
+(9, 15),
+(10, 15),
+(4, 16),
+(5, 16),
+(6, 16),
+(7, 16),
+(8, 16),
+(9, 16),
+(10, 16),
+(4, 17),
+(5, 17),
+(6, 17),
+(7, 17),
+(8, 17),
+(9, 17),
+(10, 17),
+(4, 18),
+(5, 18),
+(6, 18),
+(7, 18),
+(8, 18),
+(9, 18),
+(10, 18),
+(4, 19),
+(5, 19),
+(6, 19),
+(7, 19),
+(8, 19),
+(9, 19),
+(10, 19),
+(4, 20),
+(5, 20),
+(6, 20),
+(7, 20),
+(8, 20),
+(9, 20),
+(10, 20),
+(1, 21),
+(2, 21),
+(1, 22),
+(2, 22),
+(1, 23),
+(2, 23),
+(1, 24),
+(2, 24),
+(1, 25),
+(2, 25),
+(1, 26),
+(2, 26),
+(1, 27),
+(2, 27),
+(1, 28),
+(2, 28),
+(1, 29),
+(2, 29),
+(1, 30),
+(2, 30),
+(3, 31),
+(3, 32),
+(3, 33),
+(3, 34),
+(3, 35),
+(3, 36),
+(3, 37),
+(3, 38),
+(3, 39),
+(3, 40);

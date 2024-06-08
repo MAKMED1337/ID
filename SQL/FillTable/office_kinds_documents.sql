@@ -1,4 +1,4 @@
-INSERT INTO office_kinds_documents (kind_id, document_id) VALUES 
+INSERT INTO office_kinds_documents (kind_id, document_id) VALUES
 (1, 1),
 (2, 2),
 (1, 3),
