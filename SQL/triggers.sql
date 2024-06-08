@@ -478,7 +478,7 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1
-        FROM get_issued_documents_types(NEW.issuer)
+        FROM get_issued_documents_types(NEW.inner_issuer)
         WHERE document = 'Visa' -- CHANGE ACCORDING TO DATA IN FILE
     ) THEN
         RAISE EXCEPTION 'Visa is issued by office without enough authority';
