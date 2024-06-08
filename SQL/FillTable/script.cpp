@@ -191,7 +191,7 @@ void addDocxType() {
     freopen("document_types.sql", "w", stdout);
     docTypesToOfTypes["passport"] = "consulat";
     docTypesToOfTypes["International passport"] = "consulat";
-    docTypesToOfTypes["visa"] = "consulat";
+    docTypesToOfTypes["Visa"] = "consulat";
     docTypesToOfTypes["divorce certificate"] = "marriage agency";
     docTypesToOfTypes["marriege certificate"] = "marriage agency";
     docTypesToOfTypes["birth certificate"] = "medical center";
@@ -266,6 +266,9 @@ void addAdministrators() {
     const string query = "INSERT INTO administrators (user_id, office_id) VALUES ";
     vector<string> vals;
     for (Office OF : offices) {
+        if (getRand(0, 10) != 10) continue;
+        cout << "INSERT INTO administrators (user_id, office_id) VALUES (" <<  
+        accs[c].id << ", " << OF.id << ");\n";
         assert(c < accs.size());
         vals.push_back(to_string(accs[c].id) + ", " + to_string(OF.id));
         admins.push_back(admin(accs[c].id, OF.id));
@@ -664,8 +667,8 @@ void printVisaCat(int type, string description, bool work, bool resid, string co
 
 void addVisaTypes() {
     freopen("visa_categories.sql", "w", stdout);
-    int id = 1;
     for (country C : countries) {
+        int id = 1;
         for (string desc : visaTypes) {
             printVisaCat(id++, desc, bool(desc[0] != 'T'), desc[0] == 'I', C.name, getRand(5, 10));
         }
@@ -684,6 +687,10 @@ void printIntPasprt(int id, string oName, string oSurname, string enName,
     << STR(series) << ");\n";
 }
 
+int cntIntPass;
+int YYIntPass[10000];
+
+
 void addIntPassp() {
     freopen("international_passports.sql", "w", stdout);
     int id = 1;
@@ -691,6 +698,7 @@ void addIntPassp() {
         string name = names[x];
         string surname = surnames[x];
         int YY = birth[x] + getRand(12, 18);
+        YYIntPass[id] = YY;
         string is_date = to_string(YY) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
         string exp_date = to_string(YY + 20) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
         string country = countries[getRand(0, countries.size() - 1)].name;
@@ -701,8 +709,26 @@ void addIntPassp() {
         printIntPasprt(id, name, surname, name, surname, is_date, exp_date, ("MF"[x % 2]), issuer, x, false, false, country, series);
         id++;
     }
+    cntIntPass = id - 1;
 }
 
+void printVisa(int id, int type, int passport, string issue_date, int issuer, string country) {
+    cout << "INSERT INTO visas VALUES (" << 
+    id << ", " << type << ", " << passport << ", " << STR(issue_date) << ", " 
+    << issuer << ", " << STR(country) << ");\n";
+}
+
+void addVisas() {
+    freopen("visas.sql", "w", stdout);
+    int id = 1;
+    for (int passId = 1; passId <= cntIntPass; passId++) {
+        int tp = getRand(1, 9);
+        string date = to_string(YYIntPass[passId] + getRand(1, 3)) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        int issuer = OFF["consulat"][getRand(0, OFF["consulat"].size() - 1)];
+        string country = countries[getRand(0, countries.size() - 1)].name;
+        printVisa(id++, tp, passId, date, issuer, country);
+    }
+}
 
 
 int main() {
@@ -730,8 +756,10 @@ int main() {
     addDivorce();
     addDivorceCert();
     addDeath();
+    //passport
     addPassport();
     addVisaTypes();
     addIntPassp();
+    addVisas();
     return 0;
 }
