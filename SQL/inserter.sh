@@ -3,10 +3,11 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SQL="${SCRIPT_DIR}/FillTable/"
+ID = "${SCRIPT_DIR}/../"
 
 function add() {
     echo "Inserting $1"
-    docker compose -f docker-compose-dev.yml exec -T -it db psql -Uadmin -dID < "${SQL}/$1.sql"
+    docker compose -f "${ID}/docker-compose-dev.yml" exec -T -it db psql -Uadmin -dID < "${SQL}/$1.sql"
 }
 
 add "people"
@@ -31,3 +32,5 @@ add "administrators"
 # add "educational_certificates"
 #
 add "marriages"
+
+add "passports"
