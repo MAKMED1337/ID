@@ -526,7 +526,7 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_prerequisite_kind INTEGER;
 BEGIN
-    FOR v_prerequisite_kind IN (SELECT prerequirement FROM educational_certificetes_types WHERE kind = NEW.kind)
+    FOR v_prerequisite_kind IN (SELECT prerequirement FROM educational_certificates_types WHERE kind = NEW.kind)
     LOOP
         IF v_prerequisite_kind IS NOT NULL
         AND NOT EXISTS (

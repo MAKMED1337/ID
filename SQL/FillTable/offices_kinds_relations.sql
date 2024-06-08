@@ -1,4 +1,4 @@
-INSERT INTO offices_kinds_relations (office_id, kind_id) VALUES
+INSERT INTO offices_kinds_relations (office_id, kind_id) VALUES 
 (1, 2),
 (1, 1),
 (2, 4),

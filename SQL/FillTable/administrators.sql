@@ -1,4 +1,4 @@
-INSERT INTO administrators (user_id, office_id) VALUES
+INSERT INTO administrators (user_id, office_id) VALUES 
 (359, 156),
 (145, 793),
 (67, 927),

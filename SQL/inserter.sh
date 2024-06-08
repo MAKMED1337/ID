@@ -22,15 +22,22 @@ add "office_kinds_documents"
 add "offices_kinds_relations"
 add "administrators"
 
-# add "death_certificates"
-# add "birth_certificates"
+add "death_certificates"
+add "birth_certificates"
 
-# add "drivers_licences"
-# add "educational_instances_types"
-# add "educational_instances"
-# add "educational_certificates_types"
-# add "educational_certificates"
-#
+add "drivers_licences"
+
+add "educational_certificates_types"
+add "educational_instances" #stores educational_instances_types_relation inserts
+add "educational_certificates"
+
 add "marriages"
+add "marriage_certificates"
+add "divorces"
+add "divorce_certificates"
 
 add "passports"
+
+add "visa_categories"
+add "international_passports"
+add "visas"

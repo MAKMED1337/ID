@@ -1,4 +1,4 @@
-INSERT INTO drivers_licences (id, type, person, issuer, issue_date, expiration_date) VALUES
+INSERT INTO drivers_licences (id, type, person, issuer, issue_date, expiration_date) VALUES 
 (1, $$D$$, 436, 1229, $$1899-6-16$$, $$1909-6-16$$),
 (2, $$D$$, 71, 400, $$2018-9-8$$, $$2028-9-8$$),
 (3, $$A$$, 233, 1226, $$1978-7-5$$, $$1988-7-5$$),

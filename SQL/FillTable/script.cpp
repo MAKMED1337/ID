@@ -198,10 +198,10 @@ void addDocxType() {
     docTypesToOfTypes["International passport"] = "consulat";
     docTypesToOfTypes["Visa"] = "consulat";
     docTypesToOfTypes["divorce certificate"] = "marriage agency";
-    docTypesToOfTypes["marriege certificate"] = "marriage agency";
+    docTypesToOfTypes["Marriage certificate"] = "marriage agency";
     docTypesToOfTypes["birth certificate"] = "medical center";
     docTypesToOfTypes["death certificate"] = "medical center";
-    docTypesToOfTypes["driver licence"] = "driver schools";
+    docTypesToOfTypes["driver license"] = "driver schools";
     int id = 1;
 
     const string query = "INSERT INTO document_types (id, document) VALUES ";
@@ -376,13 +376,16 @@ void addUnivers() {
 
     const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES ";
     vector<string> vals;
+    vector <pair <int, int>> Z;
     for (auto [name, date, adress, city, country] : universities) {
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
-        for (int i = 4; i <= 10; i++)
-            printEducInstTypRelation(i, educational_instances_count - 1);
+        for (int i = 4; i <= 10; i++) {
+            Z.emplace_back(i, educational_instances_count - 1);
+        }
     }
     cout << create_insert(query, vals) << "\n";
+    for (auto [a, b] : Z) printEducInstTypRelation(a, b);
 }
 
 pair<int, int> schoolsIds;
@@ -404,13 +407,18 @@ void addSchools() {
 
     const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES ";
     vector<string> vals;
+    vector <pair <int, int>> Z;
     for (auto [name, date, adress, city, country] : schools) {
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
-        for (int i = 1; i <= 2; i++)
-            printEducInstTypRelation(i, educational_instances_count - 1);
+        for (int i = 1; i <= 2; i++) {
+            Z.emplace_back(i, educational_instances_count - 1);
+        }
     }
     cout << create_insert(query, vals) << "\n";
+    for (auto [a, b] : Z) {
+        printEducInstTypRelation(a, b);
+    }
 }
 
 pair<int, int> collegesIds;
@@ -436,12 +444,14 @@ void addColleges() {
 
     const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES ";
     vector<string> vals;
+    vector <pair <int, int>> Z;
     for (auto [name, date, adress, city, country] : colleges) {
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
-        printEducInstTypRelation(3, educational_instances_count - 1);
+        Z.emplace_back(3, educational_instances_count - 1);
     }
     cout << create_insert(query, vals) << "\n";
+    for (auto [a, b] : Z) printEducInstTypRelation(a, b);
 }
 
 void addEdObjects() {

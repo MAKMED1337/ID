@@ -1,4 +1,4 @@
-INSERT INTO countries (id, country) VALUES
+INSERT INTO countries (id, country) VALUES 
 (1, $$Afghanistan$$),
 (2, $$Albania$$),
 (3, $$Algeria$$),

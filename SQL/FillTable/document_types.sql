@@ -1,9 +1,9 @@
-INSERT INTO document_types (id, document) VALUES
+INSERT INTO document_types (id, document) VALUES 
 (1, $$International passport$$),
-(2, $$Visa$$),
-(3, $$birth certificate$$),
-(4, $$death certificate$$),
-(5, $$divorce certificate$$),
-(6, $$driver licence$$),
-(7, $$marriege certificate$$),
+(2, $$Marriage certificate$$),
+(3, $$Visa$$),
+(4, $$birth certificate$$),
+(5, $$death certificate$$),
+(6, $$divorce certificate$$),
+(7, $$driver license$$),
 (8, $$passport$$);
