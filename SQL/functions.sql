@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION get_administrated_offices(
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT offices.id, offices.country, office.city
+    SELECT offices.id, offices.country, offices.city
     FROM offices
     JOIN administrators ON offices.id = administrators.office_id
     WHERE administrators.user_id = p_administrator_id;
