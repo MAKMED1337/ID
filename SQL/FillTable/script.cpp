@@ -174,13 +174,13 @@ void addOffices() {
     cout << "--Offices\n";
     int id = 1;
 
-    const string query = "INSERT INTO offices (id, country, address, city) VALUES";
+    const string query = "INSERT INTO offices (id, country, address, city, name) VALUES";
     vector<string> vals;
     for (country C : countries) {
         int type_id = 0;
         for (int i = 0; i < min<int>(10, cities[C.id].size()); i++) {
             vals.push_back(to_string(id) + ", " + STR(C.name) + ", " + STR(C.name + " " + cities[C.id][i]) + ", " +
-                           STR(cities[C.id][i]));
+                           STR(cities[C.id][i]) + ", " + STR(cities[C.id][i] + "'s office"));
             offices.push_back(Office(id, C.name, cities[C.id][i]));
             id++;
         }
