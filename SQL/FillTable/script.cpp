@@ -377,6 +377,7 @@ void addUnivers() {
     const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES";
     vector<string> vals;
     for (auto [name, date, adress, city, country] : universities) {
+        date[1]-=2;
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
         for (int i = 4; i <= 10; i++) {
@@ -406,6 +407,7 @@ void addSchools() {
     const string query = "INSERT INTO educational_instances (id, name, address, creation_date, country, city) VALUES";
     vector<string> vals;
     for (auto [name, date, adress, city, country] : schools) {
+        date[1]-=2;
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
         for (int i = 1; i <= 2; i++) {
@@ -440,6 +442,7 @@ void addColleges() {
     vector<string> vals;
     vector <pair <int, int>> Z;
     for (auto [name, date, adress, city, country] : colleges) {
+        date[1]-=2;
         vals.push_back(to_string(educational_instances_count++) + ", " + STR(name) + ", " + STR(adress) + ", " +
                        STR(date) + ", " + STR(country) + ", " + STR(city));
         educInstTypesRel.emplace_back(3, educational_instances_count - 1);
@@ -477,9 +480,9 @@ void addEducCertificates() {
         int wasY = birth[id] + 10; /// TODO: define with date of birth + 10
         for (int i = 0; i < cntCert; i++) {
             int issuer = getRand(universityIds.first, universityIds.second);
-            if (kind / 2 == 0) {
+            if (kind <= 2) {
                 issuer = getRand(schoolsIds.first, schoolsIds.second);
-            } else if (kind / 2 <= 1) {
+            } else if (kind == 3) {
                 issuer = getRand(collegesIds.first, collegesIds.second);
             }
             string date =
