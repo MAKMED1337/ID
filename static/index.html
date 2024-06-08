@@ -1,18 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
+    <script src="helper.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function createNavBar(items) {
+            // Create the nav element
+            const nav = document.createElement('nav');
+
+            // Create the unordered list element
+            const ul = document.createElement('ul');
+
+            // Iterate over the items array to create list items
+            items.forEach(item => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.textContent = item.name;
+                a.href = item.url;
+                li.appendChild(a);
+                ul.appendChild(li);
+            });
+
+            // Append the ul to the nav
+            nav.appendChild(ul);
+
+            return nav;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
             var token = localStorage.getItem('bearerToken');
             if (!token) {
                 window.location.href = 'login.html';
             }
+
+            const offices = await fetchData('/offices/access');
+            if (offices.length === 0)
+                return;
+
+            const h1 = document.createElement('h1');
+            h1.innerText = 'Offices:';
+            document.body.appendChild(h1);
+
+            const nav = offices.map(office => ({ name: office.id, url: `/offices/${office.id}` }));
+            document.body.appendChild(createNavBar(nav));
         });
     </script>
 </head>
+
 <body>
     <h1>Documents:</h1>
     <nav>
@@ -24,4 +61,5 @@
         </ul>
     </nav>
 </body>
+
 </html>

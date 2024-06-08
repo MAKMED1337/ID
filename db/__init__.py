@@ -2,6 +2,7 @@ from .accounts import Accounts
 from .administrators import Administrators
 from .config import make_session, start, stop
 from .educational_certificates import EducationalCertificates
+from .functions import get_administrated_offices
 from .international_passports import InternationalPassports
 from .passports import Passports
 from .people import People
@@ -18,4 +19,6 @@ __all__ = [
     'InternationalPassports',
     'EducationalCertificates',
     'Visas',
+    # Functions
+    'get_administrated_offices',
 ]

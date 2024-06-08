@@ -12,20 +12,14 @@ from .config import app
 from .helper import DB
 
 
-class ReturnToken(BaseModel):
-    access_token: str
-    token_type: str
-
-
 class Token(BaseModel):
-    username: str
-    password: str
+    id: int
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
 
-async def get_user(token: Annotated[str, Depends(oauth2_scheme)], db: DB) -> int:
+async def get_user(token: Annotated[str, Depends(oauth2_scheme)]) -> int:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='Could not validate credentials',
@@ -34,25 +28,24 @@ async def get_user(token: Annotated[str, Depends(oauth2_scheme)], db: DB) -> int
     try:
         payload = jwt_helper.decode(token)
         token_data = Token.model_validate(payload)
-    except InvalidTokenError as e:
-        raise credentials_exception from e
+    except InvalidTokenError:
+        raise credentials_exception from None
 
-    user = await Accounts.find_account(db, token_data.username, token_data.password)
-    if user is None:
+    user_id = token_data.id
+    if user_id is None:
         raise credentials_exception
-    return user
+    return user_id
 
 
 @app.post('/login')
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB) -> ReturnToken:
-    user = await Accounts.find_account(db, form_data.username, form_data.password)
-    if user is None:
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB) -> str:
+    user_id = await Accounts.find_account(db, form_data.username, form_data.password)
+    if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Incorrect username or password',
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
-    token = Token(username=form_data.username, password=form_data.password)
-    access_token = jwt_helper.create_access_token(data=token.model_dump())
-    return ReturnToken(access_token=access_token, token_type='bearer')  # noqa: S106
+    token = Token(id=user_id)
+    return jwt_helper.create_access_token(data=token.model_dump())

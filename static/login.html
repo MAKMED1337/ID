@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login with Bearer Token</title>
     <style>
-        body, html {
+        body,
+        html {
             height: 100%;
             margin: 0;
             display: flex;
@@ -13,6 +15,7 @@
             align-items: center;
             background-color: #f0f0f0;
         }
+
         #loginFormContainer {
             background-color: #fff;
             padding: 20px;
@@ -21,6 +24,7 @@
             width: 300px;
             text-align: center;
         }
+
         #loginForm input[type="text"],
         #loginForm input[type="password"] {
             width: 100%;
@@ -28,12 +32,14 @@
             margin: 10px 0;
             box-sizing: border-box;
         }
+
         #loginForm input[type="submit"] {
             padding: 10px 20px;
             cursor: pointer;
         }
     </style>
 </head>
+
 <body>
     <div id="loginFormContainer">
         <h2>Login</h2>
@@ -47,7 +53,7 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
             var formData = new FormData(event.target);
@@ -65,23 +71,23 @@
                 },
                 body: urlEncodedData
             })
-            .then(response => response.json())
-            .then(data => {
-                let token = data.access_token;
-                if (token) {
-                    // Assuming the token is returned in the data.token
-                    // Store the token in localStorage or sessionStorage
-                    localStorage.setItem('bearerToken', token);
-                    location.href = 'index.html';
-                } else {
-                    alert('Login failed!');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred during login');
-            });
+                .then(response => response.json())
+                .then(token => {
+                    if (token) {
+                        // Assuming the token is returned in the data.token
+                        // Store the token in localStorage or sessionStorage
+                        localStorage.setItem('bearerToken', token);
+                        location.href = 'index.html';
+                    } else {
+                        alert('Login failed!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during login');
+                });
         });
     </script>
 </body>
+
 </html>
