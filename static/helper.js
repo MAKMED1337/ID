@@ -31,22 +31,32 @@ function createTable(headers) {
     return table;
 }
 
-// TODO: check the order
-async function fillTable(table, data) {
+async function fillTable(table, headers, data) {
     const tableBody = table.getElementsByTagName('tbody')[0];
     tableBody.innerHTML = '';
+
+    if (data.length === 0) {
+        const row = document.createElement('tr');
+        const td = document.createElement('td');
+        td.textContent = 'No entries found';
+        td.colSpan = headers.length; // Span across all columns
+        td.style.textAlign = 'center';
+        row.appendChild(td);
+        tableBody.appendChild(row);
+        return;
+    }
 
     data.forEach(item => {
         const row = document.createElement('tr');
 
-        for (let key in item)
+        for (let key of headers)
             row.innerHTML += `<td>${item[key]}</td>`
 
         tableBody.appendChild(row);
     });
 }
 
-async function createTableFromFetch(path) {
+async function fetchData(path) {
     const token = localStorage.getItem('bearerToken');
 
     if (!token) {
@@ -71,14 +81,15 @@ async function createTableFromFetch(path) {
             throw Error('Network response was not ok ' + response.statusText);
         }
 
-        const data = await response.json();
-        if (data.length == 0)
-            return null;
-
-        const table = createTable(Object.keys(data[0]).map(snakeToTitle));
-        fillTable(table, data);
-        return table;
+        return await response.json();
     } catch (error) {
-        console.error('Error fetching passport data:', error);
+        console.error('Error fetching data:', error);
     }
+}
+
+async function createTableFromFetch(path, headers) {
+    const data = await fetchData(path);
+    const table = createTable(headers.map(snakeToTitle));
+    fillTable(table, headers, data);
+    return table;
 }

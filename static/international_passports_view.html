@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,91 +10,33 @@
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
+
+        th,
+        td {
             padding: 8px;
             border: 1px solid #ddd;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
     </style>
+    <script src="helper.js"></script>
 </head>
+
 <body>
-    <h1>International passports</h1>
-    <table id="passportTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Original Surname</th>
-                <th>Original Name</th>
-                <th>English Name</th>
-                <th>English Surname</th>
-                <th>Issue Date</th>
-                <th>Expiration Date</th>
-                <th>Sex</th>
-                <th>Issuer</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
+    <h1>International Passports</h1>
     <script>
-        async function fetchPassportData() {
-            const token = localStorage.getItem('bearerToken');
-            
-            if (!token) {
-                console.error('No bearer token found in localStorage');
-                window.location.href = '/static/login.html';
-                return;
-            }
+        window.onload = async () => {
+            const table = await createTableFromFetch('/documents/international_passports', [
+                'id', 'original_name', 'original_surname',
+                'en_name', 'en_surname', 'issue_date', 'expiration_date', 'sex', 'issuer'
+            ]);
 
-            try {
-                const response = await fetch('/documents/international_passports', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.status === 401) {
-                    window.location.href = '/static/login.html';
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
-
-                const data = await response.json();
-
-                const tableBody = document.querySelector('#passportTable tbody');
-                tableBody.innerHTML = '';
-
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td>${item.id}</td>
-                        <td>${item.original_surname}</td>
-                        <td>${item.original_name}</td>
-                        <td>${item.en_name}</td>
-                        <td>${item.en_surname}</td>
-                        <td>${item.issue_date}</td>
-                        <td>${item.expiration_date}</td>
-                        <td>${item.sex}</td>
-                        <td>${item.issuer}</td>
-                    `;
-                    
-                    tableBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error fetching passport data:', error);
-            }
+            document.body.appendChild(table);
         }
-
-        // Fetch data when the page loads
-        window.onload = fetchPassportData;
     </script>
 </body>
+
 </html>
