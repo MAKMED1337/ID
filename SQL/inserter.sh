@@ -10,15 +10,24 @@ function add() {
 }
 
 add "people"
+
 add "accounts"
 add "countries"
 add "cities"
 add "offices"
+add "document_types"
+add "offices_kinds"
+add "office_kinds_documents"
+add "offices_kinds_relations"
 add "administrators"
-add "drivers_licences"
-add "educational_certificetes_types"
-add "educational_instances_types"
-add "educational_instances"
-add "educational_certificates"
-add "educational_certificates"
+
+# add "death_certificates"
+# add "birth_certificates"
+
+# add "drivers_licences"
+# add "educational_instances_types"
+# add "educational_instances"
+# add "educational_certificates_types"
+# add "educational_certificates"
+#
 add "marriages"

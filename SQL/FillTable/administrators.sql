@@ -1,111 +1,112 @@
-INSERT INTO administrators (user_id, office_id) VALUES (359, 156);
-INSERT INTO administrators (user_id, office_id) VALUES (145, 793);
-INSERT INTO administrators (user_id, office_id) VALUES (67, 927);
-INSERT INTO administrators (user_id, office_id) VALUES (288, 84);
-INSERT INTO administrators (user_id, office_id) VALUES (3, 415);
-INSERT INTO administrators (user_id, office_id) VALUES (138, 1135);
-INSERT INTO administrators (user_id, office_id) VALUES (107, 953);
-INSERT INTO administrators (user_id, office_id) VALUES (195, 805);
-INSERT INTO administrators (user_id, office_id) VALUES (60, 1039);
-INSERT INTO administrators (user_id, office_id) VALUES (484, 1063);
-INSERT INTO administrators (user_id, office_id) VALUES (235, 717);
-INSERT INTO administrators (user_id, office_id) VALUES (363, 291);
-INSERT INTO administrators (user_id, office_id) VALUES (437, 835);
-INSERT INTO administrators (user_id, office_id) VALUES (102, 21);
-INSERT INTO administrators (user_id, office_id) VALUES (27, 485);
-INSERT INTO administrators (user_id, office_id) VALUES (365, 534);
-INSERT INTO administrators (user_id, office_id) VALUES (468, 916);
-INSERT INTO administrators (user_id, office_id) VALUES (76, 730);
-INSERT INTO administrators (user_id, office_id) VALUES (126, 618);
-INSERT INTO administrators (user_id, office_id) VALUES (405, 788);
-INSERT INTO administrators (user_id, office_id) VALUES (38, 417);
-INSERT INTO administrators (user_id, office_id) VALUES (478, 583);
-INSERT INTO administrators (user_id, office_id) VALUES (217, 810);
-INSERT INTO administrators (user_id, office_id) VALUES (80, 1019);
-INSERT INTO administrators (user_id, office_id) VALUES (336, 716);
-INSERT INTO administrators (user_id, office_id) VALUES (310, 712);
-INSERT INTO administrators (user_id, office_id) VALUES (305, 257);
-INSERT INTO administrators (user_id, office_id) VALUES (289, 424);
-INSERT INTO administrators (user_id, office_id) VALUES (114, 518);
-INSERT INTO administrators (user_id, office_id) VALUES (16, 93);
-INSERT INTO administrators (user_id, office_id) VALUES (266, 874);
-INSERT INTO administrators (user_id, office_id) VALUES (211, 314);
-INSERT INTO administrators (user_id, office_id) VALUES (130, 1104);
-INSERT INTO administrators (user_id, office_id) VALUES (46, 53);
-INSERT INTO administrators (user_id, office_id) VALUES (88, 95);
-INSERT INTO administrators (user_id, office_id) VALUES (157, 89);
-INSERT INTO administrators (user_id, office_id) VALUES (37, 104);
-INSERT INTO administrators (user_id, office_id) VALUES (160, 1184);
-INSERT INTO administrators (user_id, office_id) VALUES (85, 670);
-INSERT INTO administrators (user_id, office_id) VALUES (40, 1226);
-INSERT INTO administrators (user_id, office_id) VALUES (155, 1015);
-INSERT INTO administrators (user_id, office_id) VALUES (344, 1088);
-INSERT INTO administrators (user_id, office_id) VALUES (381, 683);
-INSERT INTO administrators (user_id, office_id) VALUES (219, 1143);
-INSERT INTO administrators (user_id, office_id) VALUES (427, 929);
-INSERT INTO administrators (user_id, office_id) VALUES (313, 1138);
-INSERT INTO administrators (user_id, office_id) VALUES (215, 184);
-INSERT INTO administrators (user_id, office_id) VALUES (248, 833);
-INSERT INTO administrators (user_id, office_id) VALUES (367, 475);
-INSERT INTO administrators (user_id, office_id) VALUES (444, 1102);
-INSERT INTO administrators (user_id, office_id) VALUES (73, 564);
-INSERT INTO administrators (user_id, office_id) VALUES (9, 1068);
-INSERT INTO administrators (user_id, office_id) VALUES (41, 969);
-INSERT INTO administrators (user_id, office_id) VALUES (460, 967);
-INSERT INTO administrators (user_id, office_id) VALUES (33, 1100);
-INSERT INTO administrators (user_id, office_id) VALUES (108, 863);
-INSERT INTO administrators (user_id, office_id) VALUES (459, 817);
-INSERT INTO administrators (user_id, office_id) VALUES (318, 272);
-INSERT INTO administrators (user_id, office_id) VALUES (111, 1248);
-INSERT INTO administrators (user_id, office_id) VALUES (162, 814);
-INSERT INTO administrators (user_id, office_id) VALUES (324, 1122);
-INSERT INTO administrators (user_id, office_id) VALUES (269, 561);
-INSERT INTO administrators (user_id, office_id) VALUES (382, 950);
-INSERT INTO administrators (user_id, office_id) VALUES (8, 838);
-INSERT INTO administrators (user_id, office_id) VALUES (152, 987);
-INSERT INTO administrators (user_id, office_id) VALUES (190, 215);
-INSERT INTO administrators (user_id, office_id) VALUES (321, 844);
-INSERT INTO administrators (user_id, office_id) VALUES (23, 1026);
-INSERT INTO administrators (user_id, office_id) VALUES (350, 876);
-INSERT INTO administrators (user_id, office_id) VALUES (260, 1136);
-INSERT INTO administrators (user_id, office_id) VALUES (113, 33);
-INSERT INTO administrators (user_id, office_id) VALUES (317, 630);
-INSERT INTO administrators (user_id, office_id) VALUES (91, 252);
-INSERT INTO administrators (user_id, office_id) VALUES (96, 988);
-INSERT INTO administrators (user_id, office_id) VALUES (87, 715);
-INSERT INTO administrators (user_id, office_id) VALUES (179, 374);
-INSERT INTO administrators (user_id, office_id) VALUES (392, 638);
-INSERT INTO administrators (user_id, office_id) VALUES (61, 628);
-INSERT INTO administrators (user_id, office_id) VALUES (90, 76);
-INSERT INTO administrators (user_id, office_id) VALUES (52, 1145);
-INSERT INTO administrators (user_id, office_id) VALUES (320, 1233);
-INSERT INTO administrators (user_id, office_id) VALUES (267, 174);
-INSERT INTO administrators (user_id, office_id) VALUES (7, 928);
-INSERT INTO administrators (user_id, office_id) VALUES (176, 375);
-INSERT INTO administrators (user_id, office_id) VALUES (243, 767);
-INSERT INTO administrators (user_id, office_id) VALUES (497, 924);
-INSERT INTO administrators (user_id, office_id) VALUES (244, 1085);
-INSERT INTO administrators (user_id, office_id) VALUES (395, 1012);
-INSERT INTO administrators (user_id, office_id) VALUES (24, 666);
-INSERT INTO administrators (user_id, office_id) VALUES (446, 92);
-INSERT INTO administrators (user_id, office_id) VALUES (115, 319);
-INSERT INTO administrators (user_id, office_id) VALUES (2, 645);
-INSERT INTO administrators (user_id, office_id) VALUES (56, 138);
-INSERT INTO administrators (user_id, office_id) VALUES (473, 247);
-INSERT INTO administrators (user_id, office_id) VALUES (301, 1075);
-INSERT INTO administrators (user_id, office_id) VALUES (137, 879);
-INSERT INTO administrators (user_id, office_id) VALUES (192, 1207);
-INSERT INTO administrators (user_id, office_id) VALUES (328, 1007);
-INSERT INTO administrators (user_id, office_id) VALUES (197, 419);
-INSERT INTO administrators (user_id, office_id) VALUES (306, 581);
-INSERT INTO administrators (user_id, office_id) VALUES (475, 524);
-INSERT INTO administrators (user_id, office_id) VALUES (188, 476);
-INSERT INTO administrators (user_id, office_id) VALUES (414, 602);
-INSERT INTO administrators (user_id, office_id) VALUES (424, 1048);
-INSERT INTO administrators (user_id, office_id) VALUES (208, 234);
-INSERT INTO administrators (user_id, office_id) VALUES (455, 842);
-INSERT INTO administrators (user_id, office_id) VALUES (184, 289);
-INSERT INTO administrators (user_id, office_id) VALUES (272, 266);
-INSERT INTO administrators (user_id, office_id) VALUES (387, 1093);
-INSERT INTO administrators (user_id, office_id) VALUES (15, 450);
-INSERT INTO administrators (user_id, office_id) VALUES (312, 401);
+INSERT INTO administrators (user_id, office_id) VALUES
+(359, 156),
+(145, 793),
+(67, 927),
+(288, 84),
+(3, 415),
+(138, 1135),
+(107, 953),
+(195, 805),
+(60, 1039),
+(484, 1063),
+(235, 717),
+(363, 291),
+(437, 835),
+(102, 21),
+(27, 485),
+(365, 534),
+(468, 916),
+(76, 730),
+(126, 618),
+(405, 788),
+(38, 417),
+(478, 583),
+(217, 810),
+(80, 1019),
+(336, 716),
+(310, 712),
+(305, 257),
+(289, 424),
+(114, 518),
+(16, 93),
+(266, 874),
+(211, 314),
+(130, 1104),
+(46, 53),
+(88, 95),
+(157, 89),
+(37, 104),
+(160, 1184),
+(85, 670),
+(40, 1226),
+(155, 1015),
+(344, 1088),
+(381, 683),
+(219, 1143),
+(427, 929),
+(313, 1138),
+(215, 184),
+(248, 833),
+(367, 475),
+(444, 1102),
+(73, 564),
+(9, 1068),
+(41, 969),
+(460, 967),
+(33, 1100),
+(108, 863),
+(459, 817),
+(318, 272),
+(111, 1248),
+(162, 814),
+(324, 1122),
+(269, 561),
+(382, 950),
+(8, 838),
+(152, 987),
+(190, 215),
+(321, 844),
+(23, 1026),
+(350, 876),
+(260, 1136),
+(113, 33),
+(317, 630),
+(91, 252),
+(96, 988),
+(87, 715),
+(179, 374),
+(392, 638),
+(61, 628),
+(90, 76),
+(52, 1145),
+(320, 1233),
+(267, 174),
+(7, 928),
+(176, 375),
+(243, 767),
+(497, 924),
+(244, 1085),
+(395, 1012),
+(24, 666),
+(446, 92),
+(115, 319),
+(2, 645),
+(56, 138),
+(473, 247),
+(301, 1075),
+(137, 879),
+(192, 1207),
+(328, 1007),
+(197, 419),
+(306, 581),
+(475, 524),
+(188, 476),
+(414, 602),
+(424, 1048),
+(208, 234),
+(455, 842),
+(184, 289),
+(272, 266),
+(387, 1093),
+(15, 450),
+(312, 401);
