@@ -73,3 +73,10 @@ async def get_drivers_licences(db: AsyncSession, user_id: int) -> list[dict]:
 async def get_divorce_certificates(db: AsyncSession, user_id: int) -> list[dict]:
     assert type(user_id) == int  # noqa: E721, S101, at least some check for stupidity
     return await select_all(db, text('divorce_certificates_view'), text(f'first_person = {user_id} OR second_person = {user_id}'))
+
+
+async def invalidate_document(db: AsyncSession, document_type: int, id: int) -> None:
+    assert type(id) == int  # noqa: E721, S101, at least some check for stupidity
+
+    table = document_tables[document_type]
+    await db.execute(text(f'UPDATE {table} SET invalidated = TRUE WHERE id = {id}'))  # noqa: S608

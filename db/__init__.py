@@ -12,6 +12,7 @@ from .functions import (
     get_drivers_licences,
     get_issued_documents_types,
     get_marriage_certificates,
+    invalidate_document,
 )
 from .international_passports import InternationalPassports
 from .passports import Passports
@@ -39,4 +40,5 @@ __all__ = [
     'get_birth_certificates',
     'get_death_certificates',
     'get_divorce_certificates',
+    'invalidate_document',
 ]

@@ -51,6 +51,8 @@ DROP FUNCTION IF EXISTS verify_passport_number;
 DROP FUNCTION IF EXISTS verify_international_passport_number;
 DROP FUNCTION IF EXISTS verify_visa_passport_expiration_date;
 
+DROP VIEW IF EXISTS divorce_certificates_view;
+DROP VIEW IF EXISTS marriage_certificates_view;
 DROP VIEW IF EXISTS educational_certificates_view;
 
 DROP EXTENSION IF EXISTS pgcrypto;

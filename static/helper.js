@@ -7,7 +7,7 @@ function snakeToTitle(snakeStr) {
         .join(' ');                 // Join the array back into a single string with spaces
 }
 
-function createTable(headers) {
+function createTable(headers, admin = false) {
     // Create table element
     const table = document.createElement('table');
 
@@ -31,7 +31,7 @@ function createTable(headers) {
     return table;
 }
 
-async function fillTable(table, headers, data) {
+async function fillTable(table, headers, data, admin = false) {
     const tableBody = table.getElementsByTagName('tbody')[0];
     tableBody.innerHTML = '';
 
@@ -49,8 +49,28 @@ async function fillTable(table, headers, data) {
     data.forEach(item => {
         const row = document.createElement('tr');
 
-        for (let key of headers)
-            row.innerHTML += `<td>${item[key]}</td>`
+        for (let key of headers) {
+            if (!admin || key != 'invalidated') {
+                row.innerHTML += `<td>${item[key]}</td>`
+                continue;
+            }
+
+            const checkboxCell = row.insertCell();
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = item[key];
+            checkbox.onclick = async (event) => {
+                if (item[key]) {
+                    event.preventDefault();
+                    alert('Can not uninvalidate document');
+                    return;
+                }
+
+                if (!await invalidate(item))
+                    event.preventDefault();
+            };
+            checkboxCell.appendChild(checkbox);
+        }
 
         tableBody.appendChild(row);
     });
