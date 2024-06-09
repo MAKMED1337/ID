@@ -3,8 +3,8 @@ INSERT INTO document_types (id, document) VALUES
 (2, $$Death certificate$$),
 (3, $$Divorce certificate$$),
 (4, $$Driver license$$),
-(5, $$Educational certificate$$),
-(6, $$International passport$$),
-(7, $$Marriage certificate$$),
-(8, $$Passport$$),
-(9, $$Visa$$);
+(5, $$International passport$$),
+(6, $$Marriage certificate$$),
+(7, $$Passport$$),
+(8, $$Visa$$),
+(9, Educational certificate);

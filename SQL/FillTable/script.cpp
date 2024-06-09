@@ -202,7 +202,6 @@ void addDocxType() {
     docTypesToOfTypes["Birth certificate"] = "medical center";
     docTypesToOfTypes["Death certificate"] = "medical center";
     docTypesToOfTypes["Driver license"] = "driver schools";
-    docTypesToOfTypes["Educational certificate"] = ""; /// there is no way
     int id = 1;
 
     const string query = "INSERT INTO document_types (id, document) VALUES";
@@ -211,6 +210,7 @@ void addDocxType() {
         vals.push_back(to_string(id++) + ", " + STR(a));
         docID[a] = id - 1;
     }
+    vals.emplace_back(to_string(id++) + ", Educational certificate");
     cout << create_insert(query, vals) << "\n";
 }
 
