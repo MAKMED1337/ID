@@ -194,14 +194,15 @@ map<string, int> officeTypeID;
 vector<string> officesKinds = {"consulat", "marriage agency", "driver schools", "medical center"};
 void addDocxType() {
     freopen("document_types.sql", "w", stdout);
-    docTypesToOfTypes["passport"] = "consulat";
+    docTypesToOfTypes["Passport"] = "consulat";
     docTypesToOfTypes["International passport"] = "consulat";
     docTypesToOfTypes["Visa"] = "consulat";
-    docTypesToOfTypes["divorce certificate"] = "marriage agency";
+    docTypesToOfTypes["Divorce certificate"] = "marriage agency";
     docTypesToOfTypes["Marriage certificate"] = "marriage agency";
-    docTypesToOfTypes["birth certificate"] = "medical center";
-    docTypesToOfTypes["death certificate"] = "medical center";
-    docTypesToOfTypes["driver license"] = "driver schools";
+    docTypesToOfTypes["Birth certificate"] = "medical center";
+    docTypesToOfTypes["Death certificate"] = "medical center";
+    docTypesToOfTypes["Driver license"] = "driver schools";
+    docTypesToOfTypes["Educational certificate"] = ""; /// there is no way
     int id = 1;
 
     const string query = "INSERT INTO document_types (id, document) VALUES";
@@ -232,7 +233,9 @@ void addOfficesKindsDox() {
     const string query = "INSERT INTO office_kinds_documents (kind_id, document_id) VALUES";
     vector<string> vals;
     for (auto [a, b] : docTypesToOfTypes) {
-        vals.push_back(to_string(officeTypeID[b]) + ", " + to_string(docID[a]));
+        if (b.size()) {
+            vals.push_back(to_string(officeTypeID[b]) + ", " + to_string(docID[a]));
+        }
     }
     cout << create_insert(query, vals) << "\n";
 }
