@@ -747,7 +747,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Marriage certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE id = 2 -- MARRIAGE CERTIFICATE
     ) THEN
         RAISE EXCEPTION 'Marriage certificate is issued by non-existing office';
     END IF;
@@ -766,7 +766,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Divorce certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE id = 6 -- DIVORCE CERTIFICATE
     ) THEN
         RAISE EXCEPTION 'Divorce certificate is issued by office without enough authority';
     END IF;
@@ -785,7 +785,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Death certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE id = 5 -- DEATH CERTIFICATE
     ) THEN
         RAISE EXCEPTION 'Death certificate is issued by office without enough authority';
     END IF;
@@ -804,7 +804,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Birth certificate' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE id = 4 -- BIRTH CERTIFICATE
     ) THEN
         RAISE EXCEPTION 'Birth certificate is issued by office without enough authority';
     END IF;
@@ -823,7 +823,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Passport' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE id = 8 -- PASSPORT
     ) THEN
         RAISE EXCEPTION 'Passport is issued by office without enough authority';
     END IF;
@@ -842,7 +842,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'International passport' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE id = 1 -- INTERNATIONAL PASSPORT
     ) THEN
         RAISE EXCEPTION 'International passport is issued by office without enough authority';
     END IF;
@@ -861,7 +861,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.issuer)
-        WHERE document = 'Driver license' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE id = 7 -- DRIVER LICENSE
     ) THEN
         RAISE EXCEPTION 'Driver license is issued by office without enough authority';
     END IF;
@@ -880,7 +880,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.inner_issuer)
-        WHERE document = 'Visa' -- CHANGE ACCORDING TO DATA IN FILE
+        WHERE id = 3 -- VISA 
     ) THEN
         RAISE EXCEPTION 'Visa is issued by office without enough authority';
     END IF;
