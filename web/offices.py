@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
+from pydantic import BaseModel
 
 from db import document_tables, get_administrated_offices, get_issued_documents_types
 from db import find_document as find_document_db
@@ -41,12 +42,16 @@ async def get_documents(office_id: Annotated[int, Depends(get_office)], db: DB) 
     return await get_issued_documents_types(db, office_id)
 
 
+class ID(BaseModel):
+    id: int
+
+
 @app.post('/offices/{office_id}/documents/{document_id}/find')
-async def find_document(id: int, document_id: Annotated[int, Depends(get_document)], db: DB) -> dict | None:
+async def find_document(id: ID, document_id: Annotated[int, Depends(get_document)], db: DB) -> dict | None:
     if document_id not in document_tables:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Document type not found',
         )
 
-    return await find_document_db(db, document_id, id)
+    return await find_document_db(db, document_id, id.id)

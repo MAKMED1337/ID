@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
     <script src="helper.js"></script>
+    <script src="documents.js"></script>
     <script>
         function createNavBar(items) {
             // Create the nav element
@@ -40,8 +41,7 @@
             const officeId = urlParams.get('office');
 
             try {
-                documents = await fetchData(`/offices/${officeId}/documents`);
-
+                localDocuments = await fetchData(`/offices/${officeId}/documents`);
             } catch (error) {
                 alert('You do not have access to this office');
                 location.href = '/static/index.html';
@@ -51,14 +51,20 @@
             const documentFind = document.createElement('h1');
             documentFind.innerText = 'Find by document:';
             document.body.appendChild(documentFind);
-            const navFind = documents.map(doc => ({name: doc.document, url: `/offices/${officeId}/documents/${doc.id}/find`}));
+            const navFind = localDocuments.map(doc => ({
+                name: documents[doc.id].name,
+                url: `documents_lookup.html?officeId=${officeId}&documentType=${doc.id}`,
+            }));
             document.body.appendChild(createNavBar(navFind));
 
 
             const documentNew = document.createElement('h1');
             documentNew.innerText = 'New document:';
             document.body.appendChild(documentNew);
-            const nav = documents.map(doc => ({name: doc.document, url: `/offices/${officeId}/documents/${doc.id}/new`}));
+            const nav = localDocuments.map(doc => ({
+                name: documents[doc.id].name,
+                url: `/offices/${officeId}/documents/${doc.id}/new`,
+            }));
             document.body.appendChild(createNavBar(navFind));
         });
     </script>

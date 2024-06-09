@@ -56,7 +56,7 @@ async function fillTable(table, headers, data) {
     });
 }
 
-async function fetchData(path) {
+async function fetchData(path, params = {}) {
     const token = localStorage.getItem('bearerToken');
 
     if (!token) {
@@ -65,10 +65,13 @@ async function fetchData(path) {
         return;
     }
 
+    const headers = {
+        ...params['headers'],
+        'Authorization': `Bearer ${token}`,
+    };
     const response = await fetch(path, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
+        ...params,
+        headers: headers,
     });
 
     if (response.status === 401) {
@@ -83,8 +86,8 @@ async function fetchData(path) {
     return await response.json();
 }
 
-async function createTableFromFetch(path, headers) {
-    const data = await fetchData(path);
+async function createTableFromFetch(path, headers, params = {}) {
+    const data = await fetchData(path, params);
     const table = createTable(headers.map(snakeToTitle));
     fillTable(table, headers, data);
     return table;

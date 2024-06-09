@@ -14,6 +14,9 @@ documents = {
         ],
         url: '/documents/international_passports',
     },
+    2: {
+        name: 'Marriage Certificates',
+    },
     3: {
         name: 'Visas',
         fields: [
@@ -25,6 +28,18 @@ documents = {
             'country',
         ],
         url: '/documents/visas',
+    },
+    4: {
+        name: 'Birth Certificates',
+    },
+    5: {
+        name: 'Death Certificates',
+    },
+    6: {
+        name: 'Divorce Certificates',
+    },
+    7: {
+        name: 'Driver Licenses',
     },
     8: {
         name: 'Passports',
@@ -45,8 +60,9 @@ documents = {
         name: 'Educational Certificates',
         fields: [
             'id',
+            'holder',
             'issuer',
-            'issuer_date',
+            'issue_date',
             'kind'
         ],
         url: '/documents/educational_certificates',
