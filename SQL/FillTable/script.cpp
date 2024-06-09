@@ -208,11 +208,19 @@ void addDocxType() {
 
     const string query = "INSERT INTO document_types (id, document) VALUES";
     vector<string> vals;
-    for (auto [a, b] : docTypesToOfTypes) {
-        vals.push_back(to_string(id++) + ", " + STR(a));
-        docID[a] = id - 1;
+    
+    docID["Passport"] = 8;
+    docID["International passport"] = 1;
+    docID["Visa"] = 3;
+    docID["Divorce certificate"] = 6;
+    docID["Marriage certificate"] = 2;
+    docID["Birth certificate"] = 4;
+    docID["Death certificate"] = 5;
+    docID["Driver license"] = 7;
+    docID["Educational certificate"] = 9;
+    for (auto [a, b] : docID) {
+        vals.push_back(to_string(b) + ", " + STR(a));
     }
-    vals.emplace_back(to_string(id++) + ", $$Educational certificate$$");
     cout << create_insert(query, vals) << "\n";
 }
 
