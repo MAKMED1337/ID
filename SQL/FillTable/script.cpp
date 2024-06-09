@@ -210,7 +210,7 @@ void addDocxType() {
         vals.push_back(to_string(id++) + ", " + STR(a));
         docID[a] = id - 1;
     }
-    vals.emplace_back(to_string(id++) + ", Educational certificate");
+    vals.emplace_back(to_string(id++) + ", $$Educational certificate$$");
     cout << create_insert(query, vals) << "\n";
 }
 
