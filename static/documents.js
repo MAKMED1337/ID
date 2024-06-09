@@ -16,6 +16,16 @@ documents = {
     },
     2: {
         name: 'Marriage Certificates',
+        fields: [
+            'id',
+            'marriage_id',
+            'first_person',
+            'second_person',
+            'marriage_date',
+            'issuer',
+            'issue_date',
+        ],
+        url: '/documents/marriage_certificates',
     },
     3: {
         name: 'Visas',
@@ -31,15 +41,54 @@ documents = {
     },
     4: {
         name: 'Birth Certificates',
+        fields: [
+            'id',
+            'person',
+            'father',
+            'mother',
+            'issuer',
+            'country_of_birth',
+            'city_of_birth',
+            'issue_date',
+        ],
+        url: '/documents/birth_certificates',
     },
     5: {
         name: 'Death Certificates',
+        fields: [
+            'id',
+            'person',
+            'issuer',
+            'issue_date',
+        ],
+        url: '/documents/death_certificates',
     },
     6: {
         name: 'Divorce Certificates',
+        fields: [
+            'id',
+            'divorce_id',
+            'marriage_id',
+            'first_person',
+            'second_person',
+            'marriage_date',
+            'divorce_date',
+            'issue_date',
+            'issuer',
+        ],
+        url: '/documents/divorce_certificates',
     },
     7: {
-        name: 'Driver Licenses',
+        name: 'Driver\'s Licenses',
+        fields: [
+            'id',
+            'person',
+            'type',
+            'issuer',
+            'issue_date',
+            'expiration_date',
+        ],
+        url: '/documents/drivers_licences',
     },
     8: {
         name: 'Passports',
@@ -60,10 +109,9 @@ documents = {
         name: 'Educational Certificates',
         fields: [
             'id',
-            'holder',
-            'issuer',
-            'issue_date',
-            'kind'
+            'level_of_education',
+            'issuer_instance',
+            'date_of_issue'
         ],
         url: '/documents/educational_certificates',
     },

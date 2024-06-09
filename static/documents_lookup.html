@@ -44,7 +44,7 @@
 
             const url = `/offices/${officeId}/documents/${documentType}/find`;
 
-            let table = createTable(documentInfo.fields);
+            let table = createTable(documentInfo.fields.map(snakeToTitle));
             document.body.appendChild(table);
 
             submitButton.onclick = async () => {
@@ -54,7 +54,7 @@
                     body: JSON.stringify({'id': inputField.value}),
                 };
                 try {
-                const data = await fetchData(url, params);
+                    data = await fetchData(url, params);
                 } catch(error) {
                     alert('You do not have access to this document from this office');
                     location.href = `office.html?office=${officeId}`;

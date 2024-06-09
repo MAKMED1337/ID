@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +14,7 @@ class Visas(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     type: Mapped[int]
     passport: Mapped[int]
-    issue_date: Mapped[datetime]
+    issue_date: Mapped[date]
     inner_issuer: Mapped[int]
     country: Mapped[str]
 
