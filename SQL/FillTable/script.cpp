@@ -27,8 +27,10 @@ string STR(char S) {
     return s;
 }
 
-int getRand(int l, int r) { return l + rng() % (r - l + 1); }
-
+int getRand(int l, int r) {
+    std::uniform_int_distribution<> distribution(l,r);
+    return distribution(rng);
+}
 void fillBirthLocal() {
     int YY = 2024 + 25;
     for (int i = 1; i <= 500; i++) {
