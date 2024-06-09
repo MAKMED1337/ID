@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
     <script src="helper.js"></script>
-    <script src="documents.js"></script>
     <script>
         function createNavBar(items) {
             // Create the nav element
@@ -31,40 +30,36 @@
             return nav;
         }
 
-        function appendList(name, items) {
-            const h1 = document.createElement('h1');
-            h1.innerText = name;
-            document.body.appendChild(h1);
-            document.body.appendChild(createNavBar(items));
-        }
-
-        function appendDocuments() {
-            let items = [];
-            for (let documentType in documents) {
-                const doc = documents[documentType];
-                items.push({name: doc.name, url: `view_my_documents.html?documentType=${documentType}`})
-            }
-            appendList('Documents:', items);
-        }
-
-        async function appendOffices() {
-            const offices = await fetchData('/offices/access');
-            if (offices.length === 0)
-                return;
-
-            const items = offices.map(office => ({name: office.name, url: `office.html?office=${office.id}`}));
-            appendList('Offices:', items);
-        }
-
         document.addEventListener('DOMContentLoaded', async () => {
             var token = localStorage.getItem('bearerToken');
             if (!token) {
                 window.location.href = 'login.html';
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const officeId = urlParams.get('office');
+
+            try {
+                documents = await fetchData(`/offices/${officeId}/documents`);
+
+            } catch (error) {
+                alert('You do not have access to this office');
+                location.href = '/static/index.html';
                 return;
             }
 
-            appendDocuments();
-            await appendOffices();
+            const documentFind = document.createElement('h1');
+            documentFind.innerText = 'Find by document:';
+            document.body.appendChild(documentFind);
+            const navFind = documents.map(doc => ({name: doc.document, url: `/offices/${officeId}/documents/${doc.id}/find`}));
+            document.body.appendChild(createNavBar(navFind));
+
+
+            const documentNew = document.createElement('h1');
+            documentNew.innerText = 'New document:';
+            document.body.appendChild(documentNew);
+            const nav = documents.map(doc => ({name: doc.document, url: `/offices/${officeId}/documents/${doc.id}/new`}));
+            document.body.appendChild(createNavBar(navFind));
         });
     </script>
 </head>

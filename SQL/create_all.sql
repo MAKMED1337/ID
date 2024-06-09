@@ -370,11 +370,12 @@ CREATE OR REPLACE FUNCTION get_administrated_offices(
 ) RETURNS TABLE (
     id INTEGER,
     country VARCHAR,
-    city VARCHAR
+    city VARCHAR,
+    name VARCHAR
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT offices.id, offices.country, offices.city
+    SELECT offices.id, offices.country, offices.city, offices.name
     FROM offices
     JOIN administrators ON offices.id = administrators.office_id
     WHERE administrators.user_id = p_administrator_id;

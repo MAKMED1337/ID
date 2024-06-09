@@ -65,26 +65,22 @@ async function fetchData(path) {
         return;
     }
 
-    try {
-        const response = await fetch(path, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.status === 401) {
-            window.location.href = '/static/login.html';
-            return;
+    const response = await fetch(path, {
+        headers: {
+            'Authorization': `Bearer ${token}`
         }
+    });
 
-        if (!response.ok) {
-            throw Error('Network response was not ok ' + response.statusText);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching data:', error);
+    if (response.status === 401) {
+        window.location.href = '/static/login.html';
+        return;
     }
+
+    if (!response.ok) {
+        throw Error('Network response was not ok ' + response.statusText);
+    }
+
+    return await response.json();
 }
 
 async function createTableFromFetch(path, headers) {
