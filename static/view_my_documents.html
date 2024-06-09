@@ -37,7 +37,7 @@
             h1.innerText = documentInfo.name;
             document.body.appendChild(h1);
 
-            const table = await createTableFromFetch(documentInfo.url, documentInfo.fields);
+            const table = await createTableFromFetch(documentInfo.url, documentInfo.fields.map(x => x[0]));
             document.body.appendChild(table);
         }
     </script>

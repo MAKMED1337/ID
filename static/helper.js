@@ -100,7 +100,7 @@ async function fetchData(path, params = {}) {
     }
 
     if (!response.ok) {
-        throw Error('Network response was not ok ' + response.statusText);
+        throw Error(response.status);
     }
 
     return await response.json();

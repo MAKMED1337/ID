@@ -61,11 +61,11 @@
             const documentNew = document.createElement('h1');
             documentNew.innerText = 'New document:';
             document.body.appendChild(documentNew);
-            const nav = localDocuments.map(doc => ({
+            const navNew = localDocuments.map(doc => ({
                 name: documents[doc.id].name,
-                url: `/offices/${officeId}/documents/${doc.id}/new`,
+                url: `documents_new.html?officeId=${officeId}&documentType=${doc.id}`,
             }));
-            document.body.appendChild(createNavBar(navFind));
+            document.body.appendChild(createNavBar(navNew));
         });
     </script>
 </head>

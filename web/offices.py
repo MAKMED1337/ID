@@ -1,11 +1,13 @@
+from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
 from db import document_tables, get_administrated_offices, get_issued_documents_types
 from db import find_document as find_document_db
 from db import invalidate_document as invalidate_document_db
+from db import new_document as new_document_db
 
 from .authorization import get_user
 from .config import app
@@ -67,3 +69,19 @@ async def invalidate_document(id: ID, document_id: Annotated[int, Depends(get_do
         )
 
     return await invalidate_document_db(db, document_id, id.id)
+
+
+@app.post('/offices/{office_id}/documents/{document_id}/new')
+async def new_document(
+    request: Request, office: Annotated[int, Depends(get_office)], document_id: Annotated[int, Depends(get_document)], db: DB
+) -> None:
+    if document_id not in document_tables:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Document type not found',
+        )
+
+    j = await request.json()
+    j['issuer'] = office
+    j['issue_date'] = datetime.now(UTC)
+    return await new_document_db(db, document_id, j)

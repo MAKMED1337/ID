@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        #formContainer {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: left;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            margin-right: 10px;
+            flex: 1;
+            text-align: right;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            flex: 2;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #form input[type="submit"] {
+            padding: 10px 20px;
+            cursor: pointer;
+            align-self: center;
+        }
+    </style>
+    <script src="helper.js"></script>
+    <script src="documents.js"></script>
+</head>
+
+<body>
+    <div id="formContainer">
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const officeId = urlParams.get('officeId');
+        const documentType = urlParams.get('documentType');
+        const documentInfo = documents[documentType];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const formContainer = document.getElementById('formContainer');
+
+            const h1 = document.createElement('h1');
+            h1.innerText = 'New ' + documentInfo.name;
+            formContainer.appendChild(h1);
+
+            const form = document.createElement('form');
+            form.id = 'form';
+            form.addEventListener('submit', handleSubmit);
+
+            for (const [key, type] of documentInfo.fields) {
+                if (documentInfo.exclude.includes(key))
+                    continue;
+
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+
+                const label = document.createElement('label');
+                label.htmlFor = key;
+                label.innerText = snakeToTitle(key) + ':';
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+
+                formGroup.appendChild(label);
+                formGroup.appendChild(input);
+                form.appendChild(formGroup);
+            }
+
+            const submit = document.createElement('input');
+            submit.type = 'submit';
+            submit.value = 'New';
+            form.appendChild(submit);
+
+            formContainer.appendChild(form);
+        });
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            j = {}
+            for (let [key, type] of documentInfo.fields) {
+                if (documentInfo.exclude.includes(key))
+                    continue;
+
+                let val = document.getElementById(key).value;
+                if (type == 'int')
+                    val = parseInt(val);
+                j[key] = val;
+            }
+            console.log(j);
+
+            const url = `/offices/${officeId}/documents/${documentType}/new`;
+            const params = {
+                headers: {'Content-Type': 'application/json'},
+                method: 'POST',
+                body: JSON.stringify(j),
+            };
+            try {
+                data = await fetchData(url, params);
+                alert('Success');
+                location.href = `office.html?office=${officeId}`;
+                return;
+            } catch (error) {
+                if (error.message == 403) {
+                    alert('You do not have access to this document from this office');
+                    location.href = `office.html?office=${officeId}`;
+                    return;
+                } else {
+                    alert('Invalid data, try again');
+                }
+                return;
+            }
+
+        }
+    </script>
+</body>
+
+</html>

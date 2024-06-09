@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 from sqlalchemy import ColumnExpressionArgument, func, select, text
@@ -80,3 +81,21 @@ async def invalidate_document(db: AsyncSession, document_type: int, id: int) -> 
 
     table = document_tables[document_type]
     await db.execute(text(f'UPDATE {table} SET invalidated = TRUE WHERE id = {id}'))  # noqa: S608
+
+
+# This code is a freaking mess, help meeeeeeeeeeeeeeeeeeeeeeeeee!!!
+# There is a possibilty that this code has an SQL injection
+async def new_document(db: AsyncSession, document_type: int, j: dict[str, Any]) -> None:
+    def is_valid(s: str) -> bool:
+        pattern = re.compile(r'^[A-Za-z_]+$')
+        return bool(s) and bool(pattern.match(s))
+
+    for key in j:
+        if not is_valid(key):
+            raise RuntimeError
+
+    table = document_tables[document_type]
+
+    values = ', '.join([':' + key for key in j])
+    stmt = f'INSERT INTO {table} ({', '.join(j.keys())}) VALUES ({values})'  # noqa: S608, I'm literally not sure about this noqa
+    result = await db.execute(text(stmt), j)
