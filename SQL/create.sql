@@ -28,7 +28,7 @@ CREATE  TABLE "public".offices_kinds (
  );
 
 CREATE  TABLE "public".people (
-	id                   bigint  NOT NULL  AUTOINCREMENT,
+	id                   bigint  NOT NULL  ,
 	date_of_birth        date DEFAULT CURRENT_DATE NOT NULL  ,
 	date_of_death        date    ,
 	name                 varchar(100)  NOT NULL  ,

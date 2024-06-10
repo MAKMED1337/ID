@@ -28,7 +28,7 @@ CREATE  TABLE "public".offices_kinds (
  );
 
 CREATE  TABLE "public".people (
-	id                   bigint  NOT NULL  AUTOINCREMENT,
+	id                   bigint  NOT NULL  ,
 	date_of_birth        date DEFAULT CURRENT_DATE NOT NULL  ,
 	date_of_death        date    ,
 	name                 varchar(100)  NOT NULL  ,
@@ -880,7 +880,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1
         FROM get_issued_documents_types(NEW.inner_issuer)
-        WHERE id = 3 -- VISA
+        WHERE id = 3 -- VISA 
     ) THEN
         RAISE EXCEPTION 'Visa is issued by office without enough authority';
     END IF;
