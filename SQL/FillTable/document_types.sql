@@ -7,4 +7,5 @@ INSERT INTO document_types (id, document) VALUES
 (1, $$International passport$$),
 (2, $$Marriage certificate$$),
 (8, $$Passport$$),
+(10, $$Pet passport$$),
 (3, $$Visa$$);

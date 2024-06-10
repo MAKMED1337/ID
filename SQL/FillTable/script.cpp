@@ -193,7 +193,7 @@ void addOffices() {
 map<string, string> docTypesToOfTypes;
 map<string, int> docID;
 map<string, int> officeTypeID;
-vector<string> officesKinds = {"consulat", "marriage agency", "driver schools", "medical center"};
+vector<string> officesKinds = {"consulat", "marriage agency", "driver schools", "medical center", "official veterinarian"};
 void addDocxType() {
     freopen("document_types.sql", "w", stdout);
     docTypesToOfTypes["Passport"] = "consulat";
@@ -204,6 +204,7 @@ void addDocxType() {
     docTypesToOfTypes["Birth certificate"] = "medical center";
     docTypesToOfTypes["Death certificate"] = "medical center";
     docTypesToOfTypes["Driver license"] = "driver schools";
+    docTypesToOfTypes["Pet passport"] = "official veterinarian";
     int id = 1;
 
     const string query = "INSERT INTO document_types (id, document) VALUES";
@@ -218,6 +219,7 @@ void addDocxType() {
     docID["Death certificate"] = 5;
     docID["Driver license"] = 7;
     docID["Educational certificate"] = 9;
+    docID["Pet passport"] = 10;
     for (auto [a, b] : docID) {
         vals.push_back(to_string(b) + ", " + STR(a));
     }
