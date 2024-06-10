@@ -766,6 +766,26 @@ void addVisas() {
     cout << create_insert(query, S);
 }
 
+void addPet() {
+    freopen("pet_passports.sql", "w", stdout);
+    int id = 0;
+    vector <string> species = {"Canis lupus familiaris", "Felis catus", "Cavia porcellus", "Mesocricetus auratus", "Oryctolagus cuniculus", "Melopsittacus undulatus", "Carassius auratus", "Serinus canaria domestica", "Psittacus erithacus", "Nymphicus hollandicus", "Testudo hermanni", "Betta splendens", "Chinchilla lanigera", "Pogona vitticeps", "Eublepharis macularius", "Rattus norvegicus domestica", "Ctenosaura similis", "Acanthoscurria geniculata", "Pogona vitticeps", "Python regius"};
+    vector <string> names = {"Bella", "Max", "Charlie", "Luna", "Lucy", "Cooper", "Bailey", "Daisy", "Oliver", "Rocky", "Molly", "Sadie", "Toby", "Buddy", "Stella", "Milo", "Chloe", "Bentley", "Zoey", "Lola"};
+    string query = "INSERT INTO pet_passports VALUES";
+    vector <string> S;
+    for (int i = 0; i < IDs.size(); i++) {
+        if (getRand(0, 2) != 2) continue;
+        string name = names[getRand(0, 19)];
+        string specie = species[getRand(0, 19)];
+        int issuer = OFF["official veterinarian"][getRand(0, OFF["official veterinarian"].size() - 1)];
+        int YY = birth[IDs[i]];
+        string date = to_string(YY + 10 + getRand(0, 10)) + "-" + to_string(getRand(1, 12)) + "-" + to_string(getRand(1, 28));
+        S.push_back(to_string(id++) + ", " + STR(name) + ", " + to_string(IDs[i]) + ", " + to_string(issuer) +", " + STR(date) + ", " + STR(specie));
+    }
+    cout << create_insert(query, S) << "\n";
+
+}
+
 int main() {
     fillBirthLocal();
     addPeople();
@@ -796,5 +816,6 @@ int main() {
     addVisaTypes();
     addIntPassp();
     addVisas();
+    addPet();
     return 0;
 }
