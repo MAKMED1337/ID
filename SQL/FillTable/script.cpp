@@ -32,7 +32,7 @@ int getRand(int l, int r) {
     return distribution(rng);
 }
 void fillBirthLocal() {
-    int YY = 2024 + 25;
+    int YY = 1990 + 25;
     for (int i = 1; i <= 500; i++) {
         if ((i & (i - 1)) == 0)
             YY -= 25;
