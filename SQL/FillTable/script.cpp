@@ -315,9 +315,9 @@ void addDriversLicences() {
     vector<string> vals;
     for (int i = 0; i < 200; i++) {
         int pers_id = getRand(1, accs.size());
-        while (birth[pers_id] + 17 > 2024)
+        while (birth[pers_id] + 17 >= 2024)
             pers_id = getRand(1, accs.size());
-        int YY = getRand(birth[pers_id] + 17, 2024);
+        int YY = getRand(birth[pers_id] + 17, 2023);
         int MM = getRand(1, 12);
         int DD = getRand(1, 28);
         int t_id = getRand(0, 5);
