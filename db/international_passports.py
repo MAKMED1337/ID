@@ -20,6 +20,7 @@ class InternationalPassports(Base):
     sex: Mapped[str]
     issuer: Mapped[int]
     passport_owner: Mapped[int]
+    invalidated: Mapped[bool]
 
     @staticmethod
     async def get(db: AsyncSession, user_id: int) -> list['InternationalPassports']:

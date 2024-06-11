@@ -531,3 +531,103 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER verify_educational_certificate_issuer BEFORE INSERT ON educational_certificates
     FOR EACH ROW EXECUTE FUNCTION verify_educational_certificate_issuer();
+
+-- trigger to ensure that certificate is issued before CURRENT_DATE
+CREATE OR REPLACE FUNCTION verify_certificate_issue_date()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.issue_date > CURRENT_DATE THEN
+        RAISE EXCEPTION 'Certificate is issued in the future';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_birth_certificate_issue_date BEFORE INSERT ON birth_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+CREATE TRIGGER verify_death_certificate_issue_date BEFORE INSERT ON death_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+CREATE TRIGGER verify_marriage_certificate_issue_date BEFORE INSERT ON marriage_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+CREATE TRIGGER verify_divorce_certificate_issue_date BEFORE INSERT ON divorce_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+CREATE TRIGGER verify_passport_issue_date BEFORE INSERT ON passports
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+CREATE TRIGGER verify_international_passport_issue_date BEFORE INSERT ON international_passports
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+CREATE TRIGGER verify_visa_issue_date BEFORE INSERT ON visas
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+CREATE TRIGGER verify_drivers_licence_issue_date BEFORE INSERT ON drivers_licences
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+CREATE TRIGGER verify_educational_certificate_issue_date BEFORE INSERT ON educational_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_certificate_issue_date();
+
+-- Trigger to ensure that father and mother are not equal to son in birth certificate
+CREATE OR REPLACE FUNCTION verify_birth_certificate_parents()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (NEW.father IS NOT NULL AND NEW.father = NEW.person)
+    OR (NEW.mother IS NOT NULL AND NEW.mother = NEW.person) THEN
+        RAISE EXCEPTION 'Father or mother is equal to child in birth certificate';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_birth_certificate_parents BEFORE INSERT ON birth_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_birth_certificate_parents();
+
+-- Trigger to ensure that parent relation from birth certificate is not cyclic
+CREATE OR REPLACE FUNCTION verify_birth_certificate_parents_cycle()
+RETURNS TRIGGER AS $$
+DECLARE
+    visited_ids INTEGER[];
+    current_id INTEGER;
+    father_id INTEGER;
+    mother_id INTEGER;
+BEGIN
+    visited_ids := ARRAY[NEW.person];
+    current_id := NEW.person;
+
+    LOOP
+        SELECT father, mother INTO father_id, mother_id
+        FROM birth_certificates
+        WHERE person = current_id;
+
+        IF father_id IS NULL AND mother_id IS NULL THEN
+            EXIT;
+        END IF;
+
+        IF father_id IS NOT NULL AND father_id = ANY (visited_ids) THEN
+            RAISE EXCEPTION 'Cycle detected involving father in birth certificate';
+        END IF;
+
+        IF mother_id IS NOT NULL AND mother_id = ANY (visited_ids) THEN
+            RAISE EXCEPTION 'Cycle detected involving mother in birth certificate';
+        END IF;
+
+        IF father_id IS NOT NULL THEN
+            visited_ids := array_append(visited_ids, father_id);
+            current_id := father_id;
+        ELSE
+            visited_ids := array_append(visited_ids, mother_id);
+            current_id := mother_id;
+        END IF;
+    END LOOP;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_birth_certificate_parents_cycle BEFORE INSERT ON birth_certificates
+    FOR EACH ROW EXECUTE FUNCTION verify_birth_certificate_parents_cycle();

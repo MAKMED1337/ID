@@ -74,7 +74,7 @@ async def invalidate_document(id: ID, document_id: Annotated[int, Depends(get_do
 @app.post('/offices/{office_id}/documents/{document_id}/new')
 async def new_document(
     request: Request, office: Annotated[int, Depends(get_office)], document_id: Annotated[int, Depends(get_document)], db: DB
-) -> None:
+) -> str | None:
     if document_id not in document_tables:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -82,6 +82,9 @@ async def new_document(
         )
 
     j = await request.json()
-    j['issuer'] = office
+    if document_id == 3:
+        j['inner_issuer'] = office
+    else:
+        j['issuer'] = office
     j['issue_date'] = datetime.now(UTC)
     return await new_document_db(db, document_id, j)

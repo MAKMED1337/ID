@@ -182,6 +182,94 @@ $$;
 ALTER FUNCTION public.verify_birth_certificate_issuer() OWNER TO admin;
 
 --
+-- Name: verify_birth_certificate_parents(); Type: FUNCTION; Schema: public; Owner: admin
+--
+
+CREATE FUNCTION public.verify_birth_certificate_parents() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF (NEW.father IS NOT NULL AND NEW.father = NEW.person)
+    OR (NEW.mother IS NOT NULL AND NEW.mother = NEW.person) THEN
+        RAISE EXCEPTION 'Father or mother is equal to child in birth certificate';
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.verify_birth_certificate_parents() OWNER TO admin;
+
+--
+-- Name: verify_birth_certificate_parents_cycle(); Type: FUNCTION; Schema: public; Owner: admin
+--
+
+CREATE FUNCTION public.verify_birth_certificate_parents_cycle() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    visited_ids INTEGER[];
+    current_id INTEGER;
+    father_id INTEGER;
+    mother_id INTEGER;
+BEGIN
+    visited_ids := ARRAY[NEW.person];
+    current_id := NEW.person;
+
+    LOOP
+        SELECT father, mother INTO father_id, mother_id
+        FROM birth_certificates
+        WHERE person = current_id;
+
+        IF father_id IS NULL AND mother_id IS NULL THEN
+            EXIT;
+        END IF;
+
+        IF father_id IS NOT NULL AND father_id = ANY (visited_ids) THEN
+            RAISE EXCEPTION 'Cycle detected involving father in birth certificate';
+        END IF;
+
+        IF mother_id IS NOT NULL AND mother_id = ANY (visited_ids) THEN
+            RAISE EXCEPTION 'Cycle detected involving mother in birth certificate';
+        END IF;
+
+        IF father_id IS NOT NULL THEN
+            visited_ids := array_append(visited_ids, father_id);
+            current_id := father_id;
+        ELSE
+            visited_ids := array_append(visited_ids, mother_id);
+            current_id := mother_id;
+        END IF;
+    END LOOP;
+
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.verify_birth_certificate_parents_cycle() OWNER TO admin;
+
+--
+-- Name: verify_certificate_issue_date(); Type: FUNCTION; Schema: public; Owner: admin
+--
+
+CREATE FUNCTION public.verify_certificate_issue_date() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF NEW.issue_date > CURRENT_DATE THEN
+        RAISE EXCEPTION 'Certificate is issued in the future';
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.verify_certificate_issue_date() OWNER TO admin;
+
+--
 -- Name: verify_death_certificate_issuer(); Type: FUNCTION; Schema: public; Owner: admin
 --
 
@@ -1248,506 +1336,506 @@ ALTER TABLE ONLY public.educational_certificates_types ALTER COLUMN id SET DEFAU
 --
 
 COPY public.accounts (id, login, hashed_password) FROM stdin;
-1	user1	$2a$06$6ghdGbUoA.GRmrTqS5kIfuoMTxeizrkS8N9sKzHjhNdZCt13yX2r6
-2	user2	$2a$06$TmiQCBK5ZkeIPbKD5AltoealG3xbug7CdP60rJEV5AZ7ozveQBtl2
-3	user3	$2a$06$hDobD/dGRKlYesQgMjDRDeG3R3O0WHVVzhG2nffYehcgD2sBGbhLS
-4	user4	$2a$06$z96m3HQzCbzb0wbpxpeHY.tPOTRXsbKOWPScn4CIWwz0/plkP.XYC
-5	user5	$2a$06$ozHzfMxinaRkB75z1NqXWezIbejcQlXTeLUlV5TCsOHKCpYkheERm
-6	user6	$2a$06$uLgidGbUu5tjm9QHUWa8DO49vMu74ofbo3aPN.XEkdmfzY12ZKgSK
-7	user7	$2a$06$xYpgyY2hKYkp1Xhkexp8VeUCdVq.zEdk9MWV3w3TjLRGknvCdXZby
-8	user8	$2a$06$iv0zUwc4/UhVPlcm5T4x3OJ.wVGzsojm8RDcRNy5rIG1jvBnvanDK
-9	user9	$2a$06$.giJgOv6aqdBxFOk0GyTTOfRayZZL2XH2/QCFWriV7nGNVMRpW1ee
-10	user10	$2a$06$RLTgkFICsF/VZ5n3zO23LeDj7IILw6f5zU5QAy/9PtYIVLokC4iiq
-11	user11	$2a$06$FLlhbhXFEUGCzPXUHcdb3.tCr9NhcHyWuGwRnXkW0mS9XflSkfLuW
-12	user12	$2a$06$J09i37oEarf2hFHZinjik.78JWmVxze03dXZ9HLnbzJW2Mi1rOneW
-13	user13	$2a$06$g6tFib1Yg9eVeKjeMXmV9OBYbAcrFvMWj8yJLzpt3.apf45zM8mf2
-14	user14	$2a$06$VyjCsJVg0aGIzT13cklqEuV4wP8Pl0PXFuvb6cm4uZonPhchGS.vC
-15	user15	$2a$06$it2UcHBJgm/0tjRkXnoLku1zRDiZQBzsEk0vT86mvj4v8h1LahD8e
-16	user16	$2a$06$pXoHwGmW0DYRfY03IUeMGOO5zzBwqQ2x06BjD4nc7qhf1u2T8jfo6
-17	user17	$2a$06$Nhc5fQ6RjPdZ0bumCVkt0uqCVYs45dQ4ohm5w9yybGgXPxS0GtJ9e
-18	user18	$2a$06$ZZWAMW..h0DznrxZEFY47ulLC.o4/3XJo/OwcL.v1c74fYhiiUOY.
-19	user19	$2a$06$fUbyfoEAHXuE.MMAkG1/GOnkfRvEQkRgN6c..N3ZYjbE8NxMAcNOO
-20	user20	$2a$06$IYxUSlY/k4k1.cyyJMQNyOHO3QIXXYfEyC9pg5cD28.OpBy3piov6
-21	user21	$2a$06$0dYx8DAtm6Dxu9C/qrDtRuaqLxU8d5fiCm49LUTgpezRZMUWuVozW
-22	user22	$2a$06$xb.bT4gZMoLcxRLvPXAMxOZl8qKzWG953bUdin44W.j60WaUsJi7q
-23	user23	$2a$06$8Kf209Ww.O/2XPYQy6bM0uVDzzjbfHs49bDjJkSS8RoPePiZuimLq
-24	user24	$2a$06$32QbSXNSpV85e4ykEtTJmOA5vACZRLZiLqGiuIjJX6N4xRgWSZTE6
-25	user25	$2a$06$gqh7AtLsViWYmi11mZlWUOAhBoT1X0DLyNnCtQK0DwyAt8yJor/2m
-26	user26	$2a$06$3E2Vkbg9H/ssSfiKwK6pTuai/8LnrgsPfo4/.bWT6oBTxRY07wSvu
-27	user27	$2a$06$H9yqCiTX9cknpa1yMQHZC.fqXK1n4q037yCZbKGyFn5nqF84gla8K
-28	user28	$2a$06$x594xryVxyalFr8pO0wOwuzIVDJD8scEn..h2/ycGJhCHEALIyBPW
-29	user29	$2a$06$B5DhnmkOxGfzpvDxpFuQMesMf1rWiE1wMG4V9d1xwDEGkNqbCRPbi
-30	user30	$2a$06$dTdojXZCHqdEucpCzs//iuRtwLieTQ9n2VQZbpwaGAvAscIfoMqIi
-31	user31	$2a$06$4u6YpAOn97O/iPAfNzAoW.C.9msvnWBUj4A7N9FNMJboBf55NGsSK
-32	user32	$2a$06$W0A74C5BFDJ52Ds9pYhqkumRxnr2Dz2Rbt77rD0iTmMnlty0C1BeO
-33	user33	$2a$06$oXCuodqDwhGrG8uEVZQ7nem4GtS43jMQXX2/YG9WBu1DnzPFwM6HO
-34	user34	$2a$06$s04aAE3yux8CSp6hhJ1NbeYSqLmJj0kXA1d2UvjU5.nLv1fobANNC
-35	user35	$2a$06$qdNDXTeQ4/2nI.U7tbvulOrCamGLsSbm7vvniuQQ1QemRiq786BtK
-36	user36	$2a$06$.PMqNrRbAnxFs7MDQKLmkuMIjKEQg3RhFOiPpduhAu0h3CPSO8KLS
-37	user37	$2a$06$9WTCMJBw3q3DKkPdyiR2LuR45ux7S4oUeTZJWTwGp7B4uZcWe17gG
-38	user38	$2a$06$Jfxacj8/SpnsDqb7UZySQOk5wlHqhXgP7LQjvsmNwXDo1kKpPS/j6
-39	user39	$2a$06$Fe06eIf1GnTgdgmJiEayVOdUvsFZ0HfJFxOJWVU3lgXh47V0GnqX.
-40	user40	$2a$06$3oOxpfZRPUv0P2e9wsq4ce.bdHGLPJi4ASChSx6Oidoh2Om/TrQjO
-41	user41	$2a$06$0r2JJmtcN9Zt4JW.L32MP.Kb8P73KLfO/ceiq3wVjRk9s6EI3iAeG
-42	user42	$2a$06$w/bqg4K7NsFzIVWRrcS3MunOxpeuQjm5uLFQpv9WfY6XbLQln6Gxm
-43	user43	$2a$06$k30i7E6UPHMMa.Cis2D4c.3MugTdEZv36.ysFR6jtc5RA3QYwikYC
-44	user44	$2a$06$TxstcNmWHJoYakqLfYNwY.7fwaAZA4BgVACdjuWOle/vUo1jgG6Pu
-45	user45	$2a$06$Ii6WWuvlfp9nStOVzI8SbOti.2sZGGRqdNFWjwbtSXYonRdAYXJma
-46	user46	$2a$06$xhffV7L6ieEl9e0bowxZFeEdekfL0To/pGGBd7dU1bSIahzsEM/Tq
-47	user47	$2a$06$Ii2BKcbjP1XrmuM6Dcp6duFKnnTbYuzWfuqyE3ILsCLDJY5Q3uK1G
-48	user48	$2a$06$HHZMLBjjO.groWmlW23cweZ43W6FJU6UdSzCS3U/JM/BuamF89uVm
-49	user49	$2a$06$Mit72VB33DEXbtGemp8hO.6jw7kr0MShQPunYPpPjKuYQMWTGSQSu
-50	user50	$2a$06$84sYnCAimhvkCUU5rFpTHe35jGO84LoHNc1n.d5ejDjTTqeLaualG
-51	user51	$2a$06$ewFimQOd2wJpiG0CCIN2He69TVCCHAE1bu5tNdVQRxxiP1napkHCS
-52	user52	$2a$06$OtM3xe4e3Ls4IfQd1VEG9eyiKknRlo3bxyNS7CSzjp1rbQxPckog.
-53	user53	$2a$06$lCe.7L0678xGlbD2zhbQW.m8I.w/ydjbnmSx6Ofhi8FElyq3KR2C2
-54	user54	$2a$06$Qe4Bfa9mUHWTOGaQHxbdde4oiUjDJMD4XRw3pmh3HEw4nRairChii
-55	user55	$2a$06$dBQRaYYFic1P9M7CLFQ7Ge8mL2Jbtz/okdzF5Yf66s4QiU1EU7WN.
-56	user56	$2a$06$wZfZJyAemd9ceEICrxHFseyyDl14fSqSPg2Fnm28yP7J9EWxvcVpK
-57	user57	$2a$06$3v7V7E5gDUJ8kywrQDtxKumZFONhYY4c7Uxrfgoe.mVSZTTRDjJHS
-58	user58	$2a$06$8tS8SwIYwyQThYATO5qEN.7w.eSMPx/vxfVJmSFadLTAICxrIGZ0O
-59	user59	$2a$06$Yec3cYdBT4eV2zg05s/8reBGH5RSCfUI12/y9IUS7x/nsdfuwW2z6
-60	user60	$2a$06$fNj49OBAXQmQGsJmBhAu0u0CyrchEsQ5yXmiHcrHSYMTahUDVO0xC
-61	user61	$2a$06$CE6UDUOTDkxLHsY9SGwSneh/glnXHoHdpt4BOtenyS/P9w/E4Gv6m
-62	user62	$2a$06$4zqpAjcmkzzgZyOBzgXyxOLLutKslo6zfXPjtE9JJDYcFfk.EizTe
-63	user63	$2a$06$FqrCeSr4s4tnrL6C/1TH5ONB/OKHDFueJQrkDyfoY24gTp.tMwjuS
-64	user64	$2a$06$8AWKW5G3sagooVpbLiHAduas8HHTM8zw5GUIvATh1ZLFWpzRjHj.q
-65	user65	$2a$06$oy5ZhKrQSy270MC2lxkEtO5bXHcphNqeFHeZO3iu9l40ePBBEoLlq
-66	user66	$2a$06$nULFpp0i7c6rm4CBXnfUKu/MJrKmxxd4zSeKYHt.iU5miNnMNCNvW
-67	user67	$2a$06$L6PsNfO9Ln95l77uMiX6V.YqSnMKEovPaunJI9SttqvSgE5flEyG6
-68	user68	$2a$06$SlJkQRS.4GSj.fiAODgyOuc.IZ69Co2MqCTKQx76M8Z/4ontD2Pve
-69	user69	$2a$06$araiv/t6AFz/yGEFwIvjBuWA7028MYEwrnKuf8EzPBV/KauhjamUy
-70	user70	$2a$06$o1nYurF/iNTbLYYZseODJOW0CUXFQzy0tCjxOr4PrX8Tk1ppd7eye
-71	user71	$2a$06$8ez0B42R.0GO6NDUxKZReu6dejhDnrUHHDh.tLlkAd3slJhP1L9m6
-72	user72	$2a$06$MmPxrxDsNUzRWv7MwLrpZOOMpeEp9kHzIfA2tKE580ZgkHAnNerGO
-73	user73	$2a$06$OwX6PkUynrezo02.rduuo.N0C0vMwCuLivfN8RNkDDVGKt7gpEtVO
-74	user74	$2a$06$WWos3jOBUBclSQrspoPNMuIEJYURRsr7/Nwi29zx.uWZxyVZVaNdq
-75	user75	$2a$06$OCcZFT/kR.5dxES/Jrss4uKMwIfCFqaQpgbJP.o4y13r5tLCHnGwa
-76	user76	$2a$06$R..br6f/2fmVhljYiOMbu.H5OYZaQkzUkhoKUd.W/mpXL2JPa7axC
-77	user77	$2a$06$DYI28DvGFL3s11g/NZad5uhxKk/npWRBfA/mGaE/VMWF01jW15hVC
-78	user78	$2a$06$zWIpEXXk7n7LKIACqK5b4Orv3DL/Vz3Idv.GzwB70byrwqJWXZotG
-79	user79	$2a$06$92GZNMZtXbQRz0dBnBiVtunX4X3y2ESqAPAnwyKRes7PsSHzkKVP2
-80	user80	$2a$06$mvzPqOT/2bfFiWgt0rN1oegfEeK6RB3TVJljjYuIWNJuPUKz4QoNy
-81	user81	$2a$06$8PhxxpzksKETxwOmunix0efCRqOBj34Ugtg/Y3I6jkzeXyRXd/Hle
-82	user82	$2a$06$XxGyjY0iW2Z3STdWAeWvXeK00cqItYZdiLY8mR2/a3kOxtEoVrPU.
-83	user83	$2a$06$DUoaaxxIM0ixtag9ubY14OwAvpMBe0KQeUmtY0T4hpqKXPF79/ITy
-84	user84	$2a$06$rVECxvHtYpw1kcFnMYnj5uTT/HEMqWzTqEzeFd8KnxolDSICKgyyy
-85	user85	$2a$06$A2AVEpUia2bk8aUi5Khx8.QXUHRC0iYZm4y4mWHPelDBQBKVDnoUC
-86	user86	$2a$06$3jUXoAr.g3hl6GfDRfFy1OIDyghPPrmN.CKikrycWxj7VdiPbI1Ye
-87	user87	$2a$06$Xnv2XsjzAVLDRkns6rGvCu1gHpUb9nFP4g4SfHwC9yzmt1Whh7.pO
-88	user88	$2a$06$x1sIK4lX/IQhWAvm1CRC5umt90k1ixwpqHdM1BwiCnJnBVijcmAx2
-89	user89	$2a$06$KT/XOWSMEJ5MkOkttSm/Ee1ehGkdHo6yNF7Fwu8pR/BdDF37cMROC
-90	user90	$2a$06$1dIUlFVGnti6amepvkuRI.rjknu04iP9bL5fz1tldUj1UvcADHsde
-91	user91	$2a$06$DoHDYZ1o5YNfOUxKW.Ewi.KT6h4IqlgJ7b7FGaATjTByZc6K7yTNe
-92	user92	$2a$06$XxLzf7heaOpxPOFg2N1fX.CDriDEP5lU14uHiysmktZS6Kl1N0zm.
-93	user93	$2a$06$tuswWbCRnYs.hd/JNrPZqONRgxhLpUkBie1JdXhkCkGbJQILYbpfS
-94	user94	$2a$06$XKaQNTE8L2CGV0HG4.vN9eZzIVcCUjN5LcwAU2wEULd88pG5hNWL2
-95	user95	$2a$06$.GqktTP03RBSu8nD8Ma62uKlGg5O5dDuFVVCTw.3jxyztPMRAKFqu
-96	user96	$2a$06$YZ/TbqmEe8JiCfRBre4dJ.lL0VPecqxe33A0/UCDCuvhwaCH2ojDe
-97	user97	$2a$06$39HACSb.qVQwKdRfGgj7jeQvcU.aE52Y/r3uo.xUB68bg0ChBH/DW
-98	user98	$2a$06$IvNUV7twaQXRmSNjdrqHrOSXlinDkcrkxyGSy80MVd51N01cs8gmC
-99	user99	$2a$06$1hYT103YUXqu9lw0A1hv8uUZlZ1ux3vDFNTKrU8xWW3ftj0Umnl/.
-100	user100	$2a$06$NwsSwLJvWcCaYtSK.v9R2OQVCaW5r7hXlrRXKwg414Fn5Fc/mSPG.
-101	user101	$2a$06$fqH48LqneCI7C/rffCoXuePQl6bWmOI7vGt/4MvWzFNwK7/9FZMp.
-102	user102	$2a$06$lvU.HW.3lISXBBSWRRxp3.CVYw9IgaIyBCwbtfo11YUUSJVQlIqSS
-103	user103	$2a$06$t9EGGh9fBLdkKdlgOQn4OeU6QU426O1LvXSKEFDNdIp75N5NDoG5W
-104	user104	$2a$06$nMX3wQK7/IYQM.C9ULmhAeTG2kwGExPNGSkiIDex1KPkdfAucwK/u
-105	user105	$2a$06$m6abIOat3AYRW8rBrfqr4u1uOiE0lvLyrwI52y2LEmKyeuAwGXZUe
-106	user106	$2a$06$8OTndi5BP6llCBghEgpTte0LwsQzzwneQ8iyhDucwCqAa4ul8rxPG
-107	user107	$2a$06$Z0guOGHzrhHg8gLZmRu3X.DtOegNu2L4gA2xKVLb4kUx.ID5FiHsO
-108	user108	$2a$06$57jBQ6Y69GnB7ePk.O4HoeNmwRwbtaQ2jVA3YrC.o9nlBFA7DwwYC
-109	user109	$2a$06$URSOXmRvlWK8kqpupFrqzOjoDAFUsXTkzI042qckdnv/.tRWse4Wa
-110	user110	$2a$06$kYB3Aqse4R8aqP9kEbpKA.K4q6FHq.qYR2mOp3N2mV0bJfUBXLkrC
-111	user111	$2a$06$pbEawQZAxMlXmm1Pasgvxu.NjI8X6lzS9g838.BUJWVd.5nhv78bu
-112	user112	$2a$06$U34Wpcn425Pw4ziRshtmlejUKIC8JfuRSd6YbgNW.MXcrjqcCphF.
-113	user113	$2a$06$1CyvIj7HE3cwiePwPnBcveMRViP8rdO5UIMdNK06vyN2q66nItzfi
-114	user114	$2a$06$tyEZzos9TscJHnqcin/r3ekL2fBNhydO/HIJe0MELCl//xEmHO1.a
-115	user115	$2a$06$us70IsR9DaiDEFmZYP4kve3cdltS/25qjG54YTXntke/VCMFQsDru
-116	user116	$2a$06$Fz387tAyGE8ENpMC6J5JNOqZJZI2DZSgqUycIUryrbWCv82w7/JwO
-117	user117	$2a$06$XzAyzOAFRg03bIR2wDGtAeINfk/rP8RaGCpAG9ecexJt2tlyTWC72
-118	user118	$2a$06$je2nxTVa0zSdJSM1IzEcUezGUNPIU/iTEo2GNogwK6GiPfNWYFLKG
-119	user119	$2a$06$WsoFeBu4RCzWDB/MxUmKRePk1O.dPP1cdHO1ql7gyJ8yu8u7pnpYy
-120	user120	$2a$06$DAyr1IcPzI.MYYEaHRPNseQRC8TMBp687l6E23VTlr7B71HBwuymG
-121	user121	$2a$06$yoGjDEwQHvpi7dVGp6etKO.5.Fz1mRPWqNZVD49xw1E5n.i0jtDSu
-122	user122	$2a$06$yD3ujzNruxXHRzbkgUgqD.6igxujBwlFFFleBkyHRdyzByICbfSm6
-123	user123	$2a$06$VKYwaFjRVyj4nPVEXy.Pr.cavfU4HUhPVg1OJ5sCfPJZoSzxgmXYa
-124	user124	$2a$06$ljEWxep3MDeB24eoEdlth.21KHpSu8B1rWFtZ8eMefCol8.LF3HHe
-125	user125	$2a$06$NSB6.duZctgLrECc4wL4x.hHb.00V/9d4LM4ZYlW.PXgakMb1gOgS
-126	user126	$2a$06$.sqabvyqmUoJl2RbYfwoJuKyDcsOudI9Sw2sOlq/yGKKBfBMFYeGe
-127	user127	$2a$06$gIUrV45WOtwFVGTpoEwAieeGW1i8JsZyshcgaay2zO7o5EmxXTUPK
-128	user128	$2a$06$RZfniAZ1wIlawV40AeG7gOvpFaBMDqpsuKh04RyFzk/nAXLQK9Zyu
-129	user129	$2a$06$R0KHV2nOdjA/mqcP.FL3N.ZmkuT2Djih4b7mrPHqL536FDZufTXGm
-130	user130	$2a$06$O/6QzTHBA/RX1DFEBRLrwepzR/oTUnacaz4iV9V5E89xLObEoTj2u
-131	user131	$2a$06$MT3mt.PwhDuj/MOaWTT.nucmmjiVUbobmMBiQjPVg0Ew715feTN3O
-132	user132	$2a$06$nB9ssxPSDo6g8006PukmQedt5SpucKGHDmOEujUX1xBe8NHwZHgWC
-133	user133	$2a$06$cSYv5oZhIHuscjBFBFy9kOrv/fbyvDqtOM0pr7qA2BA5rel1y3xy6
-134	user134	$2a$06$xHbLNYmR7KbUWuBTTdtsjOVR5CiOBw3yEYV94J1GcKbXqOibefzbS
-135	user135	$2a$06$HoduS/jrDodSKmsJ/5/P5e/HZd/.niWp7vMiwdN57.tREFog.uh8a
-136	user136	$2a$06$sxm4XD3W7j2S48DTwzgJxuwR1BLy.zqh10nbCWeXjxXaBqvq5Rium
-137	user137	$2a$06$vV79alaMV2H1brv.MLJMw.J2xn9kzMzJ2MW5syNMW.lGSdobSycCm
-138	user138	$2a$06$jUk4v.oKcS5MtY/Jbgy/2OLBPAovecGH2hGovKt8lQhiuwt0/zqMO
-139	user139	$2a$06$3ULcuJuB20QPphESgz189eGGe5RnQgfve7k1AfxG5ypodfpTBYPxu
-140	user140	$2a$06$af3tDtbjDZzkVNjx5xmEkuDZdrDDy/uurFZ.BT/defbkwcpscsJC6
-141	user141	$2a$06$dNEZUpB883PKkED5mc/BpeTmbgwNl7FMNqRzz1yGHLJxpt38qshn.
-142	user142	$2a$06$eso92Zo4Tjcmh9JGFHzMUOaVm8D6FL1MwQwjbYy61dtYevYNKeV3C
-143	user143	$2a$06$lccNjBuOLy15kuWwbkWI9ee3iwbWfekalIbVRs7jvu1Jsx4kMtege
-144	user144	$2a$06$CyY5H6Uc49lxoUWDyy6cieLDo3l676Hhtmjb/9yg1U2nbTOPPoeLW
-145	user145	$2a$06$f7KTt6nk6vuiaWoJy2e6ReNfRGgn6oT2GAbVetb.trVArJ5DqySiy
-146	user146	$2a$06$ST68liylaQ0WGcSASjto4uapRwPCHGSDbBQYWckvtYOBn5i4CfSRy
-147	user147	$2a$06$CGmw3k/ZGv2yfFzgeSUznuVAmbsVaTvryp5v70kzQ0fnf.fUH6RUa
-148	user148	$2a$06$SFdmkYwIfRe7mOnkBV.qs.nCUNe4u/SIdzq7a8bkBde3Ij8snqL7a
-149	user149	$2a$06$T1ArGNpvHm8Fa8Rceph05uqXEa5fTxUFB0s23khv6ERPndW3g0lBC
-150	user150	$2a$06$Lg2vE8tuQNL15Gv6499o..e/VkheXQ/Sll.utuBYwessD4o/Iigby
-151	user151	$2a$06$687OxY0H9fLldfbmEVr8d.euvJj7adoj2143WNkfHRKcVr1pUkinO
-152	user152	$2a$06$2G659VEYH5GB6dU33sbZpuvTwVPZDMOgm9oPk6tF192RB9n04bQxy
-153	user153	$2a$06$2BHsK5894Bv5VU7BGpceduy3OyzJ6b5GVjm1arxwQHLXhcHIewg/.
-154	user154	$2a$06$whqeXkYVGVjgdtDcqVN.AOM9ukYXcAc1S44zlVk424ynWnDcThvmm
-155	user155	$2a$06$50moveF4aamS9SQahRTyQuW9Kb2dKrTQZOc9WNtQORJzWc436gNNO
-156	user156	$2a$06$woijopRzDWYH6.eaFKdKFOJBblZu4kk34Ks5s8upYTBJ0u7OJz9MO
-157	user157	$2a$06$Bcsz4E6OBg4XA7k6M51njuDSKNBc/71xkK6gCDl6HEovg5IHqHJni
-158	user158	$2a$06$qjqOAHvXAUYxASYdugjwLOPbT3XlYsD41giRpnuzmk6WRcekuRafq
-159	user159	$2a$06$NyX3PeC9CNvjF6K0.uAdo.RY1wMHKpQYu7hlkZGslXgmNeENFzT2K
-160	user160	$2a$06$vbynAZTBrVc6bSgEoerNjeex3YEJCediPUhXJVHXZitudSW4agoWK
-161	user161	$2a$06$C3phPp9ApDPU1u6FlR0uPeW9Yy/4ouJ.LdcIJi40a0NPdEujtdmx.
-162	user162	$2a$06$LR.dzu9B/Wy283ZFpp/MjeQaBPu.nJQkoVk1xjwpP/TIEkk7geBGm
-163	user163	$2a$06$lHzzj.2S/ns.Z6kneV/9n.Arn9GXs33gzE9YRek1DDE0AZD0lz9Au
-164	user164	$2a$06$MkqdEK7mlM0mRPxKDGj1i.kTuKDh/wBLAy82u4Y8VjU/X2dNeu0uu
-165	user165	$2a$06$a3ynDpvbX5bf1fl/2ePLdOcpQM/DgqkXMJaXSr9wrRXGDoyGmddtK
-166	user166	$2a$06$sUxnE5/076VWqPK68IxdLuJTAiWyXfsum9BlooSquCkW.3AJ.rp/G
-167	user167	$2a$06$ya.07u6KzTvxvJPHjJgwyeGfGOvTbS0hY7VdHe.MIqsLKXGmq8gqm
-168	user168	$2a$06$U4Wrb4qzwX4mf84jFrrgZuoaQAR9Wqeln88Vm.PjJYV3wdP8dJFde
-169	user169	$2a$06$HLkS3uUCMV64BgjGBh2EF.aZ3a6DRQ1wr6ldI9Dgo05oJDdavztb2
-170	user170	$2a$06$NbPOjPIdAbgERBrmxVsf8O2P234AhFdZQBDU/raLxgOu3wb/Y8RPW
-171	user171	$2a$06$cmtB0FVNT2fL2dGRBTXKv.5R3IX07TWI1WxzvSoqhAqP9ma0RwNjm
-172	user172	$2a$06$czyYhpIP.nncP2GbznmPl.ChcysY..XikK3Df0Z4jTDd8/g8cEf9O
-173	user173	$2a$06$xtF8wh8Raex0AdawWmNTweK3zDCUYhcbxBbx8CbeNoYQ3AFk9KFtO
-174	user174	$2a$06$wONR3vbq4kL/KDdJK5vfpuJKlvtRgJxB2HnWn4y8s4dwjC.1Ts8JK
-175	user175	$2a$06$4kd0kfA1mMyOAX3ZSNwcT.rNv7M7Z/6JXmMyknFJNViNzKnSu5z96
-176	user176	$2a$06$xW8.OHOpf0H5yjUD1qcXnOUxZGrdBTyyZbdD9rSB8G97Ghak5jbuS
-177	user177	$2a$06$AwKNiz96656m5c8MzNdRue0uCRb2dMb4/zrbeMhbfYnzqwEXCSJTm
-178	user178	$2a$06$I.TdoBubozvt5/tmSVqc2OpDclQvTgnm8h1cb8WTUcdRQqEJzhyGy
-179	user179	$2a$06$MnKfDojTCU.GBS.OAMOeCOsDPs17OE07UKC32z4J8u.1kKmTo9Lgy
-180	user180	$2a$06$oPDgdS/XCX.lMoKCmTFMVOsE/WDMS9FI/OZyTRdEkv7/ME44AF.1y
-181	user181	$2a$06$Bx.3wbKKC7NqQnfnsseyTOt8iUiqpuxdhFhznN33aVdnriZC0rQHO
-182	user182	$2a$06$mWGNull0LT8hc.Xh8TaiqOFNBSFEmQ.M2eb6qijUK5M3./ahZppVu
-183	user183	$2a$06$hjNUjXOGoUpDhRfuoDTg8e5rpZVmdpoebiCxbhtLLR0Q2w8E9a91O
-184	user184	$2a$06$Zam6FljUDr90k.zrmINoN.flx6fIGo4tnrD3WRyCYjuGfrAhidakm
-185	user185	$2a$06$VeX9UINKMCGZWEpK9mwL5eG3jjZGAqAIZGomwDb9h/Qt/PHKWzJDe
-186	user186	$2a$06$0VuJFEK0eJiyoNtxlLkvOO4U4vdlsLupNAlc10960emN5A.Oj6vp.
-187	user187	$2a$06$PX9B46wsf926HAghHycUMOWYnqrUFsupWW5Wv33rW3iYJBnBKxV3O
-188	user188	$2a$06$fJI/6yDlSl25osRyJ6Ij3e7Ig5LADYVBirbhoQtcRKLE98T9kSeTm
-189	user189	$2a$06$tSWRyYjTd0LS67Xz9OgaeepuCbZv80LRCpG2Byao98TeHVOWj/jlC
-190	user190	$2a$06$C958rvyZXIyC4qciabOKAOtBgHi8Vp/WyxOA9aQUV19m.qGigwZM.
-191	user191	$2a$06$6PoyFSNe7SpAUday0NpADeZdef83Y.OpRsgx7EuxKspr4KyfIUVmG
-192	user192	$2a$06$sHJ0Kuo0s06TdwCxwkY.t.orlQoPu3kbnUNLZpo0txPfniwmOqENe
-193	user193	$2a$06$B1jvFok2KxWCZDebJ.xRReeDd8AFiNDWzu6bNwBXRC/iHatQ6tcoC
-194	user194	$2a$06$A3mr3R80txorSwgWqPxmgOEiCp44dU2CML.mxSQzrjMJXUd52O49C
-195	user195	$2a$06$42s8lFrM5KAD/4O8gkmLKuFv9P5gJ5ik4m73KlL1Sly/r8XcPlyUG
-196	user196	$2a$06$0LktGpjl.n6yvlM4XuRa1uSN0Lu2mwrvsieo7WZLHFGwJYGeMIN6i
-197	user197	$2a$06$lQr8GwlZQRulPfL2h.L9A.5rG8RVdTsweZFIEdUl4q5GDK5w7foEG
-198	user198	$2a$06$t1tguJ.Vw3UV.H28.OkMt.ML.Oh2tHkAU8txaocXMfDImm.YB6/26
-199	user199	$2a$06$mgp/jQ2FwUG/sDKtEESkkePGteOHQbWckiPNDN24tsI8rIIxRN2Ri
-200	user200	$2a$06$5nN5KP/QKFRVzXRAO6yH1eL9C78JUsSH7aHaLwry.oyGqeE8ft29C
-201	user201	$2a$06$k.NEE8lbMJVuDFy6E9FfyO37x12FC9TeoBbdAmhUtrOq7TSgitcK.
-202	user202	$2a$06$uoVBqnIVzepBpbZpkIxWCOGDlXhCA6hX6xxceYxlWV/bydSSfVaIO
-203	user203	$2a$06$ISMU6G9Gq6ZmsjQn.0TnqeIsoG6XLXXWwLl4qB4VIzsj4OGQfvE.i
-204	user204	$2a$06$90TRKNggI/dTFOjJemBPreUezEmfEHgMYQ3MAaJwKLYLRTlVOuo5S
-205	user205	$2a$06$j03.B3XYiHrUYsq2Z/lvhOc.6KXe0kITZW3Dc2R66fiD/9UHMoEMu
-206	user206	$2a$06$VQiL8s4CyrieJKhinEVJMO8KX/rd4aHNUbSYRfTUjOP5gvKo4mzlG
-207	user207	$2a$06$sHXOnJ11gypDk8zhrpr6Uup3K.YF9NcZ8AdH46xi5CUpxKFhYN2ay
-208	user208	$2a$06$2zXNNhGvRIn8gsaS3xPZNOb1JNPVwadVT1.Pgnjq5xwGTnwp5zXy.
-209	user209	$2a$06$GuoM.pix3c18tOYP9Gcfd.orm20HJiOlPoSY6ZztKXvjRC4w/RZ0G
-210	user210	$2a$06$SHll.3eNghnqRwG7IQkibudUeh6RMgBfzxQCYwV1jaQmYI3wE1b/a
-211	user211	$2a$06$WsFjO30lL.G84Bb7sFGVq.EousQpprk7ljJX/zqhUbJKlGuv/Hgj2
-212	user212	$2a$06$CgB/Axcgx5MSxgoJDqeJr.5BR7ZqSG8CW13qiVDGifoGWjq/XUnUG
-213	user213	$2a$06$y58hqOQXFnexRyN0v.rr8OW5/WRtbKJNNauCqZ/1emIuAsHN6Cwjy
-214	user214	$2a$06$OfVquNN.gMFt2vQxpNeYu.gqtBKYv3hb1cIDXisuLAz8Wp5Cu0Fn6
-215	user215	$2a$06$A4wIX3bSvXhlKpcVOcxgYuZHpgUVtygz.PHdSjLTEl4LUi3bDcnYS
-216	user216	$2a$06$QNpSBa0NWL1H8qRXUBKmyuRzD9FeB4nzJrpz.wEftK7mKfam7E/G.
-217	user217	$2a$06$LID8w/NQg4XWXIWwMF36wuT1Owxfch2su54V431ha12b/aoXD7SNG
-218	user218	$2a$06$zGR/L2lFoJXT//vZdeOk1e5EVXxDRGJw63paQcwfEN/Julvmlskw.
-219	user219	$2a$06$tqwxf6HxfHY.ymNGg94WyOHjiiwcDChAhPZBbYlVAycAn8aTxC2aW
-220	user220	$2a$06$.wojeaJLAvVqPqY3g1WTZeCkyhLSIaH/gtW3khZN5nGNtMOZkYfvu
-221	user221	$2a$06$X4wcQsyXkj4J.QawcKuwAepy4DiEYQXuLvmaBgKcVx/wN8Mahl1OO
-222	user222	$2a$06$Zw.ztXB3r/tmlM3wu9dtbeu7vXuYnbgaZOMOPzZorU7n3nU4octRW
-223	user223	$2a$06$1cPAFdHAOZ2DIBTZdS1NQ.QvbJGWr7tKfN5ns9phwK6d/nOtrsAre
-224	user224	$2a$06$KEHrQ5jexglvmnKrEo93xucXA9inIWgBbtj0QhXWnlIR9dBnxIjiK
-225	user225	$2a$06$F6IPrp6uUp.mZJTY7t8ynuqNKxd3Q8t9zBz3wDujMt.Rqx9Eai29u
-226	user226	$2a$06$LD/qWDU..I0v7uXzAVeE5.q31U9lheUaHT2gcgcf3F/6N2fBuzIVy
-227	user227	$2a$06$J/7A0lT1RNowp8852QFnXuw.OK1978WLrY/NlOdrM4hhLPExpnel6
-228	user228	$2a$06$ZFdkon57QAJx4c3zZQRiiOBWAHECkeKpS4APcJ3EYOwMNa7sZxP5O
-229	user229	$2a$06$r9h0Ug90vGFPWpYkpTkicu.KEO9Hf7apzhvLu4qTJWPi8NvQdN2/G
-230	user230	$2a$06$P368jj5Asn5kVhDmTUDlOeMrmrW0baPmwNv5czGGCINXNjXtwx99e
-231	user231	$2a$06$aqMQ8e1yyb724vS4mCVU0OAoR.LtqANOo6Bz45EP6uG702Fv7IOPO
-232	user232	$2a$06$8IY8b/owZ.zgFxLaqBOKzeX4vLKyz.rv5CuMoUnnDpYm7SKGT7XIC
-233	user233	$2a$06$ZmbQP95G.jsc6vQzPw52SekJE5Qa1oIDdxVcADe44l6.FxRJoIihy
-234	user234	$2a$06$fguSsC9Rkqlf3N7efk9mRur8w7xBM4hV1C/E9mx5UUbI/dmzvt3qu
-235	user235	$2a$06$vTLb3r0.tsYFIAq6R8mZ8.jB6AH6S5SB0PCH28RkS2FUQePoTmxD6
-236	user236	$2a$06$xj1FESji/BGzh.R4NNAm3eo5i4/ivRGAmW.tb.t.guxvtSJjCVZFu
-237	user237	$2a$06$VNTIxV6a6Psac0ixOuDYGejYufSCagGEJ2lqqzo3qjA7YhAO0PVLK
-238	user238	$2a$06$9uYAqjo1F.u6GOLc6.T00uFQVr9AOja86V2aNHmJYP.tmV4wCrIcS
-239	user239	$2a$06$YWgf1dUeCg9AnLKG6U7A2Ojy/na9SBbejcIjvDyXzPQ2M9KVV03f2
-240	user240	$2a$06$OJVhOdA2bZDi7fjUXQ2Cc.smIv1m00OuL5mBqH5QYzlsfgpGu3INC
-241	user241	$2a$06$FnFP9..jwphfrQriLD13rOBeJwGYv0J8ubFEgPTuLoH17YIVDdjJu
-242	user242	$2a$06$UnmYHjJd1FPx3Pi.Wj/R1eDEqJ0hf8qx8KBhzRVfPIVZiSCTR6KLa
-243	user243	$2a$06$JBM2Nqiemqx8J8G2Pr5LY.KACyiaKOe6BZamfcDGhSV62L.sR1Zo.
-244	user244	$2a$06$isp1rdpF4proEXaG1IGGZ.FRGu4Yq0VbP7g5T1mDefhv5wZqrV6Vy
-245	user245	$2a$06$dPqWNQhGBpqr/CeR/3uPPeMIpTignP7zAuAck2JKn2D4PVupcYi0q
-246	user246	$2a$06$RKhMdL.T/p.LaiK09NlVqOKlJvVJopL8jOLPi7K9hym9lAwTowH4m
-247	user247	$2a$06$zX3YgkTdHiB51npXPsfScOgx62WJBXwwsDod2DnWBwe5KiU6OWPfW
-248	user248	$2a$06$0cV4luBwtrr8DXzVU1d3ludVA6GUcx7AULhbXpxStyxKV3ls/azxC
-249	user249	$2a$06$Jwy.VsW0uFvnvuw3MRlUXO87Soqsn/vi.9oT2X3Id1yY8k89orH/W
-250	user250	$2a$06$iqtW0/qPFuFivSrZQPpSOOdEqWF8qFdjZoCf2wSK5CeOGEcUQoyea
-251	user251	$2a$06$r/g7jpd3Md0mwrGArwMkr.I8MAKZp4rOBwNG0KRLvB0k.LMG8KGnq
-252	user252	$2a$06$EG0krqgPpVdaGTCX43AcdOFvZBiIA5x3VF5wJZ23IxHt2fCOVtwq2
-253	user253	$2a$06$cC.ulMBHa1prlyt48lkqhui2AeHwsvbev8c8GiI9i2NGxv12I7ccO
-254	user254	$2a$06$lQ5G1IDAfcqMTRS4mV3F.e7zNFuhTvE7a1aK12u3y9u4naE0BhSu.
-255	user255	$2a$06$55OQlRaJcoRAXUKLPQl5Q.n6HJfRN9T5Yv9BQrELypgeZMzeXfZiC
-256	user256	$2a$06$IZ33Z1rt6TyQq7bXRl3UW.KjGpIvh.DwnF39MqSDN7xwyJ68NxEoS
-257	user257	$2a$06$n4/mLLKgOIRXOTX.58LHEeVz3I0B8q2euSbNYxaAeyQ5nld/oe.IW
-258	user258	$2a$06$DzGUY24IYuCweI6v0QfF3eyiM2ZJoBl4py.47NFgXm/VOoiCtsqn6
-259	user259	$2a$06$DUcKUT5mQVOWVf4V4i8IOegEr15bXYYXdWEBtMPROTbukWdcPLZAi
-260	user260	$2a$06$5TuVlp//cCwChB64OrzbVO6kznF/SXTDrG7rojTqWWIqELTxANrhG
-261	user261	$2a$06$qnFU35cacrWX/ZTXeCFSEuzsmI.9qWgPc2ic9LhJCWINtWkk/MJ4m
-262	user262	$2a$06$uk/HbXDH43pEIPwmNtCtAeGdi80SUxpj1YZyNDtZlIJcqWWkX44OK
-263	user263	$2a$06$IG8FNBtn361BfHue/9HA3Og2fJCBdEs0n2ER5.uqDxlPvO9eHTaOK
-264	user264	$2a$06$0lQoFxpovsFQ4h.gNqWndukvnnRPmFVxohGAvwszXwShTP9CxLVP2
-265	user265	$2a$06$sSH1aEiAU8WcfahRdomaju87OaU/M3EeqoBsI4DoNHOtZT6PkD8eS
-266	user266	$2a$06$/vwmQWn2Bs1xynvCYNw5s.c2PO9pvWTluev7RE..w1dROgVUP/Kqi
-267	user267	$2a$06$v62eNHxzVV3DrsMKPPNVz.qI8Qyh/Y9fv7vKjOPfhuCl4C5hQAngC
-268	user268	$2a$06$jDwEmmxaDcGNnjKCcBYFi.QZAjvQc6aAMlRxoyPSeQzQkrzdN6vTu
-269	user269	$2a$06$aekkc5.wpk2CGB.vCaFSye0eBS/4MNA2JagNUp4jDNtMWgEoiX8FC
-270	user270	$2a$06$zyegDhcvMCy7MbtlxbmwwuiE8l2dtxf6h8ZC6DMrI5yV3neOPyFye
-271	user271	$2a$06$oRonREyPssJS0Uw6vMOAKefD0tonRiDk5db6KQKq8IjfDXoAaIHzK
-272	user272	$2a$06$C/klXNTrjb2GPLf3rcWCH.7Kl/Rpu3xIdWgc96HUX2W0wGKGyGDZy
-273	user273	$2a$06$XXs87qP4bsw35E8959WOm./PqTu6ivAQitMXhNqGGBFCQLR65TEQq
-274	user274	$2a$06$vMpkOct81CxIvvI72.363.rGWgS8.sskkKZ6gq1JQoKlZPt8JbTQ.
-275	user275	$2a$06$FnyS.hrsd5qooITzfWOQs.8FJ6oufH5.Eax4BwQGghcA4gBJJ4DY.
-276	user276	$2a$06$5AZlCzI2IecK2vTuW0HEj.f33gDfDWtmkvJakYlqO90dhd.1RGGhK
-277	user277	$2a$06$Ycq9.jd0GGYNhVuuX9UwoOXP9glkrpYfs79PMuZll4pB9WUzRUL4O
-278	user278	$2a$06$AJVRZvgpY4JD8rfSxdnBp.zGDUywX95XXkO6NJhMnUf2/1qZFGhEa
-279	user279	$2a$06$to0TfglnwjrkSOM/17cHgundsMMS5O9u3FpZbjlbOUzH81D.VMCe2
-280	user280	$2a$06$QtgCT9WeVcTp2QRTtEg7zup0KQ4R1se7y0NYxiKNMlH3pn/uc0vqq
-281	user281	$2a$06$qfx17XAFy9fybuFDnkgGx.GVYeZCZEHUJdjJkhEX9M9FBOVloshXe
-282	user282	$2a$06$umUZhfdTAkFWkrahjv7AbOMyqZBnWsOLnlJg0.3.sCvzs.SPJ/Xra
-283	user283	$2a$06$gumzS4IbQJXqh2OrDoGIouCblDT5Z9iWBDeJzqMcVvgboZUt2yfDS
-284	user284	$2a$06$OK2KzTxVGQXCXc824WFG5OOm0zRfX.IqTleF3Q91/tB2YMHjRx402
-285	user285	$2a$06$diyesfudYdhM1pCF9pBCa.OJ4HV.VoxYsMuj9TcEl0Fn/wINPQeO.
-286	user286	$2a$06$anHV/bleyRPKlMC6QyV6N.T5cGgtPVdlGNtSt6ms2vuqoAyi9V78q
-287	user287	$2a$06$iG8/mmn7a59JzQgREjKzEOY6p7SFOcAuwxO9Wqs6Gm//75EeqoR32
-288	user288	$2a$06$uqzInKzRNkSrFcT2QJtF1.8oGlR1J5HQD86xIFTIsba5RNsLyz8FC
-289	user289	$2a$06$eKHZEiYZ.Zu67/WPS08OQ.U0bgZ71QtIUg10KXGO.2rcRCdeZeVaK
-290	user290	$2a$06$TTpWgCd0oOjpY0iES4ZLouCmA36q6dCUBc1hr/lk62pjs3zRxP2EO
-291	user291	$2a$06$MqInzHZ.BdB8e6TjKhQJuuyZtw4dkW25dwMnJynDrOpQVtlmdLESq
-292	user292	$2a$06$sAIX/PVpifVqrhPHVXZtsu9auFOFzZugsalOBrAyUQ5Oi5l8/rvEm
-293	user293	$2a$06$et97DuzI2/WUwYHP/tvLX.aJrUb3bqzDXKFysk9Fe/fUKVJiuvX/W
-294	user294	$2a$06$RS8WggYWHJHtwvBz0u.ONumznF8L6CrDl1kI4b4tnUfk.L1h8l5fW
-295	user295	$2a$06$S5PR63wSRVWNUC9VYS5Jd.Zmv1zyFa1TSyzB32kso1L65odB7dckK
-296	user296	$2a$06$wGU5gBVPBXvTEdJDyWp4jeFbNMjZcXMaZSe3xaUmm2QOfi.v1z2Ii
-297	user297	$2a$06$XPsw/IrncUW58cRZI0zxK.OxIVp4x7t0k1Ovx5LKjDEFqgIDZSpZq
-298	user298	$2a$06$u2cfHsiji8s.EDCntXKAMOfDR14LjGU9l9610.odk39BMuOcbdpPG
-299	user299	$2a$06$AB3cmiuBDoDoAGGbzCuvNu9fr1AlHMg6hOjL9PC2NfJbeYnlP12WS
-300	user300	$2a$06$GZwYXLQWu27bdRH5kE/OwOglXXhZDpFImx5S/uvyeuwKh0xadfAzC
-301	user301	$2a$06$4bEMvwVznRczHBPc56AG9.7YnNHuImmiBgbQu1xmqLEmPs6nsKTru
-302	user302	$2a$06$cRfjf0gHRorDjdpeYssvi.nmGiB7JtQWjDRY4BOVlvkOtDfuDWnL.
-303	user303	$2a$06$xtWavOutL6Aa6Z2h9ZHgPO3ZqLWJLtSgx3n90W0E52sd.ZZDtX1Zm
-304	user304	$2a$06$CFlJNfRW4nr07.gJ8T4o6e7FKcA0somv6/YlDA4z5zNaDQaS3A6Na
-305	user305	$2a$06$33H9Vm9wauOul1EJAxLEQ.6DP4pe97V6B7adQmcXH0MYbvloz2pre
-306	user306	$2a$06$jb8cewefQUX6t4hu2i43j.WjMNMmPHcgCXYuFw471ebN5/KIRar9G
-307	user307	$2a$06$DIOOvT8mGQ316lMEPl5sMemIe3iTcFZq5G6qrVjIxIuMqZz8.IOla
-308	user308	$2a$06$FoFLYerVnQcEJdS4yOF0deOChTM5ddcyaR21uExkOJs3Vz1W3XBt6
-309	user309	$2a$06$Vl/aJeU90Am1hGXNmpdV1eZ67CdiZ0cVF48MMRtzwngU.sL3aOxDO
-310	user310	$2a$06$Um8JTyUdrOOL0BKBNoiy7uf8gcE2PIHCTUeygLhjCjAVoX4QzVzR2
-311	user311	$2a$06$RlZUHUtzbOzGvRMkXsguyOWfgpjcS4nJHiJXylIBbxC0L3j4KTtfO
-312	user312	$2a$06$RJ95IR02vYPgQZW66C1tsOJ6d0jjqa8aukoIkd1A0mjxjxHbYtub.
-313	user313	$2a$06$3KyfpQM9RR73IvuZdMhcYuHcyEDFMHbCg0jU.a1r3dlTEnBrrjF4q
-314	user314	$2a$06$x0unY0bGCtyJniCX9yWl4OkzMU95oREHpELrh.4C9rxgXRiXtJaya
-315	user315	$2a$06$MHeZeyiyFrizJvdLOjqcOenPGQw8gfk80Fl4ZxJCfW/0JodXy3Hw2
-316	user316	$2a$06$9ZDE8DEMNlSn7tpKnTuUnOBV9QGtOv3uwskFNIYfWgz9m8vVaIVdW
-317	user317	$2a$06$CAK40ffXToKmaJ5XNiqM6O8vExdY1vaGzzPbZwFuASyN5sW3m3NxW
-318	user318	$2a$06$oCbnSZdrsiTvh58ZjZ0CR.mJKKz/WryIpny/uREYA1Yld7V7CvBSu
-319	user319	$2a$06$oBeBhhCz/3TFwt4MEGNJbOMp6nr0dTr398RV3Yj2P0YJl/lDtU3hm
-320	user320	$2a$06$Fg3xKiRQKHMnSUsfYLh/WuYHWYrjRkNFT1hbiSvF40ESXbXRQP9gS
-321	user321	$2a$06$LGwClzSTFgsd2a4jWnAjmuMq.S8zajV95Qj1NxVZ9QvhLuLAorXPy
-322	user322	$2a$06$khYoxkefsChGChxbkiPE7evUKMcvGv/yDejilxnJ5jEItkaG5n7cC
-323	user323	$2a$06$IsopZFM0FUu46hiA7EHKV.Slo2HahQ/3FCMdR5i2RwvP4gxItt3uy
-324	user324	$2a$06$RdsgbtfFDkJAn97CS9F6ge0yzG9fDpak2NuS5quPNtn5W13qzGhCO
-325	user325	$2a$06$bx7nl3qW8rpufUD325tR0Opuwb9hp.UlXiZTxI5VU9btYSVV8OdBO
-326	user326	$2a$06$PH0cxWfn0KdLEtXD.2Jhje.GuWABhgiXU4HAAQxtXDMhS1BBnNLdG
-327	user327	$2a$06$FE4.ZL5Xd/AP7MZJJ.4fIep.KJ76J6iQnN.qN6rCtnjBbtLPMSsxq
-328	user328	$2a$06$EmP.pgKcXGXyWW692Sk0NuLYIrCoRgsIbWX3Zqt9.VTn/G6hJ0j8W
-329	user329	$2a$06$61qNzM7c0D6iALm1CHsLXeh4OzGU7LqjyBtf2p.eyR7cSz.zIV/By
-330	user330	$2a$06$6P9pka7Flv0UDisUVeVSuOcNWVBeumwja/FSsNKrn9Hthv.n/9/yu
-331	user331	$2a$06$EpVqvobZAiv5vJiKh/fG0erjzerudCtLwZbzR0ZCk7ClBtTZftWt.
-332	user332	$2a$06$cXexGvtbH6EZLG5IADXAzeSSDJ5cM1yIiBksgk5tRvRfY5GSoTv3a
-333	user333	$2a$06$6QhliBePx.w7tlflwGIjr.5uZ1DWFYQTsJgVWcLj5OiRowcEvE6S2
-334	user334	$2a$06$lap4zi2J5rQ3Wy2PbKOfsuWJarR7B3/PA5jcfC6ie5UwKKvaa5NdK
-335	user335	$2a$06$ET/z8oYJ6JaC7Yv44Kq7keH5EDHByc0BrD4wxTG7Bf/BwbyM5x/MW
-336	user336	$2a$06$pamn9wyLfAvbDmzGkIbPWuZeKcnOLvATxsu4HkRei2LOM8E0JJZMi
-337	user337	$2a$06$YDR3/tSAZ2UJtdCI99z2jOWHfL1Xtxk6hKpSzQ89RmAgMOYvc12FW
-338	user338	$2a$06$s05Pv5Pn8As4CneiCD8WBeIjTMJlxEOAapWok3PR57toCCtVJUZKe
-339	user339	$2a$06$fV5qP05mYX6gFN5JwXEL3urreEcTKR5GXQInng52OMiEpjVoUZE7u
-340	user340	$2a$06$Bk2upBPcA6/m3u77peA7FeXGsCZN8NMPmUAiEjXuTL4QLCklhZCiC
-341	user341	$2a$06$6IXexThPCBXu4UXnCOlv2uFz2b6MH4j0MrZ.kN6NHcFMKpyWqVeT2
-342	user342	$2a$06$VcynjzFrT8jUyjI97gfmz.Jy/7wU2gj9bI4ovvyW1E.FqeyGPgw6y
-343	user343	$2a$06$Vn0i4yi6fIfTtYVVZnq.tun7OOZp5Vp9My9DowJNEy9Lslu89MhOK
-344	user344	$2a$06$p.FhndnH6RuFvp8tT/nvBu/d/EeCWYzSGe3IeVKmYZGtGNz9jFd.6
-345	user345	$2a$06$i8MWn34iEbH0MQQNbFrxNu7SXIqXoN2Iw6//Las6A4lmd3BULyb0K
-346	user346	$2a$06$6JVKFvEHFBhV8hTZdwGmHeHo0pXgn9IkWe5x2vXYClMm0KSr1mjbm
-347	user347	$2a$06$xjEkzraHfg8DeK46q5TMiOyVDS7ygFLiXBpolK7Mn0yIXMujcnGJu
-348	user348	$2a$06$NniXeZDHZFq8J50iOHaWNOTxi5zInKpHCykI8uIWXWqsKoM6edK06
-349	user349	$2a$06$CxTFFaYOtYae9pnMtmrV7e7Z7cYaUH9J05vyF6je6Fdk9T6AJJa3O
-350	user350	$2a$06$vSCVQP9Vym.ZD2Q7z0.gD.cICZdwMVJkveU3bv6nTfOsjxD.o6zGG
-351	user351	$2a$06$3srJOaFTzwoYqosDR5HP2eK8uG0Y0uYKmRunur4uQ8ZrA3kk4Pi6S
-352	user352	$2a$06$Kgecxbk89s/u/QMyvtYj5ezEtR7z33xoFrdTwcxv1BygW3m3BudnK
-353	user353	$2a$06$hul8QZTcHVL3/SiMtgyU2OHpWDbSdqL051ybSLkBwFE0/W34M/pH2
-354	user354	$2a$06$LD6L/IWASy/BYFRx1enmQO3NjYLU5syutl/BVpL7YHrgDC3CzEbqi
-355	user355	$2a$06$Eu/aULu9vWi8O0bKpuMUTeGKEtJULaVXJXQtTFTeNA4tqcXVs48ke
-356	user356	$2a$06$bkDk1IQjT.aK1zBnKd704.AiO3quXzqidmaBZUGMpLQoYEuaPYB/q
-357	user357	$2a$06$FLlzgzWynw1fQIGnlhaEoeADKPfQGpGX9Qk0JfGkEfTjJuBus7WCi
-358	user358	$2a$06$l3X971V1gdCjP/zHl2B2Fe0ZFSd4CSWu5i/awhFu25YQfYRzY32/y
-359	user359	$2a$06$gCh4YbMoa4.WIdaVj6HYBehZhW1lZmm1CL9ZvxX6zXzppIJTzmye2
-360	user360	$2a$06$cMiqayELMSHZS13tl4coNuox4FynOkgvKZcUkEzXvKl0OQ8rlQ2ai
-361	user361	$2a$06$2LpTkIgps9Mk8HEGfGSLxuN7FZqC832zZTtMwnmFYBx.uExi0r.Hm
-362	user362	$2a$06$KPUwh78kXouVcBc76LAN5u/fy1j69QXefHBPswUWkiEyHxvQbneam
-363	user363	$2a$06$/W9Ad6WgXpRzoioiVPf55OgbSwPkj3O3LFKVFLfu2yKfK82FIsP0e
-364	user364	$2a$06$hvf0Mo0bLoWn6CMD24PKhe1Jpr4cem4RQtOTG0taQeu1orTL7dxH.
-365	user365	$2a$06$yiq/lTlzWLhZGCNqwRagDO91l7pEyJfGs5Uk60gGl5waUzOsKCaI2
-366	user366	$2a$06$0/VaNGSjgV3SoOPj9/raAe6MFrZxeM1R.FS5GOX4sdxXxHH3UCwmO
-367	user367	$2a$06$ZLXazywSww4hkSTunADHie6IuP1Z5fA9fVbycSnD8GCZ2J8WSQUc2
-368	user368	$2a$06$McLSMvpLryf7LkqGG5oGwu.RsmSxZ/JADaA19i64PwO7x82vC26zy
-369	user369	$2a$06$8rgr.W4RGRLoJjH0LDzP2.KI6niftSC.s55pfc7fx7oojJK8aLNMy
-370	user370	$2a$06$68JjzyK8dpivnh06Slhnte/mn5YAQ4cdWzZlhq6fehztN5mMcnoYy
-371	user371	$2a$06$eBJTQ9j2hV/ZLWiFumrZ5umYEiWj5/GNSK9WiXvuIgXfP7JuyhrfO
-372	user372	$2a$06$ATyTUPZr96AHosWl0rVi8eYRn/uTC9SxKBTtU0I7tg5Vdx/ucg5Fy
-373	user373	$2a$06$bjzF64yokQGpYYWLGUF3x.fDPct8ba2s/rv8L1RLa7BaQbV1jSdGu
-374	user374	$2a$06$Y1nac8Q7jXcgi6kPZg2EouB2pJ.Lz6Xo/cK14sAua70TT.d4Jjdo2
-375	user375	$2a$06$vKF0JJKpQEwrTVSBYkuaHORTvzg0lt9lqSJ7DaQjoco6RiWRl9UdC
-376	user376	$2a$06$Jr5hv2ImQ9A67mzHjUPqQuYSMIo6hkiprrZFEPmhis8y30cYSxslu
-377	user377	$2a$06$W5eU54G9i6nJbEUG/bSBxeDzWNXmfuQPd3ysiX6rCMpvwoTSno1Wu
-378	user378	$2a$06$E0AnNPOHibP7D2wDF09QC.LARy1O/Nr.mtqIgL3WAGqZVdpl89Ogu
-379	user379	$2a$06$c9dxh8eTPgNrys7DQu7k6uvHKY2bZH1onNLO4hBoKWeHRYpV/Ic2.
-380	user380	$2a$06$g3kvhkBp/oYdFM31Ho/R4eyvtsORR2x5tDmaZ.QgfUucRW01JpcBa
-381	user381	$2a$06$cTZLOGoKoQQF2Lxmd5q2oOvxCx0neYHWpZz.j.VxR2OSdj.sWPgUK
-382	user382	$2a$06$AkjPWkuj5C0fUaiCY6WujuANuBfOvTeFQp7Sf.wNXNjNnV0TTCKS.
-383	user383	$2a$06$14zwBYuoA0xeB6.fTgS2/Ogt05qTjPueQemvnrsuWLIq/3sx2Fa5u
-384	user384	$2a$06$KS4QN0vo1nebM4nzzQXzeOPZKVVuhjbE98TfmyLzcNX11naTDPwdq
-385	user385	$2a$06$ZeqQcAai0RPjdjgTxoHmBuqBwGv6oLPB1uWKWSCl4zCVmfNBknDf6
-386	user386	$2a$06$wgMUoqqIMTT.48PSwFlbGOwdOZmSVv3Y47nftQ.C4KT3SXsakBnsS
-387	user387	$2a$06$Aq0DfC5sTDN5a1Ox/tvIieLGaKqm9piFZUKygM5raTK1axNLgk2qK
-388	user388	$2a$06$hKLv35YU.zFmMLxsomSbPuSN/HigBixSiIZMkfeFyNZGU0blv/J4e
-389	user389	$2a$06$RUWEnsphBMlIdSYOfeINFOKxYX2a4Xk9Bf3IEINJCMtL0fVEZmnIS
-390	user390	$2a$06$bCU4KR7OskIEX2klrJo7BeUFrhnVApSn/UStTBfok4ZcNSPxKfmwi
-391	user391	$2a$06$w0SpvEeKhPa/rz6TFKFeGuuLZbmBLS5jLd3pz8QRufDESfRsB831S
-392	user392	$2a$06$.ufIpOq4nsOx/l/2efN.M..Npvm1flvG0zrbDNBWy8BxeYHx7tAee
-393	user393	$2a$06$BE6gwheqxfuauu.vrrr0s.hmkU9clID2oPGCp1dctSz2kre1exmAW
-394	user394	$2a$06$i1pYqDxmMHYinpypdn.KlOURVyNWZMB40Vrnv2BiOzcCUkPoa4XSm
-395	user395	$2a$06$c.i0Qg.Kqq7eYF1dXGDj..moGl8XlTJhdlnDYnwJ6EZP4VVBUzrhm
-396	user396	$2a$06$VZm2M4hInRH0irCIbYhdoOSrVAw2lijasP/yt0ty7a6Y2Zv4n3q/G
-397	user397	$2a$06$GPNQ7FDXnsmQQv6nVzr.3.f7b6U7PkINwsS0r6smq57KLw3dvmIca
-398	user398	$2a$06$a2OxTgAnNNepVjgjyjUDAezdnaIa83f7JcSwaw5Epfj7UElqbs.B.
-399	user399	$2a$06$KkoPFxXKnCqRpGDRcLTPlODiHQq9T2VnQZduaSwl3bWgQXZnuZBPO
-400	user400	$2a$06$k.w8cWR3D75RTkerHkaC.uBV.bSvO36OEel0Xw183gM8CCS57VpYe
-401	user401	$2a$06$vIJlwPJoV.slJ7.QiexFb.QIG24CuGPDLvuM89VgHodzydtDmGof2
-402	user402	$2a$06$Ty4y2HGcLrigSmih4strLeh50v7wn1u83H1dWqA2jkR8hM3T0Fc1W
-403	user403	$2a$06$MSBI4uyP5WM.f7HRhZKdPOMwtq63ZsiEew/PeLSNSyEie2BMiFtyW
-404	user404	$2a$06$06pIReX23/bberEfjtuklezSKhFC9IqiA63eTPG1b4JptAnOO0HaG
-405	user405	$2a$06$naNeYpRmgvrlB9eB8UVD2OVPrbJ8jf09OGS8OUD1IDMQdf4MYvhEy
-406	user406	$2a$06$fidv2pKd/ql/PTUkB6VXGe5.MsvNvdzRSTlQvvLwzWFLteGXzHim2
-407	user407	$2a$06$1UYlCsvNjM1xzWtkPungIeDYfhILfTzgXgS/ANQcrrgHhtG2x479m
-408	user408	$2a$06$eWvuL2OViOI.LlCCgyWH4.PhVHEMngolZvfvwOYeKAxyx1R0BsPLm
-409	user409	$2a$06$97EVY7KkQ25sUGafWy95KOcevmgrEWpPs.3dvLkMOYEC2Y/SF2rRe
-410	user410	$2a$06$Dj3bCfiALgLa9EyNE8mlhOTTdzj6rCe8Hrw0rP1AKu0eTmX94w1/y
-411	user411	$2a$06$ulsh/Lg0OAU2iMHchq0Z8uZBiiqn/gbCKY7gcigMnw285hwieIDty
-412	user412	$2a$06$Sl2kSCgH1rOfKlFbdCsfneAmoRyjIw00eIHAVp4iYfhIdZZTusE5q
-413	user413	$2a$06$qdFq6vHUMWGu/QBvLICq4e8/4vgm0S5fXwZyIusy7727wlwgu2eEW
-414	user414	$2a$06$YllOyVjj1I0nle92W0jGAur222TmwVm7mucsDYgLv4VUnfyVcUmbC
-415	user415	$2a$06$zpM8Rpa8I488tIxmoTXSUeL0xGaP.SIG8n0FkBD2QEzvElvwK2TT.
-416	user416	$2a$06$xaNVXAt9nHYl58d7iLj1zeBe.HnU1DscU1ZjFtgvCsJZx2GQkfoj6
-417	user417	$2a$06$iPQ0lmbkq.fG18YEi6TghuYMgAKgM2tYig1xx5ReGewi82rnX5b9q
-418	user418	$2a$06$i3nMTY4.sWvbvA9rZM/ftOlggx2Ry28WIQKPjvby3ke6Zs.aGzOOC
-419	user419	$2a$06$jsnW7uTXSF8cU6x.oPBvKeqOq.6bfmscRYuEJ.TVfYdzBN/k21CB.
-420	user420	$2a$06$gLczbRV75UA6I1HdEFcQEeLYhOrw5wfnVP0yHbwkAt/32DMAJNbzy
-421	user421	$2a$06$cSe/29g5mBXJTlfDUXnFge5hKElnm/kvMuS1If.jO0Hl8bTuHYHNq
-422	user422	$2a$06$IpVunNpbLVjYxi6E5.VuuukECJxDIWsazPumpT1JQcC2QLuS4aWLC
-423	user423	$2a$06$1BSa5dfQyvxkJUpMrH7w9Osqw9Ou9tB/2B4hk1nVUfd6aXs5BIUVq
-424	user424	$2a$06$nQ.pbn8xrczPPvHIWF9PnegAp/ZECG6c78PYFkklnmoaNpqFUf5XG
-425	user425	$2a$06$qm/4xVpEYcFjMt8DStDQ/OHy5fjXFMNkGoS5nX.feSWazLhx9XnJe
-426	user426	$2a$06$1Boe4k4DWefvJHz3eDaTfe3XuMs1BoBFQAd4HqyjYKDg3UGlZz4Ay
-427	user427	$2a$06$phnF2Fj40GjJo.IbaBaIL.jZ405I6efbQC0Rp56V0go.MxadANEOG
-428	user428	$2a$06$10nJfh7ONwEE6z2TWh3/jOWAh/GlPWo1Jhel95EAxonqz0erbcEGK
-429	user429	$2a$06$xX2EXEnFE3PrPnwbq0vyyeTxEOgtreuJb.QEV63UTuMWgy8j1/JY6
-430	user430	$2a$06$DoXQhBKnMQfe2DlGnKaPBe7Eigt9bxNbWdvHgGQaCX7.aTJ5EYm8i
-431	user431	$2a$06$d4PGkkEdLvy8iQSa8jLjOOdJzryqke4gp08uT/fuAAF9afhUcR.5G
-432	user432	$2a$06$hGCYDcLssVnlq4vdWwQyo.bUDB.Kp4oqs.5V1u.q40MGFcXsWzt8u
-433	user433	$2a$06$M56frT7HByj3jvLg3jjWxekoLOfb84yiPR90JbdKlhzyp2jJRTp0m
-434	user434	$2a$06$.Zm0W4.PYo99VUfhA7.aauE.xNt0jP3N.3I73Zmi21P0ZShrh2Ppq
-435	user435	$2a$06$CXSl6TSDw4xCST7iaFcpbewqmRqZ19WmXpD1Eg3vZWWvB9Gn0Df8.
-436	user436	$2a$06$aW/ag6BcoLImj7ucmWkxt.1uoTkdNA0/l.eK7TioX4jfXRTrg5HDK
-437	user437	$2a$06$Vxo2ExVwlkNKVEYSKhndSeA417EPzvSn8PxhtKzHrrRl9Exc.59Ja
-438	user438	$2a$06$ZWHtuzutjAM4UJqdXUMr9eS7CYH3yZi42/muFtSeeXTPYS2FtHnwa
-439	user439	$2a$06$kux2THJPLyWZJjzysTSd7eNuUEt3kgHG7DWOY7tstKliKgdbNo.Am
-440	user440	$2a$06$k5.dg3dPPNQQT991YnBH.OQA.JoBec46qcu6NJ4CMUlHJnIH4ds.W
-441	user441	$2a$06$d2uh9999EgsKWzr7DLoiDubQEMd8u7Svl88J5FldH8uwNwLj.j.Ii
-442	user442	$2a$06$iJbnaPXhakmY8hK9G13DO.JnMhP5SKQlK4ZmS2zs.E26IoKJNORr2
-443	user443	$2a$06$sXfrdXiWDEe87UbF4MYKoOd7lF5al1wuebNJMnusFxj0P1nPDFCuK
-444	user444	$2a$06$gugL4/2l9IB2JB5SOWNQZOVxCAPTy9xHaIqg92tx/UvAZsLtqpjJG
-445	user445	$2a$06$gCyWrhcIxDr6MllgWH13NupCy22YVbWKqwuIYcK.1LwY6qvFhvVp2
-446	user446	$2a$06$.qlINWwGd6YB.cXYiY8gHuz5BLyAAkexjbSUKA8HMQmxDhmUdJVgO
-447	user447	$2a$06$v37aDs4W8LaGlNRp0H/HeOmjOJQ/Ie9zZxPffKhRG9cESu0vFh08.
-448	user448	$2a$06$00BzNnjNh3SZeQJZY1I7I.xrmDk.W6mOIf.cvIbtvRJK655R8G8fe
-449	user449	$2a$06$/Mt9HCOBLqhMDdJbDB.XCe33OehYp/STItvIB1nk5Tumv5ky6sCZe
-450	user450	$2a$06$sWnrErVC.SwfKKqO91TU4ubpwmP/ebxn1HaNtz8zWFZDFTS1tZX2O
-451	user451	$2a$06$jmpc6.54UuRAadON51pQBuqqsGTkykQelTc7ADQUgpib1ffnZayg6
-452	user452	$2a$06$q6LzsdUzDGqV/xEITOnxuuRDING2LNs30r4vxZk8c9d3LPvl0qIn.
-453	user453	$2a$06$jF4uO93ddLqxHXfxDVSeMOMzhe96cI6VzrMVY9BkTlpYBYHoyH4h.
-454	user454	$2a$06$JXRu4JWAh3hz3Pd6U8oP2umP737/.npg5kEwXbUAXDH6p/6KVazwW
-455	user455	$2a$06$IleAmAbwpBcLK14oOlpVVub8kEfyqxGQmQGJ5XSg5KI97zeaIDXnm
-456	user456	$2a$06$9M4ehaAgHT3R32PChAgQ1eAkAvOn1FGCgmDj0hK6tCc4cPjcZZuBO
-457	user457	$2a$06$M0BNxKAJVwallZxX/Mz.OOcIbB6j4kpIrHGoLJuYFz3EnKCXQSdxq
-458	user458	$2a$06$UPGQ2mSYV8NBCctM99dnM.suT4EzPkBsia67KDGrzOR.rBKLeo9mu
-459	user459	$2a$06$znQdAcXiot4a5UsTsyW2yOc1GScjIMByCorAYTty9imzUI.xiDHku
-460	user460	$2a$06$NuwhFntuL7D/XEDGR7ga0.BSNDZ54k1Ahl6c5/WS/NUGSK4JWnpKa
-461	user461	$2a$06$cihrSzV.x3UfbhrTS1JFRO2x5Bd3/edm3iu.XrUP5owEoeJ5dIaqS
-462	user462	$2a$06$h/8fjmEB3WbgrQElBbmJGua0dYddBg1AgcRW9WSf0sPDHy6DYZQEC
-463	user463	$2a$06$V7zi2qp/ovlHAKzOwzVRXuhsWlUmLfN2JduSqP/bRf/SagyJGXj5S
-464	user464	$2a$06$LJxI6nyAanzGPasmAX312uvupMZJUkloN1qjOE8txnD70WsIVwcg6
-465	user465	$2a$06$G3L0pouT7Yc4UirBRsNJ6OFkDwTuqAHDkyJv.VLNmuoo59vXzy6ZC
-466	user466	$2a$06$g5lXno5QT/unc7iXUK1NDORidet5pbA6gFKDCvbms/krTU2F2SOOi
-467	user467	$2a$06$hGLm3HAYcx9reD6iOQzLbenczSucdPuny8OMKGwD1jjv6umB/VCXK
-468	user468	$2a$06$ZBfVjv0p9/S3NO6d8apIrOo/S0Q9M0S6Tgf26hDBpNZuYZzX7AQhG
-469	user469	$2a$06$WSIy/bDbgRtOSthdoYxEOOwVWkcSkGkgzp09iBxDkGIFvEyaSy.Qq
-470	user470	$2a$06$0.bsvkUs1yMckQlZSyQ4HuNd.OqgvSdck8I4LUjx3dtKVlHtk7UXy
-471	user471	$2a$06$NChKomUBedXKC9.L2J9swO1ut1yegoQ2KnOp3NmFNeytuBZqTp97i
-472	user472	$2a$06$g101Log8kyAtEP6R7VW6oOO91dpcdjaISw5iS8nteYb0Ir9a0x/86
-473	user473	$2a$06$FPRVRcUSDs0FJGLfYccXCeP/BEIaaDh/6sPAfek.c8Tuu20TmUsKO
-474	user474	$2a$06$6sSeCu.2S1e4ju3gb7qUVeVspMj/Hl9.k5jmUHWpwxG8Kieehj.h6
-475	user475	$2a$06$rrEwK32XWhpQduRYQKktUuMpsibVo0r9i1efeHcl/eIFUQul04wae
-476	user476	$2a$06$gznKw2TI5Xd9FGBtzuAlCu2CL5ZwihRqsTka/Um.JX/nJ3N1RZ0dy
-477	user477	$2a$06$vs7hgG3e8siBD4Djpm6B9eO4DtrNM4VmG2bB5a6j7Fhg3T0VE/Oi.
-478	user478	$2a$06$pzvkLkUhMbu7fQDRvJyFaey.A1lSZsaf9wcLnZtXt4v0p6zbrDrdm
-479	user479	$2a$06$t6DKReZ.y4TLkSBDpmp0RuU9JHE.dbuQ4MrnnlVSA/9CiLQl5/3xi
-480	user480	$2a$06$1pKH3.YwuEaxZoHDwNW06OsJw0YyG0Xie21nGub3BdHV.e8UbHrFi
-481	user481	$2a$06$woRu8NgI4cK2uco../wiAe3kcpTOyGBtNQRjXqvOh86I1PmhOPZZC
-482	user482	$2a$06$IN/kVezVRotvrQBS51iD8eUAFxPrAlmPceh.dEzJp7IX.x/t15rY.
-483	user483	$2a$06$ooQAUabfAN9thA6OYApeVeXD44wnqt6nZuCdnpbsnMqtz7Q.bFzDO
-484	user484	$2a$06$v43aMA1esAHyNDI/KNLnp.giRTii1p/awZLD54X5aYrJbuBFM3eBi
-485	user485	$2a$06$Fxbv9Heh2yP1BGUpm9RcEeszl4tgTUGuC6DDjyVKEzsGixLrxlm9y
-486	user486	$2a$06$w1pda2AsUUoR62N/7X4VZO.OguEJZS/tBijlfrri4BXanxrwTwYDO
-487	user487	$2a$06$muf7u7oHua8mXcswPE2IJegvSigA6scLpJtxDIiQymtq5FtJqAXH6
-488	user488	$2a$06$JK4gX7IGomrzAMcT35.sJ.50lPygr94vlAChLqHhlM4yQpmtUp0.S
-489	user489	$2a$06$4KuBavqtEzyO8xbm1polkOwVe5MQZGNzQFxfcQ548GlLL53Omukm.
-490	user490	$2a$06$FowfDQ76d.l4uSMTjRAA7.V0wEj6Mw0LfERrSE6wU4WrDYBO9P3Mq
-491	user491	$2a$06$Ottwj0MzY7PjCARSPJbKi.HkDoz90q2eHvOp.BrHq9GDV3bwWVYkW
-492	user492	$2a$06$Esb36UNuxVWlbCZ/HQ/8VeuhRKTIkUejroHDgogmg/hrWPvah3xYm
-493	user493	$2a$06$IjgslUX8rC3Xzef.mdbEEuz/X6AoWIEzGrgyzFWRixif0yCkiwyKy
-494	user494	$2a$06$yWndJqZ2T/RmYthmMnQmAO/G87l1ObdsMxZTIETFr94Ia9RT0AVve
-495	user495	$2a$06$Xwm6eo.vKxjnYQDyjcJVGOxHThieSr.tizCe9JoiBtqmIvg5Ot3.i
-496	user496	$2a$06$P6C1jAJlPwoWw1JH6HNXn.ce.wK2UnEt5EUCdsQjoEdeiamqM1XsC
-497	user497	$2a$06$j33r5x6YtSVXh17URtV4x.3nbEQApyW34FK/j7ODkk7EzFaEC5a9C
-498	user498	$2a$06$QDU52Fb4g62YRequfSGG5uAOrdUqt7gBGtVcF5pz6Neel/YQW8jLK
-499	user499	$2a$06$LiqN4zpfsCAKggYNHoWq0.evLxNqTZFFoeakqao2FIXAt34GsAoN2
-500	user500	$2a$06$9tgIV/DZydkXw5CJWFV/vuA1MZme0Qc3yUvaGcCUGcvFryqpNbFvK
+1	user1	$2a$06$aIN8.zGAv/01peJcJP9pe.9wwyCUMhXwrGMSHLlmXuJXczJmoCVBW
+2	user2	$2a$06$qsLOMrlPVyIzSz37weoeLOvT1G1izQ6yGLQ2Trf1NSeLbLYMK7xRS
+3	user3	$2a$06$Pf0qje2ZeqbhQ13/KEZ0RufbJma.JGWa9a2aaG2S9fgDJv33FiL6C
+4	user4	$2a$06$wcMvmxZt5HIM4iofjnXahuP/nJ4hkp96V7fJ3e4Ek3nGDeDh5HQIa
+5	user5	$2a$06$QSgn4vsT0SHdXg72vsu8Zu9o1XWu.TIlXnB5lWEALLfAEPj9vp/ge
+6	user6	$2a$06$CbelF9OCOm9g9FUZsX4rpOghdLyqs1973xhG57YskMEfi5qEVwX9K
+7	user7	$2a$06$gPVJ75AixTqR6gJ6otazbOpGcdkq5n2XAOOH5R1MWXVFOK9NRTa0S
+8	user8	$2a$06$mVXxAaaTa4SqRcMkUByfwOZdYHcfRRHtjp7n9uB3zAxec4aANIKOK
+9	user9	$2a$06$0tH/JlKBEvwlfjfK64UW4ukdQuW7dUSCc7CqT6tdtMqLiGNTCxrPa
+10	user10	$2a$06$fDKm5FVSI4T8aEPGBLrHg.1PsuTakmuSdYrwkNHvqn7./RyH/mXKe
+11	user11	$2a$06$CXQuSKKaReIMSc4IpaMcZudBQG1F2shhcy9b3u0AZX94YTQ4nKdtO
+12	user12	$2a$06$Bv6BkYyMxeGwtmdeOhRzB..Fr8HO6y/KWpty/1D6vWxX.UKIhRGfK
+13	user13	$2a$06$1ol3M.0xXuktQcZQQTwG2uBlvsp1DS2.qCVf1WDZLSqhUE./7kz/.
+14	user14	$2a$06$9QQAdxa6ZFUHVURJ5pu.IeTAhKK2YFI7oLsJxHEE2NK6rcK.CjGX.
+15	user15	$2a$06$uAimk8f6MgmKo/0zEJmHLurJHO1ZeFMFiC1bEgj0ukLsqc.rstSfy
+16	user16	$2a$06$2Q5iYDsx48SHXh.b2baEtOlox9juP/n5dpU.VtjdU1q77bXVd45yO
+17	user17	$2a$06$sjlj8C4xbvfFTV4PH3Cgcu8M7AjwhXe2PugX.jFrCr90.kuRsWNxa
+18	user18	$2a$06$HefIaa8A97JzMVz3.F/4Auxq2SI8HQfVTe6LOB6CO5RYFTJ83fzMW
+19	user19	$2a$06$jRafo..2ZvOT1.S7/bXD9O01Vnx0wdaPx9IYUtCo3zdN7CXZnx6Hy
+20	user20	$2a$06$PnDXMx7LmYd38kAgvpNKnekLzHI7ZKKl.kYhXb9ItcnpNu4hRJaZG
+21	user21	$2a$06$BS.oP.hSieMJlHFKxlJq0eY5SZN0IUFZuNpIUizUiW9XC7tseaAC2
+22	user22	$2a$06$ZNsn8s5j.FPkqfbEnHrvd.D/.bM5z9ryjbJ62Z31xmVqc1PB82BFK
+23	user23	$2a$06$374vdLvCYCclr6uBFFlmJ.9xKzQg1/dPsxWatCxxszDGzFIHYy/Um
+24	user24	$2a$06$Qdyx0I80bq4ATJgKzPQsPucZpJJEQut78rr51/F2A4chKvefVuDni
+25	user25	$2a$06$Vd/khzlyVfryMaVC.C1lZO4bDVqAZenFq32xWJ19ohAlkZz8oADfW
+26	user26	$2a$06$BmMEMWPXVxXzxVVilNTr/O7Lajs7zznMfahbZhNsQbj1GfnlcStvq
+27	user27	$2a$06$ZMMvky4bjtqpNHaKQMgRKeC4hZU.zevyJDRbeKxhTx84hIRgGRjgS
+28	user28	$2a$06$9T7GVIZbfn.xUfbYtWWal.ls6gVuELMik2OtVFDqTUhr/GYwTpdmC
+29	user29	$2a$06$sJzEkFXqVUYBC6PQEJTyguS6cOU1EGyrB1kq3IVuqonj/OdMLWOk2
+30	user30	$2a$06$UdmsOpcRih9cY4kGOYNF9.NY4O3IguCyJ9TdeYfPETBf7YceY0Saa
+31	user31	$2a$06$E22vv93YqUZU7Vb0TTrhyuo2TNF1mTq3qQVRu.E/s3D0wtHfhrn9.
+32	user32	$2a$06$LqG2pK0C.z3C4MPbGx0CieLWVw6f6wLOt7MhlCP.1eABtJBw4T7BW
+33	user33	$2a$06$bi9c5LBUSadt6dm1VIkxBugR1BB6eOxkIXXDbWYar4KAC5iZlF6TG
+34	user34	$2a$06$CdKIikEuHN35OU7vrU9LOeCeLn0HmUcbSnOv0CF1ghKtI27E9TWeS
+35	user35	$2a$06$hDVS25Pcr3o6TiYv//bZsuYqzreqqQUlIUDT85QboWogwmq.admn2
+36	user36	$2a$06$bXxA7qecbHgcyoEvUBCRyetw6vddHoZjhh6x44Ymr1cnJ6rFx0Vb.
+37	user37	$2a$06$o9UE7QYN55zA7p6.zj2ztevoygxrnfkWtghL2xHcLI0Am7D13MXem
+38	user38	$2a$06$Nu.2KkQGzhEfL8KlJny5GeCI7lszYx20XbYEWc0cMRKxde3NeWRxi
+39	user39	$2a$06$2570sKg6Fp8MkK8WTGXi4OdJWHow0ZGerkXSx.SA29S.Y92wNwQNe
+40	user40	$2a$06$bhm/ZsniV3NJWoaargVdg.gHn3twz9T5nvj8VNT1dwUdn9XHqyJxG
+41	user41	$2a$06$aP7Njwd3cWMnP5dopV1kRuPXTTvia9HXiM4fSiGeKLfL04gjJ/eCm
+42	user42	$2a$06$zToBlSYo4bG0hL8/wUd2meUtcuLoL6PZJUOW0jpUV1kjoThoGaTpW
+43	user43	$2a$06$tke6PrN2CKV0H93nxcaY3uj/lb2IRz6Iychsz53EhPowQmRSNb7xa
+44	user44	$2a$06$C9UrqU1pOur9rlZ0m82HjeoAVYXCTOYJDh2WR4jv381BSKp3T7xX6
+45	user45	$2a$06$2IprPCh0NkFW/pvpAv19fe9Xj6kiw4471K5IULhHChyisS.2tutEG
+46	user46	$2a$06$fmsNNPu.cneQQsjLpzQINelAdxl2jolAksKCrq80fYEvSUBF8nUTe
+47	user47	$2a$06$nKhtlOEdAFEDxDVJkA32KOrme2vfvYF0AhFjLq2hTF4kRuP0seT8u
+48	user48	$2a$06$PtLiMo3Lzq3.6iucPu6tuOaOAP3Kv4c5MF9.uS/DT3/Jw.XKe3wFa
+49	user49	$2a$06$vEf/1OqpIB.z/.bLDggNB..U0E4c/mQb0T/oCSu4rbhvoknnIzW4.
+50	user50	$2a$06$z//CxpUVocpriRu.wcgP.OgwUAy9nIwzu5yurReKyX6EGG/xoOYvS
+51	user51	$2a$06$dQfukzpWxiap31prRX1yFu.RCYGD/D4MCbhNHY1bjdAwIZf18vUZW
+52	user52	$2a$06$8l4.sQGBb5vrZvOQiHRrieIJXSRyk6poPSuHMOkUWnB.hsTXfuNyy
+53	user53	$2a$06$hT67dxPguU9AzM.DericUuVIE/SA9zXfgNEtc6LR1R0b3IUYPkKeO
+54	user54	$2a$06$.wIsA25H8W..BHWvQOkOce7CQk/UjwM8SH5p4x/b9yUzaC5mxsZQi
+55	user55	$2a$06$qysoJ7ElXh6vPLOcFcVHLe3iBR.wLLna4G8JoX.yTxsWdnmUUh.6K
+56	user56	$2a$06$zExJAsdcS9OQhjLf5DVjv.QZYB.M3r9IAQIxAtgeg1pUhqpflRF1q
+57	user57	$2a$06$6ftn/aUDJhEJF61C9eR0tuUZozFI2iF5GuVd1ba3iDG3BpKgdCxXK
+58	user58	$2a$06$C8TYk8QCp.XFItUEIQZiNeLBUx0vB8r2qE45pCWcVdcJuTikW8LN6
+59	user59	$2a$06$0JQ5pSw4HvTzlmdEpfAySOpk.NjfgHodvmGYOvYRN.JjoizbpMBuy
+60	user60	$2a$06$mwNmELoQdakxTHG7l2SVz.pmb.kE7sGCNEPF1dQ7h/dl4RJmsHKhe
+61	user61	$2a$06$1v9MyGy4F4i/kJkWb6hDtO4nhtGHLn1v1PI2sSpnka2zG26KpV2jC
+62	user62	$2a$06$CmYHFmff1C5n6pWKHRF4kuFDvJQK3.k3Qmn6QgzaL3HsCnMjtKwPa
+63	user63	$2a$06$HPCXizhAVDkY7loUL3i9COe0EDWDrIdp3XwvO9Y2uz4ZdqWyp0CTe
+64	user64	$2a$06$99ycPjN4fKsIBKjgu7cVjeG5qty7NUvsWG5oovSzk3tGwBCgoz.e2
+65	user65	$2a$06$oRj5xeHG23H0yLN.EN/Es.tXKfUuTXHTYkAfFOVtedVVT9q3LxnRW
+66	user66	$2a$06$oBNXR/7guGIjJjANNtcvDeRWGPLvkqWky0munJcvrw.WbGbRA4ASa
+67	user67	$2a$06$gEsMePmFKIuYszNqL41BbuGJqjiRY1MADQQv2pvXUbMTgQhptUbPm
+68	user68	$2a$06$2xHoYhj7prl1oAQwtItnGO6DH9B2O4MhfRF9t83y8bOcPtw89Irva
+69	user69	$2a$06$ARxSSeJKgalbGYlaenK.wOOQO2YlcZXEQCqQQmkP/h/9TJ./PcmN6
+70	user70	$2a$06$cm3eOfoOlF0Nw5PNETiAwOWttTCaBtl9kFHL1wdinBe8j/o41XtrW
+71	user71	$2a$06$3HxW7W093fgeAvBz9wjCY.e0Rk/W2JPKtAUCBix9vwnjHF2tHF2SW
+72	user72	$2a$06$W7t3AV1kpOJxG15KZaC2o.fAaPol53b61LHrCXLFYQZFC.i0dPzZe
+73	user73	$2a$06$pvoxPbu5zhGFd7bBQX6Q0.nR97wpArp33en84LWKQRqS4Zw2tXIkm
+74	user74	$2a$06$lhVWlIaJIU2RvZXa0YHVleNC3.9zUf/h8v8gyZETNzm.qmAI69gYS
+75	user75	$2a$06$14v/npJXrH.b7beKW29LoubKYkjFWbF5BZSY8d6cQIP1igDlIX7Wa
+76	user76	$2a$06$0XWqTvK1j5mNU67k5BXj7ukR/GQeP0gOtuonvgB3x7/0OpR.cqZWC
+77	user77	$2a$06$nT04zyAteixAb8V3YZkAIugS3lMyPtyR30TqxTDFOYwdTDPgEx5h.
+78	user78	$2a$06$EMoRGRYIRz1l7Ng24XFXLOyyH2H3ZOabBlypmBOb/RbJqQFhQ1iyu
+79	user79	$2a$06$.YV7h/8VId5UUixJecrnoetL73XTJEoKxM5f3OqQ9kMaAVXPDW9P.
+80	user80	$2a$06$MiiJ3H4n8tYKMNLpbznxD.s82OTGE1uDSXkCeGTnLKw2cWmr6aKpG
+81	user81	$2a$06$VvThmXDfCa2/WcvFCQk5muxNuvUMiZsaRfy9YG8x1dmfwo0TfNJly
+82	user82	$2a$06$W8dKVmGKEEtH13AOchrjwe1J6.IezuSPQrj3BE1jQRo4TexVEBq9S
+83	user83	$2a$06$6JLlHWwlhGDpZh1PkfldMOaAZJIkyxwORZgj9LtsCBLEWuM.W2LMi
+84	user84	$2a$06$qFHcAaMti3kZ6WE/ljXMRe0TeZ0ecNgApCCB.s4poae5A2U5Zo.7K
+85	user85	$2a$06$4M4t9svLNRnLU6/YcpHNlu5YUSaBMC577MCNeIRpn/lJkrJRlhJWu
+86	user86	$2a$06$ZcxAsvZCpOdKIJ3tj4SD3uH4Qsvb5fxtrzHIWOf/OGDSH5uXkxZqu
+87	user87	$2a$06$85B0PL7SprbvIVtbNmHEieP3v/XAUNdwu0YWwX0p/ulOEDIK42L8y
+88	user88	$2a$06$PfiGABTp9kYUvin8nEGnh.FmL4rORzw4LaQiAx3K92.2wfQzrl.Cq
+89	user89	$2a$06$WjrSHbD/RVz0qPueCI9p5OCyfcBZIskfn9MOU4YHXkyp34qjbjD0C
+90	user90	$2a$06$zmJjNpmRR8.okzep5.0dGOCl6aB8mEs5lGPxoZ4v9OgHMtVENKY/O
+91	user91	$2a$06$UeF/xKtcPmLOji.WMK/a7uq0ooAumH/NrrPWI4egAMX97ytLRHqVu
+92	user92	$2a$06$eQpqn/do5j73MdiBkhyVcOElRuTyHX3E4aFJtEmbxstxg5Ph88Zfu
+93	user93	$2a$06$x6ZKopK1De25PY60LKO7qOZHRefxJKRfvumFA9rCQogYpodmcX6eC
+94	user94	$2a$06$LUeXuGBH7QWC1.DoONQ9JOntDp1DgNUCCK7WGQvIBksvjXA7jEe0.
+95	user95	$2a$06$FDes3bQREI4JvlpBjXa9gO9tfqm9yU/aHQccBM2ksGsUaE/SwFP1u
+96	user96	$2a$06$eCWyhA5HLi.ZQLf7zjUsSeEPqq2wEVqzHv9kMBIRC18tJG9CYg3a6
+97	user97	$2a$06$.tZhSKnFQCqJJTJwn.T8RexdU5UyZeQXeqYts0J9rSuHikza.eqlW
+98	user98	$2a$06$SabLF6gSneaVqxGyk3hoceFAuYGmoCiM88X2slz8TyZpb3jUVQmeC
+99	user99	$2a$06$xAg7pTivwnmeGNHtcu5Yte6E.UjHg/FMWQGuPmQLCGmUH5ZjeTRb6
+100	user100	$2a$06$MDLB9uEp06IbNc689D5Dz.3ObB8kn5lKPMwfYofP.R7vec6.hISjK
+101	user101	$2a$06$.EIRciPXTlt.IpKOtgqpZOpPwuzzTnsgTdmupilIwKdtHlL9F5.Qe
+102	user102	$2a$06$FDN/FWBKYBuDCdPZAbnVxOmM4rnSrpIHEee/6ndLCPHbX6K51I/Gy
+103	user103	$2a$06$f2XEIe7vYA8RS9w8Ezgx6ehsBooOOQZYNIUvHwjDyv54VNu/Kc9Gu
+104	user104	$2a$06$0ZV66Rog7e5y7IKmglpZ7eSFpguoob1Na6q.wWIakOfHYmZ6S9djC
+105	user105	$2a$06$0Khh5zr7ZLXwyDkENOAudeJugIOph/fY.gPpLiFc1S6ua3oEtbSGO
+106	user106	$2a$06$ZzjMeYQ6UYie1RFgU79UaOhrtUe7EOQVR.QtUDm8upJWjZo0kfJDu
+107	user107	$2a$06$JxakS4EQMlKZ/o4Nw/9mBejpkjZ0W4lbS1lc4BCtMP1i3Vc/zcSb.
+108	user108	$2a$06$apcfVqUfu.sTifzuwArqAudb9aumjZSJ9EbLmV.HCu1kcViC4SyPW
+109	user109	$2a$06$9KA3QMttwSv.C9cOZ6JoquhyF8z2/9.iJVIZQK6RQ74ZuQKpOshNm
+110	user110	$2a$06$hDU5v6APYijWxik5hdU9GetjlGHtBwRXBcUiaF/1Lq0clb2yw5zHq
+111	user111	$2a$06$3YxDqmZzbIxVO7tZO4GVr.QKK4o2k1S9TKrIkR01iINENVH5R8W1G
+112	user112	$2a$06$MRZfBekDVLhrUUQcw/jUSeyMnpVSqcISn0Vbh1bxCK7JTc4FjIi4m
+113	user113	$2a$06$JyTezsPJk0GKpEXljbSLju7N.MowZXylVAups6dJrRFtyPM3bTz0i
+114	user114	$2a$06$.uMaa8q1RtgpxEXU0.mfhOlhY6orTzbnGMvjVTMkeSkr/idB8V5v.
+115	user115	$2a$06$4NkEjFPtqVihv5JaaOVgtuYqsKjH3d/XmvLSBl3F1FCVEEjdqp7pe
+116	user116	$2a$06$8CtZgV.ZXoxbM8dg0mFH7ejC.uC5ci3Soxb.CbXOnmtr0hUQIP5hK
+117	user117	$2a$06$VCFS1rpQrZjrIEJ6mXnvdu8THXPZyGQZDheBQZPvesp5wmyujByW2
+118	user118	$2a$06$uNGYj1VqqK5Pu4LOWzY.sulX3rxAP1wDwm8ny.tbcbfEoy.z6wJuG
+119	user119	$2a$06$A1xaCfq6OZ4hTOmkGw4OleKEXnXPUCH5EZn6dFF3KfP/WUrREbmdW
+120	user120	$2a$06$Ag1GXlcjvpUvHYa7UdWBBeWAbcSo7f2tBlel5UL4yd1vFyBldbFyi
+121	user121	$2a$06$LrANaK69mNZ1e/bLaQrXeOh6ywKf0QIq1gE33Jhyp7IbiFyA8stsK
+122	user122	$2a$06$p1K1yII4kRd4.cIB/pKdzOJQk9amNdtiKk79IrxIrGPhyIVi3NGJa
+123	user123	$2a$06$2V7oUvQ3PlFHyQw6poDCZ.F9/8ySNGkGypFe22/iWK8rdNnB/SSnq
+124	user124	$2a$06$32NTg3dCPx1YnoUk7U8APOUBXv5Ci7ZnpQSN69G5zkX27WgIvwtGm
+125	user125	$2a$06$gPocgDQlUUoF8M58VpCKoeXrs.W2H4dmW7BVuiIgtnsSbl8rInGSO
+126	user126	$2a$06$7ghvLq8hFrLEVHrTABOVCu5PUK4wR8nasCFUxlVrOIlgMu2twaekq
+127	user127	$2a$06$/5DEzstUF3Cmsy.Ibf9HDOr/vPB9bok957.WOD33floecYMe88S1m
+128	user128	$2a$06$fGIeI734rDRK5oPWdvqVl.F3rG1fmJ4Nfdyuz6alCR0.K8BDqsprO
+129	user129	$2a$06$K4P5X/iE3m9/F99RG7Lk0ufE8baDppjSqam7sJK8K61sxvoX2Ymr.
+130	user130	$2a$06$.v5GWvwshjSfzeMV5Oq91.MkqF2wtOaBb7nQQJSPSvbLpe6P2hoQu
+131	user131	$2a$06$i36MUz429CJlWHNg0Iw34u3U5OFeFeOPSDSjgcPdh6KeKqWX31ZVO
+132	user132	$2a$06$Dq6MXG6gwoyArNRORZIWGe9KIf9dC9jyFCv87t0P5UDg8orKlP5i6
+133	user133	$2a$06$9cU6xdUd440GJNs7RACHi.3XgXW2VNwKFDwzouqn25oH0Gm26jyxi
+134	user134	$2a$06$uqN0U1BGGB5MSyM2IME./ONiZ9LZ5GHnAsjeKRT20KuyTjwnLg/bu
+135	user135	$2a$06$/46KF5Ykqz/pjdnnrtLAPuxlvlDTRhHpKrK/LBe45yN21K.xNn6OW
+136	user136	$2a$06$4onFE3DQ6beWj5s1Vkm.Me1s3w47qxk4jtmD4DrbSoCf0yJByWcEK
+137	user137	$2a$06$bHLR4mvrR3ofeKSughE3OuxD/migHBnM3iOlAxNYwdVi1xeue7mBW
+138	user138	$2a$06$FShhV4e3y.rHftGKuIsB5e0FvPBZysVtu5cX4M55NL/2f.0cz6Hoy
+139	user139	$2a$06$s5imd8rukT2rIOfX0jt2TeaQkGqaJPendMwJRLMNEv701bmd4lQqe
+140	user140	$2a$06$2FKc/5TSsxCmxQsPzc9iW.3Tt1lU/8dX9Gc9uXyE1DkDvYECnAqoK
+141	user141	$2a$06$7rXMDzlPUOSeQKruxjSUx.VNspiICtU56ZIuJe5GaKMJ.hSbEkJbG
+142	user142	$2a$06$omMNJ3Z3wohhVECsQQMxFuB9QKuaQbpSpWbXZtp7lvyOdYyJ50CkK
+143	user143	$2a$06$BSk2FJjwIIrfoa5pYbYfUuim2ilFOHGvWAQCK2jJiVT5RsnX2Kdqu
+144	user144	$2a$06$.ulE4ggUr0iNC9WtfCvLI.XzCkrz1azkNWGZIoQeklP9M5mdX3Yb2
+145	user145	$2a$06$2GVwjuRzvHUcaMk6N/sZwOBti6M7PuBIZffU/uLZ3PU2LjOxrXLWm
+146	user146	$2a$06$Tq1EoeLMOrzamrSLPzYF/OxwzLj7xL0w16JlC92A/REFFDbusiSwi
+147	user147	$2a$06$oKvC40f3dCIPQtTjYHRIuuaPeg08F4.VenZ9pXjtpPzPs/DISodmK
+148	user148	$2a$06$c4tnmP/Ju96GfdQtEusjcetHoz1s0PXS4ZlCxw/XUkkx6DGQGlXem
+149	user149	$2a$06$BcT9.TacBMCrTxusuDrgROy5fH5.mFWq2VcsTyQkHjR0B5FpmhcvS
+150	user150	$2a$06$qpN/LSK.QDLr/QokhHvGG.LlqObC46OoQjds/8g1nzI29vImUZ7US
+151	user151	$2a$06$/WL3HF9Hxe5z7IJIXloace/n0LySuvBPy4.SQfzgzS7B2H7LrEIPO
+152	user152	$2a$06$AZNee0aLLL8E.yW4p9eLHOpzW9D2Q1Zj7V6JwGCaEf3Zp0cURYjF2
+153	user153	$2a$06$42i25XtZqT/erswbumJKfedYS3EpqnFthOd9Cr8Mziq5LOAg3iK06
+154	user154	$2a$06$.iJyKHXCQ3Yqv380AHSFW.T6rDoH9eYRPfEazrVFTX59JXYd0QtO6
+155	user155	$2a$06$LlKCpUrrU6PJjhf4PRFyhO5fI5VmKk8a4vcfLaMkBt0kWN8IhuDK6
+156	user156	$2a$06$bdkdFv9ZNexXOAmyIjnWTOIP61FZ363FEHys5rMm7PZukP.kwmq0G
+157	user157	$2a$06$vCTTq7PqQuPz.cFTacGuE.HXSM4y5s5N86ez7zd61ARWxhvND6kQe
+158	user158	$2a$06$zGhXDUwsFxqzvJX0YuNDqOfERUxm0mPasCJXAC417dBoZrFv7gYIy
+159	user159	$2a$06$wm.V122S1cctcLAf6BF8veWSzwdHAev.lDW7crLv6xfnJktqdSGy.
+160	user160	$2a$06$XvISboULGOnO48DgDE.VUesXNm.vcZmhLnHKYZNfc5FZbyQsPm4Vy
+161	user161	$2a$06$MOq3tzpKW.H4YLpzLAbZ6ufLNnfYicIASwldKIB/T1W2efsh/0bW.
+162	user162	$2a$06$WW/5nEhaeYeMBedczubBG.97qwKV21p3Am/ye9/IKQys4ypKppv8G
+163	user163	$2a$06$sh6jJgEny9y5h5KBoaKFnuuOdNqI1YGH3qRPIMVq401XpoOYJ3cgK
+164	user164	$2a$06$klB4PhPxEj2isrbiOp6z1OezKbf4NhLRUSNIbZ.twscmQPVmPbl6K
+165	user165	$2a$06$UDFv.iN6LcFtRPT8cbfgXeIFQHJHo5SW.6QPLM2ZjrAfXqGstcf4.
+166	user166	$2a$06$qgDhJKXCqlQeiM35iPp73.Nj5XkiIlUBNnZymPuf/5i63/V4Mc3vS
+167	user167	$2a$06$jYuiyV6Bm0Apa7l7NGXAlupqkaRUG97x3p2hw/6qFWOOEDdw5vrFW
+168	user168	$2a$06$gSkJDZYj864Nq/z4GUAOuuBHLPBrUUHgLjhoLT0/rzlpSu1AYEBI2
+169	user169	$2a$06$tRUOC7Sj4WjDz66W4zahpebO1uTFLENzh0uf2gpsRvfmecNPwFO7C
+170	user170	$2a$06$YQOHX04iYDi3oIam9lgnnO3HNwcI8stRt2N2pyGrr96Vhexr47c.C
+171	user171	$2a$06$omqtxaxwsn6XY90pmu8ssexfFKfdwkcu0PdSwutdVGY5tEg9wziq6
+172	user172	$2a$06$TEiTqLxLmMLbctsW4Qx0nOd3pXbZHPatghcn2QY4n6v0ooHwOeoke
+173	user173	$2a$06$cTL/PFBSG.vKzW5YWsPa7eREk/KZsqexQNUtLSIVAkJOmHT2pQ6YC
+174	user174	$2a$06$oxmpYY96baEGBQYPOwmz4u9YyTRxlOBF7C0tn9G29Vg2KmhaO.ZNW
+175	user175	$2a$06$PYDeVJYi9s2E7a8L8vs5Ces6APzuRX8qJ7BdMayzlMYDu5m2gjDS2
+176	user176	$2a$06$1d1Qy3Kutc3LhsbaiCwDEO42bvXHO49PLXXd0I8KkNU530POHvTP6
+177	user177	$2a$06$cCu/PwJ99NDLg89MrvkdGOozAg6fYf08F2cME1TbVGVRNzLHfZSta
+178	user178	$2a$06$RKzhRPp9KMyDBwGBpZQzEOyfsFR653G9y0e1PhCz/7rMQtbsZvioK
+179	user179	$2a$06$4PDjwupMnlTVtvVCv31VteM/AZ9LMHx7nZTXL7vM1zdqoYVvZDMJC
+180	user180	$2a$06$HuspGSEIVyUN3YOeT2meIeZYOZULfMkti.BysRmya5TWZAl05fKha
+181	user181	$2a$06$1GaCDYYPzo6Xwqjx0fP5k.00DBV8hCrrW4WoSs96Riwy3BZ.3kIFG
+182	user182	$2a$06$RlHP2AqaHOYr8xNj2/HJM.mh718T80T026S2WAdf1mbRSN4Ob//1u
+183	user183	$2a$06$BquIYHbo6Q4BktrBcFjV1OlQf4BT.rQlDlP0jQ4HKXaBttK2oADPa
+184	user184	$2a$06$UpQ1YN0FofEn0OTtQUywoup47ykrBl6qfO6XBTNo5ElDmOR7gltM.
+185	user185	$2a$06$dOisVmD/YngYBDiJ7UPWoeczIgGfpCZvvNDoN0K1bxkpfCGx0UrHi
+186	user186	$2a$06$tr6rhVrWl.dAIfdDvEzVbuTIjdIVxwr7FlEzo21fw5VzrHfr4z68a
+187	user187	$2a$06$dMQ/c3dDAKhauVT88Cm77uwZEyvOKCUG.XHRE2lDa4qzEsVfuvCym
+188	user188	$2a$06$gwZzymXf7xt7AUI7Dz8W0u9QwUcb9.QI0WD3nzbKX8aQJw3FTRxN2
+189	user189	$2a$06$vVuiitb1ZFjrZjOpG/H0D.iwyBN3hjD0Xqy99KNjk7QUlICA1oSLW
+190	user190	$2a$06$iVIlSisxeTHd6S308jgzzeFJ4kQ2S06UWFNI91YQZnyYOVdbphFjS
+191	user191	$2a$06$IOPEqfbQVtiR1HTG4D0IIuDV/hcFyHcBLoGDlNbvwc6509ZcmROjy
+192	user192	$2a$06$l1jBWJUCAuBooeEmeHaereGAGggJwgXERkZA34uKourh4An289XOq
+193	user193	$2a$06$AmPn4JLYws9NcDS30zvgPuR9Cmgww8nQ425s42mbf/6oy8kj6nOC6
+194	user194	$2a$06$Cpn1TPnFIsdhh/TbIjeueO.jjsB2tFcxGhHsc5RGCnDylmMMP4kxO
+195	user195	$2a$06$HkCwL83oYLUeQrN7FugtKOdOnvb8Ha.Nxg9My/aYKWTV/.uEi3RWO
+196	user196	$2a$06$smuJqouuH5dy8QtjEGiXtOfPLWh8VDSYhDMyp7eNEvWy2/wzAok16
+197	user197	$2a$06$rcvXidZntvaglR7kcmq/BeC2AyBORl7CyvwoeIceVLsYRF1GeyhAm
+198	user198	$2a$06$7r.lHE0.E61j0D8txRKbqeHLkrmNCgJPPXNuOfEvhD4eFt18ugp56
+199	user199	$2a$06$mZyaF9BqNceUP7oApxRb7u1uK28kaGkUZ8jLd1gwm4a2HNHWg8Yuq
+200	user200	$2a$06$zQ1gcQYCDAMhY212JiHV6O8nMMjLh.uDRdMq0N.spzLmrebXImKjy
+201	user201	$2a$06$IwBxcmeqqzWRbYDtTd/xxeQd3nSzTqImPP3QoD1zhw4cCXuY61gou
+202	user202	$2a$06$N2ZvcQSJv2yvM2/RgkP2I.ms12Kju2ZwCSeKVjjDpeaNsSYtj0VSS
+203	user203	$2a$06$PGAe93XP10126AlczDxN0erKPDjO1vmZZRIIKMcTIC4XmP0cgqchq
+204	user204	$2a$06$bS20xJ72pvuHlm49dpezn.fKbVXvg5uMVBiXTePI.tcWdIDyehs6i
+205	user205	$2a$06$meqGMlwgb9uOyW1fgBmu/OVfP4aPNOjJPPgZYIEr/Jr6VsTa99WLK
+206	user206	$2a$06$tao.EFZ5LHOkExDdlk17oO/Bt42WSULWGACXTGVNUwiknAk3uwOTK
+207	user207	$2a$06$rIHGKMEC6iK.ivVYbFh2YekguwlbH23YCFOz54JuXtSQXNS6f1WI2
+208	user208	$2a$06$bsXsX1AM30DHrjFJudJiP.mnUlsoZQ/3GhHk.pRv7ElkesVjU5YDS
+209	user209	$2a$06$Dc9SJdZAXnOGQRU1P22xSOKp0UZ7UXXUytVCtZ1BrN7rG6DMEFNyC
+210	user210	$2a$06$pPGQ5FiPMpAUFwR5vFtorexxBZwPneQe7UGhijVESd7mi/f0aRjp.
+211	user211	$2a$06$SE0g8dgiVqLhq6BAQh/EVe4Qlz.f3pwNB5SzEIs1q.KEPq8HHcNum
+212	user212	$2a$06$awvTLZJlZmoVueCS9FhziOkf4Yp.z9QzFUSwP0btLbYK5BRlvPocK
+213	user213	$2a$06$cBQc9k8XGYce9gsjCCuEM.gY4ssLk32r1UYc1yOeZKvKkFlrVaFPK
+214	user214	$2a$06$0xZH6/2EBrS4UABcdfTFver4feI5sjgX5GxFJbuGWaHFAclMFO616
+215	user215	$2a$06$OTeHYjEu5SoLQ.08rEymdeXnoehluC/X0BIdpGMM7MF72x7JfVaYO
+216	user216	$2a$06$hfdgnUpX.KNfks2SJEid1OgkOhK6NxtAalPajoXC9ahNpd8OHezZm
+217	user217	$2a$06$Fp5dE9RbxkeOLWC92onK1OUKgH3qU3x1wRuCadxC389wqwyhrexg6
+218	user218	$2a$06$k.jyhAF81CVuSaU24OUrueUXlBHJZp81AkUF0bLzqqTizQ8jMaBN.
+219	user219	$2a$06$gonW6rL9UlLMiPtWcmhQ4OuDjLW0CHCOrfcuxizsPyWj/F6s910..
+220	user220	$2a$06$L7U4B/8yuC1v3zGu4Ba6eeQgbj5L0OaGcHXOCjL5yMaISVXfgh9E2
+221	user221	$2a$06$SKwuBim8GB5bpHbqwi28surzdYky/SPmVafCi4o9Bax6kLTItIeGu
+222	user222	$2a$06$zVnp8yj5.olj6MHsrerIke3QiGcIqcIDPDGc9fOrQx6w4ZR8H/fba
+223	user223	$2a$06$S01dQ86aO1ayeFym5Xcy...kRVnahiIb/kC8hfJpd/6tPUf2MkRcq
+224	user224	$2a$06$v3okITF6YXrghgGC4.gyCe7fhrZNyxZ41..p0EqDGQuhFkJcqRYLG
+225	user225	$2a$06$VdpBhucnYJjohpAwH/fKN.V3DoaNSICaWD0gjfpOWpJ870jd7Vk.u
+226	user226	$2a$06$famN..q0I40F1BzL2n09cetiYref.EXCVgNK0xmvIpwg3u8ARvEsy
+227	user227	$2a$06$yGePiKL1tkUbTyKtzTJmS.qtksBWH5jDhO05gJVCb8BHTLQZbZNmq
+228	user228	$2a$06$TkcBf1X1yExtRdfx3nOsYeagXWW/uFD8HRAyEZ.PGsNK48h7LrElW
+229	user229	$2a$06$7fCzbNqhriZdNpgAmiSQKOn3XofHXYg/7Bi.tJqaGXjm5ABTpEGmi
+230	user230	$2a$06$wvORO5nGHcAzcaoTsU7mk.pqsQ08fi3TU7mIyP.I6xBWG7a6AjxGy
+231	user231	$2a$06$sbD9DHnK94cOHcI4W3JTR.kj33Q0pLDwc5jvmvVqcRNuNVkMzeqtu
+232	user232	$2a$06$rZv6mBkzZIdZLqM0LawRbONr3Q2d5pM1/OmQ2YMN4XWNsODN2Fzx2
+233	user233	$2a$06$iCoJ/bfoUqgIQGIcRzxSCepIll/lBLRW.880Z1Bx/tF84mr0TqqwG
+234	user234	$2a$06$wkFHjDuGTIWA2tw3N6XIUOPpJYygPMdHayeVnK8r2ZHrnN8Z.4nse
+235	user235	$2a$06$OJCzxki2FBdznSBvC7LdOeAvgg4DxA4409zSYJG7..8MHLgM.jeAm
+236	user236	$2a$06$je/IR7qqhQ1vgfqLrlIQMe8407GfUtzBfXmakhPUbpAWLSYnVgtFm
+237	user237	$2a$06$qddNBZ4Eedxjhw02177qPuXpV6XTOMmUIfUIHw0WyTrBNOay62o9q
+238	user238	$2a$06$EW.fKkpnGJ2nqtiHX3gKau5h53nF.MJ0Llc2hjDOEpvSyBtLORXu.
+239	user239	$2a$06$kjc5eRwcTU45OOvuSlJjke.1fZjv5EwOJrlXZ29jZa4jPfmje0QRq
+240	user240	$2a$06$3cLtEqBfYQSBz6gZByEQ2.LvMN58VpE9alGb1RElbQu7nigg/MI.i
+241	user241	$2a$06$QScVLDpMYK0sE3PMS4kqj./FUJ9STG0QEYxsOR0KVjPoUHH8tAGb2
+242	user242	$2a$06$/MVkuI3usSIR87yLQxw4mOibr/SJ4SQqNG3frI27.DLSO13Awzq1.
+243	user243	$2a$06$uPxyjsCrxNKsFFncaqo/ouaJA2x4oMALzP9GXEj7qqYsH4bCCHk3W
+244	user244	$2a$06$xBce56MhZA5f7rPYsZSCUeZ3dFOAtxKliI81k2aWY5/PBicxFy4aG
+245	user245	$2a$06$UtNTB0Z1.h2hW.nqL6xQTOoPY/.ofNmwIxHcBsQHS5Y0hjndxeb32
+246	user246	$2a$06$B0YPzY1kSMjbj1aNA9DYk.ObxkjYNtnqQ66.SJIFG6etuZvUN6.c6
+247	user247	$2a$06$Numj.CiH8Sc4uc7cNIqfzOVyHVpjWaKJebPWEluVYRrW9/4io.kw.
+248	user248	$2a$06$Bxtc50b9/bhzRllWmTjAoe8QgcFZ9gD1rTcEk/s.ws1NU5dOwrM9W
+249	user249	$2a$06$LnNSfW7J84HcoLNud6.xEOhdiKOPT4PmIOcgaqMHzQ4r1EmY/3m0a
+250	user250	$2a$06$.xOrvVFzkXdjNnPmUHjXduIXl9B6oegU/JVdbfMLbKvJvmlJReveq
+251	user251	$2a$06$./8JQAyE7YIlZeK7Qjtu0umz/JTnW1StJd4Tm7z.3PBZ0Z.Ir.YOS
+252	user252	$2a$06$wK.zjEzb.brOZqost1wWKOFKYvLdbBeeR1HEmfqLJiLz21Q5kwIfe
+253	user253	$2a$06$rhLoqhUfTWk9suaugaoCCu3DQUTMwTYbAuZrwhCwmaGzdPlnBI9gy
+254	user254	$2a$06$VXkf1vGj4Voev1G.Il3qHOD/3foH4DR2sfN2as7PoJk4YdNaMLXp.
+255	user255	$2a$06$s8U99d.USG1nL57rlYDUXeoBd/T7Qb0VQnnQZSZH/1uRs1rJJZ1RO
+256	user256	$2a$06$dOpxcLtW9/NG4IlSI0hs7ODD06c7.Jiw9HJ66hvbyCTONDUcmlKb6
+257	user257	$2a$06$G1CLxYYzyvG/iVRWku1xkODxKYDxYnHQhyxU7Ly0ctFFb/GN1eMou
+258	user258	$2a$06$9hRI47.CJcJNLEJHKSQIB.c83JHWxDoGMiU2kAIrqKV2C2LObodMe
+259	user259	$2a$06$hcy8G1c9ud9slN.PA7km7uIQYHT1YQizQyCDtSArDUSqNbCSrHgPS
+260	user260	$2a$06$venEbhf2pBRPTy/EthdHu.7YIF1koY0PqH7Lp4TL97YjhaLOZs0Zm
+261	user261	$2a$06$hlWaBxiQ4AJUGLywgAHKTOgs3v6VP4bP7uwF9GYCxhimz7YWaI2/a
+262	user262	$2a$06$llFRMLjz/dj4scEzzS.r..3z42I7ENHuDRxW5KAIdGst0QCDPR51q
+263	user263	$2a$06$Ia6oFadZ7IzEJ9A/GSEQ6.h4PI4jHJoD8Lvh4adgX8PqxUd5.3hm6
+264	user264	$2a$06$nEd1KGwBj1T75y1YFNAluuRBV27rku315sOGOgls.9Rpoqe2vvTbm
+265	user265	$2a$06$BX3kmj8lysbw6IPgm4B/0.caTcHM35gCMx5WfAqvRWUhFpD6FXs.6
+266	user266	$2a$06$bN6ulff3zc4i0hmqMYBIZe00JZ5sySlIUXSCGlAILXla/a5OgvEEO
+267	user267	$2a$06$niinGOtf.E0GBlYeNnPcT.W2Ha1Gpcx2PFvxayjBURsLHLNgec7YW
+268	user268	$2a$06$rsKWWh8FEwmt29K73uHyBeZukEkdkLNX8JnLr4GgJnMDMcaEhZuZu
+269	user269	$2a$06$yaJUYw5que0yyKcZ4BdcM.NStoYVcfCkK9mBiTJmpgtZ5Ptf2FHtW
+270	user270	$2a$06$kOehX3XpMj0U1.t0uMyf3u2uBkufPbhBRuVWhwE4dnJXIWKrCPOp.
+271	user271	$2a$06$QVigFgNcGAUH0uAn8eMOGeQod367QqkfETfvm/97Pr1g1ebMHGY3G
+272	user272	$2a$06$awbnxjswf668r3fCpNhPmO89/VBDaTqIcbKQmDXdAZKGnWp.Qf12y
+273	user273	$2a$06$imj5sxD/fMtJk2nHdbOt1.33e.2Co3am1YLdNs4Bq9gcQUk3Ma4xC
+274	user274	$2a$06$ccW4fkf6bQh9gXYEdEr9RuQG3pD1y/YkRCAeu8f4fHBxA.aqJgJwe
+275	user275	$2a$06$MloOIb15x52YXvwtI9rft.RawAN8lCWGfhs2lpfh7RFZqcDpMUYMm
+276	user276	$2a$06$FhZzA8hiSbyaX/yeGGQdU.Cb5C9tF2FHgvacnOG6uAABfiz70.4Om
+277	user277	$2a$06$iNDL1obu6rBa4pN7fWMUW.hmo8uAnoMR7gyw26wDH9aSzXmaXFhtW
+278	user278	$2a$06$dEItKvaWuKITnuASNrYzy.APaE42CRZwntFOqVgUc3NJvff3aOQfu
+279	user279	$2a$06$xEm./eex84BpeaVuMZgoke7znkVgK9x2kPW7OLnI1/Avz6NSYRWn2
+280	user280	$2a$06$HnPj421CHTozyS7Zw08RueExQmnGXC5q8ZkAQrt6YiwRjXV46EJGG
+281	user281	$2a$06$gE6abKG/Se3p67/VJN//8usRcZdxyXblnB6i7nCYj80e6ddG1ot8K
+282	user282	$2a$06$I/L6MxWBJ3167Q8Iur5iSOcrMAABa18k/ZYPk9ZTlzSV3NiI.yNCS
+283	user283	$2a$06$9WOcsYTNwdz/Mp2mJOfKDeFYKJMOW5540h0Um1hEwQ2kZDGu/dg1i
+284	user284	$2a$06$ynWDtPU76uR9MYVifwKpN.h629IWwSYFKV2KxvXpV05V8aqk/QavW
+285	user285	$2a$06$2IWuNW1y/IDYUziOG7lLoO6nKCW6JMsSvQYc5WMASyyk2GTBJ36hK
+286	user286	$2a$06$nTtfgsUGa6N7qHLGxop9Y.637Bd2/tiCP14ESq8PHi9eAC9RBlmTS
+287	user287	$2a$06$2JxfiIWagmInsDTeKKnCk.joIT/1FvExx24o.CJgB8YMWzok/8PW6
+288	user288	$2a$06$.6aXVHmbdt3hT06ogkUN9OJyOngCa3BA0rBdItA/b4mnle0s42AFe
+289	user289	$2a$06$Syk.lQw7DYBDJUhdKejgnOqmOI4tGBNb1uAH4S2ffV0K9oggpRb7a
+290	user290	$2a$06$tYtdkHnOMNhLgcoVsJcPeuoplMPC1zmyacTZJnN5Jt5kwseoHEL36
+291	user291	$2a$06$XJ.P1ZNcaItC8PITwre8LuoiAhlVyHPofTpJlNaA3JVDPW3puRFHq
+292	user292	$2a$06$0DUzAuh/9wlAX3DBtf0eGOdQ7xHWtxAQTdgUNMUWnT4NIwCVoxZMS
+293	user293	$2a$06$mDTKBAWBRxkXM8yndUEUDeXdJ5k3ueFbCknjdubqNGbb.1Kurv4sW
+294	user294	$2a$06$Zuq9E6fbDIJ/r.4z2xypmuOCSVDgDUcwV9xsF8BAGcCE9kcLGP6JW
+295	user295	$2a$06$wdbUWOzQijjXgH6BsC7L6u8Dwcgc6ilBguC1mb7q5I.2kpNRXt42q
+296	user296	$2a$06$S8zFasvH67zfOyVpgpY8zuy5Id5V4sYBtp7fzuiaaUN7mMDnYKeSq
+297	user297	$2a$06$jcbsFeNzvCMmaUkVvDfyVuRGy0gvBykio2w.jamRcPtnAkr5P.6xy
+298	user298	$2a$06$FKZNPrbwBqxFvNNohy3SPu1zOXI47TVo3dgII8jGgfIZInK8AJXZm
+299	user299	$2a$06$2oBTKwQGbd7fkD6UeQwTBuu870js6Lt/TCQYpFm8p9m6UlCOej4kS
+300	user300	$2a$06$HCwCX7QdYj0JwSsAQ.jgxO0ggBNt0LHeBNFSTCsBmSBnvcIN41Ct.
+301	user301	$2a$06$vD6dhwSfANZGWJP/ArNJWOeppM3zBiU/wA3Rmp8HGdttdOdyI9KSi
+302	user302	$2a$06$5FNZkRmnz6fzbRvfCrOqveisp2admIj9p.8om..wSwDu5wddHFSxi
+303	user303	$2a$06$.mmPTEq3DPPpTRLB5roCVOszAQxUF.x/b1g3a7ET0a85EaU3NxUg.
+304	user304	$2a$06$FH357bCn7r.dgXlYN9lChO.7IGmA41EA3Tp9wzIQFiTdie9n2NgPq
+305	user305	$2a$06$Jkdr1fZ2wzXC5Z7bkR9XReCz0u8j6Zjjm8dwxA3OB64PSnkYjhhhe
+306	user306	$2a$06$hA.oi2LedBessxvwLfklfeyWpOYZhELiNOs7RImmuzG.iPtlSVfWS
+307	user307	$2a$06$wHv5Y8R6Yz2nF1a7A2.Ehusldzi33/8cieU2wWYp0MCIqZNkXrVBq
+308	user308	$2a$06$tkMLb/T1I.NhQR/p5sxXWeRu4bsL7iCKKQ2wASTzyK4XpTCMW3YPK
+309	user309	$2a$06$0b6r2a4AMUSMl/NKGgMVz.aRx97MdZeTdr8yuETr4kLYhlZk3LJTO
+310	user310	$2a$06$Ubl0ytMe0rM7UyXrG8fQgun9n1KS6p57zOQ.RwjjctYwAqfmKCy0.
+311	user311	$2a$06$N4q.MYCrfzcRuvvfXNLENOOiDWvZg7XpRJfp5bh4sXhyeTB0K5mn2
+312	user312	$2a$06$fh.O/udYuZ3XEcKPJgM78ummZLLbQ.2B0dZx5NlGBQFev1I1d1JXC
+313	user313	$2a$06$FzcFzKrJVRsMHXbPGSPJ3eTIbjB5oranev52ZKSHQD0Fx6nIRg1Z.
+314	user314	$2a$06$qLNPmF8Nya7zTiyl71KS0uIk0wxQHHXaanDoCBywb0RW.7Udyypue
+315	user315	$2a$06$MGTDVcOBzbcv43iX8371I.ZIiQfscrOfqoV09vTZNr845UQIEBmSW
+316	user316	$2a$06$6Ch/5P4MfLBEE5EtZ5ik9esaii1WKVZ7c1rhNOEGw4lf/Ac.4RBGK
+317	user317	$2a$06$K1uwM/0X/wxlKXtw4ajVh.owXJIc4EgBer2LfP9LouRFoEqNWn1QO
+318	user318	$2a$06$Z/Yi8a731iTOF28qS6qLMe4myyBE43u5sNWIDRRPAzJN/fKQO2JtW
+319	user319	$2a$06$Wisb1X1PypwGVuLiWA0XoOpRD66Q0y1fQPdWBO092rYUorQrAycnO
+320	user320	$2a$06$x8pgVYr1fb12sMA3nZzg7et.ArtQiHU66oZAJorTC.GDNH.gzs4J.
+321	user321	$2a$06$R4dBAG2wqK/aMKbz/n7F2OcJp2xQFtLlFmwsyRWhEnD9u1Pkcu/Hq
+322	user322	$2a$06$4Zau8l1UQuLobKkE6H.Dr.haSJS0Uoffy3pBo941nrS1n7j1.sOsq
+323	user323	$2a$06$t5EqexL.bTd8KGqHPgJjk.y4iDJN12gWzvi12c7.EFG02/xBk/dcq
+324	user324	$2a$06$2A3HFhQbkYtrUBt9TIzal.faA2ZljcuZt7mx.Q70jtnQDVJlORvIW
+325	user325	$2a$06$QCZ8K35Mtw7JjmVF2QVex.LS9sW1Bpsb1aPi90Aa7vbnoBM/14nla
+326	user326	$2a$06$/imgq.SmXDo/QB0CYX2Rz.bZjBGVXY.BmB2YT/dLYPA5GKVhZ/upe
+327	user327	$2a$06$0TRzg3J3tUXK6hT5k5oOR.c6Ec86MtoPR1pe8vmbKpJjsIYV3SHB6
+328	user328	$2a$06$JW8hedHJ9OXlVLBmsqH9oes1u3CJO9GA.kBknZhDl7fmYMhlZkQlG
+329	user329	$2a$06$wfR3lZuTi1GpBj3xlVMBgug57JOZK93IkbZFh6n.LgGLYSV3tse0G
+330	user330	$2a$06$tMaV1qgmE6H88N0lp9JT2.rWStIhgTLewCcUrWlm/4XZbx5khdN/O
+331	user331	$2a$06$m6ejOZ1H.wtwwSo0CYHYY.02SqICE9bTGNp6EnsvfZlhOC.khQSlO
+332	user332	$2a$06$rvpPBcSW4P.csx5t/oW.7.Fy74Mr06H1KFV/CJ/7mXZc2GOQQ/vDq
+333	user333	$2a$06$lDagUOrzwRfL16uNOl3llONNebJnZayO54QZOGg72lPCBu/x0MXTm
+334	user334	$2a$06$7hPNiKuQEAHLoV21VLU5ye.QvDcbOnshqnWNfp2812qkaNX.DYZhi
+335	user335	$2a$06$SLWoxdHOVhqBL56L.Q58Mun/tTZSOuQwD5pEit1FnqrOqwCGYEN6a
+336	user336	$2a$06$iUNwCGPi/ZYiX6.xf/vVouXd8hdOUSs6kiORe47A4pSN60cdKYKoO
+337	user337	$2a$06$R1VwNsAsL99Qzp28Qj8Cqe3nUnGfyMxDxDJNPewQe2zuyA.whiuwy
+338	user338	$2a$06$NQ/9KTm9idIM3nMJ4t5Zk.DR..DczECWLKY04hkLUJcT115WhQE1C
+339	user339	$2a$06$nqemRge.TiPC7nqMxvYvj..vGDNKmu/KaB5qLQG3ln9VwNKfzbdFu
+340	user340	$2a$06$OeGJp2E/Kqvlip.ebU4Gjutz6UQsj/LOvLPMbyfAhLfseLKZmX2cS
+341	user341	$2a$06$vZ8f9KzubBnV1lA.5e3NCe/F46Zk9eL1Mk2Cfc38wVgjNXm9YaEEe
+342	user342	$2a$06$TmMwk/DLJ9JeQQq64WH.Du8KJ/Owtf8ECESY4oUjesjEUcuBDfnmC
+343	user343	$2a$06$epB5T8sMuzgGBjRSbCPloeBLTQutpdRQPJqkkVtEytwAtENWjcyGS
+344	user344	$2a$06$KrBpxcg5Z.uB.54wPoAvyeLXpZke0r8mLdLIgzFenhZLvs38CMnk6
+345	user345	$2a$06$PoX7HuR.SRrzKtNxOAcb7O/XR3FxwqgvfRfYc4kbvHECsvHc/s9o.
+346	user346	$2a$06$j5ZGkNOzw8PO8TIiepeEcO4umV1wFIGvvNqhXnbIiS0Ebn4HYVtBu
+347	user347	$2a$06$ejHutW3.jtzwDH6NBJ/pr.z7nAoew8rUVEcSQCVOzP7HKTfBi804S
+348	user348	$2a$06$hry8zT3zPV/XhB06xZvwEuxOZwGEM.HLfSXkLZHgIU73006JZvayK
+349	user349	$2a$06$MGxqCbMCO/1supZDBPYScesC9dWJkNELNzmZE/5qRmD1/OiMfwJhW
+350	user350	$2a$06$yI8ubnqV3u4M/2eWuRnTOeX2MZ1DPPm1P3coOrk9Wxhgf7endzk02
+351	user351	$2a$06$8NXHfcI1mF4CXLOHk44Rcun8kLLWqPZw1QtTy7gTbkckJXmGgowTG
+352	user352	$2a$06$WVKMncotYSDafXwD87UaseRXbtZRDcDcwWcWbpqQ3g9b6Nc0O3vcW
+353	user353	$2a$06$hcAOpTiJcZOPuY1AIGYRX.ILr.OKZYCuhFBIo33dvrb5sUH1CPBpe
+354	user354	$2a$06$dHloqH1Ds5rXV8Csuje6M.eX/E79nykV2Q0lMEt7BHpCtGyssQJDq
+355	user355	$2a$06$pdSGA1kOc17RcIU22rlqpOqH/rvnSY5VHtPh3u2wBVxDyLfLfGTZ.
+356	user356	$2a$06$JPbPP1CkxeLP2CQx2iAM8.PbzOm.4P8any9t6.nBf/zYJ8ol00R/K
+357	user357	$2a$06$nUobG/oEPxDpXtrd9RRane9QPkzVNo3ivAXZfo9O8m5tJAD3CFo6u
+358	user358	$2a$06$TIpDK52oSdf/0xelC6ICyuPCe.QXPXr6sAHBwNxDPEgaOF7HG5BFi
+359	user359	$2a$06$yK9FIsgiulcnVLsYnYud5uvsmVfAlxDND4CJPD5TODfVWIX8BgpKa
+360	user360	$2a$06$FAH7l98R70mHVO2hebsh6O.5WZAET3sswvzZblxnK8pE6ZxRvD.lq
+361	user361	$2a$06$3I5PpJ1qCPr5EINRSI/1puYK.6U0Toh2FihpjZFHO9A7heteTXgoq
+362	user362	$2a$06$q9dKEETDB87r5iQmZQc43ObyDrYTDC/fIZu0X/ro4SjqI16fq3OyO
+363	user363	$2a$06$umMb6XBFDzUNLXQN7udy.e9Mghx/VfWuX4lfog.bQK8CegmwtWObm
+364	user364	$2a$06$G5c/k8ApNj0zAxn4vviaa.s3E83cLWs/IdY84DA.NXiYzn66jvUYi
+365	user365	$2a$06$HWdH9LknKzIFifOLgQ1u/eazz9f81IUxYNUlRa13/s1LJdR5Q/VBm
+366	user366	$2a$06$DDL.N6ROAF3yFl/6tX26behVDQ7bIwDZTgkGfa1QZuDIuMFSx9XCy
+367	user367	$2a$06$LQpzbclP/R65MVdlKdzZ..equdwFAJPjknNvooMkXgwKrGk6vNZIW
+368	user368	$2a$06$SH4UajGCPbNw6un7Bm3ZQOdgomdVVLDsYU0HUvDCjIU0rNT7c95Gq
+369	user369	$2a$06$tNeJ.tRqb7NL4hG98/TDDuJWh7Kj/eAQQfI4QMKoffa4MUSJQVbgy
+370	user370	$2a$06$lSk./bo.HS.fJAGXZzHePut.7ycgkFHdiVPqXSaTZvgf9vkKIqgPy
+371	user371	$2a$06$I/x.7DVkudkMf.BW0d6AwOhcPQB/LzkbQ4zmw8u9aKQfIvO1UW5WS
+372	user372	$2a$06$U9bIxNIkByfvB67brBH56Oyv1hcQ0mXVl5CGUjdIv5yEb7GsQAbEq
+373	user373	$2a$06$QUNv1RJgwFHltvl//hgUXed69Y5BoRlC2MOe5t3.6ngmOa9CyoLUy
+374	user374	$2a$06$zzAFHn8HGa9rOc6ja3stXuANoyN37dpyEnvw07F4tBtH.5ZOgfKba
+375	user375	$2a$06$Hix1fLB9z35uz6jfIpgUzu6uYXK1QHAFMeG1NjFI9Qx5JKbMCy.ye
+376	user376	$2a$06$R6t5swSJ7a4WdOnuGfPmme0RMnMdp814J1iEwiHgXhmaOVXt/S50u
+377	user377	$2a$06$zMssxny2NUHgiMkg./.byukWfPTpjL2DEYyYdNQPrYeZE/OiYbtB.
+378	user378	$2a$06$av3wnldHaF6LYLhtYgB6ceNAHrygc8RJV0redN3aWPSN/p.Qjfuda
+379	user379	$2a$06$15vh67xaEDaJQHtozb0jIeHLMh40Aur6k7NGkaBbuHbO0ds4gDBZ2
+380	user380	$2a$06$8yQQ/DTyDjJh1hbaSGtWIuZ/g.ri9a9vIYDpg5lwRxnX17Ovw1QUe
+381	user381	$2a$06$Q1VGYie9FAwhvhZX.HV3VecoKRuFpa51BFzUwlVbtOoMVyAoOVOma
+382	user382	$2a$06$P2V3UhZG3uhqdNkD7g7.VOLxfubYGGRmEuLErDkU4zhq9eok41NJO
+383	user383	$2a$06$D1cf.fLIgNMvG6tU6M19/O5lISGHV.34OoBuZu976WMCnj6F6aazG
+384	user384	$2a$06$0.4j0ll5g7CXmi3Y5jQU1uIYMVb8edvfT6E50BbYnG8wofdfkJVyW
+385	user385	$2a$06$OXfflw2KfD2hboHsMMfjtuerKs6iv95hC85XlSGgHAfRHWUlMUzDK
+386	user386	$2a$06$FzyIZfSdc4QfNPyhUlAihOcCi98ctmodZ9gxqnZEwopDRhg7z5leK
+387	user387	$2a$06$PXXFkUWIOWEZp5q.Sw2W.eIPzpBu681zDrq5ny.Gl.sHPT88IR81a
+388	user388	$2a$06$ewqt5ZD0.vH8tEQT/A1.s.H5S6lIbKkU9SDuALrx4H9k.cC99evCy
+389	user389	$2a$06$f.GX3pv.1emRHVw61Jq8m.E6aKJcuNQpzA3ihTOBOuGKYwo9F5TfG
+390	user390	$2a$06$u4jl0FUa1ss/sbDFZMY17.c3zcrozSvc7y.7BzzbMXzPu7HIGxXde
+391	user391	$2a$06$A1IB2vwpTEh1qiRNHX35BeU1E8zlyiK9WpS9N5sFOJdE5AFSxOXc6
+392	user392	$2a$06$blR3kSPFQajgszwnA6NZLODhPY2pJt62ziggNrTGWJKXYcFuWeyKm
+393	user393	$2a$06$gOeonaUXhmDVSk03jJH43.IUJwr9pIfdpJ8tES5lqCpzCg9Crt3e.
+394	user394	$2a$06$xfiHuNJDXTnJ0nrAuYXt4efVCM.2JpRKMLkz1MkPVJFQyV0KxGYvS
+395	user395	$2a$06$.JDL8Pgb2/5XCGQta1kvHe61dszrFgqOrp81Ipt6qp/fAZv47j3hC
+396	user396	$2a$06$Z1zBQalKfR9RQjrn1CfLJ.vz/KD/JioyutHWr5ckhgeg.xP7tJ0e6
+397	user397	$2a$06$384nrNJ9lkb1PK7eqtBake/HvZMiUxzojI3WdXVSuiIxUA/k/FvHy
+398	user398	$2a$06$bk7gLsOzvxyj6IACJStpIO9dKGKBqbuA2RcsdlsZevM0HLvfx9bYi
+399	user399	$2a$06$9Xb.GoW7sIRMSYAofVOdTeHe/5oBKx4.KraTTqaABA.rzTNSaaLTS
+400	user400	$2a$06$y6Lu6MkeqUoTqiaEGpYwx.o9.hxHIcOHO/jFcvXk54cKhJajcEb4m
+401	user401	$2a$06$BsSPZNft/jxhc4AnlTFEXe3q9J/DwvAUmqe.LuEf2uFgDkHfIJXUK
+402	user402	$2a$06$lsFOlpACuzqmvIemKTbQmuauOANCQm2kHBR6fw3B.6lhGmPBju7QK
+403	user403	$2a$06$4SLd2XB/hQ0aV2UkmEwrnuM/MPxb4yhliY1KjdzcS6VwiweUIj7P6
+404	user404	$2a$06$LGFou8j1DzhMoMHk3cDh/.DzDPGW4S/HF3R2wdNr4FlYpt/ibTCBi
+405	user405	$2a$06$ikG.SeVfGZrESrxo.I8UZ.gHY00jMMpJE7A64DCS3XuAeiFeZrK3m
+406	user406	$2a$06$NZn6pYhbg01qf9G4Gu5IB.tCYBaJQvxIXxJj.7sf7m1Y4mQstMJuK
+407	user407	$2a$06$FwqQf9v8mAobSEC0xqytX.ubIV/xQOqCHfRRmr10MGscs6rwXblTK
+408	user408	$2a$06$ogokks3Zqw2RjVJz5JTwrezqM.qwkmM.JZRqqw0ZQXlET2Uugdx0i
+409	user409	$2a$06$Vabn7b945FIUDtKtCWlHnui1bbvgsgtX9lqfI4PvYiSPbCuND5RtK
+410	user410	$2a$06$EA9al9z4OPZoL/7Up.4cC.apO2.7orCGKOhjWQqiV7u5LqK8mHsr2
+411	user411	$2a$06$7Sb5uw8T59Z4WJ8SyT19s.GhWPMY3cfN4.oSvOd6.0CdH7L0IpVRe
+412	user412	$2a$06$HCIoSlAsjSzlnQ1IqFgJeOsnbwGWaFcfA6b.OL05669Mt5HDBe/YK
+413	user413	$2a$06$8mgObf2RvdvWGynJps0gbu.E49y.cjnTmNsHEHIAZgQWVds3nIWkO
+414	user414	$2a$06$f7nPPx6RXdDOhewzvWiXK.OcUJWgSKLGBAI8xYreKjwI4ksf3dasq
+415	user415	$2a$06$gj1AiTxqCnlBW5zKQQWUQOVz.q3m7GQFLEjo.2U6PCzvE6Tezl.tO
+416	user416	$2a$06$tODf3m0MlSKI..Iac0gC1OFjpQFgLI8CV4PArR17NU7WNK.aRenKi
+417	user417	$2a$06$.f4Dr1YneyoEfX.GRng7ZuEo8XDWXbnpPt1e3lkRlqPB5mFcONsF.
+418	user418	$2a$06$DY/d2ar4QzC3DSOSDmR3DuCpz0t1ScTTe03ZNTWvql4wzFIf9U1eO
+419	user419	$2a$06$p4BPj1sWsufvigJtqI4fE.N5lfF8LEuX2wqLAx3r6qDHrI4vddhyq
+420	user420	$2a$06$6PWx5Jnajc/9DWtUnGhhMe14.ZYJRNA/5IjjGeOhEvwzN9Bh3q5IG
+421	user421	$2a$06$Apuee/VB9COi3zQLgCRXXeg9TNJOfawM9A1V9GI/Sl/zRBtsKIkWy
+422	user422	$2a$06$OBm/C6lB.xpCJRulfnX2QuvigRWqNmk7MMNFjqlkHyKHNcBTUI.XG
+423	user423	$2a$06$c9avFx1a7L1jMDv.OdcBTu.Oj1H/BS8Cmp3eKgveaMD7NBLEedf0K
+424	user424	$2a$06$ZZV9W3Q9QBjy37TqaWPYFe4w8aifOL4r2fX8kmUrWQxx5Tbhb5fwy
+425	user425	$2a$06$2EXhIawkft4Rnkz6RSrGq.qPFnwAdnFwfCbaXB2N2fs2ifW9Tbj2q
+426	user426	$2a$06$U2nnEr4EWXf373Ia0HlYkOzwdC6WArBgX7RfSyzzYswh1pZyD0wkW
+427	user427	$2a$06$8HDq4iDj0i5QjqNHghD9QuivNT3/zQyK.nTOEj1mtTDpj5PEZ3PbO
+428	user428	$2a$06$icRQyXP75.ufJ7D8nGSHyulxmDw1yJnHa.X4tRhvGU7YMHk8Hud8a
+429	user429	$2a$06$YqDysUCnEpui4SRuV3IQpus.QGxk3RDM.QWKyMbwnTj0xfTZF322W
+430	user430	$2a$06$lUSFV3R1EYrCtkw4QgucNua7iZT4ZasMJbHSPd1zMarpH6mCkxD/W
+431	user431	$2a$06$wRs.ah8gS7irAx8Mwrpz4.vvBBvzwdxXIZa8/t94JNHRYGBoEGjBm
+432	user432	$2a$06$6.tYqiBenpjME.j6DMOEPOU9Coyakt0xMos7zco4eGLbz27w.aqi2
+433	user433	$2a$06$GRkUBaJC8UhZVDmsZC912.vunI/W2S98NHz1QD9UMKXNwgZNlxd7C
+434	user434	$2a$06$u.jlLrLUTZ2cJ.BfS1ME3u7hW0dKWbDhUZjr4lx72IUptaKV/YEmy
+435	user435	$2a$06$xdd8VaKHdIxqpTEumqSLme1O0JCNBJt5O/DKNrALtqKaTl/Yqd/KG
+436	user436	$2a$06$1uqQD5rGmx2naePQUgIlMeoUsJW1G.PrTYPff0eL0d4urzhasrOqO
+437	user437	$2a$06$xyWlO/UIDXFiYOgr8tXF9OpFmhw4Gn8wwGrqH3QudhldNcOu8e7MC
+438	user438	$2a$06$ka1X1.bdvPPWMiCj9h/0oeaJaM5GPJvH.eYTqflRIugRF9izSpdYi
+439	user439	$2a$06$Oo41nNM3WbW.2nh9IoYo4OfwQtM0IbrcdBUquTojiLOhufHfVGsuS
+440	user440	$2a$06$8qBzOrGobhdfr440UgHF.u43f/qkIdwiSL1S5Pyuf0YoN9rR0UaKK
+441	user441	$2a$06$capqSd7Cc68VEqHLETtn8.UJsadd6mBm9M.cC7.y38hTaNwVCKeLK
+442	user442	$2a$06$VQr3mWPIFFn0l94U/fAIS.xpifxXGY/S88wLtQn6.4Qqdw3O.kYje
+443	user443	$2a$06$p8ZaPRMBbKikcmqJcasETODQp2TVvc4PM.demlgQV4hbBX.IuKX3K
+444	user444	$2a$06$gdlIMZcMDfs.LGyU2R0Xr.DFAdnCwzDmxy2RKF8zAUXRBciueQhHO
+445	user445	$2a$06$umEBL0JkjbdkBuJ6.9CNs.CrZPmYwKS2GHDPksebTMO5XybB33oFi
+446	user446	$2a$06$2a4ljFOqjTDqfhUubqEZ9u8zAC9xI9aWuyts/DdjHKNgT7QGJtWLO
+447	user447	$2a$06$y98IpJeUCQHuxzdV.VqsSOGmKsETqIjhT.FuDPdVPAjxfCEgDnFkC
+448	user448	$2a$06$1KxqFAyOk2oVvLfx7sWKFOFqKht63gOpaonUvk59sB0hqvhYHiUR2
+449	user449	$2a$06$RDevYnwfc9JDeoU8ZZjnQ.1addw3fsKmFCXBgq7HlvcDfltsJvDmq
+450	user450	$2a$06$UX0QWMvVl5pTpvVW9yGczuCQPMVAx6PzwP4wKbjFIQPR8QawrXDP6
+451	user451	$2a$06$iMUS5aqs8GeyRxAsdzl//.B1/hRC4bjawPeP8aPJuGKOPjmfjNp9u
+452	user452	$2a$06$5oFFcEL/GyCkdpPiBZIb8u3lZlOO1Rb9sepUe5i8GJROoqMIqqw1K
+453	user453	$2a$06$LjVre3Mb8b5foluFj1yu6eqiFUDXWt5MTG8qFi3OfjNHKeNhOoATC
+454	user454	$2a$06$B8SMlrs2wnJ/gSwgUiz.4O95had/3g5ydyEiIcnOh/hh6MaZnJssm
+455	user455	$2a$06$ihCbVVySWDtiS9Yisj7l6eCE3Ja6z1HZzy/LEVsdQA82oAqiyoCk2
+456	user456	$2a$06$qHiH2e/pLzLowsRf5BqI2u71TjN/Y2Kl8UoccP6te0u8JYcj0Nkxq
+457	user457	$2a$06$Z.aZTHJXaM9Mv/pnEPt32OLPNNT2KUAQSS77OyNhe4/RkvxKEYn52
+458	user458	$2a$06$UBkwgcTPqITJSzcizJ.SQ.Yh7bVi5kwrnV9XE0sFcoo6NDEYEkDey
+459	user459	$2a$06$rjmlUGEY7jr1OtlyyxtlKOo8dwOqKA.XXizgf4tA5xcd2dgFjtnDm
+460	user460	$2a$06$qEhjoJDxf1azI0dEhfaREuNt10Lw6TjqObgA1qAeoJ4PZheCVu9kq
+461	user461	$2a$06$dalMVW5jLU44JXaQvZwz9uvyfC.SlWMnrE4RcclqnO6rmOemqSuca
+462	user462	$2a$06$toXff7LFK0Xfa6z/JzlpN.mxY5XeonA5/2.CDAmIzzqQD/r6hd2Xm
+463	user463	$2a$06$Gd8Sh.Xfyp8lJiCkqLhS7./.j6grMg.DhvbSLj3yVLE/yk4QMqWNW
+464	user464	$2a$06$/uxb4M6f8/vpA.nwUIrWYugAM5hJsUhrHhlQiX2vi2/o5wgCkdSQ2
+465	user465	$2a$06$H0Si9iIbXpB6VtR1XNXoH.X/TktRHlIbyeQuFaSrEEZuYGWdzQbi.
+466	user466	$2a$06$UHFoeA9MpFSE.9j0oZOk7ehsYACDcsliThupPfEd485zlFWiCoNka
+467	user467	$2a$06$BlyCHhDa50WldU30GivvXuCRq.i16eIGHLqQLESQDTXpf8bD1y6u6
+468	user468	$2a$06$g5/a4Ouc3kGg4ODN3/maT.ZYv7zc2TNflph.0p0w8Sgkh6BHEjw/C
+469	user469	$2a$06$wT4jdZJ6j91Aunz0.qBmQOO4rWZS.bM6NsF5bPYA4TojNR/tJ.GjK
+470	user470	$2a$06$c.EZDRPrAcqJNei3RJOoMeps14Mo3wEnHTpNuYXYEWHbTHYBpQzjq
+471	user471	$2a$06$mOKuWnAJzExxTMYYWATRjOMH4Wjy9RCqdj0BKnYfAorxjB3YOtHPa
+472	user472	$2a$06$DyPHzQUyNQJjq3NTmTV/eOLiDpRMwIXrKxP7WJjqGVGI0KsXyzmza
+473	user473	$2a$06$5n4fQAn86JTVLKizeamG8OxSpEvKDUW44rDr7asVPvx2F746LH2Tq
+474	user474	$2a$06$NMRusAq65VvxUJkKyM2MeO6f5HCsyaVaGYJUXvuw6x7sIaO20zHmW
+475	user475	$2a$06$0uE85TJcD/sTq6mf.H/aheWQDPQjWbbwbEnUKJpm.qRTPGwdjcLqW
+476	user476	$2a$06$r.5fEv0y3I4H5U8en0IR2OoorqfRjOD/mbJ2UYsq2Beq9I83FDHtO
+477	user477	$2a$06$3hTF.zFibGSUoKbtXgSGQOmXMY2/W6zCGzjzgRe8RoHcbNiupwefu
+478	user478	$2a$06$nIoEzIK.KyLSmni6gOVXI.UpvQz9sjAFdX0qIqylGkEt0mKKH42Z2
+479	user479	$2a$06$3GUkEimzuNauPpkkOOU8r.YhHP43OjJMsNgvJeNCgPrSug5jYUG5K
+480	user480	$2a$06$qx.WYyP3y39LMdEjtikDEej6/z7EyVOJbaJtTHGD0YAMHiVujhLea
+481	user481	$2a$06$EvXEAkV0uTyFSjIXRTdQ0O/r8djA5XS/BsEuJ/pzROVaoHh0arFam
+482	user482	$2a$06$aSaaHudk5SCiPD98uBEDf.YV0msFBn0ZNE0P8B3b3Zd1FNWZz0aAu
+483	user483	$2a$06$xGd4SXP4oPHP7pRboAHaLuyRx5/MfdUGLOxqd6EjKe6//.Lyj1gyS
+484	user484	$2a$06$d13CCBFcQyR2NwA9LA2QPua3xPCxGR.f9qSPWp51lUakznmU0u/eO
+485	user485	$2a$06$rvDDl3M5Jj.kHHGTtLv14OVs7tz1n6tx3gjTzwpfIRPgy6LRMdrXm
+486	user486	$2a$06$1WC.q8.XXrYEnk3YViE4UOlYz4ErBBHBztwCquCaQswJD2i3Aiz.O
+487	user487	$2a$06$Q0gxc/LdnRkrqxgnR5ewGOY3ZT.ZO3nQRII4E8.1bgGvrKFCE2P3y
+488	user488	$2a$06$ganelkcReW9tnxC77TpE2.KF0vUvmFPU7jjPjmmlo9Pd3OEIV1El6
+489	user489	$2a$06$NInvgw8NFEpx66T2J.1JHu8GcX2m1s8MeTNEuCIIVufZo9scaewHq
+490	user490	$2a$06$NyOZbKfaTgVIZXgN407sCerIVsgVnxiDnbtuUHUKeDvDaD3EFdWFW
+491	user491	$2a$06$lVBcs.E.SbeImhm4Sr0DGelC6ydpDLMCGGuPaSNQVPRZO.FNiQucG
+492	user492	$2a$06$GIZKF4pWrc5gFQIoacFSLuux5hRKhdNUHoYZRsQJ37kpq.IaavJEC
+493	user493	$2a$06$IxnmefcT5vUSm7.WuDdbtOcAA7naIkk5yLsqD6iRzKHXpmZi5HFVO
+494	user494	$2a$06$UX.OlABEK4kMZuZUFKsHS.wEeNNdC/ftIS/838HcoNA8up36ilsqm
+495	user495	$2a$06$QS1IKldB0jpLlXwT2aPIVu9Sh.oXt5V4tAK3lpAYt/QAXoKbN0hAq
+496	user496	$2a$06$5IY1jQ7ZPeQ3s0Kkon4sgu/XGaBaiCaUlU6xSCMLJ9FyFgbRlgUGu
+497	user497	$2a$06$OniI92ZOd/VB6joeDsFSGO7BLHY0buw2ywitSw2juIMmhScDi72rq
+498	user498	$2a$06$DnEn6M4U2wIg2jrx7VJkheOn7cAu7zane12aOTjGcLP4Uk8HzEaSq
+499	user499	$2a$06$Om9KpOgzTByk0FBaIqa07uJsHl37gr36RR.T3SM22.X5b.DSsHsoC
+500	user500	$2a$06$LTQa03LXxSvP6b5B2.oiTeDnWueKp6uBErITbB277TUB4g1kNJT5a
 \.
 
 
@@ -1756,118 +1844,132 @@ COPY public.accounts (id, login, hashed_password) FROM stdin;
 --
 
 COPY public.administrators (user_id, office_id) FROM stdin;
-359	73
-145	1174
-67	529
-288	474
-3	1185
-138	869
-107	291
-195	1062
-60	720
-484	545
-235	1222
-363	261
-437	916
-102	1182
-27	1103
-365	293
-468	902
-76	898
-126	578
-405	495
-38	58
-478	56
-217	735
-80	852
-336	1188
-310	604
-305	521
-289	499
-114	637
-16	128
-266	457
-211	66
-130	2
-46	1091
-88	452
-157	393
-37	601
-160	751
-85	564
-40	282
-155	364
-344	227
-381	888
-219	465
-427	819
-313	194
-215	837
-248	390
-367	221
-444	814
-73	926
-9	722
-41	1167
-460	776
-33	147
-108	1154
-459	16
-318	402
-111	226
-162	1249
-324	37
-269	1129
-382	19
-8	1119
-152	1239
-190	199
-321	299
-23	1017
-350	217
-260	193
-113	472
-317	408
-91	774
-96	196
-87	432
-179	70
-392	103
-61	556
-90	213
-52	877
-320	483
-267	723
-7	544
-176	297
-243	277
-497	789
-244	657
-395	35
-24	603
-446	1238
-115	636
-2	796
-56	301
-473	36
-301	1071
-137	161
-192	573
-328	984
-197	623
-306	1186
-475	1157
-188	581
-414	1200
-424	476
-208	38
-455	790
-184	906
-272	1160
-387	401
-15	136
-312	540
-385	627
+261	1004
+276	719
+461	669
+350	29
+197	483
+325	1057
+118	746
+80	1022
+464	1112
+181	528
+299	1152
+456	175
+380	846
+242	1077
+392	816
+386	1222
+109	83
+444	806
+434	1052
+174	283
+346	888
+415	52
+378	1235
+397	658
+144	1149
+326	881
+473	386
+459	1068
+478	178
+280	810
+330	168
+141	1173
+308	1108
+156	269
+25	1107
+366	1063
+417	186
+55	249
+315	517
+188	1115
+63	1241
+329	543
+498	780
+377	745
+95	151
+403	350
+341	674
+460	495
+241	509
+467	710
+352	369
+185	936
+10	260
+178	590
+431	654
+340	362
+468	916
+452	214
+445	252
+199	988
+21	17
+91	341
+1	366
+295	332
+455	1171
+336	525
+493	270
+120	973
+11	995
+399	441
+213	913
+211	416
+347	756
+345	302
+230	12
+484	975
+123	787
+13	614
+406	844
+191	1183
+37	1013
+221	785
+279	499
+442	560
+323	383
+294	820
+224	951
+125	55
+175	765
+30	840
+232	473
+418	923
+28	734
+210	307
+138	67
+124	456
+179	741
+34	998
+458	22
+383	601
+186	1082
+250	1120
+314	960
+376	137
+177	774
+343	1088
+102	804
+172	318
+435	79
+318	679
+256	345
+130	848
+407	606
+465	983
+83	408
+271	577
+391	857
+97	979
+338	356
+94	1247
+394	1073
+187	821
+218	363
+164	588
+371	1245
+129	322
 \.
 
 
@@ -1876,506 +1978,506 @@ COPY public.administrators (user_id, office_id) FROM stdin;
 --
 
 COPY public.birth_certificates (id, father, mother, person, issuer, country_of_birth, city_of_birth, issue_date) FROM stdin;
-1	2	3	1	691	Nicaragua	Chinandega	2024-09-11
-2	4	5	2	219	Liechtenstein	Vaduz	1999-02-08
-3	6	7	3	1233	Albania	Elbasan	1999-04-11
-4	8	9	4	637	Russia	Kaspiysk	1974-08-01
-5	10	11	5	979	Palau	Melekeok	1974-03-25
-6	12	13	6	527	Belarus	Pastavy	1974-04-15
-7	14	15	7	1103	Mayotte	Dzaoudzi	1974-12-01
-8	16	17	8	711	Bahamas	Freeport	1949-01-18
-9	18	19	9	5	Madagascar	Antsohimbondrona	1949-01-28
-10	20	21	10	1174	Swaziland	Lobamba	1949-09-09
-11	22	23	11	1242	Jordan	Mafraq	1949-05-09
-12	24	25	12	828	Senegal	Bignona	1949-12-25
-13	26	27	13	417	Honduras	Potrerillos	1949-01-26
-14	28	29	14	301	Cambodia	Sihanoukville	1949-04-02
-15	30	31	15	802	Bhutan	Tsirang	1949-09-04
-16	32	33	16	443	Belgium	Zaventem	1924-09-11
-17	34	35	17	1076	Burundi	Bururi	1924-07-08
-18	36	37	18	725	Curacao	Willemstad	1924-03-02
-19	38	39	19	51	Iraq	Baghdad	1924-08-21
-20	40	41	20	39	Finland	Lieto	1924-09-06
-21	42	43	21	1135	Egypt	Toukh	1924-05-26
-22	44	45	22	680	Nauru	Yaren	1924-10-13
-23	46	47	23	835	Mauritania	Atar	1924-12-04
-24	48	49	24	256	Monaco	Monaco	1924-03-09
-25	50	51	25	1239	Azerbaijan	Yelenendorf	1924-02-10
-26	52	53	26	550	Suriname	Lelydorp	1924-10-11
-27	54	55	27	517	Malaysia	Simanggang	1924-09-14
-28	56	57	28	276	Malaysia	Kulim	1924-12-21
-29	58	59	29	988	Slovakia	Bardejov	1924-09-06
-30	60	61	30	421	Ukraine	Piatykhatky	1924-04-16
-31	62	63	31	242	Armenia	Hrazdan	1924-12-24
-32	64	65	32	548	Uganda	Kabale	1899-03-17
-33	66	67	33	278	Barbados	Bridgetown	1899-01-13
-34	68	69	34	297	Laos	Phonsavan	1899-09-03
-35	70	71	35	1041	Latvia	Valmiera	1899-04-26
-36	72	73	36	1179	Maldives	Male	1899-11-11
-37	74	75	37	217	Honduras	Tegucigalpa	1899-06-24
-38	76	77	38	713	Israel	Ofaqim	1899-02-03
-39	78	79	39	93	Bermuda	Hamilton	1899-09-19
-40	80	81	40	1236	Burundi	Kayanza	1899-12-05
-41	82	83	41	575	Panama	Chepo	1899-07-04
-42	84	85	42	1102	Guyana	Linden	1899-11-08
-43	86	87	43	671	Ecuador	Montalvo	1899-05-24
-44	88	89	44	81	Moldova	Ungheni	1899-07-19
-45	90	91	45	959	Bolivia	Trinidad	1899-09-15
-46	92	93	46	20	Dominica	Roseau	1899-08-06
-47	94	95	47	1230	Tajikistan	Norak	1899-07-01
-48	96	97	48	405	Niger	Mayahi	1899-07-25
-49	98	99	49	591	Moldova	Ungheni	1899-10-07
-50	100	101	50	558	Afghanistan	Kabul	1899-11-20
-51	102	103	51	1130	Tunisia	Monastir	1899-07-25
-52	104	105	52	755	Georgia	Khashuri	1899-06-09
-53	106	107	53	657	Pakistan	Kunri	1899-05-15
-54	108	109	54	430	Brunei	Seria	1899-11-10
-55	110	111	55	356	Germany	Oranienburg	1899-02-25
-56	112	113	56	1002	Croatia	Zadar	1899-11-20
-57	114	115	57	463	Belarus	Mazyr	1899-08-23
-58	116	117	58	736	Jordan	Russeifa	1899-08-26
-59	118	119	59	583	Pakistan	Digri	1899-12-01
-60	120	121	60	372	Kiribati	Tarawa	1899-07-22
-61	122	123	61	492	Mongolia	Hovd	1899-06-25
-62	124	125	62	170	Macao	Macau	1899-04-27
-63	126	127	63	271	Cameroon	Penja	1899-12-03
-64	128	129	64	464	Mozambique	Macia	1874-05-09
-65	130	131	65	727	Poland	Jawor	1874-07-01
-66	132	133	66	841	Kazakhstan	Saryaghash	1874-04-02
-67	134	135	67	767	Russia	Kovdor	1874-04-06
-68	136	137	68	209	Singapore	Singapore	1874-12-12
-69	138	139	69	818	Belize	Belmopan	1874-10-05
-70	140	141	70	805	Panama	Pedregal	1874-02-07
-71	142	143	71	1101	Honduras	Juticalpa	1874-05-26
-72	144	145	72	597	Somalia	Afgooye	1874-05-19
-73	146	147	73	26	Benin	Ouidah	1874-04-02
-74	148	149	74	1108	Mauritania	Atar	1874-04-23
-75	150	151	75	333	Chile	Arauco	1874-09-18
-76	152	153	76	1208	Qatar	Doha	1874-05-10
-77	154	155	77	1203	Azerbaijan	Baku	1874-01-06
-78	156	157	78	444	Pakistan	Loralai	1874-01-27
-79	158	159	79	38	Ethiopia	Mekele	1874-01-02
-80	160	161	80	753	Malaysia	Miri	1874-04-06
-81	162	163	81	865	Colombia	Lorica	1874-06-12
-82	164	165	82	912	Niue	Alofi	1874-02-21
-83	166	167	83	1000	Egypt	Zagazig	1874-04-26
-84	168	169	84	568	China	Gushu	1874-11-09
-85	170	171	85	229	Finland	Pirkkala	1874-03-27
-86	172	173	86	452	Kazakhstan	Astana	1874-06-07
-87	174	175	87	1185	Ghana	Achiaman	1874-02-27
-88	176	177	88	381	Tanzania	Mugumu	1874-06-07
-89	178	179	89	793	Niger	Tessaoua	1874-09-21
-90	180	181	90	1105	Kyrgyzstan	Isfana	1874-09-02
-91	182	183	91	776	Ireland	Dublin	1874-07-06
-92	184	185	92	254	Germany	Holzwickede	1874-12-11
-93	186	187	93	699	Taiwan	Lugu	1874-12-23
-402	\N	\N	402	549	Haiti	Carrefour	1824-04-08
-94	188	189	94	376	Japan	Shiroishi	1874-08-10
-95	190	191	95	565	Tunisia	Akouda	1874-03-26
-96	192	193	96	15	Burundi	Ruyigi	1874-08-07
-97	194	195	97	1207	Ireland	Luimneach	1874-06-25
-98	196	197	98	637	Kazakhstan	Abay	1874-07-19
-99	198	199	99	418	Mexico	Huatabampo	1874-02-04
-100	200	201	100	974	Niger	Agadez	1874-07-16
-101	202	203	101	674	Guatemala	Chinautla	1874-02-19
-102	204	205	102	405	Armenia	Ejmiatsin	1874-01-23
-103	206	207	103	1230	Singapore	Singapore	1874-02-02
-104	208	209	104	807	Bangladesh	Narsingdi	1874-09-11
-105	210	211	105	648	Jamaica	Portmore	1874-10-11
-106	212	213	106	607	Jamaica	Mandeville	1874-08-25
-107	214	215	107	201	Guinea	Camayenne	1874-07-18
-108	216	217	108	402	Guatemala	Tiquisate	1874-04-14
-109	218	219	109	505	Spain	Alicante	1874-02-03
-110	220	221	110	22	Italy	Siena	1874-09-03
-111	222	223	111	54	Iraq	Kufa	1874-08-07
-112	224	225	112	695	Greenland	Nuuk	1874-07-09
-113	226	227	113	670	Tunisia	Monastir	1874-07-09
-114	228	229	114	134	Burundi	Rutana	1874-04-23
-115	230	231	115	892	Curacao	Willemstad	1874-03-24
-116	232	233	116	435	Pitcairn	Adamstown	1874-10-16
-117	234	235	117	887	Niger	Dogondoutchi	1874-12-04
-118	236	237	118	294	Honduras	Tegucigalpa	1874-06-08
-119	238	239	119	526	Moldova	Soroca	1874-02-15
-120	240	241	120	702	Barbados	Bridgetown	1874-09-11
-121	242	243	121	928	Iceland	Akureyri	1874-09-22
-122	244	245	122	853	Italy	Monterotondo	1874-02-22
-123	246	247	123	1155	Lesotho	Quthing	1874-05-15
-124	248	249	124	565	Colombia	Aguazul	1874-04-22
-125	250	251	125	876	Laos	Vientiane	1874-06-06
-126	252	253	126	662	Monaco	Monaco	1874-12-04
-127	254	255	127	997	Burundi	Muyinga	1874-11-21
-128	256	257	128	700	Niger	Matamey	1849-11-08
-129	258	259	129	160	Togo	Kara	1849-05-09
-130	260	261	130	1242	Gabon	Franceville	1849-09-07
-131	262	263	131	1239	Tuvalu	Funafuti	1849-01-07
-132	264	265	132	165	Thailand	Ratchaburi	1849-01-28
-133	266	267	133	360	Nigeria	Gummi	1849-02-04
-134	268	269	134	330	Pitcairn	Adamstown	1849-11-02
-135	270	271	135	403	Togo	Bassar	1849-09-27
-136	272	273	136	840	Uruguay	Florida	1849-03-20
-137	274	275	137	241	Ireland	Kilkenny	1849-09-06
-138	276	277	138	908	Kenya	Molo	1849-09-22
-139	278	279	139	256	France	Toulouse	1849-12-20
-140	280	281	140	1124	Rwanda	Gisenyi	1849-08-23
-141	282	283	141	679	Angola	Cuito	1849-02-12
-142	284	285	142	778	Argentina	Coronda	1849-01-15
-143	286	287	143	803	Mauritius	Curepipe	1849-03-11
-144	288	289	144	656	Denmark	Nyborg	1849-09-06
-145	290	291	145	110	Benin	Parakou	1849-05-13
-146	292	293	146	490	China	Guixi	1849-07-28
-147	294	295	147	721	Djibouti	Obock	1849-11-12
-148	296	297	148	818	Lebanon	Tyre	1849-04-25
-149	298	299	149	144	Pakistan	Mailsi	1849-11-12
-150	300	301	150	682	Uganda	Paidha	1849-01-21
-151	302	303	151	1054	Azerbaijan	Mingelchaur	1849-07-05
-152	304	305	152	1133	Kyrgyzstan	Kant	1849-12-28
-153	306	307	153	1088	Greenland	Nuuk	1849-04-25
-154	308	309	154	855	Brazil	Ipubi	1849-11-26
-155	310	311	155	226	Madagascar	Ambarakaraka	1849-06-07
-156	312	313	156	608	Gambia	Farafenni	1849-09-07
-157	314	315	157	844	Tuvalu	Funafuti	1849-11-26
-158	316	317	158	721	Pakistan	Johi	1849-06-17
-159	318	319	159	939	Japan	Okunoya	1849-08-20
-160	320	321	160	479	Libya	Ghat	1849-02-24
-161	322	323	161	669	Finland	Haukipudas	1849-04-21
-162	324	325	162	1151	Pakistan	Gwadar	1849-01-24
-163	326	327	163	1110	Japan	Kanoya	1849-09-22
-164	328	329	164	712	Vietnam	Hanoi	1849-04-22
-165	330	331	165	632	Mozambique	Manjacaze	1849-03-20
-166	332	333	166	541	Mongolia	Uliastay	1849-10-18
-167	334	335	167	1135	Latvia	Valmiera	1849-01-03
-168	336	337	168	963	Belgium	Geraardsbergen	1849-06-17
-169	338	339	169	808	Venezuela	Charallave	1849-05-22
-170	340	341	170	412	Myanmar	Yangon	1849-04-16
-171	342	343	171	739	Morocco	Guercif	1849-02-15
-172	344	345	172	976	Benin	Banikoara	1849-04-19
-173	346	347	173	1015	Ecuador	Cuenca	1849-12-23
-174	348	349	174	980	Argentina	Dolores	1849-01-21
-175	350	351	175	102	Dominica	Roseau	1849-04-10
-176	352	353	176	179	Monaco	Monaco	1849-07-19
-177	354	355	177	445	Jordan	Amman	1849-10-22
-178	356	357	178	425	Poland	Police	1849-07-09
-179	358	359	179	910	Canada	Cambridge	1849-03-25
-180	360	361	180	7	Greece	Vrilissia	1849-02-20
-181	362	363	181	777	Japan	Wakuya	1849-06-19
-182	364	365	182	829	Angola	Lucapa	1849-01-01
-183	366	367	183	377	Macedonia	Kamenjane	1849-07-16
-184	368	369	184	499	Vietnam	Hanoi	1849-12-06
-185	370	371	185	1221	Cambodia	Kampot	1849-12-12
-186	372	373	186	268	France	Montivilliers	1849-02-01
-187	374	375	187	637	Indonesia	Abepura	1849-10-13
-188	376	377	188	465	Chile	Cabrero	1849-02-07
-189	378	379	189	336	Algeria	Cheraga	1849-02-26
-190	380	381	190	230	Bahamas	Freeport	1849-07-15
-191	382	383	191	692	Tuvalu	Funafuti	1849-01-12
-192	384	385	192	550	Namibia	Grootfontein	1849-06-17
-193	386	387	193	1117	Tanzania	Kidodi	1849-01-27
-194	388	389	194	583	Turkey	Fethiye	1849-05-17
-195	390	391	195	966	Kiribati	Tarawa	1849-06-13
-196	392	393	196	942	Malaysia	Ipoh	1849-02-18
-197	394	395	197	230	Australia	Randwick	1849-11-18
-198	396	397	198	1234	Libya	Mizdah	1849-09-14
-199	398	399	199	112	Nigeria	Okigwe	1849-07-28
-200	400	401	200	390	Belize	Belmopan	1849-09-17
-201	402	403	201	133	Australia	Langwarrin	1849-09-02
-202	404	405	202	137	Zimbabwe	Gweru	1849-06-15
-203	406	407	203	254	Monaco	Monaco	1849-06-20
-204	408	409	204	780	Tajikistan	Khorugh	1849-10-21
-205	410	411	205	1006	Chad	Benoy	1849-08-19
-206	412	413	206	1244	Ireland	Lucan	1849-04-23
-207	414	415	207	481	Uzbekistan	Payshanba	1849-07-22
-208	416	417	208	576	Bahrain	Sitrah	1849-04-01
-209	418	419	209	1234	Guyana	Georgetown	1849-08-20
-210	420	421	210	534	China	Yanjiang	1849-12-24
-211	422	423	211	78	Greenland	Nuuk	1849-10-12
-212	424	425	212	1239	Gibraltar	Gibraltar	1849-12-09
-213	426	427	213	450	Tuvalu	Funafuti	1849-09-02
-214	428	429	214	1018	Indonesia	Boyolangu	1849-10-21
-215	430	431	215	444	Lebanon	Baalbek	1849-02-17
-216	432	433	216	347	Guyana	Linden	1849-10-01
-217	434	435	217	861	Belarus	Dzyarzhynsk	1849-12-18
-218	436	437	218	395	Nicaragua	Managua	1849-10-07
-219	438	439	219	261	Nauru	Yaren	1849-05-03
-220	440	441	220	654	Vietnam	Vinh	1849-08-05
-221	442	443	221	340	Norway	Kristiansand	1849-09-03
-222	444	445	222	1054	Argentina	Fontana	1849-06-12
-223	446	447	223	694	Myanmar	Syriam	1849-11-12
-224	448	449	224	513	Albania	Tirana	1849-09-10
-225	450	451	225	692	Burundi	Kayanza	1849-01-04
-226	452	453	226	1156	Guatemala	Cuilapa	1849-09-01
-227	454	455	227	1045	Iran	Qeshm	1849-09-11
-228	456	457	228	110	Botswana	Janeng	1849-02-01
-229	458	459	229	301	Cyprus	Protaras	1849-05-21
-230	460	461	230	91	Italy	Triggiano	1849-07-11
-231	462	463	231	1045	Lithuania	Taurage	1849-10-17
-232	464	465	232	93	Greece	Athens	1849-10-04
-233	466	467	233	1043	Mexico	Salamanca	1849-05-06
-234	468	469	234	1129	Cuba	Florencia	1849-04-16
-235	470	471	235	984	Belarus	Kobryn	1849-01-11
-236	472	473	236	270	Ethiopia	Sebeta	1849-12-26
-237	474	475	237	1177	Montserrat	Plymouth	1849-02-04
-238	476	477	238	434	Bulgaria	Plovdiv	1849-08-20
-239	478	479	239	671	Peru	Chulucanas	1849-04-17
-240	480	481	240	1170	Uruguay	Dolores	1849-08-09
-241	482	483	241	1209	Jordan	Mafraq	1849-06-11
-242	484	485	242	955	Denmark	Viborg	1849-10-06
-243	486	487	243	964	Switzerland	Zug	1849-08-06
-244	488	489	244	845	Kenya	Nairobi	1849-08-01
-245	490	491	245	908	Curacao	Willemstad	1849-03-02
-246	492	493	246	900	Comoros	Moutsamoudou	1849-02-20
-247	494	495	247	798	Slovenia	Ptuj	1849-12-05
-248	496	497	248	90	Tanzania	Tanga	1849-03-14
-249	498	499	249	11	Chad	Massakory	1849-08-12
-250	500	\N	250	459	Albania	Elbasan	1849-04-06
-251	\N	\N	251	343	Kenya	Eldoret	1849-12-07
-252	\N	\N	252	670	Serbia	Valjevo	1849-11-24
-253	\N	\N	253	819	Dominica	Roseau	1849-10-07
-254	\N	\N	254	203	Niger	Magaria	1849-05-14
-255	\N	\N	255	325	Austria	Linz	1849-12-10
-256	\N	\N	256	1242	Bermuda	Hamilton	1824-12-17
-257	\N	\N	257	648	Austria	Klosterneuburg	1824-08-03
-258	\N	\N	258	527	Israel	Netivot	1824-11-28
-259	\N	\N	259	191	Taiwan	Banqiao	1824-08-08
-260	\N	\N	260	608	Swaziland	Lobamba	1824-04-03
-261	\N	\N	261	490	Mauritania	Kiffa	1824-05-10
-262	\N	\N	262	806	Ghana	Nkawkaw	1824-07-10
-263	\N	\N	263	1182	Sweden	Kristianstad	1824-07-14
-264	\N	\N	264	59	Pakistan	Taunsa	1824-02-09
-265	\N	\N	265	781	Iceland	Akureyri	1824-08-12
-266	\N	\N	266	695	Gambia	Bakau	1824-07-22
-267	\N	\N	267	319	Kenya	Voi	1824-03-19
-268	\N	\N	268	1178	Cameroon	Tonga	1824-06-15
-269	\N	\N	269	434	Bhutan	Thimphu	1824-04-11
-270	\N	\N	270	833	Ecuador	Riobamba	1824-05-10
-271	\N	\N	271	1119	Afghanistan	Ghormach	1824-12-26
-272	\N	\N	272	511	Mexico	Cardenas	1824-06-07
-273	\N	\N	273	357	Yemen	Aden	1824-02-24
-274	\N	\N	274	443	Niue	Alofi	1824-02-06
-275	\N	\N	275	420	Malaysia	Ranau	1824-08-17
-276	\N	\N	276	668	Malaysia	Tampin	1824-10-23
-277	\N	\N	277	131	Guinea	Kissidougou	1824-07-11
-278	\N	\N	278	1083	Moldova	Cahul	1824-11-25
-279	\N	\N	279	119	Taiwan	Keelung	1824-12-19
-280	\N	\N	280	202	Thailand	Trat	1824-01-04
-281	\N	\N	281	69	Malawi	Lilongwe	1824-01-18
-282	\N	\N	282	335	China	Taozhuang	1824-08-22
-283	\N	\N	283	356	Kiribati	Tarawa	1824-01-07
-284	\N	\N	284	218	Mali	Sagalo	1824-04-24
-285	\N	\N	285	166	Greenland	Nuuk	1824-06-10
-286	\N	\N	286	472	Brazil	Oliveira	1824-08-19
-287	\N	\N	287	1121	India	Aruppukkottai	1824-12-02
-288	\N	\N	288	1129	Afghanistan	Taloqan	1824-10-09
-289	\N	\N	289	898	Kenya	Muhoroni	1824-08-13
-290	\N	\N	290	708	Nicaragua	Bluefields	1824-06-25
-291	\N	\N	291	589	Somalia	Beledweyne	1824-11-07
-292	\N	\N	292	878	Madagascar	Faratsiho	1824-09-15
-293	\N	\N	293	1107	Latvia	Tukums	1824-07-16
-294	\N	\N	294	39	Bahrain	Manama	1824-05-19
-295	\N	\N	295	51	Gambia	Sukuta	1824-07-20
-296	\N	\N	296	720	Angola	Menongue	1824-02-12
-297	\N	\N	297	68	China	Taizhou	1824-01-19
-298	\N	\N	298	908	Tanzania	Mugumu	1824-02-06
-299	\N	\N	299	479	Austria	Wolfsberg	1824-06-05
-300	\N	\N	300	1023	Iran	Sirjan	1824-06-28
-301	\N	\N	301	850	Zimbabwe	Shurugwi	1824-03-10
-302	\N	\N	302	951	Hungary	Szolnok	1824-04-02
-303	\N	\N	303	1175	Guatemala	Mazatenango	1824-12-12
-304	\N	\N	304	267	Kenya	Kilifi	1824-04-26
-305	\N	\N	305	2	Lebanon	Beirut	1824-09-28
-306	\N	\N	306	1158	Nigeria	Jos	1824-01-25
-307	\N	\N	307	1026	Mexico	Toluca	1824-12-20
-308	\N	\N	308	962	Turkmenistan	Gazojak	1824-02-03
-309	\N	\N	309	71	Canada	Victoriaville	1824-04-11
-310	\N	\N	310	1043	Kazakhstan	Atyrau	1824-06-28
-311	\N	\N	311	351	Tajikistan	Danghara	1824-11-03
-312	\N	\N	312	870	Mauritania	Zouerate	1824-05-04
-313	\N	\N	313	578	Uzbekistan	Chirchiq	1824-02-25
-314	\N	\N	314	879	Guatemala	Mixco	1824-02-14
-315	\N	\N	315	1159	Nepal	Hetauda	1824-01-24
-316	\N	\N	316	883	Bulgaria	Kardzhali	1824-06-06
-317	\N	\N	317	29	Iceland	Akureyri	1824-05-02
-318	\N	\N	318	1165	Yemen	Ibb	1824-09-07
-319	\N	\N	319	841	Djibouti	Obock	1824-07-01
-320	\N	\N	320	739	Niger	Madaoua	1824-10-14
-321	\N	\N	321	962	Botswana	Kanye	1824-04-04
-322	\N	\N	322	19	Hungary	Eger	1824-11-15
-323	\N	\N	323	322	France	Osny	1824-06-09
-324	\N	\N	324	459	Hungary	Szombathely	1824-12-05
-325	\N	\N	325	75	Israel	Tiberias	1824-11-23
-326	\N	\N	326	151	Brazil	Barreiros	1824-02-10
-327	\N	\N	327	881	Albania	Berat	1824-05-15
-328	\N	\N	328	444	Pakistan	Hyderabad	1824-05-20
-329	\N	\N	329	294	Namibia	Oshakati	1824-05-17
-330	\N	\N	330	1210	Denmark	Esbjerg	1824-03-11
-331	\N	\N	331	447	Moldova	Orhei	1824-02-15
-332	\N	\N	332	1212	Iceland	Akureyri	1824-10-02
-333	\N	\N	333	704	Tunisia	Kebili	1824-08-04
-334	\N	\N	334	727	Bolivia	Tupiza	1824-10-09
-335	\N	\N	335	818	France	Lens	1824-01-15
-336	\N	\N	336	832	Jordan	Jarash	1824-09-21
-337	\N	\N	337	791	Madagascar	Ikalamavony	1824-10-28
-338	\N	\N	338	224	Oman	Khasab	1824-08-14
-339	\N	\N	339	348	Botswana	Mahalapye	1824-01-24
-340	\N	\N	340	1129	Niue	Alofi	1824-04-19
-341	\N	\N	341	415	Barbados	Bridgetown	1824-05-19
-342	\N	\N	342	430	Niger	Dakoro	1824-08-05
-343	\N	\N	343	597	Armenia	Gavarr	1824-04-26
-344	\N	\N	344	1155	Cameroon	Foumban	1824-05-13
-345	\N	\N	345	352	Niue	Alofi	1824-10-13
-346	\N	\N	346	1232	Mongolia	Erdenet	1824-10-07
-347	\N	\N	347	996	Argentina	Caucete	1824-09-15
-348	\N	\N	348	669	Seychelles	Victoria	1824-04-22
-349	\N	\N	349	130	India	Afzalgarh	1824-10-11
-350	\N	\N	350	647	Tunisia	Metlaoui	1824-07-24
-351	\N	\N	351	861	Lithuania	Palanga	1824-12-14
-352	\N	\N	352	851	Belize	Belmopan	1824-11-11
-353	\N	\N	353	1129	Kosovo	Gjilan	1824-08-07
-354	\N	\N	354	239	Tunisia	Tataouine	1824-07-09
-355	\N	\N	355	267	Nicaragua	Nagarote	1824-09-17
-356	\N	\N	356	1119	Tajikistan	Chkalov	1824-11-13
-357	\N	\N	357	1239	Turkey	Kestel	1824-04-27
-358	\N	\N	358	515	Romania	Giurgiu	1824-05-14
-359	\N	\N	359	411	Lithuania	Alytus	1824-09-15
-360	\N	\N	360	512	Qatar	Doha	1824-12-01
-361	\N	\N	361	392	Armenia	Armavir	1824-09-10
-362	\N	\N	362	294	Nauru	Yaren	1824-03-21
-363	\N	\N	363	766	Oman	Seeb	1824-07-26
-364	\N	\N	364	1054	Bhutan	Phuntsholing	1824-03-04
-365	\N	\N	365	539	Bermuda	Hamilton	1824-04-16
-366	\N	\N	366	745	Panama	Pacora	1824-12-19
-367	\N	\N	367	984	Russia	Klimovsk	1824-12-04
-368	\N	\N	368	271	Montserrat	Brades	1824-10-16
-369	\N	\N	369	393	Tunisia	Siliana	1824-12-03
-370	\N	\N	370	1211	Bahrain	Sitrah	1824-04-28
-371	\N	\N	371	455	Armenia	Masis	1824-11-16
-372	\N	\N	372	551	Tanzania	Kidodi	1824-11-10
-373	\N	\N	373	736	Georgia	Samtredia	1824-03-07
-374	\N	\N	374	1056	Slovenia	Maribor	1824-08-03
-375	\N	\N	375	800	Venezuela	Chivacoa	1824-07-19
-376	\N	\N	376	597	Bahamas	Lucaya	1824-11-28
-377	\N	\N	377	1078	Montserrat	Brades	1824-03-15
-378	\N	\N	378	188	Nigeria	Ibi	1824-09-02
-379	\N	\N	379	399	Malta	Birkirkara	1824-07-11
-380	\N	\N	380	647	Nigeria	Ekpoma	1824-12-17
-381	\N	\N	381	485	Georgia	Kobuleti	1824-08-19
-382	\N	\N	382	517	Maldives	Male	1824-01-27
-383	\N	\N	383	685	Benin	Ouidah	1824-08-18
-384	\N	\N	384	802	Senegal	Pourham	1824-11-23
-385	\N	\N	385	254	Lesotho	Mafeteng	1824-01-13
-386	\N	\N	386	576	Samoa	Apia	1824-02-26
-387	\N	\N	387	237	Oman	Muscat	1824-03-19
-388	\N	\N	388	833	Comoros	Moroni	1824-02-22
-389	\N	\N	389	1205	Belize	Belmopan	1824-09-02
-390	\N	\N	390	914	India	Rameswaram	1824-12-23
-391	\N	\N	391	936	Lebanon	Sidon	1824-09-08
-392	\N	\N	392	778	Laos	Phonsavan	1824-03-03
-393	\N	\N	393	531	Italy	Velletri	1824-05-05
-394	\N	\N	394	200	Luxembourg	Luxembourg	1824-08-20
-395	\N	\N	395	952	Venezuela	Caucaguita	1824-10-11
-396	\N	\N	396	1088	Colombia	Tunja	1824-03-18
-397	\N	\N	397	1158	Norway	Haugesund	1824-12-02
-398	\N	\N	398	682	Zambia	Mansa	1824-07-04
-399	\N	\N	399	896	Brunei	Seria	1824-11-24
-400	\N	\N	400	1028	Aruba	Angochi	1824-04-07
-401	\N	\N	401	578	Pitcairn	Adamstown	1824-11-06
-403	\N	\N	403	1002	Samoa	Apia	1824-11-23
-404	\N	\N	404	3	Venezuela	Maracaibo	1824-09-25
-405	\N	\N	405	877	Taiwan	Puli	1824-12-09
-406	\N	\N	406	877	Liechtenstein	Vaduz	1824-09-26
-407	\N	\N	407	1159	Lesotho	Mafeteng	1824-11-17
-408	\N	\N	408	244	Guatemala	Esquipulas	1824-12-01
-409	\N	\N	409	344	Bhutan	Phuntsholing	1824-04-07
-410	\N	\N	410	1213	Australia	Coburg	1824-03-16
-411	\N	\N	411	663	Tanzania	Isaka	1824-05-04
-412	\N	\N	412	731	Pitcairn	Adamstown	1824-03-18
-413	\N	\N	413	997	Venezuela	Tucupita	1824-05-21
-414	\N	\N	414	575	Mali	Sagalo	1824-05-08
-415	\N	\N	415	333	Germany	Gartenstadt	1824-09-19
-416	\N	\N	416	554	Ukraine	Vyshhorod	1824-10-05
-417	\N	\N	417	664	Kosovo	Podujeva	1824-04-22
-418	\N	\N	418	681	Greece	Chios	1824-01-08
-419	\N	\N	419	890	Senegal	Matam	1824-07-19
-420	\N	\N	420	1063	Cuba	Boyeros	1824-12-27
-421	\N	\N	421	894	Belarus	Pastavy	1824-12-16
-422	\N	\N	422	767	Germany	Velbert	1824-09-23
-423	\N	\N	423	1153	Nepal	Nepalgunj	1824-09-23
-424	\N	\N	424	37	Uzbekistan	Showot	1824-05-17
-425	\N	\N	425	965	Ecuador	Machala	1824-06-14
-426	\N	\N	426	1063	Finland	Pirkkala	1824-07-10
-427	\N	\N	427	1232	Belize	Belmopan	1824-08-12
-428	\N	\N	428	22	Croatia	Split	1824-03-21
-429	\N	\N	429	486	Nigeria	Lalupon	1824-08-17
-430	\N	\N	430	272	Ecuador	Cuenca	1824-08-18
-431	\N	\N	431	441	Turkmenistan	Seydi	1824-04-28
-432	\N	\N	432	571	Canada	Dorval	1824-01-01
-433	\N	\N	433	539	Liberia	Greenville	1824-01-01
-434	\N	\N	434	153	Panama	Veracruz	1824-07-11
-435	\N	\N	435	922	Togo	Badou	1824-06-06
-436	\N	\N	436	397	Paraguay	Limpio	1824-09-24
-437	\N	\N	437	807	Bangladesh	Tungi	1824-02-01
-438	\N	\N	438	1230	Somalia	Buurhakaba	1824-05-17
-439	\N	\N	439	588	Latvia	Ventspils	1824-01-13
-440	\N	\N	440	737	Finland	Sibbo	1824-07-13
-441	\N	\N	441	503	Gabon	Moanda	1824-07-26
-442	\N	\N	442	371	Montenegro	Pljevlja	1824-03-24
-443	\N	\N	443	532	Barbados	Bridgetown	1824-05-17
-444	\N	\N	444	1204	Morocco	Guelmim	1824-10-24
-445	\N	\N	445	34	Sweden	Landskrona	1824-01-15
-446	\N	\N	446	980	Bahamas	Freeport	1824-11-21
-447	\N	\N	447	1231	Liechtenstein	Vaduz	1824-11-08
-448	\N	\N	448	297	Zimbabwe	Zvishavane	1824-06-11
-449	\N	\N	449	959	Namibia	Swakopmund	1824-09-02
-450	\N	\N	450	916	Guyana	Georgetown	1824-03-19
-451	\N	\N	451	743	China	Wucheng	1824-10-12
-452	\N	\N	452	676	Finland	Lohja	1824-06-09
-453	\N	\N	453	1040	Syria	Aleppo	1824-10-04
-454	\N	\N	454	1246	Yemen	Ataq	1824-03-10
-455	\N	\N	455	896	Suriname	Lelydorp	1824-11-10
-456	\N	\N	456	568	Chile	Victoria	1824-01-18
-457	\N	\N	457	360	Serbia	Trstenik	1824-07-03
-458	\N	\N	458	143	Myanmar	Yangon	1824-05-27
-459	\N	\N	459	953	Mayotte	Koungou	1824-09-03
-460	\N	\N	460	579	Norway	Molde	1824-11-01
-461	\N	\N	461	780	France	Frontignan	1824-01-11
-462	\N	\N	462	1234	Tajikistan	Yovon	1824-09-08
-463	\N	\N	463	939	Oman	Rustaq	1824-01-28
-464	\N	\N	464	648	Poland	Krakow	1824-08-14
-465	\N	\N	465	248	Ethiopia	Gondar	1824-05-01
-466	\N	\N	466	578	Australia	Mosman	1824-01-21
-467	\N	\N	467	1032	Canada	Courtenay	1824-07-03
-468	\N	\N	468	139	Estonia	Tartu	1824-11-28
-469	\N	\N	469	539	Jamaica	Portmore	1824-04-22
-470	\N	\N	470	405	Tajikistan	Tursunzoda	1824-06-24
-471	\N	\N	471	51	Slovenia	Velenje	1824-12-01
-472	\N	\N	472	411	Nicaragua	Camoapa	1824-06-11
-473	\N	\N	473	779	Indonesia	Kutoarjo	1824-09-09
-474	\N	\N	474	38	Pakistan	Talamba	1824-01-16
-475	\N	\N	475	467	Chad	Kelo	1824-05-06
-476	\N	\N	476	1039	India	Narauli	1824-09-26
-477	\N	\N	477	131	Gibraltar	Gibraltar	1824-12-25
-478	\N	\N	478	100	Greenland	Nuuk	1824-06-26
-479	\N	\N	479	599	Tanzania	Kilosa	1824-01-06
-480	\N	\N	480	344	Guinea	Kindia	1824-10-21
-481	\N	\N	481	664	India	Chennai	1824-02-19
-482	\N	\N	482	518	Luxembourg	Luxembourg	1824-06-09
-483	\N	\N	483	1117	Panama	Chepo	1824-04-01
-484	\N	\N	484	656	Bahamas	Lucaya	1824-01-10
-485	\N	\N	485	951	Cyprus	Larnaca	1824-01-05
-486	\N	\N	486	1234	Ecuador	Quito	1824-02-11
-487	\N	\N	487	969	Estonia	Rakvere	1824-09-19
-488	\N	\N	488	584	Hungary	Hatvan	1824-12-21
-489	\N	\N	489	816	Liechtenstein	Vaduz	1824-11-28
-490	\N	\N	490	610	Moldova	Cahul	1824-06-27
-491	\N	\N	491	358	Colombia	Turbaco	1824-09-21
-492	\N	\N	492	356	Eritrea	Barentu	1824-09-03
-493	\N	\N	493	69	Nepal	Malangwa	1824-06-24
-494	\N	\N	494	390	Turkey	Marmaris	1824-04-09
-495	\N	\N	495	130	Kiribati	Tarawa	1824-06-12
-496	\N	\N	496	734	Belarus	Vawkavysk	1824-09-08
-497	\N	\N	497	170	Turkey	Adana	1824-10-18
-498	\N	\N	498	959	Liberia	Bensonville	1824-06-06
-499	\N	\N	499	93	Zambia	Ndola	1824-05-28
-500	\N	\N	500	568	Thailand	Trat	1824-01-21
+1	2	3	1	573	Egypt	Fuwwah	1990-05-02
+2	4	5	2	1046	Nigeria	Damboa	1965-08-26
+3	6	7	3	909	Bangladesh	Gaurnadi	1965-09-16
+4	8	9	4	1211	Albania	Elbasan	1940-12-25
+5	10	11	5	869	Monaco	Monaco	1940-12-11
+6	12	13	6	486	Montenegro	Bar	1940-06-21
+7	14	15	7	516	Niue	Alofi	1940-08-27
+8	16	17	8	802	Montserrat	Brades	1915-05-27
+9	18	19	9	710	Macao	Macau	1915-02-27
+10	20	21	10	1213	Syria	Tadmur	1915-09-03
+11	22	23	11	768	Uganda	Mbale	1915-06-15
+12	24	25	12	131	Samoa	Apia	1915-06-10
+13	26	27	13	852	Gibraltar	Gibraltar	1915-06-01
+14	28	29	14	124	Sweden	Huskvarna	1915-01-12
+15	30	31	15	626	Bulgaria	Shumen	1915-01-07
+16	32	33	16	540	Tuvalu	Funafuti	1890-07-08
+17	34	35	17	298	Switzerland	Baar	1890-12-20
+18	36	37	18	778	Azerbaijan	Yelenendorf	1890-11-11
+19	38	39	19	1010	Japan	Kishiwada	1890-05-08
+20	40	41	20	353	Barbados	Bridgetown	1890-10-26
+21	42	43	21	1067	Somalia	Wanlaweyn	1890-11-12
+22	44	45	22	643	Turkey	Sinop	1890-08-01
+23	46	47	23	196	Brazil	Barcarena	1890-03-05
+24	48	49	24	928	Uganda	Kotido	1890-03-02
+25	50	51	25	1181	Pitcairn	Adamstown	1890-08-19
+26	52	53	26	812	Dominica	Roseau	1890-11-06
+27	54	55	27	573	Niue	Alofi	1890-03-15
+28	56	57	28	749	Fiji	Labasa	1890-07-02
+29	58	59	29	1145	Afghanistan	Zaranj	1890-08-02
+30	60	61	30	916	Austria	Wolfsberg	1890-12-13
+31	62	63	31	549	France	Cugnaux	1890-05-02
+32	64	65	32	533	Aruba	Oranjestad	1865-03-06
+33	66	67	33	625	Morocco	Settat	1865-09-11
+34	68	69	34	1125	Portugal	Arrentela	1865-12-01
+35	70	71	35	1005	Liberia	Bensonville	1865-02-03
+36	72	73	36	695	Sudan	Shendi	1865-07-28
+37	74	75	37	319	India	Nautanwa	1865-07-01
+38	76	77	38	46	Greece	Corfu	1865-06-09
+39	78	79	39	30	Libya	Sirte	1865-03-17
+40	80	81	40	1071	Spain	Alzira	1865-04-02
+41	82	83	41	1250	Chad	Ati	1865-03-09
+42	84	85	42	247	Russia	Ilanskiy	1865-05-18
+43	86	87	43	1128	Uzbekistan	Beshkent	1865-09-21
+44	88	89	44	359	Senegal	Bignona	1865-07-05
+45	90	91	45	1147	Zimbabwe	Marondera	1865-03-12
+46	92	93	46	1062	Estonia	Viljandi	1865-05-01
+47	94	95	47	627	Kiribati	Tarawa	1865-06-01
+48	96	97	48	689	Libya	Murzuq	1865-04-20
+49	98	99	49	481	Pitcairn	Adamstown	1865-11-10
+50	100	101	50	182	Belgium	Riemst	1865-05-18
+51	102	103	51	84	Bangladesh	Saidpur	1865-11-14
+52	104	105	52	92	Madagascar	Ambositra	1865-08-15
+53	106	107	53	287	Greece	Rethymno	1865-11-19
+54	108	109	54	117	Netherlands	Delft	1865-07-05
+55	110	111	55	816	Montenegro	Cetinje	1865-05-07
+56	112	113	56	452	Latvia	Jelgava	1865-01-22
+57	114	115	57	819	Chile	Ovalle	1865-04-28
+58	116	117	58	924	Burundi	Rutana	1865-07-19
+59	118	119	59	1021	Angola	Luau	1865-01-17
+60	120	121	60	1027	Montenegro	Pljevlja	1865-02-10
+61	122	123	61	619	Kyrgyzstan	Balykchy	1865-12-06
+62	124	125	62	925	Ecuador	Cuenca	1865-06-19
+63	126	127	63	462	Brazil	Igarapava	1865-02-05
+64	128	129	64	1001	Kosovo	Ferizaj	1840-05-23
+65	130	131	65	341	Guatemala	Mixco	1840-08-07
+66	132	133	66	958	Norway	Kongsberg	1840-11-20
+67	134	135	67	847	Sudan	Khartoum	1840-02-27
+68	136	137	68	859	Tajikistan	Istaravshan	1840-03-22
+69	138	139	69	155	Netherlands	Vianen	1840-07-24
+70	140	141	70	1226	Cameroon	Lagdo	1840-07-02
+71	142	143	71	459	Mongolia	Ulaangom	1840-12-13
+72	144	145	72	906	Martinique	Ducos	1840-11-22
+73	146	147	73	926	Namibia	Grootfontein	1840-08-15
+74	148	149	74	852	Cameroon	Lagdo	1840-12-08
+75	150	151	75	692	Mozambique	Tete	1840-06-16
+76	152	153	76	462	Iceland	Akureyri	1840-04-28
+77	154	155	77	501	Martinique	Ducos	1840-01-06
+78	156	157	78	464	Belarus	Krychaw	1840-12-04
+79	158	159	79	109	Eritrea	Asmara	1840-03-19
+80	160	161	80	308	Angola	Luau	1840-03-03
+81	162	163	81	1099	Ethiopia	Mekele	1840-11-02
+82	164	165	82	1236	Seychelles	Victoria	1840-01-21
+83	166	167	83	328	Netherlands	Venray	1840-01-02
+84	168	169	84	145	Barbados	Bridgetown	1840-12-24
+85	170	171	85	421	Niue	Alofi	1840-05-16
+86	172	173	86	884	Malawi	Dedza	1840-04-09
+87	174	175	87	1	Cyprus	Famagusta	1840-02-06
+88	176	177	88	471	Georgia	Kobuleti	1840-09-11
+89	178	179	89	106	Egypt	Hurghada	1840-09-07
+90	180	181	90	1045	Armenia	Ararat	1840-07-20
+91	182	183	91	1179	Austria	Innsbruck	1840-06-11
+92	184	185	92	150	Tanzania	Shelui	1840-08-07
+93	186	187	93	16	Macao	Macau	1840-08-05
+94	188	189	94	783	Jordan	Aqaba	1840-11-07
+95	190	191	95	1146	Niger	Matamey	1840-04-20
+96	192	193	96	469	Algeria	Algiers	1840-05-24
+97	194	195	97	892	Niger	Alaghsas	1840-01-24
+98	196	197	98	759	Slovakia	Martin	1840-09-12
+99	198	199	99	683	Vietnam	Pleiku	1840-02-09
+100	200	201	100	495	Seychelles	Victoria	1840-04-19
+101	202	203	101	895	Philippines	Cogan	1840-09-09
+102	204	205	102	580	Suriname	Paramaribo	1840-06-19
+103	206	207	103	815	Jamaica	Portmore	1840-01-17
+104	208	209	104	143	Bahamas	Lucaya	1840-09-06
+105	210	211	105	459	Somalia	Jamaame	1840-06-15
+106	212	213	106	858	Chad	Kelo	1840-04-08
+107	214	215	107	802	Singapore	Singapore	1840-03-23
+108	216	217	108	831	Slovenia	Maribor	1840-02-12
+109	218	219	109	1010	India	Godhra	1840-05-04
+110	220	221	110	651	Sweden	Kalmar	1840-04-26
+111	222	223	111	903	Norway	Kristiansand	1840-05-17
+112	224	225	112	711	Mozambique	Maputo	1840-12-19
+113	226	227	113	695	Paraguay	Nemby	1840-02-25
+114	228	229	114	810	Peru	Pisco	1840-04-23
+115	230	231	115	77	Gambia	Brikama	1840-03-25
+116	232	233	116	1142	Lithuania	Kretinga	1840-02-03
+117	234	235	117	332	Niger	Mayahi	1840-03-24
+118	236	237	118	861	Mexico	Teoloyucan	1840-05-04
+119	238	239	119	392	Lebanon	Djounie	1840-12-03
+120	240	241	120	983	Sudan	Zalingei	1840-05-09
+121	242	243	121	153	Cameroon	Bafoussam	1840-04-10
+122	244	245	122	220	Bolivia	Villamontes	1840-04-04
+123	246	247	123	930	Ireland	Naas	1840-03-04
+124	248	249	124	852	Israel	Beersheba	1840-09-15
+125	250	251	125	409	Kazakhstan	Temirtau	1840-06-12
+126	252	253	126	844	Philippines	Burgos	1840-07-01
+127	254	255	127	469	Tanzania	Tarime	1840-11-11
+128	256	257	128	785	Netherlands	Vlaardingen	1815-10-15
+129	258	259	129	606	Laos	Vangviang	1815-10-20
+130	260	261	130	316	Mauritius	Vacoas	1815-12-10
+131	262	263	131	245	Jamaica	Mandeville	1815-02-26
+132	264	265	132	615	Cyprus	Protaras	1815-05-11
+133	266	267	133	546	Nepal	Jaleswar	1815-11-12
+134	268	269	134	50	Senegal	Kolda	1815-01-28
+135	270	271	135	1031	Chad	Moussoro	1815-05-09
+136	272	273	136	838	Guatemala	Colomba	1815-09-27
+137	274	275	137	916	Dominica	Roseau	1815-11-01
+138	276	277	138	412	Brazil	Alenquer	1815-12-28
+139	278	279	139	663	Mali	San	1815-06-01
+140	280	281	140	669	Cameroon	Akonolinga	1815-10-06
+141	282	283	141	793	Tanzania	Magole	1815-10-05
+142	284	285	142	459	Libya	Brak	1815-06-13
+143	286	287	143	215	Brunei	Seria	1815-01-19
+144	288	289	144	400	Ecuador	Calceta	1815-10-01
+145	290	291	145	320	Samoa	Apia	1815-06-14
+146	292	293	146	220	Macedonia	Brvenica	1815-01-14
+147	294	295	147	1104	Indonesia	Rangkasbitung	1815-03-04
+148	296	297	148	385	Turkey	Ceyhan	1815-12-11
+149	298	299	149	343	Romania	Turda	1815-10-05
+150	300	301	150	500	Germany	Vlotho	1815-03-20
+151	302	303	151	499	Bahrain	Sitrah	1815-11-15
+152	304	305	152	967	Lebanon	Beirut	1815-10-23
+153	306	307	153	1032	Rwanda	Gisenyi	1815-10-04
+154	308	309	154	199	Liberia	Bensonville	1815-10-25
+155	310	311	155	84	Denmark	Hvidovre	1815-09-13
+156	312	313	156	943	Turkmenistan	Balkanabat	1815-02-07
+157	314	315	157	592	Algeria	Brezina	1815-07-11
+158	316	317	158	309	India	Indi	1815-03-27
+159	318	319	159	270	Belarus	Rahachow	1815-12-10
+160	320	321	160	1022	Iceland	Akureyri	1815-10-04
+161	322	323	161	252	Turkey	Biga	1815-09-17
+162	324	325	162	82	Tunisia	Siliana	1815-12-26
+163	326	327	163	1225	Azerbaijan	Aghsu	1815-05-20
+164	328	329	164	53	Ghana	Apam	1815-06-08
+165	330	331	165	673	Colombia	Sogamoso	1815-05-21
+166	332	333	166	702	Niue	Alofi	1815-08-07
+167	334	335	167	309	Egypt	Bilbays	1815-06-01
+168	336	337	168	235	Spain	Jumilla	1815-11-08
+169	338	339	169	557	Bermuda	Hamilton	1815-06-15
+170	340	341	170	215	Gabon	Franceville	1815-04-19
+171	342	343	171	323	Curacao	Willemstad	1815-05-03
+172	344	345	172	385	Singapore	Singapore	1815-10-27
+173	346	347	173	548	Malta	Mosta	1815-08-22
+174	348	349	174	831	Cyprus	Kyrenia	1815-09-15
+175	350	351	175	1146	Montenegro	Budva	1815-01-10
+176	352	353	176	811	Djibouti	Tadjoura	1815-06-01
+177	354	355	177	255	Martinique	Ducos	1815-10-27
+178	356	357	178	289	Nigeria	Kabba	1815-07-25
+179	358	359	179	265	Peru	Chongoyape	1815-09-12
+180	360	361	180	358	Switzerland	Grenchen	1815-03-02
+181	362	363	181	1100	Maldives	Male	1815-07-18
+182	364	365	182	1006	Monaco	Monaco	1815-04-04
+183	366	367	183	335	Venezuela	Coro	1815-06-02
+184	368	369	184	147	Japan	Namie	1815-05-09
+185	370	371	185	1246	Bahrain	Manama	1815-09-13
+186	372	373	186	1074	Martinique	Ducos	1815-07-08
+187	374	375	187	757	Azerbaijan	Nakhchivan	1815-11-24
+188	376	377	188	335	Syria	Satita	1815-06-09
+189	378	379	189	1250	Bahamas	Nassau	1815-03-05
+190	380	381	190	170	Guyana	Linden	1815-12-26
+191	382	383	191	1185	Russia	Glazov	1815-04-26
+192	384	385	192	296	Uruguay	Trinidad	1815-02-28
+193	386	387	193	481	Denmark	Farum	1815-08-14
+194	388	389	194	1241	Guyana	Georgetown	1815-06-12
+195	390	391	195	1044	Mayotte	Dzaoudzi	1815-11-02
+196	392	393	196	773	Ethiopia	Nejo	1815-12-20
+197	394	395	197	94	Panama	David	1815-02-22
+198	396	397	198	964	Kosovo	Orahovac	1815-02-19
+199	398	399	199	1151	Bangladesh	Azimpur	1815-01-11
+200	400	401	200	1234	Norway	Fredrikstad	1815-05-02
+201	402	403	201	554	Rwanda	Gisenyi	1815-06-07
+202	404	405	202	1010	Greece	Chios	1815-11-02
+203	406	407	203	777	Russia	Neftekumsk	1815-11-19
+204	408	409	204	926	Switzerland	Meyrin	1815-04-06
+205	410	411	205	507	Poland	Krapkowice	1815-11-20
+206	412	413	206	905	Djibouti	Obock	1815-05-06
+207	414	415	207	541	Greece	Vrilissia	1815-03-27
+208	416	417	208	482	Bhutan	Tsirang	1815-04-22
+209	418	419	209	287	Zambia	Siavonga	1815-02-08
+210	420	421	210	430	Afghanistan	Karukh	1815-06-06
+211	422	423	211	250	Tajikistan	Proletar	1815-05-14
+212	424	425	212	330	China	Jiangguanchi	1815-06-09
+213	426	427	213	326	Luxembourg	Luxembourg	1815-03-25
+214	428	429	214	154	Japan	Mitsuke	1815-07-20
+215	430	431	215	939	Denmark	Viborg	1815-10-26
+216	432	433	216	1099	Gabon	Franceville	1815-12-09
+217	434	435	217	1100	Suriname	Paramaribo	1815-12-24
+218	436	437	218	854	Jamaica	Portmore	1815-01-26
+219	438	439	219	811	Ecuador	Guaranda	1815-01-24
+220	440	441	220	598	Singapore	Singapore	1815-12-08
+221	442	443	221	1040	Colombia	Espinal	1815-02-16
+222	444	445	222	1242	Lithuania	Palanga	1815-09-26
+223	446	447	223	1037	Afghanistan	Ghormach	1815-12-03
+224	448	449	224	287	Monaco	Monaco	1815-02-20
+225	450	451	225	907	Iraq	Ramadi	1815-01-03
+226	452	453	226	1230	Uganda	Kyenjojo	1815-03-19
+227	454	455	227	370	Laos	Vangviang	1815-03-28
+228	456	457	228	1026	Ethiopia	Dodola	1815-06-08
+229	458	459	229	520	Luxembourg	Dudelange	1815-09-17
+230	460	461	230	870	Mali	Sikasso	1815-02-09
+231	462	463	231	470	Argentina	Quitilipi	1815-11-27
+232	464	465	232	1168	Finland	Rauma	1815-03-28
+233	466	467	233	1051	Bahamas	Lucaya	1815-07-26
+234	468	469	234	10	Cuba	Cienfuegos	1815-11-05
+235	470	471	235	638	Zimbabwe	Epworth	1815-01-25
+236	472	473	236	149	Comoros	Moutsamoudou	1815-12-08
+237	474	475	237	234	Palau	Melekeok	1815-06-02
+238	476	477	238	349	Cameroon	Buea	1815-04-12
+239	478	479	239	385	Bhutan	Phuntsholing	1815-03-22
+240	480	481	240	735	Germany	Schwalbach	1815-11-20
+241	482	483	241	219	Honduras	Siguatepeque	1815-12-08
+242	484	485	242	3	Ukraine	Hlukhiv	1815-02-28
+243	486	487	243	778	Haiti	Lenbe	1815-08-05
+244	488	489	244	556	Tanzania	Arusha	1815-02-18
+245	490	491	245	940	Mauritius	Vacoas	1815-06-03
+246	492	493	246	1229	Poland	Choszczno	1815-05-28
+247	494	495	247	1168	Chad	Pala	1815-03-10
+248	496	497	248	673	Indonesia	Wanaraja	1815-03-23
+249	498	499	249	1179	Bulgaria	Kyustendil	1815-12-10
+250	500	\N	250	1113	Uganda	Entebbe	1815-08-01
+251	\N	\N	251	399	India	Srivilliputhur	1815-01-01
+252	\N	\N	252	952	Mayotte	Koungou	1815-03-03
+253	\N	\N	253	355	Gibraltar	Gibraltar	1815-02-04
+254	\N	\N	254	1113	Slovenia	Ptuj	1815-06-23
+255	\N	\N	255	790	Swaziland	Lobamba	1815-07-25
+256	\N	\N	256	685	Spain	Roses	1790-06-25
+257	\N	\N	257	892	Bangladesh	Sarankhola	1790-01-12
+258	\N	\N	258	825	Niger	Dogondoutchi	1790-11-08
+259	\N	\N	259	469	Mayotte	Dzaoudzi	1790-11-11
+260	\N	\N	260	9	Zambia	Monze	1790-05-28
+261	\N	\N	261	348	Serbia	Senta	1790-06-06
+262	\N	\N	262	846	Haiti	Jacmel	1790-10-27
+263	\N	\N	263	921	Angola	Benguela	1790-01-21
+264	\N	\N	264	831	Russia	Teykovo	1790-10-21
+265	\N	\N	265	528	China	Zhaoyuan	1790-10-02
+266	\N	\N	266	525	Bulgaria	Haskovo	1790-03-19
+267	\N	\N	267	1030	Belgium	Lille	1790-06-05
+268	\N	\N	268	1002	Rwanda	Byumba	1790-08-08
+269	\N	\N	269	374	Suriname	Paramaribo	1790-12-15
+270	\N	\N	270	148	Bhutan	Tsirang	1790-11-06
+271	\N	\N	271	1140	Afghanistan	Gereshk	1790-03-23
+272	\N	\N	272	149	Sweden	Karlskoga	1790-12-08
+273	\N	\N	273	695	Bolivia	Riberalta	1790-08-24
+274	\N	\N	274	182	Macedonia	Bogovinje	1790-07-18
+275	\N	\N	275	659	Kosovo	Prizren	1790-09-17
+276	\N	\N	276	963	Tuvalu	Funafuti	1790-05-01
+277	\N	\N	277	1205	Rwanda	Byumba	1790-03-24
+278	\N	\N	278	774	Gambia	Lamin	1790-12-12
+279	\N	\N	279	912	Sudan	Omdurman	1790-08-28
+280	\N	\N	280	906	Mexico	Salvatierra	1790-01-26
+281	\N	\N	281	41	Jamaica	Linstead	1790-02-25
+282	\N	\N	282	702	Iran	Khomeyn	1790-05-19
+283	\N	\N	283	663	Kazakhstan	Lisakovsk	1790-01-23
+284	\N	\N	284	415	Djibouti	Djibouti	1790-07-16
+285	\N	\N	285	416	Palau	Melekeok	1790-03-03
+286	\N	\N	286	987	Belarus	Mahilyow	1790-03-26
+287	\N	\N	287	193	Iran	Yazd	1790-01-10
+288	\N	\N	288	488	Liechtenstein	Vaduz	1790-06-10
+289	\N	\N	289	1079	Ireland	Blanchardstown	1790-01-18
+290	\N	\N	290	751	Suriname	Paramaribo	1790-02-07
+291	\N	\N	291	481	Madagascar	Vohibinany	1790-02-14
+292	\N	\N	292	690	Cuba	Mariel	1790-03-28
+293	\N	\N	293	1187	Niger	Magaria	1790-12-10
+294	\N	\N	294	815	Argentina	Barranqueras	1790-12-06
+295	\N	\N	295	946	Ethiopia	Sebeta	1790-08-08
+296	\N	\N	296	439	Azerbaijan	Barda	1790-05-06
+297	\N	\N	297	754	Monaco	Monaco	1790-06-01
+298	\N	\N	298	770	Ghana	Aburi	1790-09-26
+299	\N	\N	299	412	Montenegro	Bar	1790-02-11
+300	\N	\N	300	206	Comoros	Moroni	1790-12-26
+301	\N	\N	301	687	Mauritania	Rosso	1790-11-08
+302	\N	\N	302	591	Romania	Zimnicea	1790-05-21
+303	\N	\N	303	110	Mayotte	Koungou	1790-02-09
+304	\N	\N	304	318	Brazil	Itapeva	1790-08-08
+305	\N	\N	305	511	Martinique	Ducos	1790-05-20
+306	\N	\N	306	674	Seychelles	Victoria	1790-09-09
+307	\N	\N	307	706	Germany	Herborn	1790-07-19
+308	\N	\N	308	851	Seychelles	Victoria	1790-11-04
+309	\N	\N	309	1147	Israel	Yehud	1790-10-16
+310	\N	\N	310	384	Tuvalu	Funafuti	1790-08-19
+311	\N	\N	311	790	Montserrat	Brades	1790-09-09
+312	\N	\N	312	1024	Suriname	Lelydorp	1790-08-15
+313	\N	\N	313	186	Luxembourg	Luxembourg	1790-09-20
+314	\N	\N	314	816	Kosovo	Leposaviq	1790-08-17
+315	\N	\N	315	512	Tunisia	Msaken	1790-09-23
+316	\N	\N	316	489	Nauru	Yaren	1790-04-07
+317	\N	\N	317	595	Haiti	Okap	1790-06-12
+318	\N	\N	318	1121	Brazil	Castanhal	1790-04-05
+319	\N	\N	319	50	Curacao	Willemstad	1790-01-08
+320	\N	\N	320	1167	Mongolia	Dalandzadgad	1790-02-25
+321	\N	\N	321	561	Zambia	Chililabombwe	1790-02-08
+322	\N	\N	322	932	Kyrgyzstan	Karakol	1790-01-16
+323	\N	\N	323	430	Australia	Mosman	1790-05-25
+324	\N	\N	324	349	Guatemala	Coatepeque	1790-02-21
+325	\N	\N	325	960	India	Bellampalli	1790-02-08
+326	\N	\N	326	950	Swaziland	Mbabane	1790-08-26
+327	\N	\N	327	1036	Uruguay	Carmelo	1790-11-11
+328	\N	\N	328	685	Spain	Natahoyo	1790-02-25
+329	\N	\N	329	777	Qatar	Doha	1790-10-11
+330	\N	\N	330	257	Swaziland	Mbabane	1790-10-01
+331	\N	\N	331	484	Austria	Hallein	1790-04-03
+332	\N	\N	332	427	Afghanistan	Kabul	1790-06-12
+333	\N	\N	333	1054	Kenya	Wajir	1790-10-27
+334	\N	\N	334	402	Zambia	Livingstone	1790-02-26
+335	\N	\N	335	270	Thailand	Chaiyaphum	1790-03-28
+336	\N	\N	336	848	Togo	Kara	1790-02-18
+337	\N	\N	337	1123	Tuvalu	Funafuti	1790-05-13
+338	\N	\N	338	1045	Barbados	Bridgetown	1790-04-02
+339	\N	\N	339	319	Togo	Dapaong	1790-11-27
+340	\N	\N	340	7	Taiwan	Puli	1790-01-16
+341	\N	\N	341	80	Zimbabwe	Marondera	1790-02-21
+342	\N	\N	342	792	Belize	Belmopan	1790-12-01
+343	\N	\N	343	815	France	Forbach	1790-11-20
+344	\N	\N	344	499	Brazil	Piraju	1790-11-09
+345	\N	\N	345	416	Nigeria	Geidam	1790-09-10
+346	\N	\N	346	218	Serbia	Apatin	1790-05-16
+347	\N	\N	347	69	Moldova	Cahul	1790-06-18
+348	\N	\N	348	41	Iran	Qom	1790-01-14
+349	\N	\N	349	992	Ukraine	Fastiv	1790-04-21
+350	\N	\N	350	316	Maldives	Male	1790-10-16
+351	\N	\N	351	1021	Liberia	Bensonville	1790-02-26
+352	\N	\N	352	512	Rwanda	Cyangugu	1790-11-28
+353	\N	\N	353	895	Sudan	Kosti	1790-05-10
+354	\N	\N	354	967	Iraq	Kufa	1790-08-28
+355	\N	\N	355	1167	Bhutan	Thimphu	1790-04-21
+356	\N	\N	356	27	Austria	Kufstein	1790-04-19
+357	\N	\N	357	250	Tanzania	Matiri	1790-11-28
+358	\N	\N	358	196	Togo	Dapaong	1790-08-02
+359	\N	\N	359	849	Zambia	Mbala	1790-02-19
+360	\N	\N	360	1195	Spain	Melilla	1790-09-01
+361	\N	\N	361	1123	Greenland	Nuuk	1790-07-15
+362	\N	\N	362	1250	Martinique	Ducos	1790-11-24
+363	\N	\N	363	837	Nigeria	Akure	1790-09-28
+364	\N	\N	364	48	Maldives	Male	1790-12-03
+365	\N	\N	365	696	China	Changsha	1790-12-05
+366	\N	\N	366	51	Burundi	Makamba	1790-06-20
+367	\N	\N	367	745	Macao	Macau	1790-09-01
+368	\N	\N	368	296	Gambia	Bakau	1790-06-15
+369	\N	\N	369	246	Norway	Halden	1790-10-27
+370	\N	\N	370	690	Nigeria	Pankshin	1790-07-04
+371	\N	\N	371	1151	Mayotte	Mamoudzou	1790-04-03
+372	\N	\N	372	481	Palau	Melekeok	1790-11-03
+373	\N	\N	373	286	Montserrat	Brades	1790-12-26
+374	\N	\N	374	1247	Nauru	Yaren	1790-07-21
+375	\N	\N	375	867	Morocco	Taounate	1790-03-01
+376	\N	\N	376	696	Ireland	Dublin	1790-02-14
+377	\N	\N	377	1109	Nicaragua	Tipitapa	1790-05-13
+378	\N	\N	378	126	Uruguay	Melo	1790-12-01
+379	\N	\N	379	827	Cambodia	Sihanoukville	1790-08-26
+380	\N	\N	380	1040	Eritrea	Massawa	1790-11-02
+381	\N	\N	381	1024	Denmark	Kalundborg	1790-01-04
+382	\N	\N	382	676	Nicaragua	Boaco	1790-09-26
+383	\N	\N	383	752	Mauritius	Triolet	1790-09-06
+384	\N	\N	384	929	Ethiopia	Korem	1790-12-15
+385	\N	\N	385	1029	Ethiopia	Dubti	1790-03-24
+386	\N	\N	386	995	Morocco	Casablanca	1790-06-27
+387	\N	\N	387	1106	Aruba	Angochi	1790-05-13
+388	\N	\N	388	1238	Laos	Vangviang	1790-10-11
+389	\N	\N	389	667	Laos	Phonsavan	1790-12-05
+390	\N	\N	390	921	Mauritania	Zouerate	1790-10-12
+391	\N	\N	391	40	Comoros	Moroni	1790-04-03
+392	\N	\N	392	540	Azerbaijan	Shamkhor	1790-02-01
+393	\N	\N	393	1200	Egypt	Juhaynah	1790-07-26
+394	\N	\N	394	743	Austria	Leonding	1790-02-08
+395	\N	\N	395	1211	Russia	Salekhard	1790-12-10
+396	\N	\N	396	1112	Macao	Macau	1790-03-22
+397	\N	\N	397	785	Denmark	Slagelse	1790-08-17
+398	\N	\N	398	821	Nicaragua	Nandaime	1790-02-27
+399	\N	\N	399	905	Maldives	Male	1790-02-09
+400	\N	\N	400	988	Iran	Khvoy	1790-02-23
+401	\N	\N	401	790	Indonesia	Cikarang	1790-07-01
+402	\N	\N	402	1156	Moldova	Bender	1790-07-27
+403	\N	\N	403	1053	Ukraine	Kreminna	1790-02-22
+404	\N	\N	404	17	Pakistan	Haveli	1790-10-01
+405	\N	\N	405	172	Morocco	Dakhla	1790-10-03
+406	\N	\N	406	308	Romania	Alexandria	1790-07-02
+407	\N	\N	407	542	Pitcairn	Adamstown	1790-04-10
+408	\N	\N	408	559	India	Hukeri	1790-11-15
+409	\N	\N	409	1104	Turkmenistan	Boldumsaz	1790-12-06
+410	\N	\N	410	636	Iceland	Akureyri	1790-07-25
+411	\N	\N	411	52	Thailand	Lamphun	1790-06-18
+412	\N	\N	412	416	Belgium	Seraing	1790-01-20
+413	\N	\N	413	1220	Lithuania	Naujamiestis	1790-07-09
+414	\N	\N	414	230	Djibouti	Tadjoura	1790-05-28
+415	\N	\N	415	1058	Ethiopia	Korem	1790-09-01
+416	\N	\N	416	710	Israel	Lod	1790-06-21
+417	\N	\N	417	410	Malta	Valletta	1790-10-23
+418	\N	\N	418	101	Slovakia	Nitra	1790-08-09
+419	\N	\N	419	1246	Peru	Chongoyape	1790-06-24
+420	\N	\N	420	199	Bulgaria	Kardzhali	1790-12-26
+421	\N	\N	421	206	Aruba	Babijn	1790-11-20
+422	\N	\N	422	217	Tajikistan	Hisor	1790-08-05
+423	\N	\N	423	30	Djibouti	Tadjoura	1790-07-23
+424	\N	\N	424	676	Uzbekistan	Denov	1790-05-21
+425	\N	\N	425	335	Albania	Fier	1790-08-11
+426	\N	\N	426	507	France	Pontivy	1790-01-10
+427	\N	\N	427	194	Nepal	Malangwa	1790-08-05
+428	\N	\N	428	837	Japan	Akune	1790-06-22
+429	\N	\N	429	3	Armenia	Hrazdan	1790-07-09
+430	\N	\N	430	549	Niger	Matamey	1790-05-09
+431	\N	\N	431	827	Morocco	Nador	1790-10-07
+432	\N	\N	432	359	Norway	Horten	1790-05-24
+433	\N	\N	433	314	Dominica	Roseau	1790-08-24
+434	\N	\N	434	851	Greece	Vrilissia	1790-12-04
+435	\N	\N	435	752	Lebanon	Baalbek	1790-08-14
+436	\N	\N	436	780	Maldives	Male	1790-09-27
+437	\N	\N	437	469	Martinique	Ducos	1790-10-23
+438	\N	\N	438	724	Bangladesh	Bhola	1790-07-03
+439	\N	\N	439	475	Mongolia	Erdenet	1790-12-24
+440	\N	\N	440	447	Montenegro	Bar	1790-06-06
+441	\N	\N	441	854	Mauritania	Aleg	1790-05-09
+442	\N	\N	442	1175	Germany	Eppingen	1790-08-06
+443	\N	\N	443	1074	Cyprus	Nicosia	1790-03-17
+444	\N	\N	444	852	Lesotho	Mafeteng	1790-05-23
+445	\N	\N	445	893	Jordan	Irbid	1790-03-06
+446	\N	\N	446	565	Kenya	Garissa	1790-12-28
+447	\N	\N	447	788	Chile	Rancagua	1790-03-06
+448	\N	\N	448	666	Ecuador	Puyo	1790-06-13
+449	\N	\N	449	633	Portugal	Loures	1790-02-22
+450	\N	\N	450	941	Angola	Lobito	1790-01-03
+451	\N	\N	451	389	Madagascar	Antsohimbondrona	1790-07-08
+452	\N	\N	452	14	Norway	Horten	1790-08-23
+453	\N	\N	453	844	Sweden	Sollentuna	1790-03-15
+454	\N	\N	454	1121	Somalia	Baardheere	1790-03-01
+455	\N	\N	455	936	Montserrat	Plymouth	1790-06-09
+456	\N	\N	456	585	Dominica	Roseau	1790-02-15
+457	\N	\N	457	486	Afghanistan	Khanabad	1790-09-07
+458	\N	\N	458	649	Lithuania	Palanga	1790-11-28
+459	\N	\N	459	166	Lithuania	Eiguliai	1790-02-18
+460	\N	\N	460	244	Mali	Markala	1790-06-23
+461	\N	\N	461	1139	Armenia	Gavarr	1790-10-23
+462	\N	\N	462	1046	Uruguay	Maldonado	1790-12-24
+463	\N	\N	463	420	Australia	Wollongong	1790-07-20
+464	\N	\N	464	125	Tunisia	Zouila	1790-08-01
+465	\N	\N	465	1234	Philippines	Ipil	1790-10-20
+466	\N	\N	466	954	Serbia	Senta	1790-02-07
+467	\N	\N	467	385	Belize	Belmopan	1790-02-18
+468	\N	\N	468	472	Zambia	Siavonga	1790-12-11
+469	\N	\N	469	452	Belarus	Mazyr	1790-03-27
+470	\N	\N	470	1206	Tunisia	Kairouan	1790-05-01
+471	\N	\N	471	343	Djibouti	Tadjoura	1790-08-07
+472	\N	\N	472	1155	Hungary	Dabas	1790-04-11
+473	\N	\N	473	1042	Maldives	Male	1790-08-10
+474	\N	\N	474	852	Argentina	Esquina	1790-11-18
+475	\N	\N	475	526	Laos	Phonsavan	1790-02-20
+476	\N	\N	476	714	Rwanda	Gitarama	1790-09-24
+477	\N	\N	477	1142	Fiji	Nadi	1790-12-17
+478	\N	\N	478	57	Mongolia	Uliastay	1790-08-04
+479	\N	\N	479	143	Yemen	Aden	1790-11-01
+480	\N	\N	480	83	Ukraine	Vasylkiv	1790-02-24
+481	\N	\N	481	126	Belize	Belmopan	1790-10-23
+482	\N	\N	482	771	Nigeria	Nkpor	1790-05-22
+483	\N	\N	483	1010	Uzbekistan	Toshloq	1790-09-04
+484	\N	\N	484	834	Argentina	Allen	1790-08-08
+485	\N	\N	485	1112	Turkey	Tosya	1790-10-04
+486	\N	\N	486	969	Peru	Tacna	1790-10-12
+487	\N	\N	487	1203	Cambodia	Kampot	1790-03-25
+488	\N	\N	488	429	Martinique	Ducos	1790-09-22
+489	\N	\N	489	181	Benin	Djougou	1790-09-19
+490	\N	\N	490	2	Malta	Birkirkara	1790-08-02
+491	\N	\N	491	591	Gabon	Koulamoutou	1790-05-28
+492	\N	\N	492	178	Pitcairn	Adamstown	1790-11-18
+493	\N	\N	493	799	Bulgaria	Velingrad	1790-02-20
+494	\N	\N	494	699	Cameroon	Bafoussam	1790-03-12
+495	\N	\N	495	567	Brunei	Seria	1790-08-07
+496	\N	\N	496	98	Gibraltar	Gibraltar	1790-02-01
+497	\N	\N	497	635	Sweden	Karlskoga	1790-02-12
+498	\N	\N	498	265	Qatar	Doha	1790-06-24
+499	\N	\N	499	917	Palau	Melekeok	1790-08-02
+500	\N	\N	500	304	Afghanistan	Karukh	1790-01-09
 \.
 
 
@@ -13720,493 +13822,502 @@ USA	166
 --
 
 COPY public.death_certificates (id, issuer, person, issue_date) FROM stdin;
-1	519	8	2016-07-22
-2	151	11	2007-10-05
-3	856	16	1976-09-22
-4	147	17	2001-06-27
-5	687	18	1998-02-27
-6	378	19	1977-03-11
-7	97	20	1974-10-13
-8	209	21	1989-10-20
-9	60	22	2001-02-08
-10	1081	23	2002-12-11
-11	491	24	1988-06-13
-12	110	25	1997-11-16
-13	612	26	2001-09-10
-14	790	27	2017-10-01
-15	1030	28	2003-04-25
-16	493	29	2002-08-12
-17	1181	30	1991-08-16
-18	816	31	1975-03-25
-19	411	32	1987-07-26
-20	130	33	1995-08-04
-21	601	34	1980-07-05
-22	1040	35	1966-12-22
-23	607	36	1978-03-23
-24	685	37	1992-01-09
-25	503	38	1995-11-26
-26	723	39	1981-08-23
-27	63	40	1993-09-04
-28	357	41	1974-11-26
-29	615	42	1959-01-19
-30	283	43	1970-10-06
-31	329	44	1958-01-03
-32	627	45	1967-06-11
-33	704	46	1982-05-12
-34	568	47	1963-11-14
-35	360	48	1984-03-21
-36	1054	49	1976-10-12
-37	381	50	1954-10-08
-38	340	51	1995-01-13
-39	805	52	1993-10-15
-40	162	53	1992-11-01
-41	1026	54	1963-02-17
-42	644	55	1973-02-13
-43	944	56	1999-05-24
-44	1155	57	1986-05-22
-45	1028	58	1994-05-09
-46	684	59	1969-06-04
-47	237	60	1954-03-02
-48	1117	61	1985-07-25
-49	200	62	1978-10-08
-50	856	63	1973-03-05
-51	545	64	1927-09-10
-52	795	65	1964-09-17
-53	198	66	1937-11-01
-54	1179	67	1932-07-15
-55	22	68	1933-07-13
-56	1006	69	1939-03-12
-57	1187	70	1953-03-26
-58	293	71	1972-07-15
-59	853	72	1967-08-21
-60	1220	73	1953-08-19
-61	474	74	1969-01-07
-62	39	75	1961-07-17
-63	715	76	1969-01-28
-64	187	77	1942-12-11
-65	760	78	1925-03-15
-66	1016	79	1944-06-18
-67	1156	80	1940-01-28
-68	700	81	1928-12-21
-69	297	82	1945-03-06
-70	948	83	1927-05-09
-71	620	84	1955-04-23
-72	68	85	1970-12-08
-73	559	86	1962-08-06
-74	149	87	1962-11-07
-75	1170	88	1963-03-08
-76	444	89	1928-03-17
-77	1179	90	1941-10-15
-78	963	91	1934-06-23
-79	757	92	1934-08-19
-80	800	93	1942-04-17
-81	969	94	1938-05-23
-82	383	95	1944-05-13
-83	892	96	1953-01-19
-84	603	97	1972-05-09
-85	37	98	1941-02-10
-86	381	99	1928-02-06
-87	714	100	1931-09-16
-88	1205	101	1945-07-09
-89	969	102	1971-03-23
-90	669	103	1955-01-16
-91	436	104	1966-09-03
-92	549	105	1963-11-23
-93	418	106	1971-01-07
-94	1203	107	1974-09-04
-95	806	108	1965-12-19
-96	495	109	1932-03-19
-97	348	110	1966-09-18
-98	335	111	1926-07-24
-99	677	112	1953-04-04
-100	254	113	1931-11-21
-101	810	114	1970-01-26
-102	162	115	1924-01-01
-103	1247	116	1924-01-25
-104	652	117	1955-03-18
-105	145	118	1940-08-27
-106	1060	119	1929-09-14
-107	705	120	1970-10-09
-108	818	121	1968-05-24
-109	1166	122	1927-09-10
-110	399	123	1938-04-27
-111	1205	124	1952-03-21
-112	375	125	1937-09-19
-113	30	126	1939-08-26
-114	49	127	1930-01-13
-115	429	128	1919-08-10
-116	1008	129	1908-08-03
-117	251	130	1902-09-27
-118	727	131	1943-07-11
-119	924	132	1944-01-19
-120	720	133	1944-02-07
-121	294	134	1901-08-27
-122	915	135	1944-02-28
-123	936	136	1900-07-04
-124	219	137	1905-06-20
-125	890	138	1942-02-08
-126	778	139	1932-04-28
-127	181	140	1927-03-02
-128	898	141	1900-05-15
-129	1175	142	1934-11-10
-130	1150	143	1915-12-20
-131	63	144	1911-02-05
-132	902	145	1946-04-22
-133	355	146	1908-03-24
-134	1212	147	1949-05-11
-135	86	148	1928-09-20
-136	992	149	1936-09-26
-137	816	150	1935-02-10
-138	323	151	1943-04-24
-139	850	152	1932-06-15
-140	995	153	1935-07-01
-141	38	154	1910-01-25
-142	531	155	1940-04-01
-143	102	156	1901-02-09
-144	639	157	1902-09-14
-145	124	158	1949-03-20
-146	671	159	1906-08-09
-147	664	160	1945-11-05
-148	907	161	1922-09-03
-149	687	162	1909-07-09
-150	835	163	1916-06-01
-151	396	164	1930-08-28
-152	513	165	1906-09-04
-153	962	166	1902-01-16
-154	1249	167	1913-12-19
-155	160	168	1930-10-25
-156	383	169	1908-05-28
-157	1056	170	1904-03-06
-158	779	171	1914-08-16
-159	550	172	1938-07-17
-160	368	173	1920-11-09
-161	805	174	1924-05-21
-162	301	175	1942-05-22
-163	71	176	1905-09-27
-164	232	177	1949-03-14
-165	216	178	1939-02-11
-166	777	179	1938-12-02
-167	1093	180	1907-04-09
-168	1219	181	1919-06-14
-169	294	182	1948-07-11
-170	1109	183	1926-06-03
-171	703	184	1945-09-17
-172	1175	185	1924-07-26
-173	291	186	1909-11-18
-174	1020	187	1915-09-26
-175	97	188	1933-04-15
-176	743	189	1914-12-15
-177	905	190	1905-07-23
-178	179	191	1917-05-07
-179	953	192	1942-09-15
-180	790	193	1944-03-09
-181	666	194	1937-04-28
-182	107	195	1911-01-10
-183	40	196	1916-01-16
-184	29	197	1907-10-09
-185	207	198	1930-01-27
-186	130	199	1922-08-11
-187	322	200	1917-08-11
-188	151	201	1943-07-12
-189	112	202	1923-03-26
-190	500	203	1913-01-24
-191	892	204	1923-04-24
-192	34	205	1902-12-01
-193	483	206	1935-05-09
-194	1049	207	1926-02-19
-195	523	208	1929-06-18
-196	824	209	1944-04-28
-197	1051	210	1924-07-17
-198	637	211	1902-08-13
-199	241	212	1937-12-12
-200	1019	213	1921-02-26
-201	631	214	1903-11-06
-202	907	215	1899-10-23
-203	1220	216	1922-11-17
-204	399	217	1913-09-14
-205	469	218	1936-03-18
-206	1010	219	1926-02-16
-207	974	220	1916-03-28
-208	1099	221	1904-09-10
-209	656	222	1899-10-20
-210	311	223	1901-06-14
-211	1207	224	1946-03-25
-212	545	225	1902-10-05
-213	955	226	1926-08-09
-214	430	227	1921-10-03
-215	1179	228	1927-12-17
-216	387	229	1902-05-26
-217	1224	230	1918-07-24
-218	1234	231	1903-05-06
-219	800	232	1914-03-07
-220	974	233	1934-12-04
-221	1155	234	1909-11-07
-222	392	235	1912-08-06
-223	85	236	1924-03-09
-224	85	237	1927-10-21
-225	798	238	1929-07-14
-226	721	239	1905-11-22
-227	29	240	1920-05-23
-228	638	241	1899-08-22
-229	1175	242	1942-06-10
-230	1188	243	1906-12-27
-231	510	244	1920-05-05
-232	1207	245	1925-10-25
-233	457	246	1905-05-07
-234	928	247	1940-03-03
-235	523	248	1929-09-07
-236	82	249	1935-05-09
-237	170	250	1903-12-13
-238	578	251	1920-09-12
-239	1038	252	1900-09-01
-240	1246	253	1906-08-25
-241	130	254	1910-09-24
-242	649	255	1917-10-01
-243	278	256	1914-12-16
-244	826	257	1886-08-02
-245	96	258	1877-09-21
-246	965	259	1888-08-16
-247	844	260	1915-01-13
-248	431	261	1886-05-03
-249	1221	262	1884-08-21
-250	359	263	1890-01-22
-251	577	264	1884-08-07
-252	490	265	1906-12-13
-253	515	266	1895-02-02
-254	278	267	1921-02-05
-255	1016	268	1874-07-20
-256	674	269	1894-11-16
-257	1021	270	1885-10-22
-258	310	271	1880-05-20
-259	1203	272	1910-10-06
-260	1040	273	1908-07-18
-261	137	274	1905-07-14
-262	765	275	1878-04-17
-263	19	276	1894-12-12
-264	145	277	1883-10-15
-265	354	278	1882-06-12
-266	75	279	1914-05-13
-267	637	280	1907-01-16
-268	54	281	1896-05-22
-269	379	282	1896-02-28
-270	661	283	1906-06-22
-271	1099	284	1888-01-12
-272	269	285	1904-04-17
-273	575	286	1917-02-22
-274	601	287	1924-02-03
-275	472	288	1907-11-22
-276	115	289	1894-03-24
-277	869	290	1881-04-19
-278	360	291	1880-12-13
-279	166	292	1875-09-23
-280	953	293	1908-08-20
-281	296	294	1908-07-09
-282	1222	295	1920-03-07
-283	1176	296	1917-10-19
-284	1068	297	1885-06-18
-285	1093	298	1899-07-11
-286	810	299	1916-03-05
-287	1054	300	1886-07-25
-288	922	301	1876-12-25
-289	381	302	1916-01-02
-290	907	303	1900-08-03
-291	418	304	1918-06-04
-292	1178	305	1910-11-19
-293	841	306	1881-12-08
-294	472	307	1892-11-14
-295	825	308	1902-12-16
-296	697	309	1914-12-09
-297	841	310	1877-01-21
-298	760	311	1924-09-06
-299	1041	312	1906-05-14
-300	725	313	1899-05-18
-301	524	314	1915-10-14
-302	608	315	1909-06-25
-303	489	316	1923-02-14
-304	963	317	1898-01-18
-305	1150	318	1903-11-08
-306	1224	319	1880-09-23
-307	199	320	1877-07-07
-308	22	321	1904-03-09
-309	248	322	1924-08-14
-310	1212	323	1891-08-08
-311	14	324	1874-07-10
-312	34	325	1901-09-01
-313	425	326	1887-08-11
-314	839	327	1874-07-14
-315	378	328	1921-05-23
-316	52	329	1893-04-08
-317	145	330	1885-03-15
-318	509	331	1900-11-09
-319	647	332	1874-09-23
-320	82	333	1874-05-13
-321	654	334	1879-04-24
-322	964	335	1895-07-13
-323	699	336	1894-06-28
-324	143	337	1914-06-01
-325	941	338	1923-08-01
-326	198	339	1894-05-19
-327	1032	340	1907-03-15
-328	69	341	1884-02-12
-329	372	342	1879-11-15
-330	714	343	1910-12-21
-331	976	344	1906-04-08
-332	1041	345	1878-03-17
-333	807	346	1900-07-26
-334	371	347	1912-10-20
-335	793	348	1890-04-24
-336	196	349	1874-12-19
-337	463	350	1892-02-12
-338	423	351	1909-05-06
-339	1227	352	1922-06-11
-340	697	353	1924-08-27
-341	1220	354	1923-04-09
-342	825	355	1896-08-01
-343	795	356	1890-12-25
-344	271	357	1885-02-25
-345	376	358	1901-12-01
-346	505	359	1877-08-10
-347	724	360	1919-07-23
-348	796	361	1917-06-04
-349	802	362	1902-07-25
-350	377	363	1909-07-26
-351	265	364	1889-07-28
-352	165	365	1917-10-14
-353	715	366	1885-08-12
-354	916	367	1913-03-05
-355	1247	368	1880-02-18
-356	144	369	1909-02-22
-357	1015	370	1909-04-18
-358	983	371	1891-12-22
-359	426	372	1917-11-14
-360	434	373	1902-01-08
-361	415	374	1900-10-02
-362	808	375	1884-03-06
-363	908	376	1888-11-14
-364	1157	377	1913-09-18
-365	251	378	1904-03-01
-366	1003	379	1900-09-06
-367	139	380	1913-11-06
-368	919	381	1890-09-01
-369	133	382	1890-01-07
-370	1107	383	1907-03-17
-371	535	384	1905-03-19
-372	435	385	1917-09-15
-373	191	386	1904-05-13
-374	470	387	1914-03-02
-375	1232	388	1906-04-14
-376	1006	389	1880-10-21
-377	393	390	1920-08-09
-378	676	391	1914-04-22
-379	226	392	1923-05-27
-380	372	393	1900-02-21
-381	936	394	1910-06-11
-382	269	395	1923-12-13
-383	1049	396	1876-12-03
-384	451	397	1883-02-01
-385	890	398	1888-08-16
-386	970	399	1908-05-12
-387	978	400	1908-02-18
-388	200	401	1875-03-23
-389	465	402	1890-03-12
-390	131	403	1900-01-12
-391	891	404	1882-12-20
-392	654	405	1924-05-05
-393	1039	406	1879-04-14
-394	404	407	1921-02-17
-395	503	408	1889-11-08
-396	415	409	1903-04-16
-397	1234	410	1900-12-01
-398	200	411	1917-09-20
-399	1227	412	1875-03-01
-400	1041	413	1904-05-09
-401	707	414	1888-03-01
-402	1153	415	1909-11-26
-403	734	416	1903-08-04
-404	405	417	1898-12-04
-405	1233	418	1918-04-08
-406	50	419	1916-08-02
-407	519	420	1903-09-04
-408	720	421	1891-07-17
-409	816	422	1896-03-19
-410	397	423	1879-03-20
-411	549	424	1902-01-16
-412	1194	425	1905-05-01
-413	986	426	1881-08-24
-414	1081	427	1921-10-04
-415	708	428	1911-05-07
-416	230	429	1919-10-16
-417	974	430	1906-06-04
-418	1164	431	1888-11-02
-419	1151	432	1897-04-04
-420	687	433	1901-09-19
-421	45	434	1914-01-20
-422	1086	435	1890-07-16
-423	322	436	1887-05-13
-424	697	437	1913-10-02
-425	1243	438	1922-09-03
-426	232	439	1915-02-09
-427	583	440	1900-07-21
-428	964	441	1917-05-17
-429	212	442	1897-06-24
-430	914	443	1882-09-22
-431	315	444	1911-03-04
-432	271	445	1919-07-07
-433	926	446	1876-10-13
-434	693	447	1902-07-18
-435	919	448	1924-06-07
-436	9	449	1924-05-28
-437	1176	450	1877-06-01
-438	36	451	1893-07-20
-439	539	452	1911-08-17
-440	515	453	1881-08-10
-441	151	454	1881-08-13
-442	1243	455	1882-04-02
-443	568	456	1890-11-10
-444	819	457	1881-11-05
-445	1247	458	1901-08-21
-446	798	459	1898-07-23
-447	107	460	1899-11-12
-448	241	461	1914-08-18
-449	393	462	1882-06-10
-450	1008	463	1894-12-26
-451	703	464	1882-09-13
-452	217	465	1887-03-10
-453	1183	466	1920-07-10
-454	226	467	1889-07-16
-455	411	468	1886-08-02
-456	1033	469	1899-02-24
-457	1007	470	1896-12-01
-458	442	471	1898-10-27
-459	1178	472	1899-11-16
-460	822	473	1914-01-01
-461	894	474	1919-12-08
-462	87	475	1905-11-24
-463	156	476	1891-03-11
-464	518	477	1876-12-04
-465	797	478	1917-01-22
-466	490	479	1876-02-17
-467	1022	480	1903-12-13
-468	1246	481	1907-12-05
-469	784	482	1912-12-23
-470	822	483	1886-11-16
-471	493	484	1899-09-03
-472	850	485	1916-03-18
-473	838	486	1881-04-01
-474	869	487	1875-10-13
-475	705	488	1912-03-20
-476	535	489	1881-03-08
-477	598	490	1919-10-23
-478	241	491	1914-10-03
-479	1218	492	1902-01-17
-480	1227	493	1901-04-21
-481	955	494	1896-09-13
-482	1021	495	1911-06-06
-483	623	496	1907-03-08
-484	833	497	1920-09-25
-485	523	498	1905-08-23
-486	144	499	1915-08-14
-487	707	500	1919-05-28
+1	939	5	2009-12-16
+2	1041	6	2014-12-01
+3	10	7	1991-02-20
+4	559	8	2015-04-14
+5	118	9	1967-03-16
+6	1041	10	1982-10-20
+7	391	11	1995-01-19
+8	194	12	1973-11-14
+9	580	13	1986-12-12
+10	407	14	1969-08-14
+11	99	15	2008-10-06
+12	228	16	1942-01-10
+13	807	17	1946-05-20
+14	803	18	1968-03-03
+15	552	19	1988-01-06
+16	1224	20	1973-12-12
+17	1205	21	1972-08-11
+18	851	22	1970-05-02
+19	595	23	1947-02-06
+20	427	24	1948-07-04
+21	1219	25	1970-05-02
+22	676	26	1948-02-10
+23	1233	27	1950-09-13
+24	179	28	1965-11-23
+25	367	29	1979-02-17
+26	792	30	1957-03-18
+27	493	31	1963-04-21
+28	392	32	1960-02-03
+29	131	33	1928-07-13
+30	923	34	1961-09-05
+31	289	35	1959-02-14
+32	525	36	1943-10-15
+33	434	37	1919-01-22
+34	1169	38	1918-02-22
+35	1175	39	1953-12-15
+36	542	40	1941-06-27
+37	1224	41	1958-10-08
+38	7	42	1935-05-04
+39	703	43	1962-08-18
+40	796	44	1934-05-13
+41	30	45	1919-07-07
+42	1133	46	1965-07-14
+43	141	47	1924-09-01
+44	353	48	1949-09-23
+45	355	49	1929-08-13
+46	1142	50	1957-05-06
+47	32	51	1941-05-07
+48	499	52	1956-01-15
+49	1190	53	1954-06-08
+50	318	54	1942-12-17
+51	585	55	1921-12-23
+52	674	56	1932-08-18
+53	445	57	1965-12-25
+54	348	58	1948-05-12
+55	629	59	1945-09-04
+56	861	60	1950-12-11
+57	48	61	1965-01-14
+58	831	62	1938-03-01
+59	36	63	1915-06-25
+60	869	64	1909-05-07
+61	12	65	1932-08-25
+62	106	66	1925-01-19
+63	590	67	1914-02-09
+64	783	68	1919-01-13
+65	1107	69	1926-03-06
+66	957	70	1896-09-14
+67	132	71	1908-07-15
+68	952	72	1903-04-17
+69	696	73	1927-08-05
+70	358	74	1926-11-10
+71	82	75	1935-06-03
+72	1062	76	1924-11-05
+73	1121	77	1914-01-23
+74	153	78	1935-01-16
+75	704	79	1911-05-22
+76	1226	80	1922-05-06
+77	167	81	1906-02-24
+78	1242	82	1896-06-21
+79	1218	83	1905-11-17
+80	141	84	1913-04-21
+81	332	85	1922-01-16
+82	1234	86	1895-11-09
+83	989	87	1921-08-27
+84	1179	88	1919-06-16
+85	977	89	1940-10-09
+86	785	90	1925-02-12
+87	898	91	1913-05-11
+88	1226	92	1916-08-20
+89	936	93	1938-06-14
+90	726	94	1932-05-24
+91	523	95	1910-12-27
+92	239	96	1930-01-11
+93	770	97	1915-10-01
+94	364	98	1940-02-14
+95	503	99	1926-06-19
+96	128	100	1894-11-17
+97	265	101	1921-10-28
+98	117	102	1924-08-21
+99	656	103	1924-11-27
+100	27	104	1907-05-04
+101	143	105	1892-06-23
+102	697	106	1902-04-26
+103	779	107	1939-12-07
+104	1011	108	1900-11-28
+105	849	109	1918-12-25
+106	507	110	1914-03-24
+107	757	111	1896-11-24
+108	20	112	1915-10-14
+109	156	113	1928-04-18
+110	482	114	1925-03-25
+111	816	115	1932-03-23
+112	1018	116	1896-01-20
+113	172	117	1914-11-09
+114	1179	118	1926-08-23
+115	618	119	1896-07-07
+116	416	120	1899-06-11
+117	518	121	1895-03-12
+118	1079	122	1916-07-02
+119	295	123	1891-08-17
+120	1070	124	1912-09-25
+121	1158	125	1899-05-28
+122	677	126	1921-06-08
+123	40	127	1901-07-19
+124	919	128	1903-03-28
+125	347	129	1902-11-24
+126	239	130	1905-12-17
+127	315	131	1871-05-23
+128	364	132	1891-11-16
+129	352	133	1874-02-19
+130	277	134	1899-07-13
+131	149	135	1909-08-11
+132	883	136	1889-11-05
+133	1012	137	1866-10-11
+134	478	138	1867-06-03
+135	564	139	1882-12-28
+136	1100	140	1909-07-26
+137	193	141	1881-07-10
+138	892	142	1885-09-04
+139	324	143	1912-05-17
+140	561	144	1892-09-11
+141	215	145	1880-04-21
+142	980	146	1911-01-22
+143	207	147	1870-04-13
+144	390	148	1912-11-19
+145	907	149	1885-04-02
+146	141	150	1879-08-27
+147	563	151	1880-08-24
+148	519	152	1894-09-18
+149	613	153	1867-01-18
+150	1058	154	1903-06-08
+151	1244	155	1877-04-12
+152	690	156	1867-04-23
+153	189	157	1874-05-20
+154	392	158	1901-06-24
+155	308	159	1908-10-19
+156	969	160	1872-12-06
+157	1245	161	1869-05-16
+158	1145	162	1905-12-04
+159	69	163	1901-01-13
+160	711	164	1902-05-04
+161	397	165	1895-12-16
+162	1133	166	1905-09-07
+163	148	167	1873-03-27
+164	2	168	1905-02-17
+165	1091	169	1866-08-08
+166	94	170	1892-11-15
+167	1022	171	1909-02-19
+168	925	172	1873-06-09
+169	606	173	1874-10-26
+170	714	174	1900-06-14
+171	1064	175	1891-03-12
+172	921	176	1879-03-20
+173	41	177	1866-10-18
+174	995	178	1898-08-13
+175	245	179	1915-07-10
+176	940	180	1905-09-04
+177	579	181	1887-08-26
+178	318	182	1903-06-04
+179	1171	183	1872-11-06
+180	923	184	1872-01-13
+181	170	185	1876-06-28
+182	520	186	1874-02-03
+183	539	187	1872-04-03
+184	726	188	1911-11-04
+185	642	189	1899-01-28
+186	544	190	1879-03-17
+187	301	191	1872-03-02
+188	110	192	1898-01-17
+189	299	193	1889-05-26
+190	346	194	1894-04-05
+191	677	195	1912-04-18
+192	95	196	1868-09-28
+193	754	197	1885-11-09
+194	470	198	1892-05-23
+195	520	199	1910-09-20
+196	861	200	1909-02-16
+197	480	201	1880-03-24
+198	1021	202	1885-01-17
+199	1097	203	1890-04-16
+200	898	204	1879-01-14
+201	713	205	1868-01-09
+202	781	206	1893-12-25
+203	919	207	1898-08-25
+204	83	208	1901-08-20
+205	536	209	1866-05-08
+206	1109	210	1885-01-15
+207	207	211	1902-02-27
+208	172	212	1872-05-02
+209	1043	213	1887-04-15
+210	318	214	1909-09-28
+211	336	215	1889-05-26
+212	125	216	1915-12-07
+213	695	217	1905-09-20
+214	63	218	1895-07-03
+215	153	219	1883-10-05
+216	554	220	1871-06-19
+217	1128	221	1896-10-07
+218	414	222	1879-05-18
+219	202	223	1872-10-10
+220	767	224	1868-08-10
+221	602	225	1877-04-04
+222	1030	226	1883-02-15
+223	639	227	1889-06-13
+224	781	228	1908-07-12
+225	1003	229	1892-04-02
+226	807	230	1898-07-17
+227	958	231	1882-05-04
+228	748	232	1902-01-16
+229	23	233	1873-12-12
+230	92	234	1865-07-21
+231	493	235	1914-03-26
+232	397	236	1875-04-25
+233	207	237	1892-10-04
+234	312	238	1903-01-23
+235	1212	239	1893-01-16
+236	713	240	1907-01-19
+237	459	241	1866-01-11
+238	1024	242	1869-03-04
+239	816	243	1891-07-23
+240	1104	244	1908-12-25
+241	1153	245	1908-07-06
+242	713	246	1872-02-26
+243	624	247	1873-01-19
+244	418	248	1886-09-26
+245	650	249	1902-11-06
+246	1096	250	1872-07-14
+247	869	251	1905-01-10
+248	655	252	1910-12-16
+249	1220	253	1876-03-05
+250	923	254	1913-05-01
+251	1127	255	1892-11-27
+252	141	256	1884-10-21
+253	542	257	1887-05-15
+254	38	258	1881-03-24
+255	475	259	1845-10-14
+256	1121	260	1850-02-22
+257	833	261	1868-04-06
+258	78	262	1856-12-14
+259	1004	263	1870-06-19
+260	541	264	1890-08-14
+261	1215	265	1889-09-10
+262	1	266	1862-02-28
+263	415	267	1869-12-17
+264	355	268	1845-08-16
+265	558	269	1887-10-21
+266	624	270	1850-08-05
+267	635	271	1885-04-16
+268	58	272	1886-03-07
+269	286	273	1851-12-16
+270	1221	274	1853-07-10
+271	234	275	1874-12-28
+272	758	276	1878-08-17
+273	103	277	1849-01-07
+274	907	278	1848-11-09
+275	539	279	1865-12-19
+276	1221	280	1847-02-17
+277	1193	281	1858-04-16
+278	956	282	1844-05-10
+279	924	283	1871-12-04
+280	952	284	1850-05-24
+281	1051	285	1865-05-08
+282	872	286	1869-03-09
+283	958	287	1890-03-18
+284	760	288	1856-04-16
+285	55	289	1875-11-04
+286	860	290	1878-03-06
+287	1208	291	1887-04-09
+288	1236	292	1862-05-24
+289	352	293	1866-02-05
+290	860	294	1874-09-15
+291	409	295	1868-09-06
+292	814	296	1865-05-05
+293	16	297	1890-08-12
+294	1242	298	1865-07-14
+295	413	299	1865-08-23
+296	272	300	1843-11-24
+297	123	301	1862-10-28
+298	153	302	1840-08-11
+299	444	303	1876-12-17
+300	1236	304	1858-07-14
+301	906	305	1864-08-25
+302	430	306	1865-06-23
+303	519	307	1859-02-04
+304	368	308	1872-03-08
+305	218	309	1878-04-28
+306	650	310	1871-07-18
+307	1155	311	1866-09-21
+308	1077	312	1869-09-01
+309	967	313	1879-12-15
+310	27	314	1843-07-20
+311	298	315	1885-01-21
+312	846	316	1888-12-07
+313	1123	317	1890-07-22
+314	901	318	1890-06-17
+315	234	319	1853-06-13
+316	330	320	1877-09-24
+317	840	321	1890-06-06
+318	597	322	1876-04-28
+319	1128	323	1875-08-07
+320	152	324	1888-03-25
+321	106	325	1854-10-02
+322	353	326	1853-04-01
+323	405	327	1883-09-15
+324	3	328	1847-04-18
+325	892	329	1887-08-04
+326	97	330	1844-01-11
+327	1098	331	1863-09-05
+328	133	332	1855-04-28
+329	92	333	1855-07-04
+330	414	334	1870-07-11
+331	453	335	1844-09-20
+332	768	336	1885-10-24
+333	921	337	1854-11-02
+334	1070	338	1865-09-06
+335	1190	339	1870-08-11
+336	245	340	1880-09-14
+337	131	341	1851-08-04
+338	711	342	1882-06-15
+339	36	343	1862-01-15
+340	7	344	1869-01-28
+341	682	345	1869-06-19
+342	1103	346	1886-01-10
+343	893	347	1847-05-18
+344	827	348	1880-04-21
+345	434	349	1854-02-15
+346	369	350	1850-09-09
+347	1146	351	1864-02-02
+348	930	352	1882-09-24
+349	7	353	1868-09-10
+350	550	354	1868-03-05
+351	1123	355	1871-11-20
+352	1165	356	1856-02-28
+353	957	357	1888-10-21
+354	99	358	1863-11-08
+355	562	359	1883-01-02
+356	391	360	1855-09-01
+357	1137	361	1890-02-12
+358	1248	362	1889-07-15
+359	949	363	1880-04-01
+360	205	364	1884-04-01
+361	239	365	1871-12-24
+362	676	366	1861-05-23
+363	472	367	1882-02-09
+364	789	368	1843-05-05
+365	559	369	1851-11-16
+366	989	370	1866-12-12
+367	99	371	1841-11-08
+368	999	372	1853-05-12
+369	841	373	1886-01-01
+370	441	374	1846-09-20
+371	308	375	1875-01-25
+372	768	376	1847-10-11
+373	36	377	1876-06-10
+374	370	378	1849-06-14
+375	547	379	1840-12-02
+376	591	380	1883-02-05
+377	1112	381	1848-12-14
+378	826	382	1872-06-20
+379	1067	383	1884-11-01
+380	684	384	1864-10-25
+381	1104	385	1881-11-06
+382	117	386	1872-06-10
+383	194	387	1883-01-03
+384	992	388	1873-07-19
+385	565	389	1841-10-21
+386	367	390	1854-09-22
+387	345	391	1885-07-07
+388	348	392	1879-10-28
+389	1227	393	1854-12-18
+390	1006	394	1840-01-21
+391	1151	395	1875-08-09
+392	31	396	1869-07-13
+393	997	397	1865-04-09
+394	1179	398	1879-01-25
+395	770	399	1860-02-16
+396	905	400	1871-08-02
+397	573	401	1851-03-03
+398	742	402	1866-02-01
+399	771	403	1864-11-21
+400	758	404	1850-07-08
+401	340	405	1877-01-19
+402	557	406	1869-06-27
+403	1052	407	1848-12-19
+404	30	408	1847-04-12
+405	126	409	1880-01-22
+406	378	410	1889-10-07
+407	151	411	1879-04-22
+408	859	412	1850-07-15
+409	635	413	1867-02-12
+410	452	414	1852-09-23
+411	60	415	1865-07-04
+412	210	416	1873-10-15
+413	395	417	1870-11-25
+414	212	418	1884-02-24
+415	1221	419	1865-03-06
+416	918	420	1856-01-06
+417	228	421	1848-05-12
+418	303	422	1862-07-26
+419	260	423	1845-09-14
+420	1146	424	1870-04-28
+421	314	425	1889-09-11
+422	598	426	1844-08-09
+423	262	427	1851-12-25
+424	710	428	1866-11-16
+425	847	429	1864-03-22
+426	523	430	1845-02-12
+427	1092	431	1862-03-08
+428	869	432	1868-10-26
+429	1037	433	1862-02-11
+430	950	434	1850-02-22
+431	29	435	1876-06-04
+432	399	436	1873-08-21
+433	885	437	1847-06-19
+434	912	438	1888-12-23
+435	1213	439	1844-01-15
+436	622	440	1877-08-10
+437	1168	441	1857-03-04
+438	2	442	1855-06-21
+439	150	443	1863-04-06
+440	386	444	1843-06-05
+441	38	445	1882-11-26
+442	62	446	1885-08-16
+443	361	447	1890-11-20
+444	556	448	1844-11-04
+445	699	449	1840-08-06
+446	1068	450	1849-08-21
+447	769	451	1855-11-10
+448	941	452	1878-10-12
+449	1185	453	1849-07-01
+450	414	454	1855-07-19
+451	939	455	1867-05-17
+452	745	456	1874-12-07
+453	407	457	1864-10-15
+454	370	458	1846-04-03
+455	1058	459	1862-11-06
+456	1226	460	1861-10-01
+457	644	461	1885-04-14
+458	148	462	1866-12-04
+459	702	463	1859-09-10
+460	1153	464	1883-10-24
+461	409	465	1846-11-24
+462	1238	466	1841-09-10
+463	1158	467	1854-07-13
+464	519	468	1878-05-11
+465	640	469	1890-03-28
+466	871	470	1870-11-24
+467	844	471	1848-12-21
+468	156	472	1889-02-10
+469	1212	473	1868-07-19
+470	389	474	1856-10-01
+471	552	475	1848-11-03
+472	114	476	1849-07-25
+473	386	477	1879-01-14
+474	495	478	1855-02-11
+475	235	479	1855-12-05
+476	449	480	1859-03-21
+477	167	481	1861-10-09
+478	1140	482	1870-10-14
+479	642	483	1889-04-27
+480	768	484	1873-09-08
+481	1037	485	1868-07-15
+482	563	486	1846-04-19
+483	1022	487	1873-01-02
+484	346	488	1869-10-16
+485	1225	489	1883-01-11
+486	563	490	1848-09-08
+487	478	491	1846-06-07
+488	625	492	1852-10-18
+489	591	493	1890-03-21
+490	481	494	1862-03-15
+491	1027	495	1881-05-02
+492	493	496	1865-06-25
+493	153	497	1878-07-28
+494	481	498	1849-04-07
+495	1226	499	1863-08-07
+496	118	500	1846-05-07
 \.
 
 
@@ -14215,185 +14326,182 @@ COPY public.death_certificates (id, issuer, person, issue_date) FROM stdin;
 --
 
 COPY public.divorce_certificates (id, divorce_id, issue_date, issuer) FROM stdin;
-1	1	2000-04-10	703
-2	2	1985-12-14	987
-3	3	1988-10-20	516
-4	4	1953-10-23	814
-5	5	1950-05-11	845
-6	6	1951-11-11	34
-7	7	1959-02-19	805
-8	8	1961-06-23	492
-9	9	1925-11-27	292
-10	10	1934-02-19	177
-11	11	1935-02-28	1122
-12	12	1938-06-16	650
-13	13	1931-07-07	640
-14	14	1923-09-17	663
-15	15	1920-04-03	289
-16	16	1932-02-10	1197
-17	17	1920-04-07	303
-18	18	1921-07-08	127
-19	19	1939-11-04	1157
-20	20	1923-11-05	389
-21	21	1935-05-28	355
-22	22	1909-11-27	155
-23	23	1907-03-08	619
-24	24	1896-05-10	829
-25	25	1913-02-09	66
-26	26	1898-05-27	567
-27	27	1895-08-11	678
-28	28	1909-01-18	1026
-29	29	1896-04-13	455
-30	30	1908-12-20	150
-31	31	1911-12-11	536
-32	32	1901-01-10	33
-33	33	1900-07-22	143
-34	34	1895-12-09	617
-35	35	1905-10-20	234
-36	36	1907-08-22	234
-37	37	1902-12-25	911
-38	38	1900-02-08	282
-39	39	1907-03-06	710
-40	40	1894-09-13	1072
-41	41	1906-06-25	1160
-42	42	1915-03-20	707
-43	43	1891-04-08	1042
-44	44	1870-02-08	96
-45	45	1883-09-16	669
-46	46	1874-05-02	194
-47	47	1891-03-21	510
-48	48	1882-01-18	1004
-49	49	1879-05-16	568
-50	50	1886-12-05	43
-51	51	1878-04-09	104
-52	52	1883-06-15	317
-53	53	1890-12-26	846
-54	54	1884-03-12	485
-55	55	1885-07-01	887
-56	56	1879-12-26	1125
-57	57	1874-09-21	155
-58	58	1881-08-04	11
-59	59	1875-03-18	621
-60	60	1887-04-14	415
-61	61	1880-07-05	1221
-62	62	1877-12-21	1088
-63	63	1867-09-24	1210
-64	64	1886-11-08	13
-65	65	1881-10-19	1089
-66	66	1882-09-05	177
-67	67	1871-02-16	634
-68	68	1885-04-07	464
-69	69	1878-07-16	53
-70	70	1880-02-18	135
-71	71	1883-03-01	1003
-72	72	1869-02-12	700
-73	73	1878-01-03	636
-74	74	1884-04-23	451
-75	75	1877-01-26	903
-76	76	1877-10-04	1205
-77	77	1883-05-02	957
-78	78	1868-04-17	167
-79	79	1881-11-23	91
-80	80	1892-03-03	822
-81	81	1871-11-23	678
-82	82	1877-08-18	1243
-83	83	1879-04-26	487
-84	84	1886-12-02	805
-85	85	1868-09-28	113
-86	86	1885-06-12	344
-87	87	1874-07-21	11
-88	88	1873-04-11	679
-89	89	1883-05-12	377
-90	90	1886-02-15	117
-91	91	1890-03-12	749
-92	92	1871-05-28	516
-93	93	1846-05-20	491
-94	94	1856-07-13	479
-95	95	1849-06-24	665
-96	96	1852-12-07	544
-97	97	1851-12-08	831
-98	98	1863-03-05	732
-99	99	1859-04-12	443
-100	100	1854-02-20	817
-101	101	1863-08-25	790
-102	102	1856-07-27	1028
-103	103	1864-01-25	481
-104	104	1853-04-09	1124
-105	105	1859-06-18	139
-106	106	1851-09-11	850
-107	107	1858-12-28	111
-108	108	1851-06-25	904
-109	109	1857-09-19	532
-110	110	1852-11-22	656
-111	111	1855-02-10	689
-112	112	1852-05-16	187
-113	113	1863-05-12	340
-114	114	1848-01-06	220
-115	115	1857-09-06	490
-116	116	1846-07-10	670
-117	117	1858-07-04	495
-118	118	1853-03-14	922
-119	119	1852-08-26	986
-120	120	1851-11-10	464
-121	121	1845-05-14	168
-122	122	1851-04-20	34
-123	123	1847-10-25	435
-124	124	1855-06-23	569
-125	125	1853-01-28	922
-126	126	1848-05-10	138
-127	127	1863-11-26	130
-128	128	1854-06-01	287
-129	129	1860-02-28	165
-130	130	1858-04-01	1014
-131	131	1867-02-28	639
-132	132	1841-03-06	559
-133	133	1863-03-09	845
-134	134	1855-10-06	229
-135	135	1855-12-04	425
-136	136	1861-04-17	465
-137	137	1845-03-08	734
-138	138	1855-11-02	399
-139	139	1854-06-07	882
-140	140	1856-04-25	704
-141	141	1859-12-17	1036
-142	142	1854-08-10	143
-143	143	1860-10-04	934
-144	144	1860-04-25	207
-145	145	1851-10-09	720
-146	146	1853-01-05	956
-147	147	1848-04-01	63
-148	148	1865-06-06	349
-149	149	1855-04-24	619
-150	150	1846-01-18	116
-151	151	1851-04-18	1170
-152	152	1855-08-28	772
-153	153	1862-04-26	557
-154	154	1851-04-03	957
-155	155	1856-03-23	784
-156	156	1860-05-13	357
-157	157	1855-11-21	170
-158	158	1850-06-12	972
-159	159	1847-12-18	708
-160	160	1865-04-19	504
-161	161	1860-09-22	139
-162	162	1862-12-16	1248
-163	163	1861-09-27	487
-164	164	1858-12-22	684
-165	165	1846-06-25	1245
-166	166	1861-01-01	686
-167	167	1862-04-17	686
-168	168	1851-10-25	1063
-169	169	1861-11-11	784
-170	170	1861-04-04	32
-171	171	1855-10-20	286
-172	172	1858-03-21	1243
-173	173	1861-10-24	305
-174	174	1861-02-02	424
-175	175	1850-11-05	616
-176	176	1856-07-20	883
-177	177	1860-09-12	1120
-178	178	1858-12-25	716
-179	179	1856-08-11	650
+1	1	2000-09-13	407
+2	2	1973-12-16	645
+3	3	1968-02-26	674
+4	4	1954-12-12	1121
+5	5	1952-04-19	683
+6	6	1947-01-02	1136
+7	7	1939-05-20	852
+8	8	1918-07-08	604
+9	9	1914-06-27	496
+10	10	1915-11-16	338
+11	11	1917-04-24	1025
+12	12	1926-08-25	453
+13	13	1897-06-08	687
+14	14	1903-06-21	1084
+15	15	1884-10-02	1210
+16	16	1896-04-12	830
+17	17	1892-07-12	577
+18	18	1903-08-25	110
+19	19	1902-01-12	447
+20	20	1892-05-16	225
+21	21	1900-11-04	936
+22	22	1893-07-09	222
+23	23	1883-07-23	624
+24	24	1903-01-27	501
+25	25	1898-12-21	277
+26	26	1875-11-19	531
+27	27	1866-05-23	180
+28	28	1877-10-13	1006
+29	29	1873-08-26	897
+30	30	1872-03-10	1121
+31	31	1882-05-20	995
+32	32	1865-09-26	519
+33	33	1870-02-04	943
+34	34	1864-07-19	566
+35	35	1865-04-25	208
+36	36	1871-11-04	1241
+37	37	1870-06-11	1080
+38	38	1865-03-12	251
+39	39	1873-09-04	525
+40	40	1875-04-15	928
+41	41	1871-01-15	1099
+42	42	1867-01-16	694
+43	43	1872-02-27	575
+44	44	1883-06-13	311
+45	45	1880-07-22	342
+46	46	1863-05-03	189
+47	47	1850-07-25	314
+48	48	1848-09-14	1039
+49	49	1834-07-06	630
+50	50	1850-01-21	906
+51	51	1843-07-17	1176
+52	52	1846-09-08	2
+53	53	1837-01-19	358
+54	54	1851-04-05	215
+55	55	1851-10-05	774
+56	56	1840-07-28	900
+57	57	1854-03-05	1060
+58	58	1841-09-18	826
+59	59	1851-09-21	19
+60	60	1839-07-25	220
+61	61	1836-10-24	1074
+62	62	1839-09-28	337
+63	63	1853-11-21	889
+64	64	1847-03-20	1226
+65	65	1858-03-13	906
+66	66	1845-11-11	574
+67	67	1851-02-14	338
+68	68	1842-11-11	1213
+69	69	1850-11-03	342
+70	70	1843-11-24	1156
+71	71	1838-08-23	234
+72	72	1841-09-17	1122
+73	73	1854-01-04	499
+74	74	1851-08-07	684
+75	75	1832-03-25	851
+76	76	1852-05-27	430
+77	77	1836-01-19	457
+78	78	1847-06-19	598
+79	79	1849-08-13	856
+80	80	1851-06-06	242
+81	81	1850-02-15	1204
+82	82	1855-02-25	1154
+83	83	1854-11-23	413
+84	84	1850-11-25	242
+85	85	1844-06-21	936
+86	86	1840-05-14	453
+87	87	1840-11-18	464
+88	88	1819-03-24	802
+89	89	1827-02-17	1003
+90	90	1816-11-20	949
+91	91	1821-01-07	1210
+92	92	1813-12-16	218
+93	93	1826-01-01	84
+94	94	1820-11-08	77
+95	95	1818-07-09	1190
+96	96	1816-11-04	447
+97	97	1814-01-08	103
+98	98	1821-10-13	1214
+99	99	1811-02-13	299
+100	100	1818-06-18	622
+101	101	1812-11-26	938
+102	102	1827-02-06	1163
+103	103	1818-02-21	638
+104	104	1810-05-19	192
+105	105	1812-08-05	41
+106	106	1811-04-16	503
+107	107	1810-11-20	486
+108	108	1812-12-02	2
+109	109	1817-02-21	586
+110	110	1829-10-08	849
+111	111	1829-09-20	976
+112	112	1827-10-13	931
+113	113	1824-10-22	180
+114	114	1814-01-06	474
+115	115	1826-03-28	425
+116	116	1826-04-12	1161
+117	117	1819-02-14	1233
+118	118	1816-02-18	66
+119	119	1821-11-17	61
+120	120	1827-05-11	1198
+121	121	1823-11-28	997
+122	122	1815-01-26	506
+123	123	1814-12-27	1213
+124	124	1813-05-17	830
+125	125	1822-05-22	46
+126	126	1814-11-13	245
+127	127	1821-10-16	1213
+128	128	1819-03-13	445
+129	129	1830-11-25	170
+130	130	1827-10-25	921
+131	131	1820-02-11	328
+132	132	1816-01-20	66
+133	133	1820-02-08	856
+134	134	1816-04-09	303
+135	135	1825-03-16	389
+136	136	1831-02-04	554
+137	137	1827-04-08	60
+138	138	1815-02-26	854
+139	139	1824-04-15	1031
+140	140	1822-04-22	642
+141	141	1813-09-28	941
+142	142	1821-08-08	787
+143	143	1810-02-21	918
+144	144	1829-07-15	678
+145	145	1826-09-08	473
+146	146	1824-04-26	430
+147	147	1828-04-11	931
+148	148	1816-01-04	192
+149	149	1810-02-27	389
+150	150	1814-04-06	291
+151	151	1824-03-26	529
+152	152	1825-12-22	941
+153	153	1809-11-09	729
+154	154	1829-07-16	302
+155	155	1815-05-16	349
+156	156	1826-12-03	318
+157	157	1813-09-14	168
+158	158	1812-10-25	1094
+159	159	1823-10-04	581
+160	160	1810-10-06	31
+161	161	1821-05-27	377
+162	162	1822-02-04	1228
+163	163	1813-06-07	642
+164	164	1827-12-07	1013
+165	165	1818-02-09	1191
+166	166	1810-02-19	1084
+167	167	1808-02-04	922
+168	168	1823-01-11	1212
+169	169	1809-06-14	501
+170	170	1817-05-26	117
+171	171	1814-07-10	425
+172	172	1824-08-21	1055
+173	173	1821-05-17	139
+174	174	1829-10-12	277
+175	175	1823-11-14	772
+176	176	1812-01-04	342
 \.
 
 
@@ -14402,185 +14510,182 @@ COPY public.divorce_certificates (id, divorce_id, issue_date, issuer) FROM stdin
 --
 
 COPY public.divorces (id, marriage_id, divorce_date) FROM stdin;
-1	2	2000-04-10
-2	5	1985-12-14
-3	6	1988-10-20
-4	8	1953-10-23
-5	10	1950-05-11
-6	12	1951-11-11
-7	13	1959-02-19
-8	15	1961-06-23
-9	16	1925-11-27
-10	17	1934-02-19
-11	18	1935-02-28
-12	19	1938-06-16
-13	20	1931-07-07
-14	22	1923-09-17
-15	24	1920-04-03
-16	25	1932-02-10
-17	26	1920-04-07
-18	27	1921-07-08
-19	28	1939-11-04
-20	29	1923-11-05
-21	30	1935-05-28
-22	32	1909-11-27
-23	34	1907-03-08
-24	35	1896-05-10
-25	36	1913-02-09
-26	37	1898-05-27
-27	40	1895-08-11
-28	41	1909-01-18
-29	42	1896-04-13
-30	45	1908-12-20
-31	46	1911-12-11
-32	48	1901-01-10
-33	49	1900-07-22
-34	50	1895-12-09
-35	51	1905-10-20
-36	52	1907-08-22
-37	54	1902-12-25
-38	55	1900-02-08
-39	57	1907-03-06
-40	58	1894-09-13
-41	59	1906-06-25
-42	63	1915-03-20
-43	64	1891-04-08
-44	65	1870-02-08
-45	67	1883-09-16
-46	69	1874-05-02
-47	70	1891-03-21
-48	71	1882-01-18
-49	72	1879-05-16
-50	73	1886-12-05
-51	75	1878-04-09
-52	76	1883-06-15
-53	77	1890-12-26
-54	80	1884-03-12
-55	81	1885-07-01
-56	82	1879-12-26
-57	84	1874-09-21
-58	85	1881-08-04
-59	86	1875-03-18
-60	87	1887-04-14
-61	88	1880-07-05
-62	89	1877-12-21
-63	92	1867-09-24
-64	93	1886-11-08
-65	94	1881-10-19
-66	95	1882-09-05
-67	99	1871-02-16
-68	100	1885-04-07
-69	102	1878-07-16
-70	103	1880-02-18
-71	104	1883-03-01
-72	105	1869-02-12
-73	106	1878-01-03
-74	107	1884-04-23
-75	108	1877-01-26
-76	109	1877-10-04
-77	110	1883-05-02
-78	111	1868-04-17
-79	112	1881-11-23
-80	113	1892-03-03
-81	114	1871-11-23
-82	116	1877-08-18
-83	117	1879-04-26
-84	119	1886-12-02
-85	120	1868-09-28
-86	121	1885-06-12
-87	122	1874-07-21
-88	123	1873-04-11
-89	124	1883-05-12
-90	125	1886-02-15
-91	126	1890-03-12
-92	127	1871-05-28
-93	128	1846-05-20
-94	129	1856-07-13
-95	130	1849-06-24
-96	133	1852-12-07
-97	134	1851-12-08
-98	135	1863-03-05
-99	136	1859-04-12
-100	137	1854-02-20
-101	138	1863-08-25
-102	139	1856-07-27
-103	140	1864-01-25
-104	141	1853-04-09
-105	142	1859-06-18
-106	144	1851-09-11
-107	147	1858-12-28
-108	148	1851-06-25
-109	149	1857-09-19
-110	150	1852-11-22
-111	151	1855-02-10
-112	152	1852-05-16
-113	153	1863-05-12
-114	155	1848-01-06
-115	156	1857-09-06
-116	158	1846-07-10
-117	161	1858-07-04
-118	162	1853-03-14
-119	165	1852-08-26
-120	166	1851-11-10
-121	169	1845-05-14
-122	170	1851-04-20
-123	173	1847-10-25
-124	175	1855-06-23
-125	176	1853-01-28
-126	177	1848-05-10
-127	178	1863-11-26
-128	179	1854-06-01
-129	180	1860-02-28
-130	182	1858-04-01
-131	183	1867-02-28
-132	184	1841-03-06
-133	185	1863-03-09
-134	186	1855-10-06
-135	187	1855-12-04
-136	188	1861-04-17
-137	189	1845-03-08
-138	192	1855-11-02
-139	193	1854-06-07
-140	194	1856-04-25
-141	195	1859-12-17
-142	196	1854-08-10
-143	198	1860-10-04
-144	199	1860-04-25
-145	200	1851-10-09
-146	202	1853-01-05
-147	203	1848-04-01
-148	205	1865-06-06
-149	206	1855-04-24
-150	207	1846-01-18
-151	208	1851-04-18
-152	210	1855-08-28
-153	211	1862-04-26
-154	213	1851-04-03
-155	215	1856-03-23
-156	216	1860-05-13
-157	217	1855-11-21
-158	218	1850-06-12
-159	220	1847-12-18
-160	221	1865-04-19
-161	222	1860-09-22
-162	223	1862-12-16
-163	225	1861-09-27
-164	226	1858-12-22
-165	231	1846-06-25
-166	233	1861-01-01
-167	235	1862-04-17
-168	236	1851-10-25
-169	237	1861-11-11
-170	239	1861-04-04
-171	240	1855-10-20
-172	241	1858-03-21
-173	242	1861-10-24
-174	243	1861-02-02
-175	244	1850-11-05
-176	245	1856-07-20
-177	247	1860-09-12
-178	248	1858-12-25
-179	249	1856-08-11
+1	1	2000-09-13
+2	2	1973-12-16
+3	3	1968-02-26
+4	4	1954-12-12
+5	5	1952-04-19
+6	6	1947-01-02
+7	7	1939-05-20
+8	9	1918-07-08
+9	10	1914-06-27
+10	11	1915-11-16
+11	13	1917-04-24
+12	15	1926-08-25
+13	16	1897-06-08
+14	17	1903-06-21
+15	18	1884-10-02
+16	20	1896-04-12
+17	22	1892-07-12
+18	23	1903-08-25
+19	24	1902-01-12
+20	25	1892-05-16
+21	26	1900-11-04
+22	27	1893-07-09
+23	29	1883-07-23
+24	30	1903-01-27
+25	31	1898-12-21
+26	32	1875-11-19
+27	33	1866-05-23
+28	34	1877-10-13
+29	37	1873-08-26
+30	39	1872-03-10
+31	40	1882-05-20
+32	42	1865-09-26
+33	43	1870-02-04
+34	44	1864-07-19
+35	45	1865-04-25
+36	46	1871-11-04
+37	47	1870-06-11
+38	48	1865-03-12
+39	51	1873-09-04
+40	52	1875-04-15
+41	54	1871-01-15
+42	56	1867-01-16
+43	58	1872-02-27
+44	59	1883-06-13
+45	61	1880-07-22
+46	62	1863-05-03
+47	64	1850-07-25
+48	65	1848-09-14
+49	67	1834-07-06
+50	69	1850-01-21
+51	71	1843-07-17
+52	72	1846-09-08
+53	73	1837-01-19
+54	74	1851-04-05
+55	76	1851-10-05
+56	77	1840-07-28
+57	78	1854-03-05
+58	81	1841-09-18
+59	82	1851-09-21
+60	87	1839-07-25
+61	89	1836-10-24
+62	93	1839-09-28
+63	95	1853-11-21
+64	97	1847-03-20
+65	99	1858-03-13
+66	101	1845-11-11
+67	102	1851-02-14
+68	103	1842-11-11
+69	104	1850-11-03
+70	106	1843-11-24
+71	108	1838-08-23
+72	110	1841-09-17
+73	111	1854-01-04
+74	112	1851-08-07
+75	113	1832-03-25
+76	115	1852-05-27
+77	116	1836-01-19
+78	117	1847-06-19
+79	118	1849-08-13
+80	119	1851-06-06
+81	120	1850-02-15
+82	121	1855-02-25
+83	122	1854-11-23
+84	123	1850-11-25
+85	124	1844-06-21
+86	125	1840-05-14
+87	126	1840-11-18
+88	128	1819-03-24
+89	129	1827-02-17
+90	130	1816-11-20
+91	131	1821-01-07
+92	133	1813-12-16
+93	135	1826-01-01
+94	136	1820-11-08
+95	137	1818-07-09
+96	138	1816-11-04
+97	139	1814-01-08
+98	140	1821-10-13
+99	141	1811-02-13
+100	143	1818-06-18
+101	144	1812-11-26
+102	145	1827-02-06
+103	146	1818-02-21
+104	147	1810-05-19
+105	148	1812-08-05
+106	149	1811-04-16
+107	150	1810-11-20
+108	151	1812-12-02
+109	152	1817-02-21
+110	153	1829-10-08
+111	154	1829-09-20
+112	155	1827-10-13
+113	156	1824-10-22
+114	157	1814-01-06
+115	158	1826-03-28
+116	159	1826-04-12
+117	160	1819-02-14
+118	161	1816-02-18
+119	162	1821-11-17
+120	164	1827-05-11
+121	165	1823-11-28
+122	166	1815-01-26
+123	167	1814-12-27
+124	168	1813-05-17
+125	169	1822-05-22
+126	170	1814-11-13
+127	171	1821-10-16
+128	172	1819-03-13
+129	174	1830-11-25
+130	176	1827-10-25
+131	177	1820-02-11
+132	178	1816-01-20
+133	179	1820-02-08
+134	180	1816-04-09
+135	182	1825-03-16
+136	184	1831-02-04
+137	186	1827-04-08
+138	188	1815-02-26
+139	189	1824-04-15
+140	191	1822-04-22
+141	192	1813-09-28
+142	193	1821-08-08
+143	195	1810-02-21
+144	196	1829-07-15
+145	197	1826-09-08
+146	200	1824-04-26
+147	201	1828-04-11
+148	202	1816-01-04
+149	204	1810-02-27
+150	205	1814-04-06
+151	207	1824-03-26
+152	208	1825-12-22
+153	209	1809-11-09
+154	210	1829-07-16
+155	215	1815-05-16
+156	218	1826-12-03
+157	219	1813-09-14
+158	220	1812-10-25
+159	221	1823-10-04
+160	223	1810-10-06
+161	225	1821-05-27
+162	226	1822-02-04
+163	230	1813-06-07
+164	232	1827-12-07
+165	233	1818-02-09
+166	234	1810-02-19
+167	240	1808-02-04
+168	241	1823-01-11
+169	242	1809-06-14
+170	243	1817-05-26
+171	244	1814-07-10
+172	245	1824-08-21
+173	246	1821-05-17
+174	247	1829-10-12
+175	248	1823-11-14
+176	249	1812-01-04
 \.
 
 
@@ -14597,6 +14702,7 @@ COPY public.document_types (id, document) FROM stdin;
 1	International passport
 2	Marriage certificate
 8	Passport
+10	Pet passport
 3	Visa
 \.
 
@@ -14606,206 +14712,206 @@ COPY public.document_types (id, document) FROM stdin;
 --
 
 COPY public.drivers_licences (id, type, person, issuer, issue_date, expiration_date) FROM stdin;
-1	C	289	101	1890-05-21	1900-05-21
-2	C1	102	584	1897-05-28	1907-05-28
-3	B1	232	115	1997-09-16	2007-09-16
-4	C1	285	271	1907-09-26	1917-09-26
-5	A	15	670	2018-09-26	2028-09-26
-6	D	276	193	1872-08-19	1882-08-19
-7	D1	387	315	1897-09-23	1907-09-23
-8	B1	246	38	2024-12-07	2034-12-07
-9	C	443	429	1848-12-10	1858-12-10
-10	D1	22	75	1987-06-09	1997-06-09
-11	D1	386	811	1938-11-03	1948-11-03
-12	C	235	641	1888-12-03	1898-12-03
-13	C	314	1238	1972-01-18	1982-01-18
-14	D1	444	561	1963-11-21	1973-11-21
-15	D1	125	979	1909-05-12	1919-05-12
-16	D1	139	83	1989-01-10	1999-01-10
-17	D	104	160	1950-09-21	1960-09-21
-18	C1	307	401	1870-02-13	1880-02-13
-19	D1	366	1150	1886-11-05	1896-11-05
-20	C1	274	13	1866-05-19	1876-05-19
-21	B1	275	612	1903-07-14	1913-07-14
-22	D	274	559	1914-12-28	1924-12-28
-23	D	273	1016	2015-07-01	2025-07-01
-24	A	267	1119	2005-11-21	2015-11-21
-25	D1	232	259	1989-11-09	1999-11-09
-26	C	331	403	1874-08-10	1884-08-10
-27	A	371	1013	1923-02-18	1933-02-18
-28	C	69	744	1933-03-26	1943-03-26
-29	C	404	870	1899-01-06	1909-01-06
-30	D	221	432	1983-02-05	1993-02-05
-31	C	342	794	1857-03-27	1867-03-27
-32	C1	96	840	1931-05-26	1941-05-26
-33	B1	394	707	2004-06-16	2014-06-16
-34	B1	4	208	1997-11-23	2007-11-23
-35	C	46	1083	2014-06-08	2024-06-08
-36	B1	30	648	2023-12-24	2033-12-24
-37	D	438	906	1919-08-24	1929-08-24
-38	A	454	692	1878-09-09	1888-09-09
-39	B1	68	288	1980-09-01	1990-09-01
-40	D	486	10	1917-08-05	1927-08-05
-41	D1	206	1215	1927-02-13	1937-02-13
-42	C	284	928	1941-07-21	1951-07-21
-43	A	101	270	2010-10-26	2020-10-26
-44	D	423	91	1873-11-22	1883-11-22
-45	C1	391	191	1960-11-14	1970-11-14
-46	A	94	818	1961-03-08	1971-03-08
-47	C	30	37	1996-08-12	2006-08-12
-48	B1	176	1062	1871-12-02	1881-12-02
-49	B1	496	1158	1950-07-19	1960-07-19
-50	D1	421	801	1954-01-14	1964-01-14
-51	D1	281	315	2007-09-13	2017-09-13
-52	C1	406	1157	1922-10-01	1932-10-01
-53	D	119	660	1893-08-12	1903-08-12
-54	D	225	298	1955-10-08	1965-10-08
-55	B1	237	288	2011-10-17	2021-10-17
-56	C1	435	46	2008-10-23	2018-10-23
-57	A	437	244	1905-11-13	1915-11-13
-58	C	257	458	1985-08-26	1995-08-26
-59	D1	125	921	1967-12-13	1977-12-13
-60	D	424	555	1925-08-06	1935-08-06
-61	D1	418	660	1854-09-07	1864-09-07
-62	C	342	309	1849-09-06	1859-09-06
-63	A	497	29	1859-02-22	1869-02-22
-64	B1	313	732	1979-12-08	1989-12-08
-65	D1	294	108	1973-11-23	1983-11-23
-66	C	144	121	1976-06-14	1986-06-14
-67	C1	322	724	1938-05-04	1948-05-04
-68	A	359	309	1987-10-13	1997-10-13
-69	C	457	1209	2004-01-24	2014-01-24
-70	C	461	564	1878-09-13	1888-09-13
-71	D	376	777	1872-08-18	1882-08-18
-72	C	212	1024	1909-09-18	1919-09-18
-73	C	391	1056	1998-01-24	2008-01-24
-74	C	418	521	1996-08-10	2006-08-10
-75	D	140	831	1965-11-14	1975-11-14
-76	C	360	607	1984-08-18	1994-08-18
-77	A	495	372	1920-07-01	1930-07-01
-78	A	425	307	1939-01-26	1949-01-26
-79	C1	27	170	1947-01-25	1957-01-25
-80	D	476	641	1968-02-26	1978-02-26
-81	D	448	411	2018-05-25	2028-05-25
-82	D1	311	227	2016-07-02	2026-07-02
-83	A	123	1113	1970-07-04	1980-07-04
-84	D1	225	1121	1957-04-23	1967-04-23
-85	D1	60	288	1966-07-23	1976-07-23
-86	A	153	876	2007-08-14	2017-08-14
-87	D1	405	733	1851-09-04	1861-09-04
-88	C1	312	39	1848-10-02	1858-10-02
-89	C	365	360	1941-05-01	1951-05-01
-90	A	107	917	1951-03-07	1961-03-07
-91	A	202	378	1917-05-19	1927-05-19
-92	C	351	1113	1947-11-01	1957-11-01
-93	C1	186	32	1932-03-02	1942-03-02
-94	A	137	1012	1887-09-11	1897-09-11
-95	B1	456	599	2016-06-26	2026-06-26
-96	C	427	1066	1869-05-11	1879-05-11
-97	C	317	264	1961-11-11	1971-11-11
-98	D1	404	106	1930-03-20	1940-03-20
-99	C1	358	809	1932-10-08	1942-10-08
-100	B1	121	875	1988-01-11	1998-01-11
-101	B1	230	647	1887-09-07	1897-09-07
-102	C1	79	756	1913-08-01	1923-08-01
-103	A	42	655	1920-07-19	1930-07-19
-104	A	122	606	1992-03-11	2002-03-11
-105	C1	283	129	1843-03-19	1853-03-19
-106	B1	12	633	1970-02-01	1980-02-01
-107	B1	94	451	2006-10-17	2016-10-17
-108	D	228	1027	1964-03-24	1974-03-24
-109	A	28	940	1964-07-04	1974-07-04
-110	C	419	1154	1843-02-02	1853-02-02
-111	B1	386	398	1885-01-18	1895-01-18
-112	C	214	1155	1943-09-22	1953-09-22
-113	C1	145	637	1998-07-19	2008-07-19
-114	D	100	1243	1949-02-04	1959-02-04
-115	C	288	507	1987-10-22	1997-10-22
-116	B1	150	1178	1980-01-05	1990-01-05
-117	A	365	97	1899-07-14	1909-07-14
-118	D	248	1107	1929-12-15	1939-12-15
-119	B1	403	860	2006-02-13	2016-02-13
-120	D1	471	739	2005-08-24	2015-08-24
-121	B1	161	1047	1940-10-28	1950-10-28
-122	D1	433	1248	1929-05-15	1939-05-15
-123	C1	464	544	1888-02-15	1898-02-15
-124	A	240	17	1913-01-26	1923-01-26
-125	D	282	1228	1911-05-24	1921-05-24
-126	A	311	608	1947-02-27	1957-02-27
-127	D	482	683	1902-06-12	1912-06-12
-128	D1	307	38	1871-01-18	1881-01-18
-129	C1	205	1018	1996-12-28	2006-12-28
-130	D	100	275	1911-02-07	1921-02-07
-131	A	262	585	1928-11-28	1938-11-28
-132	D	403	618	1851-11-04	1861-11-04
-133	C	299	979	1948-03-28	1958-03-28
-134	D	150	888	1921-12-12	1931-12-12
-135	B1	99	40	2018-07-15	2028-07-15
-136	A	111	310	2013-11-13	2023-11-13
-137	C1	296	398	1850-10-20	1860-10-20
-138	A	499	429	1885-04-16	1895-04-16
-139	C1	374	871	1969-06-27	1979-06-27
-140	C1	204	947	1882-10-05	1892-10-05
-141	A	93	556	1996-08-21	2006-08-21
-142	B1	290	352	2016-04-07	2026-04-07
-143	B1	50	211	1995-03-19	2005-03-19
-144	B1	368	849	1988-11-10	1998-11-10
-145	B1	325	813	1928-08-23	1938-08-23
-146	C	51	1189	1936-06-09	1946-06-09
-147	D1	465	1176	1849-08-06	1859-08-06
-148	D1	383	701	1901-07-12	1911-07-12
-149	D	145	775	2017-01-12	2027-01-12
-150	D1	325	767	1949-02-26	1959-02-26
-151	C1	167	1185	2002-03-24	2012-03-24
-152	B1	85	946	1911-11-28	1921-11-28
-153	C	447	760	1876-03-20	1886-03-20
-154	C	435	683	1900-04-21	1910-04-21
-155	A	42	492	1928-07-23	1938-07-23
-156	B1	328	1129	1992-12-09	2002-12-09
-157	C1	93	713	2004-11-17	2014-11-17
-158	C1	164	1046	1939-01-10	1949-01-10
-159	D1	468	683	1927-11-12	1937-11-12
-160	C1	86	452	1921-05-10	1931-05-10
-161	D	435	599	1874-08-18	1884-08-18
-162	C	183	804	1967-06-04	1977-06-04
-163	A	109	680	1913-02-14	1923-02-14
-164	D1	92	641	1987-12-09	1997-12-09
-165	A	168	358	1983-12-21	1993-12-21
-166	C	292	212	1871-06-28	1881-06-28
-167	C	276	190	1979-09-17	1989-09-17
-168	D	295	33	1980-01-04	1990-01-04
-169	C	265	342	1976-12-28	1986-12-28
-170	D1	75	1016	2013-09-28	2023-09-28
-171	D1	412	166	2007-12-02	2017-12-02
-172	C1	455	1009	1912-03-03	1922-03-03
-173	A	14	207	1987-11-17	1997-11-17
-174	C	404	681	1957-10-26	1967-10-26
-175	D1	385	1050	1906-09-15	1916-09-15
-176	C1	72	233	1932-11-05	1942-11-05
-177	D1	442	27	1892-06-23	1902-06-23
-178	B1	175	361	1965-09-05	1975-09-05
-179	A	5	292	2021-01-06	2031-01-06
-180	C1	75	824	1978-12-02	1988-12-02
-181	A	51	861	1940-05-23	1950-05-23
-182	C1	197	288	1963-01-19	1973-01-19
-183	C1	409	120	1973-12-14	1983-12-14
-184	D1	457	1186	1923-10-15	1933-10-15
-185	D	213	345	2001-01-24	2011-01-24
-186	B1	307	425	1895-12-13	1905-12-13
-187	C	369	499	1923-01-24	1933-01-24
-188	C1	6	260	2014-12-17	2024-12-17
-189	D1	123	360	1966-03-09	1976-03-09
-190	D	226	56	1942-09-06	1952-09-06
-191	C1	125	1150	2009-05-26	2019-05-26
-192	C1	181	754	1968-07-23	1978-07-23
-193	A	364	751	1916-09-10	1926-09-10
-194	D1	94	778	1939-09-12	1949-09-12
-195	D	241	75	1924-12-24	1934-12-24
-196	D1	80	836	1936-04-04	1946-04-04
-197	A	16	61	2001-08-26	2011-08-26
-198	A	421	610	1911-07-12	1921-07-12
-199	A	149	1035	1992-12-04	2002-12-04
-200	C	158	607	1951-12-18	1961-12-18
+1	D1	179	803	1910-02-24	1920-02-24
+2	D	310	512	1866-02-25	1876-02-25
+3	B1	224	339	1984-07-02	1994-07-02
+4	B1	184	1067	1836-03-19	1846-03-19
+5	B1	59	790	1895-12-15	1905-12-15
+6	B1	259	1196	1858-07-01	1868-07-01
+7	C	491	215	2013-08-09	2023-08-09
+8	D1	356	861	1867-05-01	1877-05-01
+9	C1	321	1151	2020-10-06	2030-10-06
+10	B1	495	191	1848-09-26	1858-09-26
+11	B1	451	568	1835-08-06	1845-08-06
+12	D	120	176	1892-06-15	1902-06-15
+13	C1	336	1248	2019-10-03	2029-10-03
+14	D	469	763	1959-04-11	1969-04-11
+15	C	409	25	1965-02-28	1975-02-28
+16	D1	380	775	1878-09-27	1888-09-27
+17	C1	206	1133	1901-09-17	1911-09-17
+18	A	129	599	1941-08-28	1951-08-28
+19	B1	33	1092	1895-04-05	1905-04-05
+20	B1	313	1036	2008-05-14	2018-05-14
+21	C1	449	856	1856-04-24	1866-04-24
+22	D1	292	1219	1871-12-05	1881-12-05
+23	B1	210	649	1970-08-20	1980-08-20
+24	A	164	650	2013-04-16	2023-04-16
+25	D	400	1158	1915-10-27	1925-10-27
+26	A	448	443	1950-04-24	1960-04-24
+27	D1	307	372	1839-12-21	1849-12-21
+28	D	498	476	1845-04-01	1855-04-01
+29	D1	492	777	1825-07-05	1835-07-05
+30	A	471	275	1916-02-07	1926-02-07
+31	D1	130	1099	1922-10-01	1932-10-01
+32	D	221	1040	1837-09-26	1847-09-26
+33	D	331	159	1835-09-16	1845-09-16
+34	C1	72	518	1951-04-23	1961-04-23
+35	D1	99	140	2002-11-14	2012-11-14
+36	B1	160	494	1901-04-11	1911-04-11
+37	C	478	125	1959-05-04	1969-05-04
+38	D	253	176	1922-06-04	1932-06-04
+39	B1	375	541	1828-03-28	1838-03-28
+40	C1	194	461	2015-01-22	2025-01-22
+41	B1	386	767	1963-01-27	1973-01-27
+42	C1	248	340	1910-09-24	1920-09-24
+43	C	373	396	1937-08-08	1947-08-08
+44	D1	394	1229	1941-08-14	1951-08-14
+45	D1	112	959	1922-07-03	1932-07-03
+46	D	416	53	1907-03-21	1917-03-21
+47	B1	43	622	2021-07-17	2031-07-17
+48	C1	173	804	1985-06-07	1995-06-07
+49	B1	152	792	1931-08-14	1941-08-14
+50	C1	243	1148	2022-07-17	2032-07-17
+51	D	336	1219	1945-02-07	1955-02-07
+52	C1	179	1247	1985-04-14	1995-04-14
+53	B1	283	934	1869-08-07	1879-08-07
+54	C	337	733	1966-05-27	1976-05-27
+55	A	304	57	1881-02-08	1891-02-08
+56	B1	170	696	1857-12-27	1867-12-27
+57	D1	457	1070	1884-05-13	1894-05-13
+58	C1	120	923	1948-07-11	1958-07-11
+59	B1	87	234	1889-06-24	1899-06-24
+60	D	415	1131	1919-01-10	1929-01-10
+61	B1	115	1057	1862-11-24	1872-11-24
+62	D	283	550	1999-05-07	2009-05-07
+63	C	180	128	1926-03-19	1936-03-19
+64	A	133	1238	2015-01-15	2025-01-15
+65	B1	191	816	1834-02-21	1844-02-21
+66	D	237	684	1880-10-16	1890-10-16
+67	A	22	724	1978-04-11	1988-04-11
+68	C1	195	735	1971-03-17	1981-03-17
+69	D1	175	136	1901-08-14	1911-08-14
+70	D1	318	836	1935-12-15	1945-12-15
+71	C1	390	655	1819-10-11	1829-10-11
+72	C1	460	1227	1959-08-03	1969-08-03
+73	D	145	25	1876-02-17	1886-02-17
+74	C	430	220	1838-11-18	1848-11-18
+75	B1	397	278	1953-05-28	1963-05-28
+76	B1	342	963	1959-11-18	1969-11-18
+77	A	265	316	1969-01-15	1979-01-15
+78	B1	100	814	1963-03-09	1973-03-09
+79	C	68	852	1925-07-28	1935-07-28
+80	C1	329	1158	1884-12-28	1894-12-28
+81	D1	226	955	2023-09-27	2033-09-27
+82	C1	370	1181	1858-02-13	1868-02-13
+83	C	256	347	1981-08-05	1991-08-05
+84	A	380	613	1891-10-10	1901-10-10
+85	B1	247	549	1888-06-28	1898-06-28
+86	C1	267	292	1974-09-04	1984-09-04
+87	B1	328	308	1951-06-21	1961-06-21
+88	D1	148	959	1964-12-19	1974-12-19
+89	C	285	768	1960-04-08	1970-04-08
+90	C	153	876	1870-09-04	1880-09-04
+91	B1	452	225	1971-07-25	1981-07-25
+92	C	108	1175	1978-02-22	1988-02-22
+93	C	445	1072	1994-05-22	2004-05-22
+94	D1	194	328	1975-06-02	1985-06-02
+95	A	442	384	1861-03-09	1871-03-09
+96	A	37	1167	1889-03-27	1899-03-27
+97	D1	231	888	1958-10-21	1968-10-21
+98	D1	319	712	1997-09-27	2007-09-27
+99	C	127	1243	1983-11-16	1993-11-16
+100	D1	58	140	1895-09-24	1905-09-24
+101	D	349	991	1815-05-28	1825-05-28
+102	C	185	936	1864-01-28	1874-01-28
+103	D1	208	416	1850-07-11	1860-07-11
+104	D1	364	331	1871-05-25	1881-05-25
+105	B1	133	91	1883-11-21	1893-11-21
+106	A	12	1230	1979-06-01	1989-06-01
+107	C	337	158	1926-05-20	1936-05-20
+108	C	493	709	1841-02-19	1851-02-19
+109	A	11	451	1967-05-02	1977-05-02
+110	D1	434	451	1972-05-11	1982-05-11
+111	A	352	1189	1911-06-26	1921-06-26
+112	D1	234	635	1946-05-05	1956-05-05
+113	C1	196	1080	1864-11-02	1874-11-02
+114	D	496	750	1970-02-15	1980-02-15
+115	B1	312	941	1815-08-02	1825-08-02
+116	D	238	187	2021-12-16	2031-12-16
+117	C1	311	1106	2001-07-02	2011-07-02
+118	C1	194	12	1986-02-19	1996-02-19
+119	C1	328	245	1833-01-24	1843-01-24
+120	C1	134	871	1995-05-12	2005-05-12
+121	D	182	994	1963-04-18	1973-04-18
+122	B1	316	406	1892-06-20	1902-06-20
+123	A	399	388	1909-05-11	1919-05-11
+124	C1	375	722	1906-05-23	1916-05-23
+125	C	216	899	1961-10-22	1971-10-22
+126	B1	302	1240	1912-07-12	1922-07-12
+127	D	113	931	1900-09-18	1910-09-18
+128	C1	278	285	1860-07-03	1870-07-03
+129	A	359	1180	2007-12-13	2017-12-13
+130	B1	155	30	1898-02-23	1908-02-23
+131	C1	251	853	1973-12-26	1983-12-26
+132	D	18	799	1972-08-19	1982-08-19
+133	C	221	602	1926-10-17	1936-10-17
+134	C1	149	899	1877-07-09	1887-07-09
+135	B1	382	558	1915-01-24	1925-01-24
+136	D	345	586	1918-01-18	1928-01-18
+137	D1	203	614	1896-03-18	1906-03-18
+138	A	458	62	2018-07-16	2028-07-16
+139	D	348	1178	1945-08-24	1955-08-24
+140	C	481	119	2002-05-01	2012-05-01
+141	D1	453	416	1936-11-16	1946-11-16
+142	B1	262	603	1883-01-28	1893-01-28
+143	D	204	663	1838-03-26	1848-03-26
+144	C	413	233	1940-10-12	1950-10-12
+145	D1	350	923	1816-04-21	1826-04-21
+146	C1	448	1214	1857-12-28	1867-12-28
+147	A	248	385	1910-02-20	1920-02-20
+148	D	415	495	1846-01-05	1856-01-05
+149	D1	15	1074	2014-07-22	2024-07-22
+150	D1	154	511	1880-03-06	1890-03-06
+151	D1	4	433	1972-08-06	1982-08-06
+152	B1	326	374	1884-01-06	1894-01-06
+153	C1	251	758	1961-02-22	1971-02-22
+154	A	469	229	1987-07-20	1997-07-20
+155	D	384	723	1968-02-03	1978-02-03
+156	C	8	437	1995-12-04	2005-12-04
+157	C1	74	604	1983-05-04	1993-05-04
+158	A	352	1102	1854-02-26	1864-02-26
+159	A	8	739	1972-01-28	1982-01-28
+160	C1	158	926	2000-08-17	2010-08-17
+161	A	320	921	2009-09-08	2019-09-08
+162	C	70	510	1959-12-11	1969-12-11
+163	D1	28	1193	1922-03-04	1932-03-04
+164	D	262	10	1855-07-10	1865-07-10
+165	D1	441	663	1846-10-28	1856-10-28
+166	C1	23	158	2011-12-10	2021-12-10
+167	D1	384	1131	1856-09-05	1866-09-05
+168	B1	253	167	1947-03-10	1957-03-10
+169	D1	319	172	1908-12-14	1918-12-14
+170	C1	366	195	1969-09-23	1979-09-23
+171	C1	489	995	1833-06-02	1843-06-02
+172	A	381	640	1924-02-01	1934-02-01
+173	D	319	74	1992-10-23	2002-10-23
+174	D1	18	34	1916-04-12	1926-04-12
+175	C1	194	266	1875-01-23	1885-01-23
+176	A	341	91	1860-03-14	1870-03-14
+177	C	416	1168	1994-05-28	2004-05-28
+178	B1	451	1102	1882-09-10	1892-09-10
+179	C1	196	897	1839-02-15	1849-02-15
+180	D1	63	1053	1958-03-21	1968-03-21
+181	D	470	1250	2010-04-25	2020-04-25
+182	C	217	957	1919-09-26	1929-09-26
+183	D	72	904	1866-07-16	1876-07-16
+184	C	146	1067	1883-04-06	1893-04-06
+185	C1	456	985	1949-02-13	1959-02-13
+186	D1	264	497	1975-08-25	1985-08-25
+187	B1	50	225	1906-03-24	1916-03-24
+188	A	250	511	2004-05-12	2014-05-12
+189	D	338	253	1912-07-19	1922-07-19
+190	A	431	426	1830-12-02	1840-12-02
+191	C1	164	252	1976-04-11	1986-04-11
+192	D1	159	21	1967-01-25	1977-01-25
+193	C1	162	648	1923-06-11	1933-06-11
+194	C1	121	652	1900-02-15	1910-02-15
+195	C	406	743	1895-01-18	1905-01-18
+196	D	411	488	1963-10-28	1973-10-28
+197	A	68	646	1895-12-04	1905-12-04
+198	A	212	1115	1915-03-24	1925-03-24
+199	A	97	1137	2020-08-24	2030-08-24
+200	D	239	1181	1885-01-25	1895-01-25
 \.
 
 
@@ -14814,766 +14920,793 @@ COPY public.drivers_licences (id, type, person, issuer, issue_date, expiration_d
 --
 
 COPY public.educational_certificates (id, issuer, holder, issue_date, kind) FROM stdin;
-1	21	1	2038-02-06	1
-2	38	1	2039-12-23	3
-3	4	1	2039-11-24	6
-4	22	2	2015-12-09	1
-5	29	2	2016-10-10	2
-6	18	2	2015-06-16	5
-7	27	3	2014-07-06	1
-8	21	3	2015-02-25	2
-9	14	3	2015-05-26	5
-10	25	5	1991-12-01	1
-11	28	5	1989-04-03	2
-12	25	6	1991-07-25	1
-13	35	6	1989-05-06	3
-14	11	6	1991-04-27	6
-15	28	8	1966-03-18	1
-16	26	8	1963-11-20	2
-17	22	9	1964-02-17	1
-18	30	10	1966-09-18	1
-19	30	10	1963-06-22	2
-20	2	10	1966-10-17	4
-21	24	12	1965-01-05	1
-22	21	12	1963-04-13	2
-23	30	13	1964-11-19	1
-24	34	13	1964-06-01	3
-25	14	13	1966-09-07	6
-26	30	14	1964-08-06	1
-27	21	14	1963-07-05	2
-28	14	14	1965-05-10	4
-29	28	15	1963-11-20	1
-30	26	15	1964-06-17	2
-31	23	16	1939-12-01	1
-32	32	16	1940-07-04	3
-33	3	16	1938-12-04	7
-34	21	18	1940-01-11	1
-35	23	19	1940-05-04	1
-36	29	19	1941-06-23	2
-37	18	19	1940-12-04	4
-38	29	20	1941-06-12	1
-39	27	21	1941-02-08	1
-40	39	21	1941-07-14	3
-41	22	22	1941-03-01	1
-42	36	22	1940-08-15	3
-43	28	23	1941-03-25	1
-44	24	24	1941-04-12	1
-45	22	25	1938-03-11	1
-46	27	27	1939-08-14	1
-47	27	29	1941-06-02	1
-48	26	30	1940-08-23	1
-49	21	31	1941-11-28	1
-50	22	31	1940-03-26	2
-51	23	33	1914-06-19	1
-52	35	33	1914-02-03	3
-53	25	35	1913-02-05	1
-54	31	35	1915-12-03	3
-55	4	35	1915-01-21	7
-56	28	36	1913-01-19	1
-57	26	36	1915-11-17	2
-58	23	37	1915-05-06	1
-59	26	37	1913-02-19	2
-60	26	39	1914-11-06	1
-61	30	39	1914-05-14	2
-62	23	42	1913-03-25	1
-63	22	43	1914-11-23	1
-64	39	43	1913-05-05	3
-65	27	44	1915-08-06	1
-66	22	45	1915-10-19	1
-67	29	45	1913-10-12	2
-68	21	46	1915-12-13	1
-69	34	46	1915-05-07	3
-70	24	47	1914-10-07	1
-71	25	49	1914-12-01	1
-72	29	50	1914-05-09	1
-73	39	50	1915-03-08	3
-74	29	51	1916-03-22	1
-75	21	51	1915-12-02	2
-76	27	52	1916-06-05	1
-77	24	53	1916-07-13	1
-78	31	53	1913-05-16	3
-79	23	54	1915-06-03	1
-80	26	54	1914-09-01	2
-81	28	55	1914-03-07	1
-82	23	59	1916-12-24	1
-83	32	59	1916-11-20	3
-84	14	59	1914-12-06	7
-85	24	60	1915-01-07	1
-86	30	60	1914-07-08	2
-87	29	62	1914-07-27	1
-88	29	63	1913-05-01	1
-89	37	63	1913-08-11	3
-90	14	63	1913-03-13	7
-91	23	64	1888-03-07	1
-92	23	65	1890-03-09	1
-93	31	65	1891-01-02	3
-94	30	66	1888-03-03	1
-95	23	68	1891-10-23	1
-96	29	68	1889-11-19	2
-97	4	68	1889-03-07	4
-98	30	70	1890-03-18	1
-99	27	70	1888-04-14	2
-100	24	71	1889-02-16	1
-101	37	71	1890-03-05	3
-102	25	72	1888-05-09	1
-103	22	72	1890-02-02	2
-104	2	72	1891-01-21	5
-105	25	73	1889-09-22	1
-106	26	73	1891-09-03	2
-107	8	73	1888-06-04	4
-108	26	74	1890-08-05	1
-109	28	74	1891-06-24	2
-110	13	74	1890-02-02	4
-111	26	75	1890-02-05	1
-112	23	77	1890-07-09	1
-113	35	77	1888-02-17	3
-114	21	78	1889-10-03	1
-115	21	80	1888-02-05	1
-116	23	81	1890-08-18	1
-117	23	82	1890-09-09	1
-118	28	83	1890-06-16	1
-119	26	85	1888-09-10	1
-120	24	85	1890-12-19	2
-121	10	85	1891-06-13	5
-122	23	86	1889-04-21	1
-123	37	86	1888-07-20	3
-124	27	88	1891-11-26	1
-125	40	88	1890-11-28	3
-126	21	89	1888-02-25	1
-127	35	89	1889-12-26	3
-128	25	90	1888-08-03	1
-129	22	91	1889-06-03	1
-130	21	92	1888-10-25	1
-131	21	94	1890-08-13	1
-132	34	94	1891-03-17	3
-133	30	95	1889-11-24	1
-134	25	96	1890-07-13	1
-135	39	96	1891-01-12	3
-136	25	97	1889-09-01	1
-137	24	99	1888-05-03	1
-138	29	100	1888-11-04	1
-139	21	100	1890-11-22	2
-140	10	100	1891-05-03	5
-141	30	101	1891-01-06	1
-142	22	102	1888-05-23	1
-143	30	102	1889-06-13	2
-144	1	102	1890-10-20	5
-145	21	104	1890-06-19	1
-146	40	104	1888-08-15	3
-147	15	104	1889-05-07	6
-148	25	105	1891-02-15	1
-149	37	105	1889-02-19	3
-150	25	106	1888-11-22	1
-151	38	106	1889-07-27	3
-152	4	106	1890-08-20	6
-153	27	107	1890-09-15	1
-154	38	107	1890-09-16	3
-155	2	107	1888-01-07	6
-156	29	109	1891-06-09	1
-157	23	109	1888-01-14	2
-158	16	109	1888-05-08	4
-159	28	110	1890-10-05	1
-160	27	110	1889-05-05	2
-161	5	110	1891-01-25	5
-162	30	111	1891-03-10	1
-163	40	111	1888-07-13	3
-164	26	112	1888-02-27	1
-165	25	112	1891-10-22	2
-166	22	114	1890-05-15	1
-167	29	114	1889-06-16	2
-168	29	117	1891-10-22	1
-169	21	117	1890-04-28	2
-170	18	117	1889-10-02	4
-171	23	118	1888-09-15	1
-172	32	118	1890-11-24	3
-173	19	118	1890-02-18	6
-174	24	119	1890-05-23	1
-175	23	121	1888-10-09	1
-176	30	122	1891-05-22	1
-177	25	122	1890-07-20	2
-178	23	124	1888-05-23	1
-179	27	125	1891-06-16	1
-180	31	125	1891-03-02	3
-181	22	126	1888-11-22	1
-182	37	126	1888-02-22	3
-183	16	126	1889-08-24	7
-184	22	127	1888-02-17	1
-185	26	128	1866-03-13	1
-186	30	128	1863-09-20	2
-187	24	130	1866-10-05	1
-188	24	130	1863-02-19	2
-189	18	130	1863-11-17	4
-190	29	132	1864-06-02	1
-191	26	134	1865-06-20	1
-192	23	135	1864-04-08	1
-193	22	138	1863-03-13	1
-194	25	138	1866-07-19	2
-195	20	138	1864-01-21	5
-196	27	140	1864-05-24	1
-197	30	141	1866-01-04	1
-198	21	141	1866-05-26	2
-199	21	142	1865-11-06	1
-200	29	143	1864-07-21	1
-201	31	143	1865-03-24	3
-202	23	144	1864-01-12	1
-203	24	146	1863-04-20	1
-204	30	147	1864-08-07	1
-205	29	149	1865-10-28	1
-206	26	149	1863-11-12	2
-207	5	149	1864-04-04	4
-208	22	150	1863-01-25	1
-209	33	150	1863-04-23	3
-210	25	151	1865-04-19	1
-211	29	151	1866-05-02	2
-212	23	152	1865-02-13	1
-213	32	152	1863-08-12	3
-214	25	154	1863-07-23	1
-215	22	156	1866-05-16	1
-216	23	157	1863-09-21	1
-217	25	157	1865-06-17	2
-218	26	158	1864-09-05	1
-219	28	158	1866-12-11	2
-220	14	158	1866-05-24	4
-221	29	159	1863-08-20	1
-222	23	159	1866-01-26	2
-223	26	160	1864-11-22	1
-224	21	162	1863-06-21	1
-225	28	162	1864-05-10	2
-226	13	162	1865-10-04	5
-227	26	163	1866-08-04	1
-228	40	163	1865-03-18	3
-229	8	163	1865-06-21	6
-230	23	164	1865-12-11	1
-231	33	164	1866-01-07	3
-232	13	164	1865-05-20	6
-233	21	166	1866-05-07	1
-234	28	166	1864-05-23	2
-235	29	167	1866-10-11	1
-236	32	167	1863-07-18	3
-237	17	167	1866-12-01	7
-238	21	168	1864-08-11	1
-239	23	169	1865-08-19	1
-240	25	169	1865-07-02	2
-241	16	169	1866-02-19	5
-242	22	170	1866-10-27	1
-243	40	170	1866-06-03	3
-244	25	171	1864-06-04	1
-245	24	171	1864-02-05	2
-246	30	172	1863-02-21	1
-247	31	172	1866-11-06	3
-248	21	173	1865-08-11	1
-249	40	173	1865-03-18	3
-250	10	173	1866-02-07	6
-251	24	174	1863-03-13	1
-252	30	174	1863-11-06	2
-253	11	174	1864-02-01	4
-254	22	175	1863-09-06	1
-255	29	175	1863-09-02	2
-256	21	176	1866-04-04	1
-257	24	176	1863-04-04	2
-258	2	176	1865-05-07	5
-259	29	177	1863-02-18	1
-260	30	178	1864-05-22	1
-261	29	178	1865-10-24	2
-262	7	178	1866-05-01	4
-263	24	180	1865-10-21	1
-264	21	180	1865-07-01	2
-265	24	182	1866-04-09	1
-266	25	182	1864-02-10	2
-267	25	183	1864-07-12	1
-268	26	184	1863-12-21	1
-269	36	184	1866-02-22	3
-270	7	184	1864-11-13	7
-271	25	186	1866-04-05	1
-272	22	186	1865-04-14	2
-273	8	186	1864-03-10	5
-274	25	187	1866-12-03	1
-275	26	187	1866-04-13	2
-276	29	188	1863-09-23	1
-277	23	189	1863-08-21	1
-278	24	189	1864-07-17	2
-279	29	190	1865-10-19	1
-280	31	190	1863-09-12	3
-281	21	191	1863-10-19	1
-282	31	191	1863-06-01	3
-283	26	192	1866-04-12	1
-284	23	192	1863-03-13	2
-285	3	192	1865-01-02	5
-286	28	193	1866-01-06	1
-287	35	193	1865-04-12	3
-288	1	193	1863-03-08	6
-289	28	194	1865-11-27	1
-290	27	196	1864-03-14	1
-291	25	196	1864-06-02	2
-292	25	197	1864-10-18	1
-293	29	198	1866-06-04	1
-294	38	198	1866-02-08	3
-295	16	198	1865-03-22	6
-296	30	199	1863-11-19	1
-297	23	200	1863-03-09	1
-298	36	200	1866-08-08	3
-299	27	201	1866-03-13	1
-300	23	202	1864-09-07	1
-301	21	202	1863-08-06	2
-302	7	202	1866-04-23	4
-303	28	203	1863-02-25	1
-304	32	203	1866-07-02	3
-305	19	203	1866-08-24	6
-306	28	204	1865-08-11	1
-307	23	205	1866-09-22	1
-308	27	207	1865-02-18	1
-309	21	207	1864-02-28	2
-310	21	209	1865-09-24	1
-311	36	209	1866-05-03	3
-312	10	209	1863-05-12	7
-313	28	210	1866-01-12	1
-314	29	212	1864-01-27	1
-315	24	213	1864-04-10	1
-316	33	213	1864-07-15	3
-317	23	214	1866-03-11	1
-318	39	214	1864-09-02	3
-319	28	215	1865-01-24	1
-320	40	215	1865-11-25	3
-321	6	215	1865-03-23	7
-322	28	216	1865-03-16	1
-323	24	218	1863-06-11	1
-324	33	218	1866-03-24	3
-325	4	218	1863-08-28	6
-326	25	221	1865-10-02	1
-327	29	224	1866-06-21	1
-328	27	225	1866-09-17	1
-329	23	226	1866-04-18	1
-330	27	226	1866-02-23	2
-331	27	227	1864-07-16	1
-332	26	227	1865-06-20	2
-333	18	227	1866-12-23	5
-334	26	228	1863-08-15	1
-335	34	228	1865-12-03	3
-336	27	229	1863-11-27	1
-337	28	229	1863-08-08	2
-338	20	229	1865-12-10	4
-339	29	230	1866-10-08	1
-340	27	231	1865-11-02	1
-341	27	232	1866-02-07	1
-342	40	232	1865-10-13	3
-343	20	232	1863-04-16	7
-344	27	233	1865-04-19	1
-345	29	234	1865-11-06	1
-346	22	234	1866-03-24	2
-347	10	234	1863-12-26	4
-348	25	235	1866-09-17	1
-349	28	235	1866-06-27	2
-350	24	236	1864-10-23	1
-351	34	236	1864-09-11	3
-352	25	237	1865-05-05	1
-353	27	239	1865-10-04	1
-354	24	239	1865-11-23	2
-355	27	240	1864-05-26	1
-356	23	241	1865-10-11	1
-357	34	241	1865-03-14	3
-358	14	241	1864-10-11	6
-359	29	242	1866-03-03	1
-360	31	242	1866-04-12	3
-361	26	243	1865-12-17	1
-362	26	243	1865-04-01	2
-363	24	244	1866-05-01	1
-364	35	244	1863-02-22	3
-365	27	245	1866-01-14	1
-366	29	245	1866-10-08	2
-367	2	245	1866-02-22	4
-368	22	247	1864-04-19	1
-369	36	247	1866-04-05	3
-370	13	247	1865-12-24	6
-371	27	250	1864-01-28	1
-372	27	250	1863-05-07	2
-373	1	250	1865-02-05	5
-374	29	251	1866-04-04	1
-375	25	251	1864-03-06	2
-376	19	251	1866-03-10	4
-377	28	252	1864-11-19	1
-378	37	252	1864-04-17	3
-379	21	253	1865-06-16	1
-380	33	253	1866-10-27	3
-381	23	254	1866-10-05	1
-382	30	254	1864-02-17	2
-383	5	254	1864-02-11	4
-384	26	255	1865-03-13	1
-385	24	256	1839-09-25	1
-386	24	257	1841-04-16	1
-387	32	257	1841-03-04	3
-388	3	257	1841-06-12	7
-389	30	260	1841-06-07	1
-390	27	260	1841-12-06	2
-391	25	261	1839-05-19	1
-392	38	261	1841-09-12	3
-393	23	262	1841-06-03	1
-394	29	262	1838-07-12	2
-395	5	262	1839-09-24	4
-396	30	263	1841-04-07	1
-397	21	263	1841-04-17	2
-398	28	264	1838-03-17	1
-399	22	264	1839-07-02	2
-400	6	264	1838-09-16	4
-401	25	265	1841-11-13	1
-402	32	265	1840-07-10	3
-403	2	265	1840-08-20	7
-404	25	266	1840-06-03	1
-405	37	266	1840-07-14	3
-406	2	266	1840-03-21	7
-407	27	267	1841-09-20	1
-408	22	267	1839-01-20	2
-409	3	267	1841-04-15	5
-410	28	268	1841-05-16	1
-411	39	268	1840-04-13	3
-412	28	269	1838-04-05	1
-413	28	270	1840-02-16	1
-414	37	270	1839-03-08	3
-415	24	272	1838-02-28	1
-416	26	273	1838-04-09	1
-417	28	273	1840-02-20	2
-418	23	275	1840-09-22	1
-419	24	275	1840-10-03	2
-420	20	275	1838-03-15	4
-421	30	276	1841-12-04	1
-422	30	277	1838-10-10	1
-423	23	277	1840-06-17	2
-424	16	277	1838-09-02	5
-425	26	278	1839-04-04	1
-426	21	279	1838-01-18	1
-427	30	279	1838-03-23	2
-428	6	279	1841-05-15	4
-429	24	280	1838-07-17	1
-430	25	280	1841-09-25	2
-431	8	280	1839-04-07	5
-432	21	282	1839-08-06	1
-433	25	282	1838-12-16	2
-434	30	283	1838-02-23	1
-435	31	283	1838-04-15	3
-436	24	284	1840-08-20	1
-437	22	288	1841-01-19	1
-438	33	288	1838-11-23	3
-439	28	289	1839-06-11	1
-440	37	289	1838-07-13	3
-441	2	289	1838-04-12	7
-442	21	292	1839-02-01	1
-443	23	293	1838-02-27	1
-444	23	295	1839-07-07	1
-445	24	296	1841-10-01	1
-446	21	297	1840-01-19	1
-447	26	299	1840-02-06	1
-448	22	300	1841-05-11	1
-449	23	300	1841-03-11	2
-450	17	300	1840-11-05	5
-451	27	302	1840-06-23	1
-452	23	302	1838-09-08	2
-453	6	302	1838-04-17	5
-454	29	303	1838-10-22	1
-455	30	303	1841-09-28	2
-456	29	304	1839-08-08	1
-457	29	305	1838-10-03	1
-458	27	305	1841-04-20	2
-459	14	305	1838-06-25	4
-460	28	306	1838-12-09	1
-461	38	306	1839-07-06	3
-462	20	306	1838-06-14	6
-463	26	307	1839-09-15	1
-464	28	308	1841-06-24	1
-465	28	308	1840-03-28	2
-466	25	310	1841-02-17	1
-467	23	310	1838-11-11	2
-468	1	310	1839-11-07	4
-469	27	311	1840-07-10	1
-470	39	311	1838-12-05	3
-471	20	311	1841-01-09	7
-472	30	312	1839-09-24	1
-473	24	313	1840-11-23	1
-474	24	313	1838-02-08	2
-475	10	313	1840-01-07	5
-476	30	315	1839-06-06	1
-477	30	315	1838-07-20	2
-478	23	316	1838-02-06	1
-479	28	318	1838-03-05	1
-480	21	319	1841-07-27	1
-481	35	319	1839-08-08	3
-482	19	319	1839-07-16	7
-483	27	320	1838-08-28	1
-484	23	320	1841-08-10	2
-485	24	322	1839-11-02	1
-486	25	322	1841-10-27	2
-487	27	323	1840-07-11	1
-488	29	324	1841-11-21	1
-489	27	325	1841-01-20	1
-490	32	325	1840-11-15	3
-491	10	325	1840-10-02	7
-492	26	327	1840-01-08	1
-493	25	327	1838-05-15	2
-494	27	328	1838-04-10	1
-495	38	328	1838-05-28	3
-496	18	328	1840-04-22	6
-497	30	329	1839-01-07	1
-498	28	329	1840-03-27	2
-499	23	331	1839-05-18	1
-500	37	331	1840-02-09	3
-501	2	331	1838-10-23	6
-502	30	333	1840-06-18	1
-503	25	333	1841-05-20	2
-504	8	333	1838-03-23	4
-505	30	334	1841-10-01	1
-506	36	334	1839-09-01	3
-507	24	335	1841-02-13	1
-508	25	336	1841-10-14	1
-509	39	336	1838-09-20	3
-510	16	336	1841-02-09	6
-511	23	337	1841-03-07	1
-512	35	337	1841-03-21	3
-513	29	338	1839-07-25	1
-514	30	338	1839-12-12	2
-515	22	339	1841-07-18	1
-516	34	339	1841-12-04	3
-517	30	340	1841-03-03	1
-518	27	342	1838-05-26	1
-519	25	343	1841-06-16	1
-520	40	343	1841-06-11	3
-521	29	344	1838-02-02	1
-522	29	345	1841-09-13	1
-523	30	345	1840-09-01	2
-524	26	346	1840-01-24	1
-525	22	346	1841-12-01	2
-526	14	346	1841-11-16	4
-527	23	347	1839-01-02	1
-528	27	347	1838-12-21	2
-529	15	347	1841-06-26	4
-530	27	348	1839-09-20	1
-531	23	348	1839-12-23	2
-532	26	349	1841-03-01	1
-533	28	350	1839-06-28	1
-534	24	351	1841-08-28	1
-535	27	354	1840-01-07	1
-536	30	356	1838-09-22	1
-537	27	356	1838-05-14	2
-538	10	356	1840-04-19	5
-539	27	357	1840-02-26	1
-540	34	357	1839-01-02	3
-541	24	358	1838-01-19	1
-542	24	359	1839-05-02	1
-543	23	360	1839-07-14	1
-544	23	360	1838-02-10	2
-545	29	361	1838-05-20	1
-546	21	362	1840-02-25	1
-547	25	363	1839-12-12	1
-548	38	363	1841-11-13	3
-549	22	364	1839-04-03	1
-550	24	364	1838-06-08	2
-551	27	366	1838-01-20	1
-552	38	366	1840-08-25	3
-553	4	366	1838-12-06	7
-554	30	367	1838-02-15	1
-555	23	367	1839-12-27	2
-556	14	367	1841-07-03	4
-557	26	368	1838-12-11	1
-558	24	368	1839-07-09	2
-559	16	368	1839-12-23	5
-560	22	369	1839-07-24	1
-561	28	370	1839-02-02	1
-562	22	372	1838-03-28	1
-563	23	374	1840-03-01	1
-564	30	374	1838-04-02	2
-565	28	375	1839-10-04	1
-566	21	376	1838-08-09	1
-567	26	376	1839-08-19	2
-568	23	378	1840-08-24	1
-569	28	379	1838-02-02	1
-570	30	379	1841-08-04	2
-571	18	379	1841-05-18	4
-572	21	380	1839-06-26	1
-573	36	380	1841-02-10	3
-574	19	380	1839-10-08	7
-575	27	381	1838-01-23	1
-576	25	387	1839-02-02	1
-577	29	388	1841-10-08	1
-578	30	388	1840-08-15	2
-579	7	388	1841-07-07	4
-580	24	391	1840-01-01	1
-581	29	391	1840-07-01	2
-582	23	392	1838-09-09	1
-583	31	392	1840-06-13	3
-584	18	392	1839-05-16	6
-585	27	394	1839-03-23	1
-586	28	395	1840-03-06	1
-587	22	395	1841-10-18	2
-588	8	395	1841-10-16	4
-589	24	397	1840-02-28	1
-590	29	398	1838-10-02	1
-591	30	399	1840-08-03	1
-592	30	399	1840-11-20	2
-593	3	399	1841-08-23	4
-594	28	400	1840-06-19	1
-595	26	402	1838-01-15	1
-596	24	403	1839-12-11	1
-597	34	403	1838-10-15	3
-598	2	403	1838-03-07	7
-599	29	404	1841-09-06	1
-600	29	404	1841-08-10	2
-601	21	405	1840-06-04	1
-602	22	405	1841-02-27	2
-603	4	405	1841-04-18	5
-604	23	406	1840-09-11	1
-605	29	406	1841-10-07	2
-606	1	406	1841-10-28	4
-607	28	407	1838-04-24	1
-608	39	407	1839-04-27	3
-609	15	407	1839-02-27	7
-610	25	408	1841-01-26	1
-611	29	408	1841-03-27	2
-612	8	408	1841-01-20	4
-613	30	409	1840-11-05	1
-614	26	409	1840-01-25	2
-615	25	410	1841-02-05	1
-616	37	410	1838-09-01	3
-617	22	411	1838-11-23	1
-618	35	411	1839-03-19	3
-619	24	412	1838-02-24	1
-620	40	412	1840-12-12	3
-621	26	413	1841-09-07	1
-622	27	414	1840-12-28	1
-623	27	414	1838-05-23	2
-624	12	414	1838-03-26	5
-625	23	415	1840-11-18	1
-626	25	416	1839-09-08	1
-627	33	416	1841-10-05	3
-628	30	417	1840-07-07	1
-629	26	418	1838-01-08	1
-630	21	421	1839-02-13	1
-631	40	421	1840-02-22	3
-632	2	421	1839-02-18	7
-633	28	423	1839-10-20	1
-634	39	423	1838-09-03	3
-635	2	423	1840-04-07	7
-636	28	424	1839-03-17	1
-637	30	424	1840-02-07	2
-638	12	424	1838-08-28	4
-639	23	425	1840-07-07	1
-640	37	425	1841-06-16	3
-641	22	426	1840-03-23	1
-642	28	426	1839-11-08	2
-643	20	426	1841-03-24	5
-644	22	427	1839-12-27	1
-645	27	427	1840-02-07	2
-646	15	427	1838-11-25	4
-647	26	428	1841-07-16	1
-648	36	428	1841-06-17	3
-649	26	430	1838-09-26	1
-650	27	430	1841-12-16	2
-651	14	430	1838-02-15	4
-652	22	431	1841-07-03	1
-653	40	431	1840-07-02	3
-654	18	431	1838-03-23	6
-655	27	432	1838-01-16	1
-656	36	432	1839-06-12	3
-657	3	432	1838-09-01	7
-658	23	433	1839-06-09	1
-659	22	434	1840-04-07	1
-660	24	435	1838-05-16	1
-661	24	435	1839-11-24	2
-662	24	436	1839-02-15	1
-663	31	436	1839-12-26	3
-664	24	437	1841-07-24	1
-665	26	437	1839-07-15	2
-666	14	437	1841-09-21	5
-667	27	438	1841-06-11	1
-668	31	438	1840-09-09	3
-669	6	438	1838-11-21	6
-670	29	441	1841-01-15	1
-671	31	441	1838-03-03	3
-672	4	441	1841-03-27	7
-673	28	442	1840-10-24	1
-674	31	442	1838-05-15	3
-675	6	442	1838-09-18	7
-676	30	444	1838-05-28	1
-677	22	445	1838-03-12	1
-678	24	447	1839-02-21	1
-679	32	447	1838-02-04	3
-680	8	447	1841-10-27	6
-681	22	449	1841-01-17	1
-682	30	451	1838-10-06	1
-683	25	451	1840-12-22	2
-684	25	452	1838-12-03	1
-685	28	452	1838-12-20	2
-686	25	453	1841-08-14	1
-687	36	453	1839-11-15	3
-688	29	455	1838-01-19	1
-689	21	455	1838-03-08	2
-690	27	456	1838-02-20	1
-691	22	456	1839-09-03	2
-692	18	456	1841-06-03	5
-693	29	457	1838-05-11	1
-694	30	457	1840-09-10	2
-695	12	457	1840-03-04	4
-696	28	458	1841-05-01	1
-697	27	460	1839-12-25	1
-698	32	460	1838-10-10	3
-699	8	460	1838-08-02	6
-700	30	461	1839-02-09	1
-701	36	461	1838-11-21	3
-702	23	462	1841-10-03	1
-703	34	462	1840-09-13	3
-704	7	462	1840-11-12	6
-705	29	463	1838-07-15	1
-706	30	464	1838-08-22	1
-707	27	465	1841-07-17	1
-708	32	465	1841-10-07	3
-709	5	465	1839-07-18	6
-710	27	466	1838-08-07	1
-711	26	466	1839-07-16	2
-712	11	466	1841-11-15	5
-713	21	467	1841-08-04	1
-714	33	467	1841-05-15	3
-715	25	468	1838-02-28	1
-716	26	468	1840-01-25	2
-717	23	469	1838-10-24	1
-718	35	469	1839-04-09	3
-719	28	470	1840-08-21	1
-720	31	470	1840-05-24	3
-721	27	471	1840-04-05	1
-722	29	471	1839-05-20	2
-723	16	471	1838-03-17	5
-724	24	472	1839-03-19	1
-725	24	475	1838-10-20	1
-726	38	475	1841-08-20	3
-727	9	475	1840-12-18	6
-728	30	476	1841-07-01	1
-729	27	479	1840-08-08	1
-730	28	480	1841-08-03	1
-731	21	481	1840-07-18	1
-732	35	481	1838-12-15	3
-733	13	481	1841-11-19	6
-734	23	483	1841-12-20	1
-735	27	484	1841-08-08	1
-736	35	484	1838-03-20	3
-737	4	484	1841-06-22	7
-738	26	485	1839-04-23	1
-739	22	486	1841-12-12	1
-740	22	487	1841-04-05	1
-741	35	487	1838-10-02	3
-742	4	487	1841-06-14	7
-743	23	488	1841-12-22	1
-744	28	489	1840-06-16	1
-745	31	489	1841-04-21	3
-746	21	490	1839-01-04	1
-747	22	492	1838-10-28	1
-748	25	493	1839-03-07	1
-749	35	493	1839-04-20	3
-750	6	493	1838-02-12	7
-751	21	495	1840-07-05	1
-752	30	495	1839-08-15	2
-753	10	495	1838-01-05	4
-754	30	496	1839-01-08	1
-755	30	497	1839-11-02	1
-756	21	497	1838-10-17	2
-757	17	497	1838-12-11	4
-758	24	498	1838-11-23	1
-759	32	498	1840-04-22	3
-760	23	499	1841-07-15	1
+1	22	1	2004-09-06	1
+2	39	1	2004-12-11	3
+3	23	3	1982-03-15	1
+4	22	3	1980-05-20	2
+5	30	4	1954-10-12	1
+6	25	4	1954-02-07	2
+7	16	4	1956-09-14	5
+8	29	5	1954-05-21	1
+9	21	5	1954-03-19	2
+10	24	6	1955-04-27	1
+11	38	6	1956-01-03	3
+12	20	6	1954-09-01	6
+13	24	7	1956-03-09	1
+14	40	7	1954-02-12	3
+15	26	9	1929-11-12	1
+16	36	9	1931-09-28	3
+17	29	10	1929-02-19	1
+18	29	11	1930-06-15	1
+19	40	11	1932-10-13	3
+20	26	12	1929-08-01	1
+21	25	12	1932-08-09	2
+22	30	13	1932-09-02	1
+23	32	13	1929-11-03	3
+24	9	13	1932-08-09	7
+25	27	14	1930-10-21	1
+26	21	14	1932-10-21	2
+27	28	15	1929-03-11	1
+28	40	15	1931-09-12	3
+29	19	15	1930-02-10	7
+30	29	16	1907-10-06	1
+31	24	16	1906-01-03	2
+32	22	18	1907-06-08	1
+33	38	18	1905-07-17	3
+34	22	19	1904-01-14	1
+35	36	19	1904-09-10	3
+36	3	19	1906-06-12	7
+37	24	20	1905-05-09	1
+38	39	20	1907-05-26	3
+39	29	21	1906-11-23	1
+40	28	22	1904-03-12	1
+41	37	22	1904-01-08	3
+42	22	24	1905-03-15	1
+43	22	25	1904-07-23	1
+44	26	25	1904-02-25	2
+45	6	25	1906-09-20	4
+46	30	26	1907-09-28	1
+47	29	26	1906-11-12	2
+48	10	26	1907-07-25	5
+49	26	27	1906-05-28	1
+50	23	27	1905-10-10	2
+51	23	28	1907-03-11	1
+52	23	28	1905-07-26	2
+53	2	28	1907-02-05	5
+54	29	30	1906-11-08	1
+55	29	30	1904-06-03	2
+56	7	30	1906-02-10	4
+57	29	31	1906-10-04	1
+58	26	31	1904-03-18	2
+59	1	31	1906-02-19	4
+60	29	32	1881-02-04	1
+61	23	32	1882-07-07	2
+62	5	32	1879-04-20	5
+63	24	33	1880-01-26	1
+64	31	33	1882-08-14	3
+65	5	33	1880-08-24	7
+66	23	34	1881-01-15	1
+67	27	36	1879-06-01	1
+68	27	36	1881-03-04	2
+69	24	37	1880-03-08	1
+70	28	39	1879-07-05	1
+71	25	40	1881-08-13	1
+72	29	41	1882-12-13	1
+73	28	41	1882-08-28	2
+74	28	42	1882-12-04	1
+75	27	44	1882-01-03	1
+76	31	44	1880-06-13	3
+77	4	44	1879-11-26	7
+78	21	45	1880-01-24	1
+79	23	45	1880-10-28	2
+80	5	45	1882-12-07	4
+81	21	46	1880-04-02	1
+82	30	46	1882-12-27	2
+83	12	46	1882-01-16	4
+84	23	48	1880-11-04	1
+85	38	48	1882-04-25	3
+86	18	48	1881-12-28	6
+87	25	49	1881-07-24	1
+88	38	49	1881-04-02	3
+89	21	50	1882-03-07	1
+90	35	50	1879-08-28	3
+91	22	51	1881-06-25	1
+92	30	52	1879-11-25	1
+93	31	52	1879-12-08	3
+94	6	52	1881-09-12	6
+95	25	55	1881-04-02	1
+96	35	55	1879-11-17	3
+97	3	55	1879-05-08	6
+98	24	56	1880-11-04	1
+99	23	56	1882-09-16	2
+100	18	56	1882-03-27	4
+101	26	57	1882-10-09	1
+102	27	58	1879-02-25	1
+103	32	58	1879-03-20	3
+104	24	59	1879-12-23	1
+105	26	61	1882-07-13	1
+106	26	62	1880-10-14	1
+107	24	62	1882-07-12	2
+108	26	63	1880-08-17	1
+109	40	63	1879-08-27	3
+110	27	64	1856-06-19	1
+111	22	64	1854-02-16	2
+112	12	64	1854-07-11	4
+113	26	65	1856-08-21	1
+114	21	66	1856-08-10	1
+115	22	69	1856-07-03	1
+116	21	69	1857-09-21	2
+117	10	69	1854-07-22	4
+118	26	70	1857-02-18	1
+119	34	70	1855-02-27	3
+120	24	71	1856-05-10	1
+121	25	71	1856-11-04	2
+122	22	72	1857-01-03	1
+123	25	73	1855-12-21	1
+124	24	73	1854-11-15	2
+125	24	74	1856-05-09	1
+126	27	75	1856-12-08	1
+127	29	75	1855-03-16	2
+128	29	76	1854-08-07	1
+129	28	76	1855-05-20	2
+130	2	76	1857-04-15	5
+131	21	77	1857-03-11	1
+132	26	79	1855-06-01	1
+133	36	79	1854-10-03	3
+134	29	81	1854-12-11	1
+135	30	81	1855-06-20	2
+136	5	81	1855-03-13	5
+137	30	82	1857-02-09	1
+138	22	82	1856-07-24	2
+139	26	83	1854-05-14	1
+140	30	83	1855-08-26	2
+141	27	85	1855-07-19	1
+142	28	85	1854-09-03	2
+143	21	86	1854-09-11	1
+144	32	86	1855-01-11	3
+145	7	86	1855-09-13	7
+146	27	87	1854-08-17	1
+147	35	87	1854-07-23	3
+148	20	87	1856-06-13	7
+149	24	88	1854-12-01	1
+150	28	88	1855-03-02	2
+151	13	88	1855-03-21	4
+152	21	89	1857-11-26	1
+153	33	89	1857-08-21	3
+154	26	91	1856-04-13	1
+155	25	93	1857-06-08	1
+156	28	93	1854-05-20	2
+157	25	94	1855-07-17	1
+158	27	94	1855-01-28	2
+159	23	95	1855-02-05	1
+160	39	95	1855-04-15	3
+161	25	96	1855-03-09	1
+162	27	97	1856-10-21	1
+163	30	98	1855-06-03	1
+164	31	98	1857-09-19	3
+165	4	98	1857-09-21	7
+166	27	99	1856-09-21	1
+167	27	100	1854-08-03	1
+168	24	100	1856-03-28	2
+169	25	101	1854-03-06	1
+170	22	104	1854-10-22	1
+171	26	104	1854-09-07	2
+172	18	104	1855-08-26	4
+173	22	105	1856-01-08	1
+174	33	105	1855-07-22	3
+175	20	105	1856-02-04	6
+176	25	108	1857-08-04	1
+177	22	109	1856-03-26	1
+178	30	110	1855-01-03	1
+179	30	111	1855-06-26	1
+180	29	112	1856-10-13	1
+181	21	114	1854-10-24	1
+182	27	114	1857-11-20	2
+183	27	116	1855-12-24	1
+184	26	117	1854-06-05	1
+185	28	119	1854-04-15	1
+186	22	119	1855-04-13	2
+187	18	119	1856-02-20	5
+188	26	121	1855-06-24	1
+189	26	122	1855-11-06	1
+190	36	122	1857-11-21	3
+191	18	122	1857-10-26	6
+192	21	124	1857-11-01	1
+193	21	126	1856-02-09	1
+194	22	128	1831-07-28	1
+195	24	128	1829-10-02	2
+196	30	129	1832-03-15	1
+197	29	132	1830-10-14	1
+198	31	132	1832-10-23	3
+199	14	132	1832-04-17	7
+200	28	133	1831-11-10	1
+201	29	135	1830-05-14	1
+202	30	135	1830-06-04	2
+203	2	135	1829-08-01	4
+204	29	136	1829-09-28	1
+205	40	136	1831-07-21	3
+206	18	136	1830-03-27	7
+207	22	137	1832-10-18	1
+208	27	137	1831-02-18	2
+209	24	139	1831-08-03	1
+210	21	139	1830-11-25	2
+211	25	140	1831-12-23	1
+212	33	140	1831-08-02	3
+213	14	140	1829-05-24	6
+214	28	141	1829-05-11	1
+215	39	141	1829-07-16	3
+216	12	141	1831-09-12	6
+217	28	142	1830-08-17	1
+218	36	142	1832-02-10	3
+219	30	143	1829-05-05	1
+220	37	143	1832-03-03	3
+221	20	143	1831-05-12	7
+222	27	146	1831-07-01	1
+223	37	146	1829-11-07	3
+224	15	146	1831-06-10	7
+225	25	147	1829-11-12	1
+226	23	149	1832-12-10	1
+227	36	149	1829-10-05	3
+228	30	150	1829-06-07	1
+229	21	150	1831-05-25	2
+230	26	152	1830-10-15	1
+231	31	152	1831-08-03	3
+232	29	153	1831-08-21	1
+233	30	155	1830-02-16	1
+234	23	155	1831-09-12	2
+235	30	156	1832-05-23	1
+236	23	157	1829-05-28	1
+237	24	157	1830-12-19	2
+238	14	157	1831-03-08	4
+239	22	158	1829-03-15	1
+240	23	158	1832-11-07	2
+241	11	158	1829-07-11	4
+242	21	159	1829-09-26	1
+243	22	159	1829-01-20	2
+244	27	160	1831-06-23	1
+245	23	161	1832-07-23	1
+246	37	161	1830-05-25	3
+247	13	161	1829-03-14	6
+248	24	162	1830-03-27	1
+249	27	162	1830-03-09	2
+250	28	163	1830-06-03	1
+251	21	164	1829-01-15	1
+252	28	165	1831-04-03	1
+253	27	167	1832-05-03	1
+254	38	167	1830-07-15	3
+255	29	168	1832-06-20	1
+256	22	168	1831-04-22	2
+257	2	168	1832-04-10	4
+258	22	169	1832-03-03	1
+259	28	170	1829-06-05	1
+260	36	170	1832-10-18	3
+261	21	171	1830-04-27	1
+262	29	172	1830-01-17	1
+263	38	172	1829-03-07	3
+264	12	172	1829-01-10	6
+265	28	173	1832-12-06	1
+266	30	174	1831-10-16	1
+267	39	174	1830-06-27	3
+268	30	175	1831-07-18	1
+269	26	177	1829-12-20	1
+270	29	177	1831-12-27	2
+271	16	177	1829-08-20	5
+272	27	178	1832-03-01	1
+273	27	179	1830-12-19	1
+274	24	179	1832-03-07	2
+275	8	179	1832-01-23	4
+276	30	180	1829-11-20	1
+277	33	180	1829-06-19	3
+278	7	180	1829-10-02	7
+279	21	183	1831-03-13	1
+280	22	184	1832-04-10	1
+281	23	184	1831-05-20	2
+282	22	186	1829-11-04	1
+283	27	191	1830-01-07	1
+284	33	191	1832-10-10	3
+285	18	191	1831-08-26	6
+286	28	192	1830-10-01	1
+287	33	192	1832-08-05	3
+288	12	192	1832-03-03	6
+289	24	194	1829-10-18	1
+290	33	194	1830-08-27	3
+291	20	194	1830-03-04	7
+292	22	195	1830-06-18	1
+293	22	196	1831-03-10	1
+294	25	199	1831-04-14	1
+295	21	203	1832-08-20	1
+296	21	204	1831-11-26	1
+297	30	205	1830-08-18	1
+298	21	205	1832-04-12	2
+299	2	205	1832-06-24	5
+300	23	207	1830-08-09	1
+301	29	208	1829-04-24	1
+302	23	208	1830-06-14	2
+303	2	208	1832-02-07	4
+304	23	211	1829-02-14	1
+305	34	211	1829-03-23	3
+306	13	211	1830-10-10	6
+307	26	212	1829-05-15	1
+308	28	212	1830-08-12	2
+309	9	212	1829-04-03	5
+310	26	213	1832-03-11	1
+311	31	213	1830-08-09	3
+312	24	214	1832-02-05	1
+313	22	216	1831-03-02	1
+314	27	216	1829-05-09	2
+315	4	216	1829-05-12	4
+316	25	217	1831-11-10	1
+317	25	217	1830-06-08	2
+318	22	218	1830-01-16	1
+319	25	218	1832-12-06	2
+320	6	218	1831-05-24	5
+321	30	219	1829-07-22	1
+322	39	219	1830-08-22	3
+323	23	220	1831-04-15	1
+324	40	220	1829-03-04	3
+325	13	220	1831-06-06	7
+326	24	221	1832-07-24	1
+327	29	221	1831-12-06	2
+328	8	221	1831-07-13	5
+329	24	222	1830-01-03	1
+330	26	222	1829-06-17	2
+331	11	222	1830-02-06	4
+332	26	223	1832-12-28	1
+333	31	223	1832-07-04	3
+334	3	223	1829-01-12	7
+335	30	224	1830-08-12	1
+336	25	224	1831-03-26	2
+337	3	224	1829-07-04	4
+338	25	225	1832-11-17	1
+339	27	225	1832-05-11	2
+340	30	227	1829-12-14	1
+341	29	227	1829-04-21	2
+342	16	227	1832-08-16	4
+343	30	229	1831-06-23	1
+344	27	230	1829-01-12	1
+345	27	230	1832-07-03	2
+346	28	232	1829-05-02	1
+347	37	232	1829-09-17	3
+348	19	232	1832-12-09	6
+349	23	233	1829-02-23	1
+350	30	234	1832-11-22	1
+351	24	235	1829-08-02	1
+352	26	235	1830-02-02	2
+353	4	235	1829-09-11	4
+354	25	236	1830-10-21	1
+355	29	236	1832-01-13	2
+356	25	237	1829-10-07	1
+357	40	237	1830-07-24	3
+358	23	238	1831-05-28	1
+359	29	239	1832-08-18	1
+360	21	239	1831-07-14	2
+361	25	240	1831-03-22	1
+362	34	240	1831-09-28	3
+363	29	242	1830-10-23	1
+364	37	242	1832-05-27	3
+365	17	242	1829-01-25	7
+366	25	243	1832-12-05	1
+367	30	243	1832-08-15	2
+368	30	245	1830-12-16	1
+369	30	245	1831-06-18	2
+370	10	245	1832-07-23	5
+371	21	246	1831-05-19	1
+372	22	247	1830-12-14	1
+373	37	247	1831-01-12	3
+374	9	247	1832-09-26	6
+375	22	248	1830-08-17	1
+376	25	248	1832-12-07	2
+377	30	249	1832-09-14	1
+378	32	249	1831-12-12	3
+379	7	249	1831-10-10	6
+380	24	251	1829-09-07	1
+381	23	251	1831-03-21	2
+382	20	251	1829-08-14	5
+383	30	252	1829-04-25	1
+384	25	252	1832-12-13	2
+385	22	253	1832-09-17	1
+386	22	254	1829-12-10	1
+387	27	254	1830-06-06	2
+388	23	255	1831-08-08	1
+389	36	255	1829-11-05	3
+390	2	255	1829-06-02	6
+391	27	256	1806-01-08	1
+392	40	256	1807-06-19	3
+393	26	257	1804-11-24	1
+394	27	257	1805-12-19	2
+395	21	260	1807-06-24	1
+396	35	260	1806-07-07	3
+397	4	260	1806-03-04	7
+398	27	261	1805-05-01	1
+399	21	261	1807-02-28	2
+400	9	261	1806-11-23	4
+401	27	262	1807-06-02	1
+402	24	262	1806-12-06	2
+403	29	263	1806-02-17	1
+404	23	264	1804-09-15	1
+405	24	264	1806-04-10	2
+406	21	265	1805-04-01	1
+407	34	265	1806-10-08	3
+408	27	266	1806-05-15	1
+409	24	267	1805-12-27	1
+410	40	267	1806-11-12	3
+411	7	267	1807-12-03	6
+412	21	269	1805-09-09	1
+413	35	269	1807-02-10	3
+414	28	270	1804-08-15	1
+415	40	270	1804-03-22	3
+416	9	270	1804-03-13	6
+417	26	271	1804-10-14	1
+418	26	272	1807-05-19	1
+419	26	273	1805-06-16	1
+420	22	274	1805-03-23	1
+421	29	275	1805-11-27	1
+422	23	275	1806-03-18	2
+423	16	275	1805-11-19	4
+424	21	276	1804-05-25	1
+425	22	276	1804-05-24	2
+426	19	276	1804-12-15	4
+427	29	277	1805-11-17	1
+428	23	277	1804-07-05	2
+429	15	277	1805-08-19	4
+430	27	278	1804-02-11	1
+431	32	278	1804-02-16	3
+432	18	278	1804-01-22	6
+433	29	279	1804-07-25	1
+434	35	279	1807-12-03	3
+435	28	280	1806-08-20	1
+436	26	281	1807-04-16	1
+437	23	281	1804-09-20	2
+438	26	283	1804-09-12	1
+439	40	283	1806-08-21	3
+440	28	284	1806-05-03	1
+441	24	284	1806-12-07	2
+442	17	284	1807-12-21	5
+443	23	286	1807-07-14	1
+444	29	287	1805-04-11	1
+445	28	288	1804-06-23	1
+446	28	288	1804-12-22	2
+447	7	288	1805-09-18	4
+448	23	289	1804-08-12	1
+449	36	289	1805-02-16	3
+450	26	290	1804-02-18	1
+451	35	290	1807-04-25	3
+452	26	292	1805-05-01	1
+453	40	292	1804-07-03	3
+454	5	292	1805-11-12	6
+455	27	293	1807-07-16	1
+456	40	293	1804-08-01	3
+457	24	294	1804-06-25	1
+458	22	294	1806-02-24	2
+459	1	294	1806-01-12	5
+460	21	295	1805-03-01	1
+461	26	295	1806-11-25	2
+462	22	296	1805-02-04	1
+463	29	296	1804-02-20	2
+464	6	296	1806-08-21	4
+465	28	297	1806-07-28	1
+466	37	297	1806-10-07	3
+467	26	298	1807-05-17	1
+468	24	298	1804-10-24	2
+469	30	300	1806-11-03	1
+470	24	301	1804-01-13	1
+471	28	301	1806-12-22	2
+472	29	302	1805-09-28	1
+473	34	302	1805-10-06	3
+474	19	302	1807-08-11	7
+475	23	303	1804-07-16	1
+476	25	304	1806-07-13	1
+477	28	307	1804-03-19	1
+478	32	307	1807-03-17	3
+479	12	307	1806-03-10	6
+480	27	308	1807-07-12	1
+481	33	308	1804-05-23	3
+482	26	309	1807-03-14	1
+483	34	309	1807-02-09	3
+484	2	309	1805-02-01	6
+485	25	310	1804-08-26	1
+486	33	310	1806-11-27	3
+487	22	311	1806-06-17	1
+488	23	311	1807-09-06	2
+489	16	311	1806-01-02	4
+490	30	312	1806-12-19	1
+491	28	312	1804-04-14	2
+492	15	312	1806-02-15	5
+493	29	313	1807-06-27	1
+494	24	314	1805-09-16	1
+495	25	315	1805-08-07	1
+496	28	316	1806-08-05	1
+497	34	316	1807-01-09	3
+498	14	316	1806-12-20	7
+499	25	317	1807-06-25	1
+500	21	319	1804-02-03	1
+501	37	319	1804-10-18	3
+502	3	319	1804-04-08	7
+503	26	320	1806-06-23	1
+504	27	320	1807-02-15	2
+505	25	321	1805-12-24	1
+506	25	322	1807-09-28	1
+507	30	322	1806-06-21	2
+508	5	322	1806-08-06	4
+509	27	323	1806-07-27	1
+510	26	324	1806-09-06	1
+511	25	324	1805-01-11	2
+512	6	324	1805-01-19	5
+513	22	325	1806-03-15	1
+514	24	326	1805-09-17	1
+515	40	326	1804-07-06	3
+516	14	326	1804-06-25	7
+517	23	327	1804-07-22	1
+518	28	327	1807-03-09	2
+519	26	328	1806-05-03	1
+520	24	328	1805-09-23	2
+521	17	328	1804-02-09	4
+522	25	329	1805-01-22	1
+523	30	329	1806-01-05	2
+524	20	329	1807-06-26	4
+525	25	330	1805-07-03	1
+526	23	330	1807-08-11	2
+527	19	330	1805-08-24	5
+528	21	331	1804-10-22	1
+529	22	332	1805-06-10	1
+530	22	333	1807-05-15	1
+531	32	333	1805-07-26	3
+532	27	336	1806-03-02	1
+533	33	336	1807-10-23	3
+534	9	336	1804-08-11	6
+535	30	337	1805-04-07	1
+536	26	338	1807-11-09	1
+537	22	341	1807-04-08	1
+538	34	341	1806-10-02	3
+539	23	342	1804-05-02	1
+540	21	342	1806-06-24	2
+541	18	342	1807-03-22	5
+542	25	343	1807-05-13	1
+543	25	347	1806-08-16	1
+544	39	347	1807-02-12	3
+545	19	347	1805-03-14	7
+546	26	348	1806-04-08	1
+547	30	348	1804-08-08	2
+548	18	348	1806-07-16	4
+549	24	349	1806-08-08	1
+550	34	349	1806-01-21	3
+551	29	352	1807-09-11	1
+552	36	352	1805-08-07	3
+553	24	353	1807-01-21	1
+554	23	354	1806-01-28	1
+555	33	354	1807-12-07	3
+556	27	355	1806-02-06	1
+557	27	357	1805-04-02	1
+558	32	357	1807-10-13	3
+559	1	357	1805-06-21	7
+560	27	359	1804-09-11	1
+561	36	359	1807-01-04	3
+562	6	359	1807-03-16	6
+563	24	360	1807-02-08	1
+564	29	362	1806-05-27	1
+565	21	363	1807-02-13	1
+566	31	363	1804-09-21	3
+567	23	364	1807-01-21	1
+568	34	364	1807-07-10	3
+569	8	364	1806-08-22	7
+570	24	365	1807-04-06	1
+571	22	365	1805-07-17	2
+572	27	366	1804-01-23	1
+573	33	366	1804-03-07	3
+574	23	367	1807-05-07	1
+575	24	368	1805-03-26	1
+576	31	368	1806-09-21	3
+577	21	370	1806-04-21	1
+578	23	370	1804-11-03	2
+579	20	370	1804-07-27	5
+580	27	372	1806-04-10	1
+581	21	373	1807-12-02	1
+582	28	374	1804-09-06	1
+583	26	375	1806-12-02	1
+584	34	375	1806-08-02	3
+585	24	376	1807-09-09	1
+586	39	376	1806-08-02	3
+587	21	377	1806-05-23	1
+588	26	378	1804-03-12	1
+589	30	380	1806-09-05	1
+590	36	380	1805-10-02	3
+591	18	380	1806-11-02	6
+592	21	381	1807-10-22	1
+593	27	381	1807-06-13	2
+594	3	381	1806-11-03	5
+595	25	382	1807-12-15	1
+596	22	383	1804-09-10	1
+597	29	383	1806-07-04	2
+598	23	384	1806-01-19	1
+599	29	385	1807-09-25	1
+600	34	385	1807-05-06	3
+601	1	385	1804-04-03	6
+602	27	386	1806-12-23	1
+603	28	387	1806-10-25	1
+604	33	387	1805-03-01	3
+605	23	388	1805-04-19	1
+606	26	389	1806-08-12	1
+607	34	389	1804-06-10	3
+608	22	391	1806-05-09	1
+609	21	391	1804-03-05	2
+610	12	391	1805-06-01	5
+611	28	392	1807-06-10	1
+612	30	392	1805-09-01	2
+613	8	392	1806-02-16	5
+614	27	395	1804-09-28	1
+615	21	396	1807-06-13	1
+616	26	397	1806-10-15	1
+617	24	397	1805-03-19	2
+618	24	399	1807-08-04	1
+619	25	400	1804-12-09	1
+620	30	400	1804-05-03	2
+621	26	401	1805-03-25	1
+622	21	401	1806-06-28	2
+623	17	401	1805-12-13	4
+624	30	402	1807-03-14	1
+625	21	402	1807-01-08	2
+626	3	402	1806-06-05	4
+627	26	403	1807-03-14	1
+628	26	403	1805-01-01	2
+629	17	403	1807-09-12	5
+630	29	404	1805-09-16	1
+631	21	404	1807-07-15	2
+632	24	405	1806-06-03	1
+633	26	405	1807-07-16	2
+634	5	405	1807-06-09	5
+635	30	407	1807-02-24	1
+636	26	407	1807-11-08	2
+637	12	407	1805-03-10	5
+638	28	408	1804-09-24	1
+639	25	408	1806-02-15	2
+640	5	408	1804-10-15	4
+641	26	410	1804-07-14	1
+642	21	411	1805-10-10	1
+643	28	412	1806-04-15	1
+644	37	412	1806-06-04	3
+645	22	413	1806-12-19	1
+646	39	413	1807-06-04	3
+647	27	414	1806-01-20	1
+648	30	415	1805-04-06	1
+649	23	415	1804-04-04	2
+650	23	416	1806-01-19	1
+651	22	417	1804-03-19	1
+652	35	417	1806-05-14	3
+653	21	418	1807-07-22	1
+654	21	419	1805-03-09	1
+655	30	419	1807-08-03	2
+656	24	420	1807-07-20	1
+657	31	420	1807-02-07	3
+658	21	422	1804-08-04	1
+659	24	423	1806-10-05	1
+660	37	423	1806-10-06	3
+661	21	424	1804-10-01	1
+662	26	426	1805-06-20	1
+663	29	427	1807-04-26	1
+664	25	427	1804-10-12	2
+665	2	427	1806-05-23	5
+666	27	428	1804-08-13	1
+667	25	429	1805-11-22	1
+668	29	430	1805-01-20	1
+669	22	430	1804-12-06	2
+670	16	430	1804-11-05	4
+671	24	431	1806-02-08	1
+672	28	432	1806-09-24	1
+673	25	432	1804-09-21	2
+674	26	433	1805-11-24	1
+675	30	433	1804-05-24	2
+676	23	434	1804-07-05	1
+677	38	434	1807-01-27	3
+678	13	434	1804-04-11	7
+679	23	435	1807-09-15	1
+680	28	436	1804-10-10	1
+681	23	436	1805-07-19	2
+682	11	436	1805-06-25	4
+683	24	437	1807-02-26	1
+684	22	437	1806-03-18	2
+685	19	437	1806-06-13	4
+686	22	438	1806-09-28	1
+687	34	438	1805-05-25	3
+688	21	439	1807-02-28	1
+689	31	439	1804-07-03	3
+690	3	439	1805-12-21	6
+691	22	440	1804-08-17	1
+692	28	440	1804-04-16	2
+693	29	441	1805-01-23	1
+694	33	441	1804-10-08	3
+695	8	441	1806-07-24	6
+696	21	442	1804-02-05	1
+697	22	443	1805-06-06	1
+698	24	443	1805-05-07	2
+699	26	444	1804-05-19	1
+700	25	444	1804-03-16	2
+701	24	445	1804-04-19	1
+702	27	445	1807-05-02	2
+703	16	445	1806-07-15	5
+704	21	446	1806-10-06	1
+705	36	446	1804-06-20	3
+706	23	448	1806-01-04	1
+707	22	449	1805-09-16	1
+708	29	450	1804-10-26	1
+709	23	451	1804-11-23	1
+710	23	453	1805-04-19	1
+711	22	453	1806-12-09	2
+712	1	453	1807-12-25	4
+713	25	455	1804-01-17	1
+714	33	455	1804-05-07	3
+715	29	456	1804-01-11	1
+716	26	456	1804-09-15	2
+717	13	456	1806-07-25	5
+718	28	457	1804-06-23	1
+719	24	457	1807-12-21	2
+720	19	457	1805-10-19	5
+721	28	458	1804-12-23	1
+722	35	458	1804-04-24	3
+723	11	458	1804-07-15	7
+724	23	460	1804-05-18	1
+725	40	460	1805-11-25	3
+726	6	460	1806-11-21	7
+727	23	461	1807-09-10	1
+728	35	461	1806-02-22	3
+729	25	463	1806-02-07	1
+730	38	463	1806-04-02	3
+731	20	463	1804-11-20	7
+732	28	464	1804-01-07	1
+733	24	465	1804-03-07	1
+734	21	465	1806-06-10	2
+735	30	468	1804-04-12	1
+736	36	468	1805-07-10	3
+737	29	471	1806-04-09	1
+738	24	472	1807-12-12	1
+739	29	474	1804-10-05	1
+740	22	475	1807-11-09	1
+741	33	475	1804-08-20	3
+742	2	475	1805-10-11	7
+743	24	476	1804-05-16	1
+744	27	476	1806-04-16	2
+745	11	476	1807-10-18	4
+746	29	477	1807-06-10	1
+747	24	477	1805-05-21	2
+748	28	478	1807-04-07	1
+749	34	478	1804-05-20	3
+750	4	478	1805-04-22	6
+751	21	480	1804-03-24	1
+752	21	480	1806-01-25	2
+753	21	481	1805-09-12	1
+754	26	483	1807-06-04	1
+755	22	483	1806-04-26	2
+756	28	484	1804-12-01	1
+757	28	485	1806-04-21	1
+758	21	485	1807-03-13	2
+759	24	486	1805-10-18	1
+760	31	486	1807-04-05	3
+761	24	487	1804-04-20	1
+762	24	487	1805-04-16	2
+763	27	488	1807-04-06	1
+764	39	488	1804-10-02	3
+765	27	489	1805-01-22	1
+766	27	490	1807-03-13	1
+767	37	490	1805-01-10	3
+768	19	490	1807-02-12	6
+769	24	491	1806-12-12	1
+770	38	491	1804-02-13	3
+771	12	491	1804-02-26	7
+772	26	492	1807-07-19	1
+773	29	492	1806-09-23	2
+774	17	492	1806-06-21	5
+775	27	493	1806-09-27	1
+776	32	493	1807-08-15	3
+777	6	493	1804-08-13	7
+778	27	494	1805-04-16	1
+779	37	494	1807-09-23	3
+780	27	496	1804-05-18	1
+781	26	497	1804-04-07	1
+782	36	497	1806-07-11	3
+783	9	497	1804-11-05	7
+784	21	498	1805-07-04	1
+785	34	498	1806-03-02	3
+786	21	499	1806-03-15	1
+787	23	499	1806-10-13	2
 \.
 
 
@@ -15826,506 +15959,506 @@ COPY public.educational_instances_types_relation (instance_id, type_id) FROM std
 --
 
 COPY public.international_passports (id, original_name, original_surname, en_name, en_surname, issuer, issue_date, expiration_date, sex, passport_owner, country, lost, invalidated, series) FROM stdin;
-1	Sandra	Frye	Sandra	Frye	519	2041-02-15	2061-08-21	F	1	Cambodia	f	f	DO
-2	Tyler	Brandt	Tyler	Brandt	879	2017-11-11	2037-04-06	M	2	Pitcairn	f	f	KX
-3	Amanda	Hayes	Amanda	Hayes	8	2013-11-01	2033-11-14	F	3	Montserrat	f	f	MQ
-4	Anthony	Knight	Anthony	Knight	459	1989-09-13	2009-04-13	M	4	Aruba	f	f	BK
-5	Lawrence	Suarez	Lawrence	Suarez	980	1987-05-07	2007-01-12	F	5	Benin	f	f	UF
-6	Tamara	Snyder	Tamara	Snyder	892	1990-07-20	2010-10-20	M	6	Yemen	f	f	EK
-7	Timothy	Elliott	Timothy	Elliott	1043	1991-01-05	2011-10-20	F	7	Nauru	f	f	MR
-8	Jamie	Smith	Jamie	Smith	844	1965-02-19	1985-07-18	M	8	Brazil	f	f	ZY
-9	Nicole	Martinez	Nicole	Martinez	572	1961-05-02	1981-04-24	F	9	Montenegro	f	f	FE
-10	Kyle	Foster	Kyle	Foster	862	1961-07-07	1981-03-20	M	10	Denmark	f	f	NW
-11	Logan	Adams	Logan	Adams	838	1966-11-04	1986-06-28	F	11	Belarus	f	f	YN
-12	Paul	Hanson	Paul	Hanson	803	1965-09-21	1985-11-08	M	12	Kyrgyzstan	f	f	SY
-13	Michael	Cole	Michael	Cole	991	1962-05-01	1982-03-01	F	13	Israel	f	f	NY
-14	Robert	Foster	Robert	Foster	734	1964-03-05	1984-07-01	M	14	Cyprus	f	f	FZ
-15	Brandon	Rodriguez	Brandon	Rodriguez	1196	1962-08-28	1982-06-06	F	15	Yemen	f	f	GY
-16	Melinda	Evans	Melinda	Evans	1238	1941-03-20	1961-09-23	M	16	Mauritius	f	f	YV
-17	Emily	George	Emily	George	1039	1938-10-21	1958-06-14	F	17	Bermuda	f	f	DX
-18	John	Nelson	John	Nelson	299	1938-02-01	1958-05-19	M	18	Belarus	f	f	SH
-19	Julie	Crane	Julie	Crane	592	1939-05-07	1959-08-06	F	19	Gabon	f	f	KV
-20	Sandra	Smith	Sandra	Smith	410	1942-09-11	1962-05-19	M	20	Georgia	f	f	UR
-21	Tony	Harris	Tony	Harris	443	1939-03-21	1959-09-07	F	21	Madagascar	f	f	ZB
-22	Calvin	Garza	Calvin	Garza	253	1939-04-02	1959-11-21	M	22	Togo	f	f	CA
-23	Aaron	Calhoun	Aaron	Calhoun	559	1941-01-22	1961-04-25	F	23	Yemen	f	f	CU
-24	Crystal	Scott	Crystal	Scott	1148	1938-09-11	1958-07-10	M	24	Benin	f	f	KP
-25	Walter	Bowen	Walter	Bowen	1071	1938-05-02	1958-04-03	F	25	Nauru	f	f	DH
-26	Lucas	Austin	Lucas	Austin	379	1936-11-20	1956-11-24	M	26	Georgia	f	f	MF
-27	Kristen	Long	Kristen	Long	170	1936-08-25	1956-04-11	F	27	Ireland	f	f	YU
-28	Christina	Taylor	Christina	Taylor	898	1936-05-19	1956-08-02	M	28	Tajikistan	f	f	WU
-29	Melissa	Thomas	Melissa	Thomas	686	1941-01-06	1961-12-21	F	29	Taiwan	f	f	YQ
-30	Robert	Fuller	Robert	Fuller	1096	1936-12-18	1956-12-03	M	30	Guatemala	f	f	OT
-31	Whitney	Harris	Whitney	Harris	271	1938-09-16	1958-07-01	F	31	Ethiopia	f	f	AU
-32	Andrea	Shepard	Andrea	Shepard	980	1917-06-13	1937-01-03	M	32	Poland	f	f	MY
-33	Luis	Barron	Luis	Barron	1093	1914-11-10	1934-11-21	F	33	Laos	f	f	ES
-34	David	Weaver	David	Weaver	1193	1911-07-09	1931-12-09	M	34	Tuvalu	f	f	MZ
-35	Emma	Matthews	Emma	Matthews	1225	1914-08-24	1934-07-17	F	35	Sudan	f	f	HY
-36	Allen	Gallagher	Allen	Gallagher	712	1914-01-20	1934-07-02	M	36	Algeria	f	f	UR
-37	Ryan	Luna	Ryan	Luna	1057	1911-10-16	1931-07-07	F	37	Belize	f	f	EN
-38	Alejandro	Brown	Alejandro	Brown	562	1915-04-06	1935-09-04	M	38	Denmark	f	f	MK
-39	Emily	Ayers	Emily	Ayers	849	1913-09-23	1933-10-26	F	39	Bolivia	f	f	KK
-40	Gina	Clay	Gina	Clay	227	1915-02-06	1935-02-17	M	40	Turkmenistan	f	f	BX
-41	Amanda	Davenport	Amanda	Davenport	866	1914-08-06	1934-03-20	F	41	Gabon	f	f	WY
-42	Toni	Miller	Toni	Miller	293	1916-03-18	1936-02-14	M	42	Spain	f	f	DM
-43	Jeffrey	Ryan	Jeffrey	Ryan	106	1915-05-09	1935-12-15	F	43	Colombia	f	f	SP
-44	John	Smith	John	Smith	378	1916-11-11	1936-08-11	M	44	Switzerland	f	f	ZQ
-45	Kristin	Williams	Kristin	Williams	850	1917-12-15	1937-05-01	F	45	Kenya	f	f	JL
-46	Tracy	Caldwell	Tracy	Caldwell	313	1917-06-24	1937-08-19	M	46	Mauritania	f	f	JD
-47	Alan	Nunez	Alan	Nunez	318	1912-09-16	1932-01-24	F	47	Iran	f	f	WU
-48	Amber	Green	Amber	Green	280	1916-06-25	1936-03-17	M	48	Nepal	f	f	JL
-49	Darryl	Olson	Darryl	Olson	56	1913-06-26	1933-03-06	F	49	Liberia	f	f	SD
-50	Brenda	Rollins	Brenda	Rollins	291	1911-01-09	1931-03-12	M	50	Argentina	f	f	UV
-51	Grant	Roberson	Grant	Roberson	135	1915-03-24	1935-05-01	F	51	Brunei	f	f	HR
-52	Lauren	Wood	Lauren	Wood	479	1917-04-26	1937-06-18	M	52	Mauritius	f	f	LS
-53	Jon	Dickson	Jon	Dickson	266	1917-02-17	1937-03-13	F	53	Indonesia	f	f	IH
-54	Kyle	Gonzales	Kyle	Gonzales	471	1912-02-16	1932-09-19	M	54	Cuba	f	f	RT
-55	Jessica	White	Jessica	White	26	1916-12-28	1936-02-05	F	55	Tanzania	f	f	QT
-56	Tyler	Salazar	Tyler	Salazar	475	1911-07-07	1931-05-09	M	56	Ukraine	f	f	WM
-57	Paul	Wheeler	Paul	Wheeler	700	1913-05-11	1933-06-09	F	57	France	f	f	LF
-58	Kyle	Blake	Kyle	Blake	415	1914-03-08	1934-09-14	M	58	Serbia	f	f	XU
-59	Nicholas	Bowen	Nicholas	Bowen	1056	1917-03-08	1937-02-16	F	59	China	f	f	AI
-60	Kristopher	Hancock	Kristopher	Hancock	227	1914-11-16	1934-10-22	M	60	Aruba	f	f	OF
-61	Hector	Edwards	Hector	Edwards	323	1917-09-27	1937-12-06	F	61	Lesotho	f	f	DV
-62	Cindy	Marquez	Cindy	Marquez	13	1917-06-28	1937-03-09	M	62	Somalia	f	f	HK
-63	John	Simmons	John	Simmons	660	1912-11-05	1932-12-14	F	63	Guyana	f	f	NL
-64	Edward	Grant	Edward	Grant	1081	1888-05-07	1908-03-26	M	64	Armenia	f	f	CC
-65	Samuel	Nielsen	Samuel	Nielsen	588	1886-07-09	1906-05-15	F	65	Thailand	f	f	HC
-66	Scott	Guerrero	Scott	Guerrero	908	1888-05-04	1908-12-09	M	66	Guinea	f	f	CL
-67	Jennifer	Jones	Jennifer	Jones	190	1889-01-05	1909-07-08	F	67	Bulgaria	f	f	CR
-68	Thomas	Neal	Thomas	Neal	227	1886-01-12	1906-11-18	M	68	Israel	f	f	WO
-69	Steven	Morgan	Steven	Morgan	902	1892-02-26	1912-03-25	F	69	Singapore	f	f	JE
-70	Stephen	Bender	Stephen	Bender	573	1889-08-10	1909-07-11	M	70	Maldives	f	f	XI
-71	Rebecca	Haynes	Rebecca	Haynes	982	1888-12-01	1908-01-01	F	71	Germany	f	f	RW
-72	Corey	Daniels	Corey	Daniels	99	1886-11-08	1906-01-18	M	72	Hungary	f	f	IC
-73	Julie	Martinez	Julie	Martinez	1063	1892-06-10	1912-07-24	F	73	Zimbabwe	f	f	DW
-74	Kyle	Tucker	Kyle	Tucker	231	1891-08-02	1911-01-23	M	74	Uganda	f	f	DJ
-75	Nathan	Martin	Nathan	Martin	820	1886-02-16	1906-02-23	F	75	Palau	f	f	CP
-76	Levi	Long	Levi	Long	771	1886-01-22	1906-08-28	M	76	Argentina	f	f	MN
-77	Zachary	Jackson	Zachary	Jackson	1134	1887-05-07	1907-08-05	F	77	Curacao	f	f	RD
-78	Juan	Smith	Juan	Smith	988	1888-12-21	1908-02-08	M	78	Cyprus	f	f	JV
-79	Michael	Young	Michael	Young	404	1892-10-05	1912-03-10	F	79	Armenia	f	f	ZE
-80	Carolyn	Rivera	Carolyn	Rivera	606	1892-04-09	1912-04-10	M	80	Iceland	f	f	OH
-81	John	Robinson	John	Robinson	434	1887-04-17	1907-05-05	F	81	Norway	f	f	VR
-82	Justin	Hughes	Justin	Hughes	42	1889-01-28	1909-04-12	M	82	Zimbabwe	f	f	RU
-83	Michael	Murillo	Michael	Murillo	905	1886-08-10	1906-11-12	F	83	Finland	f	f	WT
-84	Wyatt	Brennan	Wyatt	Brennan	722	1892-04-15	1912-08-22	M	84	China	f	f	PA
-85	Christy	Obrien	Christy	Obrien	281	1888-05-06	1908-09-19	F	85	France	f	f	EV
-86	Martin	Greer	Martin	Greer	692	1890-06-15	1910-08-03	M	86	Qatar	f	f	PH
-87	Cynthia	Walker	Cynthia	Walker	974	1890-10-28	1910-06-02	F	87	Barbados	f	f	LS
-88	Adam	Hunt	Adam	Hunt	143	1888-08-22	1908-05-22	M	88	Uganda	f	f	MP
-89	Joseph	Nelson	Joseph	Nelson	854	1889-04-28	1909-05-28	F	89	Iceland	f	f	DT
-90	Damon	Valenzuela	Damon	Valenzuela	903	1889-06-17	1909-04-27	M	90	Austria	f	f	NC
-91	Linda	Golden	Linda	Golden	481	1889-09-05	1909-10-12	F	91	Zimbabwe	f	f	BP
-92	Richard	Flores	Richard	Flores	556	1889-07-19	1909-05-13	M	92	Israel	f	f	TF
-93	Matthew	Tucker	Matthew	Tucker	560	1888-09-15	1908-05-17	F	93	Niue	f	f	PI
-94	Rebecca	Hughes	Rebecca	Hughes	397	1891-09-20	1911-05-24	M	94	Iceland	f	f	NX
-95	Jennifer	Nelson	Jennifer	Nelson	1206	1892-09-08	1912-03-17	F	95	Aruba	f	f	EC
-96	Megan	Davis	Megan	Davis	1142	1889-01-06	1909-01-09	M	96	Indonesia	f	f	SZ
-97	Daniel	Wilson	Daniel	Wilson	979	1886-05-13	1906-01-10	F	97	Paraguay	f	f	HN
-98	Henry	Carrillo	Henry	Carrillo	438	1889-06-23	1909-11-15	M	98	Paraguay	f	f	QG
-99	Dalton	Henderson	Dalton	Henderson	424	1892-10-04	1912-02-20	F	99	Denmark	f	f	PE
-100	James	Hill	James	Hill	455	1886-01-13	1906-10-09	M	100	Honduras	f	f	KN
-101	Patricia	Garcia	Patricia	Garcia	185	1891-07-01	1911-02-11	F	101	Suriname	f	f	AA
-102	John	Hawkins	John	Hawkins	94	1888-06-21	1908-05-14	M	102	Uzbekistan	f	f	JS
-103	Danielle	Phillips	Danielle	Phillips	1111	1892-04-22	1912-01-11	F	103	Pakistan	f	f	HW
-104	Michael	Davis	Michael	Davis	650	1886-05-26	1906-02-08	M	104	Botswana	f	f	PN
-105	Danielle	Anderson	Danielle	Anderson	781	1888-06-20	1908-03-18	F	105	Syria	f	f	PO
-106	Lisa	Rodriguez	Lisa	Rodriguez	183	1891-12-12	1911-07-10	M	106	Uganda	f	f	LK
-107	Ryan	Jenkins	Ryan	Jenkins	609	1888-03-11	1908-08-10	F	107	Latvia	f	f	BQ
-108	Scott	Patterson	Scott	Patterson	438	1892-06-11	1912-04-17	M	108	Rwanda	f	f	GR
-109	John	Gonzalez	John	Gonzalez	422	1886-02-16	1906-04-15	F	109	Montserrat	f	f	LC
-110	Kathy	Fry	Kathy	Fry	192	1890-07-13	1910-05-28	M	110	Chile	f	f	YT
-111	Kelly	Mejia	Kelly	Mejia	523	1891-08-20	1911-01-18	F	111	Comoros	f	f	BB
-112	Lisa	Le	Lisa	Le	588	1887-06-03	1907-10-06	M	112	Ecuador	f	f	RZ
-113	John	Nelson	John	Nelson	777	1887-09-12	1907-10-10	F	113	Spain	f	f	FY
-114	Angela	Marsh	Angela	Marsh	1030	1892-05-12	1912-02-13	M	114	Portugal	f	f	IS
-115	Jonathan	Edwards	Jonathan	Edwards	493	1887-05-08	1907-10-22	F	115	Iran	f	f	OC
-116	David	Williams	David	Williams	1090	1891-11-04	1911-08-21	M	116	Bangladesh	f	f	WM
-117	Kristin	Gonzalez	Kristin	Gonzalez	835	1890-12-10	1910-11-07	F	117	Seychelles	f	f	SR
-118	Susan	Neal	Susan	Neal	26	1889-08-16	1909-07-09	M	118	Sweden	f	f	NM
-119	Lucas	Gilbert	Lucas	Gilbert	679	1892-11-04	1912-03-17	F	119	Chad	f	f	JK
-120	Cody	Meyer	Cody	Meyer	296	1890-05-16	1910-11-06	M	120	Liberia	f	f	ZN
-121	Michelle	Ross	Michelle	Ross	1058	1889-01-12	1909-11-19	F	121	Algeria	f	f	WY
-122	Donna	Daniels	Donna	Daniels	1139	1890-07-18	1910-01-02	M	122	Martinique	f	f	FQ
-123	Joel	Miller	Joel	Miller	631	1892-12-06	1912-11-17	F	123	Yemen	f	f	EC
-124	Jennifer	Johnson	Jennifer	Johnson	1022	1887-02-08	1907-08-28	M	124	Ukraine	f	f	ZD
-125	Maurice	Smith	Maurice	Smith	239	1888-02-27	1908-12-14	F	125	Estonia	f	f	ZA
-126	Ryan	Matthews	Ryan	Matthews	871	1891-09-14	1911-12-19	M	126	Nauru	f	f	BX
-127	Sharon	Perry	Sharon	Perry	1180	1886-12-14	1906-01-22	F	127	Germany	f	f	GL
-128	Ashley	Reed	Ashley	Reed	162	1867-03-26	1887-10-02	M	128	Bhutan	f	f	SE
-129	Teresa	Shaw	Teresa	Shaw	715	1861-03-01	1881-03-27	F	129	Kyrgyzstan	f	f	FB
-130	Stacy	Jenkins	Stacy	Jenkins	713	1866-06-16	1886-07-09	M	130	Estonia	f	f	KR
-131	David	Brooks	David	Brooks	161	1867-03-15	1887-07-15	F	131	Algeria	f	f	WP
-132	Angelica	Reyes	Angelica	Reyes	199	1862-07-24	1882-02-02	M	132	Austria	f	f	CU
-133	Natalie	Holmes	Natalie	Holmes	1185	1863-09-22	1883-05-21	F	133	Moldova	f	f	NC
-134	Joshua	Flores	Joshua	Flores	627	1866-07-09	1886-03-01	M	134	Mauritius	f	f	UO
-135	Melissa	Young	Melissa	Young	29	1861-10-27	1881-06-19	F	135	Greece	f	f	LS
-136	Tracey	Williams	Tracey	Williams	281	1864-02-20	1884-09-19	M	136	Switzerland	f	f	ML
-137	Jessica	Rubio	Jessica	Rubio	261	1867-08-24	1887-06-02	F	137	Greece	f	f	GY
-138	Darlene	Kelley	Darlene	Kelley	692	1864-10-20	1884-02-13	M	138	Cuba	f	f	DX
-139	Sherry	Melton	Sherry	Melton	982	1861-05-03	1881-10-25	F	139	Cambodia	f	f	LY
-140	Emily	Garner	Emily	Garner	444	1867-12-01	1887-08-26	M	140	Tunisia	f	f	DP
-141	Amber	Dickerson	Amber	Dickerson	183	1866-10-18	1886-03-21	F	141	Comoros	f	f	VQ
-142	Kathryn	Leach	Kathryn	Leach	1121	1861-08-03	1881-03-23	M	142	Paraguay	f	f	ZY
-143	Andrew	Scott	Andrew	Scott	673	1867-05-17	1887-02-22	F	143	Egypt	f	f	BV
-144	Jerry	Grant	Jerry	Grant	1085	1863-01-16	1883-09-25	M	144	Belize	f	f	IB
-145	Wesley	Cross	Wesley	Cross	170	1864-12-09	1884-05-12	F	145	Cuba	f	f	GS
-146	Randy	Miller	Randy	Miller	778	1861-06-08	1881-04-07	M	146	Syria	f	f	WW
-147	Jamie	Vaughn	Jamie	Vaughn	638	1862-03-28	1882-06-02	F	147	Cambodia	f	f	KW
-148	Melissa	Callahan	Melissa	Callahan	343	1865-07-13	1885-12-21	M	148	Afghanistan	f	f	WI
-149	Samantha	Williams	Samantha	Williams	1039	1866-08-22	1886-05-28	F	149	Kiribati	f	f	MM
-150	Cathy	Michael	Cathy	Michael	132	1862-02-12	1882-03-08	M	150	Barbados	f	f	ND
-151	Abigail	Patterson	Abigail	Patterson	102	1865-06-24	1885-03-10	F	151	Spain	f	f	OE
-152	Allison	Dudley	Allison	Dudley	666	1864-07-02	1884-03-17	M	152	Bolivia	f	f	CO
-153	Kaitlyn	Peters	Kaitlyn	Peters	565	1862-06-21	1882-07-13	F	153	Nauru	f	f	CD
-154	Darlene	Byrd	Darlene	Byrd	12	1867-10-27	1887-10-15	M	154	Mauritius	f	f	JV
-155	David	Huang	David	Huang	877	1866-07-15	1886-01-06	F	155	Myanmar	f	f	YT
-156	Phillip	Sullivan	Phillip	Sullivan	895	1863-11-20	1883-06-08	M	156	Azerbaijan	f	f	HH
-157	Morgan	Duncan	Morgan	Duncan	911	1862-12-19	1882-04-17	F	157	Mozambique	f	f	EM
-158	Danielle	Martinez	Danielle	Martinez	478	1867-12-20	1887-08-10	M	158	Luxembourg	f	f	OP
-159	Natasha	Grant	Natasha	Grant	1187	1862-09-07	1882-05-15	F	159	Morocco	f	f	QH
-160	Stephanie	Wheeler	Stephanie	Wheeler	619	1865-12-28	1885-07-10	M	160	France	f	f	DZ
-161	Raymond	Terrell	Raymond	Terrell	1187	1867-10-12	1887-07-13	F	161	Cuba	f	f	FL
-162	Krista	Marquez	Krista	Marquez	1208	1861-01-15	1881-07-04	M	162	Mexico	f	f	DQ
-163	Tamara	Tucker	Tamara	Tucker	311	1866-01-02	1886-11-01	F	163	Laos	f	f	TA
-164	Connie	Garza	Connie	Garza	406	1861-06-28	1881-03-17	M	164	Kiribati	f	f	NO
-165	David	King	David	King	435	1861-01-24	1881-09-06	F	165	Guinea	f	f	XS
-166	Tracey	Ponce	Tracey	Ponce	466	1866-08-28	1886-03-01	M	166	Malawi	f	f	PO
-167	Michael	Morrow	Michael	Morrow	985	1865-04-27	1885-02-02	F	167	Niger	f	f	DU
-168	Laura	Richardson	Laura	Richardson	562	1862-12-19	1882-10-10	M	168	Germany	f	f	GE
-169	Melinda	Atkins	Melinda	Atkins	879	1867-08-02	1887-01-18	F	169	Mali	f	f	RV
-170	Pamela	Robinson	Pamela	Robinson	554	1864-10-19	1884-09-23	M	170	Macedonia	f	f	CH
-171	Tara	Murray	Tara	Murray	487	1865-01-16	1885-12-01	F	171	Germany	f	f	MM
-172	Elizabeth	Glover	Elizabeth	Glover	221	1867-04-11	1887-01-06	M	172	Morocco	f	f	QW
-173	Dennis	Gomez	Dennis	Gomez	293	1861-04-10	1881-08-15	F	173	Curacao	f	f	AM
-174	Jenna	Schroeder	Jenna	Schroeder	559	1864-05-27	1884-12-03	M	174	Philippines	f	f	ID
-175	Amber	Hill	Amber	Hill	558	1861-08-25	1881-07-09	F	175	Aruba	f	f	DX
-176	Brittany	Kim	Brittany	Kim	675	1861-02-17	1881-03-23	M	176	Azerbaijan	f	f	AI
-177	Diana	Hall	Diana	Hall	547	1862-10-05	1882-11-02	F	177	Belgium	f	f	AB
-178	Logan	Morris	Logan	Morris	459	1866-04-16	1886-03-15	M	178	Curacao	f	f	RX
-179	Ashley	Delgado	Ashley	Delgado	838	1862-08-21	1882-09-17	F	179	Qatar	f	f	XE
-180	Rachel	Frederick	Rachel	Frederick	1009	1861-09-07	1881-01-22	M	180	Dominica	f	f	PU
-181	Rachel	Andrews	Rachel	Andrews	732	1866-07-28	1886-07-25	F	181	Uzbekistan	f	f	JO
-182	Mario	Harris	Mario	Harris	502	1863-04-06	1883-11-09	M	182	Canada	f	f	AS
-183	Scott	Martin	Scott	Martin	19	1864-05-01	1884-05-10	F	183	Australia	f	f	IU
-184	Alyssa	Williams	Alyssa	Williams	216	1861-10-25	1881-10-08	M	184	Nauru	f	f	QS
-185	Steven	Silva	Steven	Silva	648	1867-02-09	1887-06-21	F	185	Niger	f	f	QY
-186	John	Knox	John	Knox	480	1864-06-23	1884-06-12	M	186	Croatia	f	f	FU
-187	Donna	Green	Donna	Green	161	1867-08-16	1887-06-28	F	187	Estonia	f	f	VR
-188	Natalie	Taylor	Natalie	Taylor	863	1863-03-03	1883-03-25	M	188	Slovenia	f	f	FT
-189	Robert	Lam	Robert	Lam	1239	1862-01-12	1882-05-18	F	189	Nigeria	f	f	CI
-190	Nathan	Campbell	Nathan	Campbell	1166	1862-06-24	1882-12-16	M	190	Aruba	f	f	KG
-191	Crystal	Meza	Crystal	Meza	322	1866-12-01	1886-11-21	F	191	Spain	f	f	AB
-192	Robert	Lane	Robert	Lane	782	1864-10-23	1884-10-15	M	192	Laos	f	f	DM
-193	Valerie	Wade	Valerie	Wade	838	1867-09-21	1887-07-01	F	193	Martinique	f	f	BI
-194	Tiffany	Patterson	Tiffany	Patterson	952	1865-01-04	1885-09-07	M	194	Uruguay	f	f	KX
-195	Stephanie	Garza	Stephanie	Garza	1172	1867-01-05	1887-12-06	F	195	Guyana	f	f	HI
-196	Kimberly	Shields	Kimberly	Shields	669	1867-08-13	1887-09-11	M	196	Cameroon	f	f	MH
-197	Austin	Martinez	Austin	Martinez	868	1862-03-21	1882-08-19	F	197	Turkey	f	f	KP
-198	Timothy	Carter	Timothy	Carter	377	1862-02-14	1882-08-16	M	198	Bermuda	f	f	IV
-199	Timothy	Harris	Timothy	Harris	817	1861-03-09	1881-02-09	F	199	Malawi	f	f	ZO
-200	Martin	Riley	Martin	Riley	190	1866-03-09	1886-01-01	M	200	Guyana	f	f	YY
-201	Walter	Clarke	Walter	Clarke	797	1866-12-27	1886-12-21	F	201	Oman	f	f	HR
-202	Kayla	Herrera	Kayla	Herrera	457	1864-09-05	1884-11-07	M	202	Angola	f	f	QS
-203	William	Adams	William	Adams	889	1867-02-11	1887-01-24	F	203	Togo	f	f	DM
-204	Bryan	Blackwell	Bryan	Blackwell	18	1862-06-19	1882-09-14	M	204	Georgia	f	f	FD
-205	Donald	Anderson	Donald	Anderson	28	1864-02-13	1884-01-18	F	205	Suriname	f	f	VA
-206	Jonathan	Gutierrez	Jonathan	Gutierrez	687	1864-02-17	1884-09-04	M	206	Croatia	f	f	FY
-207	Jennifer	Marquez	Jennifer	Marquez	859	1864-07-04	1884-10-16	F	207	Nicaragua	f	f	RE
-208	Kelsey	Smith	Kelsey	Smith	849	1864-10-28	1884-08-13	M	208	Seychelles	f	f	AN
-209	Mark	Ware	Mark	Ware	989	1867-07-07	1887-01-19	F	209	Botswana	f	f	XV
-210	Jonathan	Haynes	Jonathan	Haynes	600	1862-03-21	1882-08-18	M	210	Denmark	f	f	QL
-211	Sandra	Kirk	Sandra	Kirk	889	1866-08-24	1886-02-23	F	211	Ghana	f	f	WI
-212	Elizabeth	Pope	Elizabeth	Pope	61	1864-07-19	1884-04-13	M	212	Netherlands	f	f	OE
-213	Misty	Hart	Misty	Hart	488	1866-07-08	1886-06-13	F	213	Uruguay	f	f	YT
-214	Darrell	Moyer	Darrell	Moyer	840	1867-06-10	1887-03-12	M	214	Syria	f	f	XF
-215	Bernard	Mann	Bernard	Mann	336	1867-08-07	1887-09-20	F	215	Angola	f	f	RC
-216	Jerry	Huffman	Jerry	Huffman	200	1865-10-23	1885-03-19	M	216	Fiji	f	f	SE
-217	Chad	Park	Chad	Park	644	1864-03-26	1884-10-04	F	217	Barbados	f	f	PF
-218	Pamela	Wagner	Pamela	Wagner	426	1867-03-16	1887-04-10	M	218	Uganda	f	f	SB
-219	Lauren	Lamb	Lauren	Lamb	64	1865-11-18	1885-06-24	F	219	Montenegro	f	f	UN
-220	Sandra	Wright	Sandra	Wright	108	1861-08-16	1881-02-08	M	220	Kenya	f	f	UU
-221	Kathryn	Cain	Kathryn	Cain	892	1865-11-14	1885-06-09	F	221	Iceland	f	f	XT
-222	Molly	Newman	Molly	Newman	324	1866-09-23	1886-06-22	M	222	Bolivia	f	f	NK
-223	Keith	Wallace	Keith	Wallace	1094	1866-01-16	1886-11-03	F	223	Tuvalu	f	f	FD
-224	Rebecca	Hogan	Rebecca	Hogan	1168	1863-03-17	1883-09-09	M	224	Philippines	f	f	IG
-225	Daniel	Chen	Daniel	Chen	985	1863-03-11	1883-06-24	F	225	Libya	f	f	SW
-226	Jason	Stewart	Jason	Stewart	959	1861-12-27	1881-10-25	M	226	Kiribati	f	f	GZ
-227	Christopher	Bailey	Christopher	Bailey	308	1864-12-21	1884-01-02	F	227	Bahrain	f	f	KO
-228	Phillip	Martin	Phillip	Martin	601	1865-02-11	1885-05-07	M	228	Paraguay	f	f	UP
-229	Kelsey	Mayo	Kelsey	Mayo	1023	1864-03-16	1884-02-26	F	229	Pitcairn	f	f	CI
-230	Karen	Thompson	Karen	Thompson	590	1866-11-09	1886-06-15	M	230	Panama	f	f	CQ
-231	Jamie	Atkins	Jamie	Atkins	265	1863-07-26	1883-01-18	F	231	Benin	f	f	VA
-232	Edward	Strong	Edward	Strong	19	1864-05-24	1884-08-19	M	232	Fiji	f	f	IY
-233	Stacy	Kim	Stacy	Kim	349	1865-01-05	1885-02-14	F	233	Iceland	f	f	WG
-234	Bryan	Ross	Bryan	Ross	1080	1866-12-06	1886-08-27	M	234	Colombia	f	f	GM
-235	David	Kirby	David	Kirby	15	1866-06-22	1886-10-21	F	235	Rwanda	f	f	UK
-236	Andrew	Freeman	Andrew	Freeman	32	1862-12-13	1882-12-24	M	236	Albania	f	f	AF
-237	Jennifer	Hudson	Jennifer	Hudson	1164	1861-12-27	1881-03-06	F	237	Iran	f	f	JT
-238	Scott	Moreno	Scott	Moreno	1098	1863-02-13	1883-04-02	M	238	Hungary	f	f	ZQ
-239	Shannon	King	Shannon	King	354	1863-08-13	1883-08-23	F	239	Australia	f	f	GP
-240	Kristen	Thomas	Kristen	Thomas	526	1865-07-11	1885-08-18	M	240	Guinea	f	f	ES
-241	Brittany	Dickerson	Brittany	Dickerson	1227	1863-10-25	1883-12-07	F	241	Hungary	f	f	OM
-242	Laura	Robles	Laura	Robles	780	1863-08-26	1883-12-13	M	242	Nauru	f	f	BN
-243	Rick	Murphy	Rick	Murphy	130	1862-02-12	1882-10-18	F	243	Tunisia	f	f	SZ
-244	Jennifer	Black	Jennifer	Black	703	1864-04-20	1884-03-19	M	244	Brazil	f	f	CE
-245	Janet	Nelson	Janet	Nelson	782	1863-04-21	1883-03-23	F	245	Rwanda	f	f	JY
-246	Susan	Smith	Susan	Smith	248	1863-11-06	1883-01-15	M	246	Spain	f	f	BS
-247	Chad	Nelson	Chad	Nelson	1212	1867-09-15	1887-05-19	F	247	Poland	f	f	JD
-248	Cesar	Peterson	Cesar	Peterson	781	1861-04-25	1881-04-13	M	248	Israel	f	f	LD
-249	Amanda	Green	Amanda	Green	450	1866-05-18	1886-08-02	F	249	Niger	f	f	EX
-250	Jennifer	Brown	Jennifer	Brown	1010	1864-10-27	1884-07-20	M	250	Belgium	f	f	YE
-251	Rebecca	Novak	Rebecca	Novak	406	1865-10-07	1885-04-19	F	251	Gabon	f	f	ZI
-252	Michael	Smith	Michael	Smith	488	1861-11-10	1881-08-14	M	252	Guyana	f	f	CQ
-253	Melissa	Barron	Melissa	Barron	783	1861-11-06	1881-10-05	F	253	Canada	f	f	CN
-254	Aaron	Richardson	Aaron	Richardson	955	1866-03-01	1886-09-26	M	254	Barbados	f	f	XL
-255	Patrick	Jacobs	Patrick	Jacobs	94	1865-02-21	1885-08-11	F	255	Angola	f	f	UC
-256	Crystal	Braun	Crystal	Braun	670	1839-02-28	1859-08-18	M	256	Finland	f	f	EL
-257	John	Mullen	John	Mullen	1085	1842-11-09	1862-07-18	F	257	Pakistan	f	f	RN
-258	Rachel	Martinez	Rachel	Martinez	148	1842-03-25	1862-09-18	M	258	Togo	f	f	JZ
-259	Joseph	Lawson	Joseph	Lawson	1156	1836-12-07	1856-01-08	F	259	Panama	f	f	YO
-260	Dana	Hicks	Dana	Hicks	1030	1837-12-16	1857-03-06	M	260	Austria	f	f	MO
-261	Jillian	Russell	Jillian	Russell	1112	1837-07-03	1857-11-02	F	261	Mongolia	f	f	PJ
-262	Scott	Williams	Scott	Williams	428	1836-04-23	1856-03-24	M	262	Morocco	f	f	IO
-263	Ronald	Sharp	Ronald	Sharp	898	1836-02-15	1856-11-01	F	263	Azerbaijan	f	f	YH
-264	Ronald	Rodriguez	Ronald	Rodriguez	345	1836-03-01	1856-03-21	M	264	Pakistan	f	f	XS
-265	Christopher	Davis	Christopher	Davis	900	1839-07-28	1859-08-03	F	265	Portugal	f	f	BZ
-266	Maria	Fletcher	Maria	Fletcher	470	1840-03-08	1860-01-17	M	266	Philippines	f	f	CS
-267	James	Chambers	James	Chambers	1083	1840-02-11	1860-05-04	F	267	Moldova	f	f	EQ
-268	Michael	Morris	Michael	Morris	22	1840-10-09	1860-03-09	M	268	Tunisia	f	f	DA
-269	Deborah	Williams	Deborah	Williams	59	1837-09-17	1857-10-17	F	269	Barbados	f	f	RC
-270	Patrick	Jimenez	Patrick	Jimenez	129	1839-06-25	1859-09-04	M	270	Armenia	f	f	GK
-271	Debra	Rojas	Debra	Rojas	963	1840-06-21	1860-06-01	F	271	Ukraine	f	f	OR
-272	Amy	Mitchell	Amy	Mitchell	453	1839-11-05	1859-07-03	M	272	Brazil	f	f	OV
-273	Angela	Macias	Angela	Macias	713	1840-01-22	1860-03-19	F	273	Eritrea	f	f	PS
-274	Jessica	Young	Jessica	Young	117	1842-10-18	1862-04-21	M	274	China	f	f	WK
-275	Lance	Evans	Lance	Evans	112	1837-11-06	1857-12-11	F	275	Australia	f	f	SV
-276	Nicholas	Phillips	Nicholas	Phillips	457	1837-09-26	1857-08-19	M	276	Afghanistan	f	f	WO
-277	Robert	Smith	Robert	Smith	800	1837-05-27	1857-03-06	F	277	Bangladesh	f	f	KA
-278	Lori	Kennedy	Lori	Kennedy	530	1841-01-15	1861-12-16	M	278	India	f	f	SE
-279	Wesley	Williams	Wesley	Williams	1098	1836-09-06	1856-03-18	F	279	Swaziland	f	f	GF
-280	Kevin	Bailey	Kevin	Bailey	910	1837-05-25	1857-05-19	M	280	Bolivia	f	f	OA
-281	Kimberly	Finley	Kimberly	Finley	749	1837-06-12	1857-01-02	F	281	Peru	f	f	FF
-282	Mitchell	Madden	Mitchell	Madden	1086	1839-10-04	1859-02-11	M	282	Syria	f	f	MW
-283	Sophia	Williams	Sophia	Williams	855	1840-03-05	1860-06-02	F	283	Slovenia	f	f	HE
-284	Craig	Luna	Craig	Luna	527	1837-11-22	1857-10-25	M	284	Malaysia	f	f	ZG
-285	Jeff	Ramirez	Jeff	Ramirez	339	1836-11-03	1856-07-11	F	285	Tuvalu	f	f	BS
-286	Angelica	Owens	Angelica	Owens	849	1837-08-13	1857-09-25	M	286	Malawi	f	f	WG
-287	Crystal	Mitchell	Crystal	Mitchell	1178	1837-03-04	1857-12-07	F	287	Curacao	f	f	YN
-288	Carrie	Holloway	Carrie	Holloway	465	1841-07-03	1861-11-13	M	288	Qatar	f	f	KL
-289	Alicia	Clark	Alicia	Clark	655	1841-12-20	1861-10-18	F	289	Nigeria	f	f	WB
-290	Michael	Gonzalez	Michael	Gonzalez	120	1839-01-04	1859-12-23	M	290	Slovakia	f	f	GU
-291	Carlos	Griffith	Carlos	Griffith	903	1838-11-23	1858-06-14	F	291	Sudan	f	f	CH
-292	Gary	Dean	Gary	Dean	1211	1839-04-06	1859-12-13	M	292	Tajikistan	f	f	XA
-293	Kevin	Smith	Kevin	Smith	1003	1838-11-03	1858-06-05	F	293	Haiti	f	f	SQ
-294	Travis	Jensen	Travis	Jensen	511	1838-04-17	1858-08-26	M	294	Estonia	f	f	UM
-295	Elizabeth	Nichols	Elizabeth	Nichols	1203	1837-12-25	1857-03-23	F	295	France	f	f	LR
-296	Sean	Castillo	Sean	Castillo	51	1837-06-28	1857-07-26	M	296	Syria	f	f	NL
-297	David	Yu	David	Yu	199	1842-06-10	1862-02-13	F	297	Argentina	f	f	VF
-298	Edward	Davis	Edward	Davis	411	1842-11-07	1862-10-22	M	298	Poland	f	f	BK
-299	Donna	David	Donna	David	1000	1836-12-28	1856-09-06	F	299	Liechtenstein	f	f	VQ
-300	Lisa	Moss	Lisa	Moss	700	1837-08-03	1857-03-10	M	300	Thailand	f	f	JN
-301	Frank	Robinson	Frank	Robinson	1236	1842-04-05	1862-08-23	F	301	Greece	f	f	YV
-302	Courtney	Moore	Courtney	Moore	599	1841-05-18	1861-02-26	M	302	Zimbabwe	f	f	JR
-303	Samantha	Gill	Samantha	Gill	495	1841-09-23	1861-05-21	F	303	Malta	f	f	GT
-304	Betty	Bauer	Betty	Bauer	319	1838-07-21	1858-10-27	M	304	Martinique	f	f	LC
-305	Matthew	Vang	Matthew	Vang	1170	1838-10-03	1858-03-14	F	305	Belize	f	f	DH
-306	Jessica	Mata	Jessica	Mata	267	1839-04-14	1859-06-14	M	306	Swaziland	f	f	OG
-307	Karen	Jones	Karen	Jones	863	1842-04-26	1862-11-17	F	307	Mauritius	f	f	DN
-308	Robert	Garza	Robert	Garza	799	1842-02-07	1862-08-16	M	308	Mauritania	f	f	VM
-309	Charles	Norton	Charles	Norton	736	1840-10-12	1860-04-27	F	309	Seychelles	f	f	IP
-310	Daniel	Garner	Daniel	Garner	820	1841-03-23	1861-10-04	M	310	Bangladesh	f	f	JR
-311	David	Singleton	David	Singleton	877	1837-10-23	1857-02-15	F	311	Swaziland	f	f	GE
-312	Justin	Baker	Justin	Baker	421	1837-10-13	1857-09-28	M	312	France	f	f	JV
-313	Heather	Taylor	Heather	Taylor	559	1837-10-14	1857-06-08	F	313	Romania	f	f	JU
-314	Brandon	Velasquez	Brandon	Velasquez	422	1839-08-22	1859-06-24	M	314	Nicaragua	f	f	LB
-315	Adam	Black	Adam	Black	955	1842-05-16	1862-02-21	F	315	Turkey	f	f	IO
-316	Albert	Smith	Albert	Smith	376	1841-10-12	1861-12-28	M	316	Ireland	f	f	YM
-317	David	Barnes	David	Barnes	555	1836-03-11	1856-06-17	F	317	Bhutan	f	f	LD
-318	Katherine	Benjamin	Katherine	Benjamin	800	1837-03-01	1857-06-16	M	318	Bolivia	f	f	MU
-319	Amber	Lopez	Amber	Lopez	423	1840-02-28	1860-09-18	F	319	Sweden	f	f	EX
-320	Cynthia	Phelps	Cynthia	Phelps	61	1839-02-16	1859-07-16	M	320	Estonia	f	f	SR
-321	Jonathon	Hurley	Jonathon	Hurley	1059	1838-09-05	1858-10-14	F	321	Slovakia	f	f	GM
-322	Evan	Bowers	Evan	Bowers	1162	1839-10-11	1859-11-04	M	322	Tanzania	f	f	RB
-323	Kristen	Wolfe	Kristen	Wolfe	1138	1839-06-07	1859-10-10	F	323	Australia	f	f	CZ
-324	Christopher	Lee	Christopher	Lee	882	1837-08-12	1857-09-09	M	324	Togo	f	f	IF
-325	Kristin	Sawyer	Kristin	Sawyer	1009	1839-10-02	1859-08-12	F	325	Egypt	f	f	UH
-326	Nicholas	Dickerson	Nicholas	Dickerson	711	1836-10-06	1856-06-20	M	326	Swaziland	f	f	ZQ
-327	Katherine	Figueroa	Katherine	Figueroa	752	1839-03-13	1859-05-22	F	327	Russia	f	f	ON
-328	Lisa	Le	Lisa	Le	238	1839-01-09	1859-07-19	M	328	Germany	f	f	NB
-329	Jon	Thornton	Jon	Thornton	1005	1841-03-10	1861-08-17	F	329	Portugal	f	f	LO
-330	David	Wilkins	David	Wilkins	1164	1838-04-09	1858-02-09	M	330	Turkey	f	f	CR
-331	Michael	Nash	Michael	Nash	1140	1841-04-26	1861-05-07	F	331	Moldova	f	f	CW
-332	Olivia	George	Olivia	George	1182	1840-07-13	1860-12-01	M	332	Canada	f	f	CV
-333	Benjamin	Oneill	Benjamin	Oneill	1110	1841-01-26	1861-08-07	F	333	Aruba	f	f	ZR
-334	Scott	Ashley	Scott	Ashley	748	1837-07-13	1857-08-17	M	334	Guinea	f	f	KU
-335	Edward	Frank	Edward	Frank	343	1837-02-28	1857-07-26	F	335	Mayotte	f	f	AG
-336	Tamara	Flores	Tamara	Flores	135	1837-04-11	1857-07-04	M	336	Australia	f	f	AH
-337	Jerry	Ramsey	Jerry	Ramsey	1111	1841-03-22	1861-02-17	F	337	Georgia	f	f	GD
-338	Anna	Merritt	Anna	Merritt	678	1841-02-02	1861-04-07	M	338	Cameroon	f	f	YO
-339	Laurie	Benson	Laurie	Benson	420	1837-12-17	1857-10-26	F	339	Tunisia	f	f	JF
-340	Matthew	Sandoval	Matthew	Sandoval	863	1839-03-06	1859-12-22	M	340	Switzerland	f	f	SA
-341	Jerry	Taylor	Jerry	Taylor	873	1841-01-26	1861-04-10	F	341	Indonesia	f	f	NN
-342	Robert	Garcia	Robert	Garcia	674	1839-08-01	1859-12-14	M	342	Malaysia	f	f	EC
-343	Ashley	Keller	Ashley	Keller	922	1842-03-02	1862-10-17	F	343	Mongolia	f	f	IQ
-344	Melissa	Thompson	Melissa	Thompson	840	1837-03-24	1857-04-10	M	344	Curacao	f	f	YN
-345	Kathleen	Gray	Kathleen	Gray	932	1842-07-21	1862-05-25	F	345	Dominica	f	f	BC
-346	Ryan	Cochran	Ryan	Cochran	384	1840-09-13	1860-06-07	M	346	Philippines	f	f	DY
-347	Ashley	Wilkinson	Ashley	Wilkinson	12	1840-06-18	1860-09-03	F	347	Panama	f	f	LL
-348	Jacqueline	Yates	Jacqueline	Yates	222	1838-10-13	1858-12-13	M	348	Nepal	f	f	ZT
-349	Erin	Fisher	Erin	Fisher	568	1837-08-11	1857-12-04	F	349	Oman	f	f	GZ
-350	Christine	Garcia	Christine	Garcia	635	1836-10-21	1856-11-08	M	350	Ghana	f	f	SY
-351	David	Bowman	David	Bowman	644	1836-04-14	1856-12-10	F	351	Venezuela	f	f	YZ
-352	Lance	Mosley	Lance	Mosley	54	1836-11-24	1856-10-10	M	352	Guyana	f	f	XV
-353	Kim	Rodriguez	Kim	Rodriguez	1110	1842-01-28	1862-09-26	F	353	Nepal	f	f	GG
-354	Erin	Erickson	Erin	Erickson	628	1842-04-15	1862-12-19	M	354	Comoros	f	f	IZ
-355	Rachel	Robbins	Rachel	Robbins	882	1839-02-07	1859-07-21	F	355	Kosovo	f	f	CB
-356	Jake	Reilly	Jake	Reilly	478	1842-09-15	1862-11-17	M	356	Nepal	f	f	LC
-357	Christian	Thomas	Christian	Thomas	892	1838-06-01	1858-10-28	F	357	Croatia	f	f	PA
-358	Leonard	Michael	Leonard	Michael	1200	1840-07-09	1860-01-08	M	358	Moldova	f	f	LJ
-359	Alyssa	Ellison	Alyssa	Ellison	388	1842-08-28	1862-06-09	F	359	Iceland	f	f	FO
-360	Amber	Lee	Amber	Lee	266	1840-01-28	1860-05-15	M	360	Burundi	f	f	KB
-361	Barbara	Jones	Barbara	Jones	973	1840-02-20	1860-10-27	F	361	Senegal	f	f	ZI
-362	Michael	Pierce	Michael	Pierce	37	1841-12-19	1861-04-07	M	362	Dominica	f	f	TZ
-363	David	Dean	David	Dean	544	1839-05-11	1859-11-23	F	363	Greece	f	f	KF
-364	Samantha	Evans	Samantha	Evans	1228	1837-05-14	1857-12-07	M	364	Paraguay	f	f	VL
-365	Carla	Lyons	Carla	Lyons	705	1837-01-13	1857-10-22	F	365	Greenland	f	f	XY
-366	Taylor	Williams	Taylor	Williams	610	1841-01-08	1861-01-03	M	366	Chile	f	f	ZD
-367	Charles	Madden	Charles	Madden	76	1838-12-05	1858-10-12	F	367	Djibouti	f	f	TE
-368	Michael	Davis	Michael	Davis	280	1837-08-08	1857-04-19	M	368	Mexico	f	f	GL
-369	Donna	Nelson	Donna	Nelson	487	1838-12-04	1858-08-01	F	369	USA	f	f	MN
-370	Shari	Jimenez	Shari	Jimenez	804	1837-06-12	1857-04-03	M	370	Nepal	f	f	CX
-371	Raymond	Lopez	Raymond	Lopez	531	1840-07-24	1860-04-20	F	371	Malta	f	f	JH
-372	Amanda	Levy	Amanda	Levy	377	1836-12-14	1856-04-17	M	372	Malawi	f	f	DN
-373	Keith	Rowland	Keith	Rowland	438	1839-07-02	1859-03-09	F	373	Belize	f	f	BS
-374	Robert	Shelton	Robert	Shelton	204	1841-03-05	1861-10-01	M	374	Fiji	f	f	IF
-375	Robert	Hutchinson	Robert	Hutchinson	954	1842-03-19	1862-08-11	F	375	Netherlands	f	f	OT
-376	Tammy	Gomez	Tammy	Gomez	415	1838-10-13	1858-05-03	M	376	Maldives	f	f	WJ
-377	Randy	Herrera	Randy	Herrera	1079	1842-09-27	1862-03-25	F	377	Venezuela	f	f	GY
-378	Wendy	Oneal	Wendy	Oneal	652	1842-10-05	1862-03-09	M	378	Niue	f	f	HX
-379	Caitlin	Wright	Caitlin	Wright	307	1840-12-04	1860-08-28	F	379	Philippines	f	f	ZB
-380	Joshua	Jones	Joshua	Jones	1164	1836-03-07	1856-04-10	M	380	Germany	f	f	BX
-381	Chris	Moore	Chris	Moore	925	1837-07-07	1857-12-04	F	381	Tanzania	f	f	ZM
-382	Daniel	Anderson	Daniel	Anderson	466	1840-01-01	1860-03-19	M	382	Curacao	f	f	AA
-383	Erin	Johnson	Erin	Johnson	1198	1836-05-03	1856-10-01	F	383	Mayotte	f	f	ZD
-384	Erika	Diaz	Erika	Diaz	1218	1837-06-25	1857-11-28	M	384	Ukraine	f	f	PB
-385	Angela	Wood	Angela	Wood	607	1842-02-12	1862-04-02	F	385	Senegal	f	f	KD
-386	Shaun	Gates	Shaun	Gates	273	1837-04-03	1857-01-03	M	386	Macedonia	f	f	CP
-387	Jessica	Garza	Jessica	Garza	170	1837-07-13	1857-11-22	F	387	Togo	f	f	EP
-388	Margaret	Henderson	Margaret	Henderson	1056	1840-04-21	1860-05-22	M	388	Austria	f	f	SV
-389	Rebecca	Miller	Rebecca	Miller	1188	1842-03-13	1862-06-24	F	389	Montenegro	f	f	SY
-390	Lori	Wright	Lori	Wright	139	1838-09-05	1858-07-02	M	390	Cameroon	f	f	GE
-391	Mark	Jenkins	Mark	Jenkins	343	1836-09-27	1856-07-19	F	391	Venezuela	f	f	ET
-392	Elizabeth	Pierce	Elizabeth	Pierce	535	1837-09-14	1857-12-28	M	392	Kazakhstan	f	f	MW
-393	Thomas	Davis	Thomas	Davis	438	1837-03-22	1857-09-12	F	393	Madagascar	f	f	RN
-394	Kenneth	Gaines	Kenneth	Gaines	660	1837-02-10	1857-12-15	M	394	Dominica	f	f	FU
-395	Jennifer	Wall	Jennifer	Wall	91	1837-01-03	1857-02-28	F	395	Guinea	f	f	VA
-396	Elizabeth	Robertson	Elizabeth	Robertson	520	1836-09-01	1856-11-18	M	396	Bhutan	f	f	IS
-397	Kristin	Todd	Kristin	Todd	1089	1840-06-04	1860-08-17	F	397	Malta	f	f	QS
-398	Sarah	Haynes	Sarah	Haynes	148	1836-10-15	1856-07-01	M	398	Nicaragua	f	f	WK
-399	Margaret	Beard	Margaret	Beard	954	1840-03-11	1860-10-25	F	399	Liechtenstein	f	f	TK
-400	Jonathan	Garza	Jonathan	Garza	54	1837-04-22	1857-04-23	M	400	Algeria	f	f	CJ
-401	Kristi	Stewart	Kristi	Stewart	990	1837-04-14	1857-01-16	F	401	Mongolia	f	f	WO
-402	Dwayne	Mcgee	Dwayne	Mcgee	361	1838-01-08	1858-06-12	M	402	Cameroon	f	f	LL
-403	Richard	Jones	Richard	Jones	88	1841-06-04	1861-06-09	F	403	Australia	f	f	SU
-404	Alexandria	Alvarado	Alexandria	Alvarado	279	1836-05-13	1856-10-19	M	404	Panama	f	f	OE
-405	Christina	Smith	Christina	Smith	1152	1842-10-18	1862-11-16	F	405	Mongolia	f	f	TS
-406	Michael	Trujillo	Michael	Trujillo	983	1842-01-01	1862-06-06	M	406	Azerbaijan	f	f	MG
-407	Jennifer	Gutierrez	Jennifer	Gutierrez	860	1839-06-17	1859-06-19	F	407	Ghana	f	f	EG
-408	Christian	Cooper	Christian	Cooper	291	1840-07-10	1860-11-19	M	408	Comoros	f	f	KV
-409	Anthony	Jones	Anthony	Jones	243	1837-10-26	1857-11-13	F	409	Montserrat	f	f	AP
-410	Pedro	Skinner	Pedro	Skinner	343	1840-10-08	1860-07-15	M	410	Russia	f	f	XE
-411	Dean	Griffin	Dean	Griffin	1198	1842-10-14	1862-05-02	F	411	Malawi	f	f	BW
-412	Sharon	Wells	Sharon	Wells	527	1838-06-03	1858-04-16	M	412	Ecuador	f	f	HK
-413	Kristy	Blake	Kristy	Blake	296	1841-07-01	1861-07-13	F	413	Chad	f	f	ZL
-414	Stephen	Morales	Stephen	Morales	1018	1836-08-14	1856-05-23	M	414	Maldives	f	f	DI
-415	Meghan	Patton	Meghan	Patton	1058	1838-06-23	1858-10-04	F	415	Armenia	f	f	VX
-416	Debra	Rivera	Debra	Rivera	563	1840-03-04	1860-11-08	M	416	Turkmenistan	f	f	ZU
-417	Chad	White	Chad	White	498	1838-11-14	1858-07-23	F	417	Cambodia	f	f	BV
-418	Darrell	Pace	Darrell	Pace	870	1838-12-21	1858-11-03	M	418	Kiribati	f	f	KO
-419	Paul	Miller	Paul	Miller	112	1841-02-12	1861-09-09	F	419	Canada	f	f	FM
-420	Martha	Ware	Martha	Ware	844	1837-09-04	1857-04-23	M	420	China	f	f	NY
-421	Leslie	Roberts	Leslie	Roberts	885	1840-08-21	1860-07-10	F	421	Germany	f	f	XE
-422	Phillip	Nelson	Phillip	Nelson	57	1842-07-06	1862-03-16	M	422	Jordan	f	f	SM
-423	Jack	Miller	Jack	Miller	991	1842-12-05	1862-08-25	F	423	Djibouti	f	f	ZB
-424	Justin	Williams	Justin	Williams	324	1841-02-23	1861-06-23	M	424	Egypt	f	f	KM
-425	Marcia	Mcdonald	Marcia	Mcdonald	330	1839-01-28	1859-08-15	F	425	Oman	f	f	NT
-426	Erin	Cox	Erin	Cox	931	1836-11-01	1856-02-23	M	426	Poland	f	f	PK
-427	Richard	Barker	Richard	Barker	1026	1838-10-19	1858-08-26	F	427	Kiribati	f	f	UV
-428	Meredith	Woodward	Meredith	Woodward	491	1836-12-18	1856-07-15	M	428	Macao	f	f	HC
-429	Emma	Mendez	Emma	Mendez	1166	1838-01-08	1858-12-27	F	429	Finland	f	f	HI
-430	John	Guzman	John	Guzman	619	1836-07-02	1856-10-06	M	430	Honduras	f	f	XU
-431	Kelly	Medina	Kelly	Medina	552	1838-03-07	1858-02-10	F	431	Macao	f	f	RG
-432	Erica	Middleton	Erica	Middleton	1174	1840-04-19	1860-04-13	M	432	Peru	f	f	RR
-433	Natalie	Mata	Natalie	Mata	495	1836-04-04	1856-02-03	F	433	Cambodia	f	f	PV
-434	Monique	Harris	Monique	Harris	55	1841-02-27	1861-12-08	M	434	Argentina	f	f	AU
-435	Amber	Williams	Amber	Williams	821	1836-02-07	1856-07-01	F	435	Yemen	f	f	VC
-436	Jessica	Gibson	Jessica	Gibson	350	1838-02-09	1858-08-10	M	436	Cuba	f	f	SK
-437	Jennifer	Woods	Jennifer	Woods	520	1842-03-22	1862-12-05	F	437	Cameroon	f	f	SM
-438	Stacie	Burns	Stacie	Burns	991	1836-12-28	1856-03-21	M	438	Singapore	f	f	RU
-439	Tyler	Martinez	Tyler	Martinez	1233	1841-09-25	1861-05-21	F	439	Cambodia	f	f	JZ
-440	Ana	Douglas	Ana	Douglas	1178	1837-07-14	1857-12-18	M	440	Yemen	f	f	OW
-441	Alan	Frazier	Alan	Frazier	107	1838-04-20	1858-04-17	F	441	Gabon	f	f	PC
-442	Stephen	Murphy	Stephen	Murphy	882	1841-03-28	1861-09-19	M	442	Afghanistan	f	f	GU
-443	Jeffrey	Miller	Jeffrey	Miller	1000	1838-12-10	1858-09-02	F	443	Belarus	f	f	JH
-444	Emily	Mooney	Emily	Mooney	592	1841-10-14	1861-10-12	M	444	Algeria	f	f	OP
-445	Justin	Palmer	Justin	Palmer	178	1840-02-15	1860-01-22	F	445	Gabon	f	f	CI
-446	Christy	Robbins	Christy	Robbins	248	1839-03-25	1859-09-24	M	446	Nauru	f	f	RI
-447	Joseph	Kennedy	Joseph	Kennedy	677	1838-07-23	1858-08-23	F	447	Turkey	f	f	NA
-448	Veronica	Waters	Veronica	Waters	675	1838-03-13	1858-11-09	M	448	Sweden	f	f	TT
-449	Benjamin	Blair	Benjamin	Blair	850	1836-12-14	1856-01-15	F	449	Greenland	f	f	OK
-450	Amanda	Morgan	Amanda	Morgan	247	1840-11-11	1860-08-24	M	450	Denmark	f	f	YF
-451	Nathaniel	Jackson	Nathaniel	Jackson	471	1837-09-20	1857-07-28	F	451	Argentina	f	f	YY
-452	John	Hensley	John	Hensley	675	1842-06-18	1862-02-26	M	452	Eritrea	f	f	GG
-453	Veronica	Hart	Veronica	Hart	133	1841-07-16	1861-12-17	F	453	Somalia	f	f	VE
-454	Jeremy	Snyder	Jeremy	Snyder	606	1840-07-19	1860-05-21	M	454	Dominica	f	f	SN
-455	Amanda	Lambert	Amanda	Lambert	554	1840-06-22	1860-05-11	F	455	Mauritania	f	f	DM
-456	Christopher	Stark	Christopher	Stark	451	1836-03-21	1856-10-22	M	456	Cyprus	f	f	UA
-457	Daniel	Duran	Daniel	Duran	28	1836-07-28	1856-10-05	F	457	France	f	f	OU
-458	Kevin	Mcconnell	Kevin	Mcconnell	537	1837-04-03	1857-01-23	M	458	Guyana	f	f	AU
-459	Troy	Montes	Troy	Montes	686	1839-07-11	1859-01-25	F	459	Nepal	f	f	PV
-460	Jose	Smith	Jose	Smith	61	1842-09-09	1862-08-24	M	460	Kenya	f	f	HX
-461	Kevin	Kramer	Kevin	Kramer	1144	1838-08-16	1858-09-13	F	461	Seychelles	f	f	RK
-462	Elizabeth	Carter	Elizabeth	Carter	60	1841-08-02	1861-05-11	M	462	Ethiopia	f	f	LX
-463	Anthony	Woods	Anthony	Woods	933	1842-03-18	1862-06-21	F	463	Dominica	f	f	WS
-464	Jennifer	Shaffer	Jennifer	Shaffer	351	1836-12-15	1856-07-22	M	464	Italy	f	f	VO
-465	Erika	Tran	Erika	Tran	434	1841-01-15	1861-12-16	F	465	Bermuda	f	f	ZF
-466	Colleen	Hampton	Colleen	Hampton	144	1836-08-18	1856-07-07	M	466	Mauritius	f	f	RD
-467	Allison	Johnson	Allison	Johnson	781	1841-01-11	1861-06-21	F	467	Mexico	f	f	CK
-468	Donald	Mcguire	Donald	Mcguire	789	1838-06-05	1858-01-16	M	468	USA	f	f	IH
-469	Elizabeth	Snyder	Elizabeth	Snyder	160	1837-11-19	1857-06-16	F	469	Syria	f	f	ES
-470	Nathan	Elliott	Nathan	Elliott	924	1836-11-05	1856-04-02	M	470	Cuba	f	f	KI
-471	Ana	Ford	Ana	Ford	392	1839-09-06	1859-04-05	F	471	Kosovo	f	f	HY
-472	Matthew	Juarez	Matthew	Juarez	443	1838-01-09	1858-04-19	M	472	Liechtenstein	f	f	VI
-473	Monica	Stewart	Monica	Stewart	635	1837-09-15	1857-06-11	F	473	Spain	f	f	ST
-474	Preston	Jensen	Preston	Jensen	451	1841-04-11	1861-08-17	M	474	Algeria	f	f	IZ
-475	Valerie	Strickland	Valerie	Strickland	276	1836-03-20	1856-09-26	F	475	Denmark	f	f	EY
-476	Amy	Murphy	Amy	Murphy	418	1841-10-01	1861-05-18	M	476	Fiji	f	f	EO
-477	Krista	Morgan	Krista	Morgan	253	1839-02-01	1859-05-06	F	477	Mauritius	f	f	BB
-478	Samuel	Le	Samuel	Le	1187	1841-11-21	1861-11-12	M	478	Gibraltar	f	f	QZ
-479	Sierra	Bentley	Sierra	Bentley	889	1839-11-12	1859-08-27	F	479	Benin	f	f	QQ
-480	Wyatt	Nelson	Wyatt	Nelson	1136	1836-05-24	1856-02-09	M	480	Ireland	f	f	EK
-481	Steven	Ramos	Steven	Ramos	529	1839-05-18	1859-11-25	F	481	Afghanistan	f	f	BC
-482	Jason	Peters	Jason	Peters	402	1839-06-12	1859-01-24	M	482	Moldova	f	f	SO
-483	Frank	Sanchez	Frank	Sanchez	1206	1842-07-19	1862-01-01	F	483	Namibia	f	f	XF
-484	James	Sloan	James	Sloan	915	1841-12-02	1861-09-05	M	484	Mauritania	f	f	DJ
-485	Thomas	Anderson	Thomas	Anderson	76	1842-08-18	1862-09-28	F	485	Bangladesh	f	f	SE
-486	Samuel	Cuevas	Samuel	Cuevas	452	1842-09-24	1862-07-27	M	486	Malaysia	f	f	WL
-487	Ian	Hoffman	Ian	Hoffman	932	1842-03-11	1862-10-26	F	487	Mauritania	f	f	OH
-488	Derek	Blair	Derek	Blair	776	1842-12-09	1862-04-22	M	488	Oman	f	f	FB
-489	Alexandria	Richard	Alexandria	Richard	655	1836-09-01	1856-04-15	F	489	Belarus	f	f	PV
-490	Craig	Blake	Craig	Blake	746	1840-02-01	1860-06-24	M	490	Lithuania	f	f	KZ
-491	Jonathan	Alvarado	Jonathan	Alvarado	547	1842-11-03	1862-07-21	F	491	Switzerland	f	f	CR
-492	Steven	Miranda	Steven	Miranda	850	1836-09-02	1856-06-28	M	492	Comoros	f	f	ZX
-493	Dennis	Wiggins	Dennis	Wiggins	8	1840-10-02	1860-02-04	F	493	Netherlands	f	f	VP
-494	Elizabeth	Bailey	Elizabeth	Bailey	760	1842-06-26	1862-09-11	M	494	Syria	f	f	FY
-495	Cheryl	Henry	Cheryl	Henry	486	1842-02-10	1862-04-13	F	495	Nepal	f	f	JR
-496	Jacqueline	Bailey	Jacqueline	Bailey	895	1840-04-03	1860-11-26	M	496	Qatar	f	f	XP
-497	Ashley	Baker	Ashley	Baker	1234	1838-08-24	1858-10-21	F	497	Libya	f	f	DM
-498	Kenneth	Williams	Kenneth	Williams	390	1842-08-25	1862-10-01	M	498	Mauritania	f	f	XQ
-499	Donald	Mejia	Donald	Mejia	782	1840-11-23	1860-09-16	F	499	Yemen	f	f	WG
-500					1157	1839-07-04	1859-11-11	M	500	Brunei	f	f	VM
+1	Sandra	Frye	Sandra	Frye	804	2008-09-04	2028-07-16	F	1	Serbia	f	f	BK
+2	Tyler	Brandt	Tyler	Brandt	174	1978-06-12	1998-11-14	M	2	Liberia	f	f	BR
+3	Amanda	Hayes	Amanda	Hayes	251	1980-10-22	2000-10-24	F	3	Australia	f	f	OZ
+4	Anthony	Knight	Anthony	Knight	517	1955-03-09	1975-05-10	M	4	Bulgaria	f	f	TN
+5	Lawrence	Suarez	Lawrence	Suarez	989	1956-05-17	1976-01-25	F	5	Sudan	f	f	YJ
+6	Tamara	Snyder	Tamara	Snyder	523	1952-04-02	1972-04-03	M	6	Bermuda	f	f	KG
+7	Timothy	Elliott	Timothy	Elliott	659	1952-04-23	1972-02-20	F	7	Montserrat	f	f	NW
+8	Jamie	Smith	Jamie	Smith	1026	1933-08-24	1953-09-09	M	8	Brunei	f	f	OT
+9	Nicole	Martinez	Nicole	Martinez	493	1932-11-27	1952-02-19	F	9	Turkey	f	f	NO
+10	Kyle	Foster	Kyle	Foster	1194	1929-11-22	1949-07-12	M	10	Nauru	f	f	GX
+11	Logan	Adams	Logan	Adams	21	1930-06-14	1950-03-12	F	11	Seychelles	f	f	WE
+12	Paul	Hanson	Paul	Hanson	931	1927-08-26	1947-02-21	M	12	Oman	f	f	DB
+13	Michael	Cole	Michael	Cole	288	1927-11-15	1947-09-15	F	13	Bulgaria	f	f	RS
+14	Robert	Foster	Robert	Foster	613	1930-07-19	1950-04-04	M	14	Nepal	f	f	WI
+15	Brandon	Rodriguez	Brandon	Rodriguez	735	1930-07-15	1950-01-01	F	15	Togo	f	f	LN
+16	Melinda	Evans	Melinda	Evans	377	1903-10-19	1923-03-12	M	16	Belgium	f	f	WW
+17	Emily	George	Emily	George	436	1902-11-24	1922-12-11	F	17	Seychelles	f	f	PE
+18	John	Nelson	John	Nelson	240	1906-09-04	1926-03-27	M	18	Burundi	f	f	GV
+19	Julie	Crane	Julie	Crane	611	1903-03-13	1923-02-18	F	19	Uganda	f	f	PK
+20	Sandra	Smith	Sandra	Smith	436	1906-01-23	1926-01-14	M	20	Peru	f	f	UZ
+21	Tony	Harris	Tony	Harris	653	1906-02-26	1926-03-03	F	21	Niue	f	f	RR
+22	Calvin	Garza	Calvin	Garza	869	1908-09-18	1928-10-11	M	22	Montserrat	f	f	RV
+23	Aaron	Calhoun	Aaron	Calhoun	472	1907-01-10	1927-10-23	F	23	Zambia	f	f	NH
+24	Crystal	Scott	Crystal	Scott	780	1902-07-10	1922-02-05	M	24	Liechtenstein	f	f	DS
+25	Walter	Bowen	Walter	Bowen	532	1905-01-14	1925-11-02	F	25	India	f	f	SA
+26	Lucas	Austin	Lucas	Austin	185	1907-10-11	1927-01-09	M	26	Japan	f	f	PT
+27	Kristen	Long	Kristen	Long	242	1906-06-17	1926-02-18	F	27	Guyana	f	f	JH
+28	Christina	Taylor	Christina	Taylor	112	1904-09-28	1924-08-26	M	28	Iran	f	f	JD
+29	Melissa	Thomas	Melissa	Thomas	1153	1902-08-09	1922-08-04	F	29	Sudan	f	f	JU
+30	Robert	Fuller	Robert	Fuller	886	1902-10-03	1922-07-23	M	30	Oman	f	f	VY
+31	Whitney	Harris	Whitney	Harris	563	1904-10-13	1924-05-19	F	31	Taiwan	f	f	BP
+32	Andrea	Shepard	Andrea	Shepard	1051	1877-10-27	1897-04-15	M	32	Kiribati	f	f	IS
+33	Luis	Barron	Luis	Barron	561	1879-06-15	1899-12-26	F	33	Greece	f	f	PH
+34	David	Weaver	David	Weaver	562	1881-08-18	1901-11-14	M	34	Mongolia	f	f	HN
+35	Emma	Matthews	Emma	Matthews	193	1882-02-11	1902-10-21	F	35	Albania	f	f	CX
+36	Allen	Gallagher	Allen	Gallagher	340	1878-09-19	1898-10-02	M	36	Japan	f	f	YX
+37	Ryan	Luna	Ryan	Luna	531	1878-02-03	1898-12-18	F	37	Paraguay	f	f	GB
+38	Alejandro	Brown	Alejandro	Brown	845	1882-01-04	1902-09-06	M	38	Syria	f	f	RE
+39	Emily	Ayers	Emily	Ayers	273	1881-11-28	1901-09-18	F	39	Benin	f	f	EC
+40	Gina	Clay	Gina	Clay	861	1882-08-07	1902-12-09	M	40	Myanmar	f	f	DO
+41	Amanda	Davenport	Amanda	Davenport	709	1880-11-12	1900-09-07	F	41	Nigeria	f	f	IH
+42	Toni	Miller	Toni	Miller	1113	1879-02-16	1899-05-24	M	42	Canada	f	f	OM
+43	Jeffrey	Ryan	Jeffrey	Ryan	779	1879-02-07	1899-09-28	F	43	Mauritius	f	f	CJ
+44	John	Smith	John	Smith	796	1881-01-18	1901-09-09	M	44	Canada	f	f	RF
+45	Kristin	Williams	Kristin	Williams	878	1879-12-14	1899-02-01	F	45	Maldives	f	f	PZ
+46	Tracy	Caldwell	Tracy	Caldwell	1224	1881-03-05	1901-12-21	M	46	Belarus	f	f	OS
+47	Alan	Nunez	Alan	Nunez	619	1883-02-09	1903-01-04	F	47	Sudan	f	f	TI
+48	Amber	Green	Amber	Green	1049	1883-12-05	1903-10-12	M	48	Canada	f	f	RR
+49	Darryl	Olson	Darryl	Olson	1118	1878-10-15	1898-09-27	F	49	Latvia	f	f	AP
+50	Brenda	Rollins	Brenda	Rollins	524	1879-02-22	1899-01-18	M	50	Jamaica	f	f	YA
+51	Grant	Roberson	Grant	Roberson	774	1877-11-18	1897-08-17	F	51	Bahrain	f	f	PI
+52	Lauren	Wood	Lauren	Wood	2	1882-08-17	1902-11-25	M	52	Nigeria	f	f	WO
+53	Jon	Dickson	Jon	Dickson	913	1877-03-09	1897-07-15	F	53	Morocco	f	f	HT
+54	Kyle	Gonzales	Kyle	Gonzales	991	1883-07-09	1903-02-18	M	54	Zimbabwe	f	f	AG
+55	Jessica	White	Jessica	White	225	1882-08-27	1902-07-24	F	55	Vietnam	f	f	UQ
+56	Tyler	Salazar	Tyler	Salazar	603	1882-04-20	1902-02-11	M	56	Namibia	f	f	GW
+57	Paul	Wheeler	Paul	Wheeler	1242	1883-09-26	1903-07-26	F	57	Greece	f	f	ZB
+58	Kyle	Blake	Kyle	Blake	273	1878-08-02	1898-01-10	M	58	Angola	f	f	BZ
+59	Nicholas	Bowen	Nicholas	Bowen	694	1878-12-15	1898-12-20	F	59	Portugal	f	f	SF
+60	Kristopher	Hancock	Kristopher	Hancock	268	1881-05-17	1901-03-01	M	60	Ireland	f	f	MT
+61	Hector	Edwards	Hector	Edwards	352	1881-07-09	1901-09-24	F	61	Azerbaijan	f	f	RK
+62	Cindy	Marquez	Cindy	Marquez	1175	1878-03-03	1898-06-25	M	62	Indonesia	f	f	PC
+63	John	Simmons	John	Simmons	475	1878-01-27	1898-05-15	F	63	Belarus	f	f	TT
+64	Edward	Grant	Edward	Grant	596	1856-03-15	1876-07-07	M	64	Nauru	f	f	GL
+65	Samuel	Nielsen	Samuel	Nielsen	647	1858-09-13	1878-05-07	F	65	Benin	f	f	EF
+66	Scott	Guerrero	Scott	Guerrero	273	1854-12-12	1874-12-19	M	66	Malaysia	f	f	BU
+67	Jennifer	Jones	Jennifer	Jones	1230	1854-01-19	1874-03-08	F	67	Afghanistan	f	f	ZA
+68	Thomas	Neal	Thomas	Neal	561	1857-03-14	1877-07-11	M	68	Iran	f	f	YF
+69	Steven	Morgan	Steven	Morgan	793	1854-07-19	1874-12-03	F	69	Israel	f	f	II
+70	Stephen	Bender	Stephen	Bender	388	1855-03-11	1875-05-28	M	70	India	f	f	GH
+71	Rebecca	Haynes	Rebecca	Haynes	1200	1852-01-04	1872-06-27	F	71	Belgium	f	f	ZM
+72	Corey	Daniels	Corey	Daniels	851	1854-03-01	1874-06-19	M	72	Albania	f	f	CX
+73	Julie	Martinez	Julie	Martinez	376	1856-01-16	1876-10-25	F	73	Armenia	f	f	UU
+74	Kyle	Tucker	Kyle	Tucker	733	1853-07-17	1873-08-18	M	74	Honduras	f	f	CL
+75	Nathan	Martin	Nathan	Martin	5	1856-07-16	1876-11-10	F	75	Eritrea	f	f	FP
+76	Levi	Long	Levi	Long	854	1856-11-11	1876-02-05	M	76	Namibia	f	f	IZ
+77	Zachary	Jackson	Zachary	Jackson	102	1858-04-13	1878-03-20	F	77	Kosovo	f	f	IO
+78	Juan	Smith	Juan	Smith	963	1856-02-21	1876-07-24	M	78	China	f	f	PN
+79	Michael	Young	Michael	Young	752	1858-11-01	1878-01-19	F	79	Greenland	f	f	XS
+80	Carolyn	Rivera	Carolyn	Rivera	588	1856-01-28	1876-05-14	M	80	Guyana	f	f	JY
+81	John	Robinson	John	Robinson	618	1852-09-10	1872-09-24	F	81	Bermuda	f	f	OC
+82	Justin	Hughes	Justin	Hughes	1017	1857-12-24	1877-12-24	M	82	Russia	f	f	NO
+83	Michael	Murillo	Michael	Murillo	433	1855-07-17	1875-10-26	F	83	Eritrea	f	f	JO
+84	Wyatt	Brennan	Wyatt	Brennan	1200	1858-07-09	1878-05-24	M	84	Afghanistan	f	f	AU
+85	Christy	Obrien	Christy	Obrien	1090	1853-09-18	1873-10-22	F	85	Albania	f	f	IX
+86	Martin	Greer	Martin	Greer	478	1856-01-01	1876-08-09	M	86	Sweden	f	f	AQ
+87	Cynthia	Walker	Cynthia	Walker	829	1856-07-16	1876-09-24	F	87	Kiribati	f	f	SF
+88	Adam	Hunt	Adam	Hunt	108	1857-08-24	1877-01-13	M	88	Slovenia	f	f	KE
+89	Joseph	Nelson	Joseph	Nelson	552	1854-08-21	1874-07-22	F	89	Palau	f	f	CM
+90	Damon	Valenzuela	Damon	Valenzuela	114	1858-08-17	1878-09-01	M	90	Canada	f	f	NY
+91	Linda	Golden	Linda	Golden	262	1855-01-19	1875-12-21	F	91	Togo	f	f	IX
+92	Richard	Flores	Richard	Flores	879	1858-09-13	1878-08-22	M	92	Eritrea	f	f	MO
+93	Matthew	Tucker	Matthew	Tucker	119	1855-09-05	1875-03-13	F	93	Seychelles	f	f	EK
+94	Rebecca	Hughes	Rebecca	Hughes	47	1857-09-04	1877-09-12	M	94	Croatia	f	f	LP
+95	Jennifer	Nelson	Jennifer	Nelson	77	1855-10-02	1875-05-04	F	95	Zambia	f	f	FA
+96	Megan	Davis	Megan	Davis	899	1856-04-12	1876-01-15	M	96	Macao	f	f	NS
+97	Daniel	Wilson	Daniel	Wilson	105	1857-01-18	1877-06-21	F	97	Australia	f	f	NL
+98	Henry	Carrillo	Henry	Carrillo	1203	1856-04-26	1876-05-07	M	98	Swaziland	f	f	BG
+99	Dalton	Henderson	Dalton	Henderson	1154	1856-09-10	1876-04-21	F	99	Gabon	f	f	BZ
+100	James	Hill	James	Hill	550	1857-06-11	1877-06-27	M	100	Seychelles	f	f	TJ
+101	Patricia	Garcia	Patricia	Garcia	10	1852-08-03	1872-09-01	F	101	Ghana	f	f	GD
+102	John	Hawkins	John	Hawkins	748	1855-03-02	1875-06-02	M	102	Aruba	f	f	YB
+103	Danielle	Phillips	Danielle	Phillips	648	1855-10-18	1875-06-13	F	103	Bahamas	f	f	QX
+104	Michael	Davis	Michael	Davis	1232	1857-04-26	1877-11-08	M	104	Comoros	f	f	CJ
+105	Danielle	Anderson	Danielle	Anderson	117	1854-12-22	1874-04-08	F	105	Cyprus	f	f	TH
+106	Lisa	Rodriguez	Lisa	Rodriguez	811	1855-08-04	1875-04-20	M	106	Senegal	f	f	ID
+107	Ryan	Jenkins	Ryan	Jenkins	593	1857-03-12	1877-06-27	F	107	Montenegro	f	f	PB
+108	Scott	Patterson	Scott	Patterson	243	1858-02-15	1878-01-23	M	108	Eritrea	f	f	CR
+109	John	Gonzalez	John	Gonzalez	190	1852-09-09	1872-11-25	F	109	Brunei	f	f	QW
+110	Kathy	Fry	Kathy	Fry	620	1853-09-09	1873-08-19	M	110	Pakistan	f	f	XA
+111	Kelly	Mejia	Kelly	Mejia	1086	1855-09-28	1875-07-17	F	111	Cambodia	f	f	YC
+112	Lisa	Le	Lisa	Le	709	1853-11-17	1873-04-20	M	112	Belarus	f	f	VQ
+113	John	Nelson	John	Nelson	28	1852-04-01	1872-09-11	F	113	Iran	f	f	NL
+114	Angela	Marsh	Angela	Marsh	779	1855-09-17	1875-08-04	M	114	Bahrain	f	f	ZU
+115	Jonathan	Edwards	Jonathan	Edwards	651	1855-05-13	1875-02-10	F	115	Djibouti	f	f	LU
+116	David	Williams	David	Williams	510	1857-05-24	1877-07-20	M	116	Malta	f	f	FU
+117	Kristin	Gonzalez	Kristin	Gonzalez	1068	1856-08-20	1876-02-25	F	117	Ecuador	f	f	NT
+118	Susan	Neal	Susan	Neal	806	1857-07-04	1877-07-06	M	118	Seychelles	f	f	AS
+119	Lucas	Gilbert	Lucas	Gilbert	328	1852-05-14	1872-10-05	F	119	Tuvalu	f	f	XZ
+120	Cody	Meyer	Cody	Meyer	1109	1854-05-14	1874-03-13	M	120	Togo	f	f	PA
+121	Michelle	Ross	Michelle	Ross	550	1857-03-13	1877-12-27	F	121	Myanmar	f	f	MK
+122	Donna	Daniels	Donna	Daniels	230	1858-06-13	1878-11-06	M	122	Qatar	f	f	IM
+123	Joel	Miller	Joel	Miller	804	1853-03-20	1873-06-01	F	123	Barbados	f	f	CC
+124	Jennifer	Johnson	Jennifer	Johnson	1104	1858-02-10	1878-05-02	M	124	Mozambique	f	f	TL
+125	Maurice	Smith	Maurice	Smith	210	1856-09-26	1876-07-14	F	125	Suriname	f	f	BW
+126	Ryan	Matthews	Ryan	Matthews	792	1852-01-24	1872-05-17	M	126	Switzerland	f	f	NQ
+127	Sharon	Perry	Sharon	Perry	1086	1856-05-21	1876-04-13	F	127	Martinique	f	f	AZ
+128	Ashley	Reed	Ashley	Reed	584	1833-11-12	1853-04-23	M	128	Kiribati	f	f	GI
+129	Teresa	Shaw	Teresa	Shaw	1069	1828-02-01	1848-03-06	F	129	Djibouti	f	f	ZO
+130	Stacy	Jenkins	Stacy	Jenkins	808	1831-09-03	1851-05-13	M	130	Poland	f	f	GA
+131	David	Brooks	David	Brooks	342	1827-08-26	1847-07-20	F	131	Bermuda	f	f	OK
+132	Angelica	Reyes	Angelica	Reyes	872	1832-10-10	1852-01-06	M	132	Cuba	f	f	WD
+133	Natalie	Holmes	Natalie	Holmes	715	1828-06-02	1848-02-15	F	133	Afghanistan	f	f	MT
+134	Joshua	Flores	Joshua	Flores	624	1832-10-19	1852-07-04	M	134	Argentina	f	f	CS
+135	Melissa	Young	Melissa	Young	1102	1831-01-13	1851-07-22	F	135	Zimbabwe	f	f	HR
+136	Tracey	Williams	Tracey	Williams	60	1832-04-15	1852-02-14	M	136	Laos	f	f	DN
+137	Jessica	Rubio	Jessica	Rubio	5	1828-01-16	1848-06-23	F	137	Samoa	f	f	CB
+138	Darlene	Kelley	Darlene	Kelley	266	1828-10-23	1848-06-26	M	138	Guatemala	f	f	WR
+139	Sherry	Melton	Sherry	Melton	537	1832-12-12	1852-03-26	F	139	Bolivia	f	f	UR
+140	Emily	Garner	Emily	Garner	940	1828-06-20	1848-08-27	M	140	Lebanon	f	f	BQ
+141	Amber	Dickerson	Amber	Dickerson	552	1831-03-15	1851-06-19	F	141	Canada	f	f	VW
+142	Kathryn	Leach	Kathryn	Leach	712	1829-12-15	1849-03-09	M	142	Kazakhstan	f	f	BS
+143	Andrew	Scott	Andrew	Scott	925	1833-06-26	1853-09-09	F	143	Seychelles	f	f	GD
+144	Jerry	Grant	Jerry	Grant	441	1832-02-16	1852-08-09	M	144	Ecuador	f	f	QV
+145	Wesley	Cross	Wesley	Cross	855	1831-09-16	1851-11-12	F	145	Montenegro	f	f	UA
+146	Randy	Miller	Randy	Miller	271	1830-09-08	1850-04-19	M	146	Ghana	f	f	FI
+147	Jamie	Vaughn	Jamie	Vaughn	1176	1833-11-08	1853-05-06	F	147	Luxembourg	f	f	HT
+148	Melissa	Callahan	Melissa	Callahan	696	1829-11-11	1849-12-25	M	148	Greece	f	f	VG
+149	Samantha	Williams	Samantha	Williams	180	1829-05-10	1849-11-26	F	149	Cambodia	f	f	TH
+150	Cathy	Michael	Cathy	Michael	320	1829-08-21	1849-02-01	M	150	Afghanistan	f	f	UL
+151	Abigail	Patterson	Abigail	Patterson	34	1828-02-21	1848-01-02	F	151	Belize	f	f	CK
+152	Allison	Dudley	Allison	Dudley	846	1830-06-07	1850-05-02	M	152	Germany	f	f	ZZ
+153	Kaitlyn	Peters	Kaitlyn	Peters	855	1830-12-08	1850-09-20	F	153	Sudan	f	f	HV
+154	Darlene	Byrd	Darlene	Byrd	1140	1828-04-10	1848-05-16	M	154	Kyrgyzstan	f	f	ES
+155	David	Huang	David	Huang	512	1831-05-25	1851-10-14	F	155	Liechtenstein	f	f	XS
+156	Phillip	Sullivan	Phillip	Sullivan	1097	1827-02-12	1847-07-22	M	156	Swaziland	f	f	WY
+157	Morgan	Duncan	Morgan	Duncan	1197	1831-08-16	1851-08-10	F	157	Zambia	f	f	PF
+158	Danielle	Martinez	Danielle	Martinez	414	1831-06-15	1851-01-21	M	158	Denmark	f	f	TR
+159	Natasha	Grant	Natasha	Grant	309	1827-07-20	1847-11-07	F	159	Niue	f	f	AR
+160	Stephanie	Wheeler	Stephanie	Wheeler	1190	1833-08-17	1853-12-20	M	160	Guatemala	f	f	EH
+161	Raymond	Terrell	Raymond	Terrell	1136	1827-03-11	1847-11-06	F	161	Libya	f	f	NZ
+162	Krista	Marquez	Krista	Marquez	66	1833-10-26	1853-09-24	M	162	Mayotte	f	f	ZT
+163	Tamara	Tucker	Tamara	Tucker	975	1830-03-20	1850-08-03	F	163	Azerbaijan	f	f	PT
+164	Connie	Garza	Connie	Garza	5	1828-09-13	1848-07-11	M	164	Cuba	f	f	VN
+165	David	King	David	King	48	1827-06-26	1847-02-14	F	165	Colombia	f	f	OQ
+166	Tracey	Ponce	Tracey	Ponce	399	1833-06-14	1853-01-16	M	166	Palau	f	f	IZ
+167	Michael	Morrow	Michael	Morrow	113	1833-05-20	1853-01-19	F	167	Chad	f	f	IT
+168	Laura	Richardson	Laura	Richardson	852	1832-09-05	1852-01-23	M	168	Switzerland	f	f	ZJ
+169	Melinda	Atkins	Melinda	Atkins	318	1828-08-01	1848-05-02	F	169	Afghanistan	f	f	CI
+170	Pamela	Robinson	Pamela	Robinson	1043	1829-12-28	1849-09-03	M	170	Switzerland	f	f	LY
+171	Tara	Murray	Tara	Murray	328	1832-05-09	1852-07-03	F	171	Rwanda	f	f	QN
+172	Elizabeth	Glover	Elizabeth	Glover	487	1830-07-25	1850-08-17	M	172	Peru	f	f	ZF
+173	Dennis	Gomez	Dennis	Gomez	747	1827-03-06	1847-07-24	F	173	Haiti	f	f	TB
+174	Jenna	Schroeder	Jenna	Schroeder	1120	1831-03-04	1851-03-07	M	174	Jamaica	f	f	CG
+175	Amber	Hill	Amber	Hill	787	1831-04-27	1851-02-17	F	175	Mauritania	f	f	VY
+176	Brittany	Kim	Brittany	Kim	1051	1830-03-17	1850-03-10	M	176	Canada	f	f	MN
+177	Diana	Hall	Diana	Hall	816	1833-11-25	1853-09-23	F	177	Bhutan	f	f	QI
+178	Logan	Morris	Logan	Morris	590	1828-05-01	1848-05-24	M	178	Uruguay	f	f	GV
+179	Ashley	Delgado	Ashley	Delgado	1092	1833-01-25	1853-02-28	F	179	Barbados	f	f	NT
+180	Rachel	Frederick	Rachel	Frederick	1154	1831-11-14	1851-09-11	M	180	Iran	f	f	UB
+181	Rachel	Andrews	Rachel	Andrews	713	1827-05-01	1847-09-27	F	181	Niue	f	f	QG
+182	Mario	Harris	Mario	Harris	475	1829-08-19	1849-03-22	M	182	Bhutan	f	f	WV
+183	Scott	Martin	Scott	Martin	776	1827-06-12	1847-02-22	F	183	Lebanon	f	f	KL
+184	Alyssa	Williams	Alyssa	Williams	1149	1827-08-07	1847-06-18	M	184	Colombia	f	f	NL
+185	Steven	Silva	Steven	Silva	570	1833-12-22	1853-11-15	F	185	Iraq	f	f	QU
+186	John	Knox	John	Knox	503	1831-01-17	1851-08-26	M	186	Slovenia	f	f	KL
+187	Donna	Green	Donna	Green	150	1830-05-15	1850-04-26	F	187	Belarus	f	f	PG
+188	Natalie	Taylor	Natalie	Taylor	49	1829-08-21	1849-11-11	M	188	Laos	f	f	HB
+189	Robert	Lam	Robert	Lam	985	1830-04-02	1850-04-15	F	189	China	f	f	XL
+190	Nathan	Campbell	Nathan	Campbell	766	1827-07-07	1847-06-07	M	190	Macedonia	f	f	SB
+191	Crystal	Meza	Crystal	Meza	585	1829-02-27	1849-03-04	F	191	Taiwan	f	f	EQ
+192	Robert	Lane	Robert	Lane	328	1831-12-11	1851-01-13	M	192	Slovenia	f	f	OU
+193	Valerie	Wade	Valerie	Wade	464	1833-01-03	1853-09-04	F	193	Lebanon	f	f	CK
+194	Tiffany	Patterson	Tiffany	Patterson	923	1830-09-05	1850-12-19	M	194	Gabon	f	f	HG
+195	Stephanie	Garza	Stephanie	Garza	349	1830-05-15	1850-08-16	F	195	India	f	f	YI
+196	Kimberly	Shields	Kimberly	Shields	440	1829-01-26	1849-03-26	M	196	Belarus	f	f	YV
+197	Austin	Martinez	Austin	Martinez	952	1829-06-09	1849-11-15	F	197	Jamaica	f	f	KJ
+198	Timothy	Carter	Timothy	Carter	226	1828-02-04	1848-02-16	M	198	Belize	f	f	JC
+199	Timothy	Harris	Timothy	Harris	758	1828-10-14	1848-01-17	F	199	Morocco	f	f	BX
+200	Martin	Riley	Martin	Riley	14	1829-01-08	1849-12-19	M	200	Peru	f	f	UC
+201	Walter	Clarke	Walter	Clarke	522	1827-09-23	1847-08-09	F	201	Kosovo	f	f	XN
+202	Kayla	Herrera	Kayla	Herrera	1176	1830-07-26	1850-10-16	M	202	Mauritius	f	f	IG
+203	William	Adams	William	Adams	752	1833-02-22	1853-04-27	F	203	Croatia	f	f	CN
+204	Bryan	Blackwell	Bryan	Blackwell	323	1829-02-08	1849-10-06	M	204	Tuvalu	f	f	BY
+205	Donald	Anderson	Donald	Anderson	104	1832-05-22	1852-12-12	F	205	Mali	f	f	DE
+206	Jonathan	Gutierrez	Jonathan	Gutierrez	1178	1833-02-14	1853-06-21	M	206	Mexico	f	f	CO
+207	Jennifer	Marquez	Jennifer	Marquez	615	1832-10-17	1852-10-17	F	207	Slovenia	f	f	CO
+208	Kelsey	Smith	Kelsey	Smith	287	1831-08-05	1851-06-19	M	208	Venezuela	f	f	QF
+209	Mark	Ware	Mark	Ware	779	1833-08-17	1853-04-01	F	209	Nicaragua	f	f	VC
+210	Jonathan	Haynes	Jonathan	Haynes	39	1829-08-05	1849-03-22	M	210	Uganda	f	f	DL
+211	Sandra	Kirk	Sandra	Kirk	1011	1829-10-17	1849-12-18	F	211	Poland	f	f	RX
+212	Elizabeth	Pope	Elizabeth	Pope	700	1829-04-27	1849-11-18	M	212	Swaziland	f	f	WH
+213	Misty	Hart	Misty	Hart	737	1829-07-28	1849-01-10	F	213	Montserrat	f	f	HG
+214	Darrell	Moyer	Darrell	Moyer	640	1833-09-17	1853-01-25	M	214	Montserrat	f	f	SX
+215	Bernard	Mann	Bernard	Mann	208	1829-12-07	1849-01-06	F	215	Monaco	f	f	AV
+216	Jerry	Huffman	Jerry	Huffman	772	1832-07-26	1852-10-17	M	216	Algeria	f	f	YW
+217	Chad	Park	Chad	Park	604	1830-11-07	1850-11-21	F	217	Algeria	f	f	KF
+218	Pamela	Wagner	Pamela	Wagner	725	1829-01-26	1849-10-22	M	218	Angola	f	f	JC
+219	Lauren	Lamb	Lauren	Lamb	878	1830-02-09	1850-07-17	F	219	Pitcairn	f	f	JF
+220	Sandra	Wright	Sandra	Wright	579	1833-12-23	1853-01-21	M	220	Palau	f	f	ZW
+221	Kathryn	Cain	Kathryn	Cain	1173	1833-08-09	1853-02-28	F	221	Spain	f	f	SN
+222	Molly	Newman	Molly	Newman	1036	1828-09-05	1848-02-16	M	222	Nepal	f	f	OP
+223	Keith	Wallace	Keith	Wallace	1224	1833-05-01	1853-05-23	F	223	Lebanon	f	f	OX
+224	Rebecca	Hogan	Rebecca	Hogan	1209	1830-07-16	1850-01-17	M	224	Portugal	f	f	OF
+225	Daniel	Chen	Daniel	Chen	1046	1831-06-12	1851-01-20	F	225	Cuba	f	f	TI
+226	Jason	Stewart	Jason	Stewart	363	1829-04-03	1849-04-16	M	226	Afghanistan	f	f	YS
+227	Christopher	Bailey	Christopher	Bailey	260	1828-04-09	1848-08-21	F	227	Monaco	f	f	ZI
+228	Phillip	Martin	Phillip	Martin	1203	1829-11-24	1849-06-24	M	228	Seychelles	f	f	LU
+229	Kelsey	Mayo	Kelsey	Mayo	613	1831-05-08	1851-05-19	F	229	Malawi	f	f	AH
+230	Karen	Thompson	Karen	Thompson	62	1833-11-08	1853-10-15	M	230	Nepal	f	f	WZ
+231	Jamie	Atkins	Jamie	Atkins	970	1831-09-18	1851-08-10	F	231	Malaysia	f	f	EN
+232	Edward	Strong	Edward	Strong	954	1831-11-17	1851-08-15	M	232	Norway	f	f	UW
+233	Stacy	Kim	Stacy	Kim	85	1833-01-22	1853-02-05	F	233	Namibia	f	f	BZ
+234	Bryan	Ross	Bryan	Ross	740	1830-10-15	1850-11-24	M	234	Portugal	f	f	TE
+235	David	Kirby	David	Kirby	822	1832-08-13	1852-12-03	F	235	Laos	f	f	TI
+236	Andrew	Freeman	Andrew	Freeman	1077	1832-07-11	1852-01-27	M	236	Angola	f	f	SP
+237	Jennifer	Hudson	Jennifer	Hudson	411	1828-08-17	1848-07-19	F	237	Afghanistan	f	f	ES
+238	Scott	Moreno	Scott	Moreno	626	1831-08-25	1851-10-21	M	238	Iceland	f	f	NM
+239	Shannon	King	Shannon	King	71	1830-12-04	1850-02-17	F	239	Curacao	f	f	YF
+240	Kristen	Thomas	Kristen	Thomas	804	1831-02-08	1851-09-21	M	240	Spain	f	f	FR
+241	Brittany	Dickerson	Brittany	Dickerson	423	1830-05-28	1850-07-09	F	241	Argentina	f	f	YU
+242	Laura	Robles	Laura	Robles	536	1830-01-16	1850-01-01	M	242	Samoa	f	f	FH
+243	Rick	Murphy	Rick	Murphy	605	1827-06-23	1847-01-14	F	243	Tuvalu	f	f	OE
+244	Jennifer	Black	Jennifer	Black	624	1833-01-04	1853-11-20	M	244	Paraguay	f	f	CC
+245	Janet	Nelson	Janet	Nelson	881	1827-04-17	1847-07-19	F	245	Georgia	f	f	FM
+246	Susan	Smith	Susan	Smith	821	1832-09-03	1852-08-24	M	246	Guinea	f	f	IB
+247	Chad	Nelson	Chad	Nelson	287	1830-11-03	1850-09-19	F	247	Taiwan	f	f	VL
+248	Cesar	Peterson	Cesar	Peterson	291	1829-01-19	1849-09-11	M	248	India	f	f	QL
+249	Amanda	Green	Amanda	Green	106	1832-02-06	1852-06-14	F	249	Liberia	f	f	VN
+250	Jennifer	Brown	Jennifer	Brown	445	1832-04-06	1852-04-02	M	250	Bulgaria	f	f	HK
+251	Rebecca	Novak	Rebecca	Novak	145	1830-03-06	1850-12-15	F	251	Albania	f	f	PR
+252	Michael	Smith	Michael	Smith	332	1827-06-18	1847-03-07	M	252	Algeria	f	f	CP
+253	Melissa	Barron	Melissa	Barron	229	1831-04-20	1851-09-04	F	253	Gambia	f	f	PJ
+254	Aaron	Richardson	Aaron	Richardson	268	1831-07-19	1851-06-03	M	254	Qatar	f	f	IA
+255	Patrick	Jacobs	Patrick	Jacobs	1175	1830-04-19	1850-11-18	F	255	Pitcairn	f	f	QO
+256	Crystal	Braun	Crystal	Braun	657	1804-01-08	1824-08-01	M	256	Uruguay	f	f	WT
+257	John	Mullen	John	Mullen	638	1804-08-06	1824-03-11	F	257	Georgia	f	f	QG
+258	Rachel	Martinez	Rachel	Martinez	45	1803-10-28	1823-05-07	M	258	Iran	f	f	CR
+259	Joseph	Lawson	Joseph	Lawson	771	1804-03-17	1824-02-21	F	259	Maldives	f	f	UX
+260	Dana	Hicks	Dana	Hicks	460	1808-09-10	1828-09-01	M	260	Macedonia	f	f	SA
+261	Jillian	Russell	Jillian	Russell	839	1803-07-26	1823-06-26	F	261	Chile	f	f	EV
+262	Scott	Williams	Scott	Williams	620	1808-04-18	1828-10-26	M	262	Algeria	f	f	QW
+263	Ronald	Sharp	Ronald	Sharp	78	1806-04-19	1826-02-20	F	263	Finland	f	f	EV
+264	Ronald	Rodriguez	Ronald	Rodriguez	15	1803-05-19	1823-08-26	M	264	Cuba	f	f	JB
+265	Christopher	Davis	Christopher	Davis	662	1806-02-22	1826-02-16	F	265	Fiji	f	f	MW
+266	Maria	Fletcher	Maria	Fletcher	526	1806-12-12	1826-09-20	M	266	Jordan	f	f	QX
+267	James	Chambers	James	Chambers	1242	1804-11-15	1824-10-01	F	267	Moldova	f	f	HJ
+268	Michael	Morris	Michael	Morris	395	1804-03-25	1824-07-25	M	268	Oman	f	f	KF
+269	Deborah	Williams	Deborah	Williams	963	1803-02-19	1823-04-01	F	269	Gambia	f	f	EK
+270	Patrick	Jimenez	Patrick	Jimenez	536	1805-10-26	1825-08-14	M	270	Canada	f	f	IJ
+271	Debra	Rojas	Debra	Rojas	888	1804-06-08	1824-04-08	F	271	Kenya	f	f	JJ
+272	Amy	Mitchell	Amy	Mitchell	450	1806-04-22	1826-06-12	M	272	Botswana	f	f	WZ
+273	Angela	Macias	Angela	Macias	1115	1808-10-28	1828-02-24	F	273	Cyprus	f	f	NS
+274	Jessica	Young	Jessica	Young	1116	1808-11-21	1828-08-20	M	274	Hungary	f	f	XZ
+275	Lance	Evans	Lance	Evans	195	1806-03-13	1826-03-05	F	275	Austria	f	f	AN
+276	Nicholas	Phillips	Nicholas	Phillips	937	1807-08-12	1827-06-18	M	276	Cuba	f	f	HE
+277	Robert	Smith	Robert	Smith	1125	1803-08-18	1823-03-08	F	277	Kenya	f	f	UJ
+278	Lori	Kennedy	Lori	Kennedy	100	1802-02-19	1822-02-12	M	278	Italy	f	f	IB
+279	Wesley	Williams	Wesley	Williams	1107	1803-01-06	1823-04-28	F	279	Ireland	f	f	CA
+280	Kevin	Bailey	Kevin	Bailey	128	1802-05-07	1822-04-20	M	280	Taiwan	f	f	FS
+281	Kimberly	Finley	Kimberly	Finley	161	1805-03-22	1825-09-12	F	281	Azerbaijan	f	f	GE
+282	Mitchell	Madden	Mitchell	Madden	949	1802-12-05	1822-12-23	M	282	Niger	f	f	EB
+283	Sophia	Williams	Sophia	Williams	161	1802-06-11	1822-05-27	F	283	Macedonia	f	f	KI
+284	Craig	Luna	Craig	Luna	1218	1802-06-08	1822-10-21	M	284	Georgia	f	f	CI
+285	Jeff	Ramirez	Jeff	Ramirez	875	1806-04-12	1826-10-24	F	285	Armenia	f	f	TK
+286	Angelica	Owens	Angelica	Owens	962	1808-12-22	1828-11-03	M	286	Turkey	f	f	VY
+287	Crystal	Mitchell	Crystal	Mitchell	420	1804-09-02	1824-08-15	F	287	Croatia	f	f	JD
+288	Carrie	Holloway	Carrie	Holloway	1241	1807-11-19	1827-08-06	M	288	Madagascar	f	f	TA
+289	Alicia	Clark	Alicia	Clark	766	1806-10-24	1826-02-26	F	289	Fiji	f	f	EM
+290	Michael	Gonzalez	Michael	Gonzalez	849	1804-01-16	1824-06-15	M	290	Thailand	f	f	EV
+291	Carlos	Griffith	Carlos	Griffith	918	1807-06-06	1827-01-08	F	291	Greenland	f	f	EZ
+292	Gary	Dean	Gary	Dean	145	1805-06-27	1825-05-07	M	292	Mauritius	f	f	KR
+293	Kevin	Smith	Kevin	Smith	373	1808-03-11	1828-06-01	F	293	Indonesia	f	f	KZ
+294	Travis	Jensen	Travis	Jensen	901	1808-12-13	1828-09-01	M	294	Honduras	f	f	VK
+295	Elizabeth	Nichols	Elizabeth	Nichols	667	1806-07-10	1826-03-14	F	295	Colombia	f	f	KG
+296	Sean	Castillo	Sean	Castillo	735	1806-01-07	1826-12-25	M	296	Italy	f	f	QD
+297	David	Yu	David	Yu	362	1802-12-22	1822-10-13	F	297	Montserrat	f	f	YK
+298	Edward	Davis	Edward	Davis	599	1808-02-24	1828-11-24	M	298	Maldives	f	f	LU
+299	Donna	David	Donna	David	645	1803-08-12	1823-08-09	F	299	Guinea	f	f	ML
+300	Lisa	Moss	Lisa	Moss	1212	1803-03-26	1823-03-16	M	300	Nigeria	f	f	JD
+301	Frank	Robinson	Frank	Robinson	138	1803-08-25	1823-11-16	F	301	Greece	f	f	EC
+302	Courtney	Moore	Courtney	Moore	578	1808-09-11	1828-06-10	M	302	Serbia	f	f	XG
+303	Samantha	Gill	Samantha	Gill	1194	1805-09-17	1825-03-09	F	303	Argentina	f	f	ED
+304	Betty	Bauer	Betty	Bauer	612	1805-08-16	1825-02-23	M	304	Lesotho	f	f	FC
+305	Matthew	Vang	Matthew	Vang	616	1802-03-18	1822-10-24	F	305	Cuba	f	f	CZ
+306	Jessica	Mata	Jessica	Mata	873	1805-09-20	1825-07-20	M	306	Somalia	f	f	KQ
+307	Karen	Jones	Karen	Jones	926	1803-11-06	1823-12-16	F	307	Rwanda	f	f	YZ
+308	Robert	Garza	Robert	Garza	963	1808-07-08	1828-04-07	M	308	Estonia	f	f	IW
+309	Charles	Norton	Charles	Norton	1068	1806-06-19	1826-01-15	F	309	Mali	f	f	WX
+310	Daniel	Garner	Daniel	Garner	631	1805-04-05	1825-04-07	M	310	Barbados	f	f	CD
+311	David	Singleton	David	Singleton	138	1806-11-06	1826-10-17	F	311	Israel	f	f	JT
+312	Justin	Baker	Justin	Baker	985	1808-11-21	1828-12-13	M	312	Seychelles	f	f	QP
+313	Heather	Taylor	Heather	Taylor	857	1805-04-03	1825-02-20	F	313	Peru	f	f	YT
+314	Brandon	Velasquez	Brandon	Velasquez	491	1802-03-20	1822-05-13	M	314	Slovakia	f	f	UN
+315	Adam	Black	Adam	Black	958	1803-11-25	1823-08-09	F	315	Belize	f	f	IC
+316	Albert	Smith	Albert	Smith	99	1804-03-02	1824-05-15	M	316	Laos	f	f	TT
+317	David	Barnes	David	Barnes	854	1805-11-15	1825-07-14	F	317	Curacao	f	f	IE
+318	Katherine	Benjamin	Katherine	Benjamin	1184	1805-07-01	1825-09-23	M	318	Myanmar	f	f	HE
+319	Amber	Lopez	Amber	Lopez	1121	1805-05-23	1825-10-04	F	319	Seychelles	f	f	DT
+320	Cynthia	Phelps	Cynthia	Phelps	296	1806-10-20	1826-03-11	M	320	Morocco	f	f	MJ
+321	Jonathon	Hurley	Jonathon	Hurley	1079	1802-01-15	1822-08-18	F	321	Colombia	f	f	IU
+322	Evan	Bowers	Evan	Bowers	1115	1806-09-08	1826-08-18	M	322	India	f	f	LO
+323	Kristen	Wolfe	Kristen	Wolfe	30	1802-01-12	1822-11-03	F	323	Kenya	f	f	UW
+324	Christopher	Lee	Christopher	Lee	1212	1802-09-01	1822-12-25	M	324	Madagascar	f	f	JV
+325	Kristin	Sawyer	Kristin	Sawyer	869	1802-12-25	1822-03-03	F	325	Slovakia	f	f	AI
+326	Nicholas	Dickerson	Nicholas	Dickerson	377	1804-12-10	1824-11-18	M	326	Malaysia	f	f	KI
+327	Katherine	Figueroa	Katherine	Figueroa	1245	1802-07-12	1822-08-24	F	327	Kosovo	f	f	DJ
+328	Lisa	Le	Lisa	Le	1215	1806-07-19	1826-05-10	M	328	Kenya	f	f	WU
+329	Jon	Thornton	Jon	Thornton	1178	1804-04-25	1824-07-22	F	329	Honduras	f	f	EH
+330	David	Wilkins	David	Wilkins	997	1804-07-14	1824-09-21	M	330	Burundi	f	f	JV
+331	Michael	Nash	Michael	Nash	509	1804-08-16	1824-08-04	F	331	Bahamas	f	f	UU
+332	Olivia	George	Olivia	George	592	1807-02-07	1827-10-09	M	332	Vietnam	f	f	YW
+333	Benjamin	Oneill	Benjamin	Oneill	1180	1805-04-26	1825-04-15	F	333	Slovenia	f	f	ST
+334	Scott	Ashley	Scott	Ashley	458	1807-12-20	1827-03-12	M	334	Libya	f	f	LO
+335	Edward	Frank	Edward	Frank	1182	1808-12-03	1828-11-13	F	335	Burundi	f	f	XX
+336	Tamara	Flores	Tamara	Flores	658	1803-06-08	1823-11-28	M	336	Somalia	f	f	BV
+337	Jerry	Ramsey	Jerry	Ramsey	386	1802-11-12	1822-09-03	F	337	Thailand	f	f	QI
+338	Anna	Merritt	Anna	Merritt	649	1807-01-16	1827-03-28	M	338	Brazil	f	f	AL
+339	Laurie	Benson	Laurie	Benson	444	1804-07-12	1824-02-24	F	339	Uzbekistan	f	f	NA
+340	Matthew	Sandoval	Matthew	Sandoval	1184	1806-02-14	1826-12-18	M	340	Ecuador	f	f	KK
+341	Jerry	Taylor	Jerry	Taylor	216	1802-11-16	1822-10-25	F	341	Egypt	f	f	OM
+342	Robert	Garcia	Robert	Garcia	1047	1806-02-23	1826-01-17	M	342	Switzerland	f	f	BO
+343	Ashley	Keller	Ashley	Keller	104	1807-10-17	1827-07-28	F	343	Pakistan	f	f	OZ
+344	Melissa	Thompson	Melissa	Thompson	177	1808-08-28	1828-04-23	M	344	Switzerland	f	f	JG
+345	Kathleen	Gray	Kathleen	Gray	320	1806-02-28	1826-04-21	F	345	Nauru	f	f	NF
+346	Ryan	Cochran	Ryan	Cochran	892	1806-08-09	1826-05-01	M	346	Australia	f	f	IX
+347	Ashley	Wilkinson	Ashley	Wilkinson	834	1802-10-18	1822-01-24	F	347	Lebanon	f	f	XO
+348	Jacqueline	Yates	Jacqueline	Yates	60	1807-07-24	1827-03-19	M	348	Spain	f	f	FN
+349	Erin	Fisher	Erin	Fisher	376	1806-10-23	1826-04-15	F	349	Russia	f	f	MF
+350	Christine	Garcia	Christine	Garcia	1191	1803-11-25	1823-05-07	M	350	Angola	f	f	CI
+351	David	Bowman	David	Bowman	725	1803-10-16	1823-10-01	F	351	Oman	f	f	QH
+352	Lance	Mosley	Lance	Mosley	1153	1807-09-28	1827-08-16	M	352	Belgium	f	f	AX
+353	Kim	Rodriguez	Kim	Rodriguez	852	1805-11-27	1825-02-07	F	353	Niue	f	f	SG
+354	Erin	Erickson	Erin	Erickson	56	1806-04-21	1826-05-27	M	354	Kosovo	f	f	CH
+355	Rachel	Robbins	Rachel	Robbins	724	1808-09-01	1828-05-15	F	355	Mayotte	f	f	WE
+356	Jake	Reilly	Jake	Reilly	484	1807-01-26	1827-08-22	M	356	Russia	f	f	PV
+357	Christian	Thomas	Christian	Thomas	631	1806-12-18	1826-04-12	F	357	Israel	f	f	RD
+358	Leonard	Michael	Leonard	Michael	353	1804-02-03	1824-10-18	M	358	Tajikistan	f	f	VU
+359	Alyssa	Ellison	Alyssa	Ellison	150	1806-11-05	1826-05-05	F	359	Albania	f	f	LW
+360	Amber	Lee	Amber	Lee	210	1804-11-17	1824-10-26	M	360	Greece	f	f	LS
+361	Barbara	Jones	Barbara	Jones	472	1805-10-16	1825-04-21	F	361	Peru	f	f	WO
+362	Michael	Pierce	Michael	Pierce	413	1807-10-08	1827-09-25	M	362	Bahrain	f	f	IO
+363	David	Dean	David	Dean	233	1808-12-15	1828-04-03	F	363	Greenland	f	f	DM
+364	Samantha	Evans	Samantha	Evans	501	1805-07-18	1825-12-01	M	364	Greece	f	f	RX
+365	Carla	Lyons	Carla	Lyons	517	1802-02-23	1822-01-25	F	365	Macao	f	f	UA
+366	Taylor	Williams	Taylor	Williams	586	1802-10-14	1822-01-03	M	366	Angola	f	f	YG
+367	Charles	Madden	Charles	Madden	622	1805-07-21	1825-03-13	F	367	Denmark	f	f	BK
+368	Michael	Davis	Michael	Davis	372	1805-09-23	1825-10-15	M	368	Tunisia	f	f	VI
+369	Donna	Nelson	Donna	Nelson	550	1805-09-14	1825-10-24	F	369	Canada	f	f	RH
+370	Shari	Jimenez	Shari	Jimenez	919	1808-05-09	1828-06-22	M	370	Cambodia	f	f	AZ
+371	Raymond	Lopez	Raymond	Lopez	742	1806-10-19	1826-11-25	F	371	Maldives	f	f	NK
+372	Amanda	Levy	Amanda	Levy	661	1807-08-13	1827-05-17	M	372	Montenegro	f	f	MZ
+373	Keith	Rowland	Keith	Rowland	869	1805-01-21	1825-05-07	F	373	Benin	f	f	TN
+374	Robert	Shelton	Robert	Shelton	1247	1806-02-27	1826-08-08	M	374	Lesotho	f	f	JM
+375	Robert	Hutchinson	Robert	Hutchinson	795	1808-05-04	1828-06-16	F	375	Norway	f	f	EN
+376	Tammy	Gomez	Tammy	Gomez	510	1806-03-18	1826-01-11	M	376	Kyrgyzstan	f	f	SZ
+377	Randy	Herrera	Randy	Herrera	343	1804-01-11	1824-07-04	F	377	Armenia	f	f	PJ
+378	Wendy	Oneal	Wendy	Oneal	511	1805-12-24	1825-06-22	M	378	Myanmar	f	f	GJ
+379	Caitlin	Wright	Caitlin	Wright	827	1803-08-12	1823-11-24	F	379	Jamaica	f	f	PA
+380	Joshua	Jones	Joshua	Jones	1061	1808-02-02	1828-02-09	M	380	Hungary	f	f	PU
+381	Chris	Moore	Chris	Moore	248	1803-12-21	1823-01-20	F	381	Portugal	f	f	GO
+382	Daniel	Anderson	Daniel	Anderson	970	1806-06-08	1826-02-11	M	382	Philippines	f	f	FP
+383	Erin	Johnson	Erin	Johnson	1153	1804-01-08	1824-08-01	F	383	Macao	f	f	HN
+384	Erika	Diaz	Erika	Diaz	352	1803-06-05	1823-02-12	M	384	Qatar	f	f	KZ
+385	Angela	Wood	Angela	Wood	112	1807-11-12	1827-08-12	F	385	Liberia	f	f	BO
+386	Shaun	Gates	Shaun	Gates	150	1803-09-09	1823-04-28	M	386	Iran	f	f	FL
+387	Jessica	Garza	Jessica	Garza	841	1802-10-06	1822-08-27	F	387	Israel	f	f	VW
+388	Margaret	Henderson	Margaret	Henderson	1002	1806-07-05	1826-06-25	M	388	Monaco	f	f	UH
+389	Rebecca	Miller	Rebecca	Miller	45	1807-08-03	1827-08-17	F	389	Armenia	f	f	UW
+390	Lori	Wright	Lori	Wright	924	1804-03-22	1824-11-25	M	390	Malta	f	f	SF
+391	Mark	Jenkins	Mark	Jenkins	888	1802-08-04	1822-10-26	F	391	Iran	f	f	QB
+392	Elizabeth	Pierce	Elizabeth	Pierce	93	1802-07-19	1822-09-12	M	392	Gabon	f	f	SW
+393	Thomas	Davis	Thomas	Davis	1005	1802-05-18	1822-08-16	F	393	Djibouti	f	f	PX
+394	Kenneth	Gaines	Kenneth	Gaines	1131	1803-12-23	1823-12-28	M	394	Jordan	f	f	LK
+395	Jennifer	Wall	Jennifer	Wall	1113	1802-03-26	1822-02-26	F	395	Azerbaijan	f	f	QJ
+396	Elizabeth	Robertson	Elizabeth	Robertson	1089	1808-03-25	1828-02-08	M	396	Algeria	f	f	PD
+397	Kristin	Todd	Kristin	Todd	465	1803-02-23	1823-02-02	F	397	Belize	f	f	WD
+398	Sarah	Haynes	Sarah	Haynes	752	1806-10-12	1826-07-08	M	398	Turkey	f	f	GN
+399	Margaret	Beard	Margaret	Beard	97	1802-08-18	1822-12-14	F	399	Madagascar	f	f	DK
+400	Jonathan	Garza	Jonathan	Garza	921	1803-11-05	1823-10-11	M	400	Cambodia	f	f	GA
+401	Kristi	Stewart	Kristi	Stewart	1126	1808-01-28	1828-06-26	F	401	Vietnam	f	f	WU
+402	Dwayne	Mcgee	Dwayne	Mcgee	45	1807-06-18	1827-11-25	M	402	Guatemala	f	f	FG
+403	Richard	Jones	Richard	Jones	1239	1807-07-20	1827-09-22	F	403	Lebanon	f	f	YX
+404	Alexandria	Alvarado	Alexandria	Alvarado	292	1807-12-23	1827-08-12	M	404	Belize	f	f	CF
+405	Christina	Smith	Christina	Smith	260	1808-11-10	1828-02-19	F	405	Mexico	f	f	TT
+406	Michael	Trujillo	Michael	Trujillo	127	1805-11-24	1825-03-24	M	406	Macedonia	f	f	JM
+407	Jennifer	Gutierrez	Jennifer	Gutierrez	40	1806-03-17	1826-10-13	F	407	Samoa	f	f	AC
+408	Christian	Cooper	Christian	Cooper	285	1805-11-13	1825-01-22	M	408	Italy	f	f	AC
+409	Anthony	Jones	Anthony	Jones	174	1807-02-20	1827-01-07	F	409	Croatia	f	f	WZ
+410	Pedro	Skinner	Pedro	Skinner	966	1805-12-27	1825-04-18	M	410	Monaco	f	f	KA
+411	Dean	Griffin	Dean	Griffin	807	1803-06-25	1823-01-20	F	411	Philippines	f	f	BD
+412	Sharon	Wells	Sharon	Wells	1010	1804-04-06	1824-05-28	M	412	Pakistan	f	f	AQ
+413	Kristy	Blake	Kristy	Blake	834	1803-08-05	1823-05-22	F	413	Tanzania	f	f	MM
+414	Stephen	Morales	Stephen	Morales	98	1807-11-10	1827-11-09	M	414	Gibraltar	f	f	PO
+415	Meghan	Patton	Meghan	Patton	386	1807-07-10	1827-10-16	F	415	Georgia	f	f	CE
+416	Debra	Rivera	Debra	Rivera	892	1808-09-25	1828-04-23	M	416	Slovakia	f	f	EJ
+417	Chad	White	Chad	White	1131	1804-08-20	1824-11-24	F	417	Spain	f	f	WT
+418	Darrell	Pace	Darrell	Pace	210	1802-02-24	1822-01-23	M	418	Canada	f	f	VY
+419	Paul	Miller	Paul	Miller	1213	1807-10-16	1827-05-07	F	419	Dominica	f	f	EL
+420	Martha	Ware	Martha	Ware	379	1802-12-21	1822-03-18	M	420	Uganda	f	f	RG
+421	Leslie	Roberts	Leslie	Roberts	318	1803-02-09	1823-06-26	F	421	Zambia	f	f	QJ
+422	Phillip	Nelson	Phillip	Nelson	680	1804-03-28	1824-06-28	M	422	Germany	f	f	DP
+423	Jack	Miller	Jack	Miller	58	1805-10-21	1825-04-06	F	423	Moldova	f	f	GI
+424	Justin	Williams	Justin	Williams	16	1802-01-04	1822-10-20	M	424	Tanzania	f	f	OU
+425	Marcia	Mcdonald	Marcia	Mcdonald	1197	1805-06-28	1825-03-03	F	425	Venezuela	f	f	ZB
+426	Erin	Cox	Erin	Cox	513	1806-10-09	1826-12-10	M	426	Turkey	f	f	DB
+427	Richard	Barker	Richard	Barker	847	1804-05-18	1824-07-02	F	427	Somalia	f	f	LX
+428	Meredith	Woodward	Meredith	Woodward	239	1806-08-11	1826-05-24	M	428	Spain	f	f	XW
+429	Emma	Mendez	Emma	Mendez	503	1806-07-25	1826-09-21	F	429	Maldives	f	f	HW
+430	John	Guzman	John	Guzman	728	1808-05-22	1828-08-20	M	430	Chile	f	f	IH
+431	Kelly	Medina	Kelly	Medina	500	1806-03-16	1826-11-28	F	431	Malta	f	f	CP
+432	Erica	Middleton	Erica	Middleton	478	1806-05-01	1826-10-06	M	432	Canada	f	f	MC
+433	Natalie	Mata	Natalie	Mata	1086	1807-06-02	1827-07-19	F	433	Honduras	f	f	JQ
+434	Monique	Harris	Monique	Harris	839	1805-04-01	1825-03-08	M	434	Luxembourg	f	f	EG
+435	Amber	Williams	Amber	Williams	526	1802-12-15	1822-06-17	F	435	China	f	f	QC
+436	Jessica	Gibson	Jessica	Gibson	1106	1806-06-16	1826-11-14	M	436	Suriname	f	f	TG
+437	Jennifer	Woods	Jennifer	Woods	1085	1805-12-23	1825-02-02	F	437	Bahrain	f	f	MJ
+438	Stacie	Burns	Stacie	Burns	857	1806-12-03	1826-06-08	M	438	Liechtenstein	f	f	RE
+439	Tyler	Martinez	Tyler	Martinez	425	1803-01-21	1823-08-20	F	439	Nigeria	f	f	WW
+440	Ana	Douglas	Ana	Douglas	509	1802-09-21	1822-04-03	M	440	Burundi	f	f	KR
+441	Alan	Frazier	Alan	Frazier	1165	1807-09-23	1827-01-02	F	441	Indonesia	f	f	BF
+442	Stephen	Murphy	Stephen	Murphy	1144	1807-04-11	1827-06-12	M	442	Suriname	f	f	QZ
+443	Jeffrey	Miller	Jeffrey	Miller	542	1807-12-02	1827-03-21	F	443	Turkmenistan	f	f	JX
+444	Emily	Mooney	Emily	Mooney	96	1804-07-05	1824-03-17	M	444	Brunei	f	f	ET
+445	Justin	Palmer	Justin	Palmer	655	1807-07-07	1827-11-15	F	445	Libya	f	f	VX
+446	Christy	Robbins	Christy	Robbins	1086	1803-12-13	1823-04-01	M	446	Bhutan	f	f	ZI
+447	Joseph	Kennedy	Joseph	Kennedy	413	1802-10-20	1822-03-05	F	447	Nauru	f	f	LP
+448	Veronica	Waters	Veronica	Waters	995	1804-08-10	1824-12-01	M	448	Azerbaijan	f	f	IA
+449	Benjamin	Blair	Benjamin	Blair	733	1807-05-10	1827-03-11	F	449	Suriname	f	f	EL
+450	Amanda	Morgan	Amanda	Morgan	416	1807-09-04	1827-10-04	M	450	Uruguay	f	f	UG
+451	Nathaniel	Jackson	Nathaniel	Jackson	561	1804-02-18	1824-02-17	F	451	Nauru	f	f	ZR
+452	John	Hensley	John	Hensley	1015	1807-04-09	1827-04-16	M	452	Mozambique	f	f	JH
+453	Veronica	Hart	Veronica	Hart	494	1805-06-22	1825-01-14	F	453	Mauritius	f	f	ZM
+454	Jeremy	Snyder	Jeremy	Snyder	349	1804-10-23	1824-10-05	M	454	Turkmenistan	f	f	JJ
+455	Amanda	Lambert	Amanda	Lambert	513	1804-11-16	1824-03-19	F	455	Chad	f	f	KW
+456	Christopher	Stark	Christopher	Stark	592	1804-03-21	1824-04-04	M	456	Finland	f	f	SU
+457	Daniel	Duran	Daniel	Duran	1112	1807-10-18	1827-02-01	F	457	Panama	f	f	RU
+458	Kevin	Mcconnell	Kevin	Mcconnell	1209	1808-12-22	1828-03-16	M	458	Moldova	f	f	XX
+459	Troy	Montes	Troy	Montes	1238	1808-06-25	1828-11-21	F	459	Jamaica	f	f	RH
+460	Jose	Smith	Jose	Smith	661	1805-06-07	1825-02-17	M	460	Togo	f	f	XK
+461	Kevin	Kramer	Kevin	Kramer	433	1805-05-25	1825-08-17	F	461	Liberia	f	f	FL
+462	Elizabeth	Carter	Elizabeth	Carter	423	1804-12-26	1824-07-05	M	462	Uganda	f	f	SE
+463	Anthony	Woods	Anthony	Woods	876	1806-12-16	1826-01-25	F	463	Azerbaijan	f	f	NL
+464	Jennifer	Shaffer	Jennifer	Shaffer	882	1807-04-08	1827-08-23	M	464	Philippines	f	f	UX
+465	Erika	Tran	Erika	Tran	1003	1803-01-12	1823-05-17	F	465	Senegal	f	f	JO
+466	Colleen	Hampton	Colleen	Hampton	634	1804-11-28	1824-08-17	M	466	Fiji	f	f	CG
+467	Allison	Johnson	Allison	Johnson	441	1802-11-22	1822-12-26	F	467	Madagascar	f	f	AA
+468	Donald	Mcguire	Donald	Mcguire	627	1803-06-15	1823-06-15	M	468	Montenegro	f	f	TM
+469	Elizabeth	Snyder	Elizabeth	Snyder	243	1803-03-14	1823-06-19	F	469	Laos	f	f	HW
+470	Nathan	Elliott	Nathan	Elliott	655	1808-01-08	1828-02-02	M	470	Montserrat	f	f	BH
+471	Ana	Ford	Ana	Ford	918	1803-11-05	1823-04-20	F	471	Malta	f	f	EA
+472	Matthew	Juarez	Matthew	Juarez	243	1805-02-03	1825-05-20	M	472	Montenegro	f	f	WG
+473	Monica	Stewart	Monica	Stewart	1086	1802-11-15	1822-12-17	F	473	Macao	f	f	XM
+474	Preston	Jensen	Preston	Jensen	1000	1803-06-26	1823-06-10	M	474	Libya	f	f	VV
+475	Valerie	Strickland	Valerie	Strickland	541	1802-04-01	1822-12-06	F	475	Tuvalu	f	f	NV
+476	Amy	Murphy	Amy	Murphy	966	1804-07-01	1824-08-21	M	476	Honduras	f	f	SL
+477	Krista	Morgan	Krista	Morgan	622	1805-03-13	1825-06-13	F	477	Uganda	f	f	FM
+478	Samuel	Le	Samuel	Le	843	1803-10-28	1823-08-01	M	478	Chile	f	f	HP
+479	Sierra	Bentley	Sierra	Bentley	1125	1806-11-15	1826-07-08	F	479	Thailand	f	f	DT
+480	Wyatt	Nelson	Wyatt	Nelson	199	1807-07-09	1827-03-27	M	480	Bangladesh	f	f	HG
+481	Steven	Ramos	Steven	Ramos	1061	1802-03-02	1822-12-16	F	481	Jamaica	f	f	HY
+482	Jason	Peters	Jason	Peters	839	1807-11-24	1827-03-17	M	482	Fiji	f	f	HW
+483	Frank	Sanchez	Frank	Sanchez	834	1806-01-27	1826-02-01	F	483	China	f	f	MW
+484	James	Sloan	James	Sloan	1111	1803-09-21	1823-08-24	M	484	Seychelles	f	f	BG
+485	Thomas	Anderson	Thomas	Anderson	77	1806-02-13	1826-09-23	F	485	Singapore	f	f	LY
+486	Samuel	Cuevas	Samuel	Cuevas	701	1808-03-13	1828-11-01	M	486	Singapore	f	f	OB
+487	Ian	Hoffman	Ian	Hoffman	343	1806-08-21	1826-03-24	F	487	Maldives	f	f	VT
+488	Derek	Blair	Derek	Blair	125	1805-07-09	1825-03-07	M	488	Hungary	f	f	TK
+489	Alexandria	Richard	Alexandria	Richard	687	1802-09-19	1822-12-01	F	489	Turkey	f	f	GE
+490	Craig	Blake	Craig	Blake	247	1806-12-18	1826-12-03	M	490	Jamaica	f	f	JA
+491	Jonathan	Alvarado	Jonathan	Alvarado	1182	1802-10-10	1822-10-10	F	491	Tajikistan	f	f	AX
+492	Steven	Miranda	Steven	Miranda	95	1803-07-22	1823-09-08	M	492	Taiwan	f	f	BR
+493	Dennis	Wiggins	Dennis	Wiggins	1114	1804-07-13	1824-11-19	F	493	Belize	f	f	GZ
+494	Elizabeth	Bailey	Elizabeth	Bailey	1051	1808-04-10	1828-05-18	M	494	Gambia	f	f	QP
+495	Cheryl	Henry	Cheryl	Henry	1112	1805-11-09	1825-10-20	F	495	Barbados	f	f	WH
+496	Jacqueline	Bailey	Jacqueline	Bailey	514	1805-12-16	1825-10-16	M	496	Indonesia	f	f	IH
+497	Ashley	Baker	Ashley	Baker	662	1808-11-17	1828-06-26	F	497	Netherlands	f	f	CJ
+498	Kenneth	Williams	Kenneth	Williams	354	1808-02-02	1828-02-19	M	498	Bulgaria	f	f	VS
+499	Donald	Mejia	Donald	Mejia	316	1804-10-12	1824-11-05	F	499	Suriname	f	f	UU
+500					796	1808-08-08	1828-10-19	M	500	Turkmenistan	f	f	NY
 \.
 
 
@@ -16334,255 +16467,255 @@ COPY public.international_passports (id, original_name, original_surname, en_nam
 --
 
 COPY public.marriage_certificates (id, marriage_id, issuer, issue_date) FROM stdin;
-1	1	244	2015-07-27
-2	2	396	1992-01-23
-3	3	760	1996-09-08
-4	4	1031	1970-08-26
-5	5	2	1967-12-15
-6	6	446	1969-06-08
-7	7	770	1970-11-17
-8	8	903	1942-06-09
-9	9	341	1944-07-06
-10	10	411	1945-06-26
-11	11	762	1943-06-27
-12	12	682	1940-11-26
-13	13	817	1947-07-18
-14	14	415	1945-01-23
-15	15	1122	1946-09-02
-16	16	210	1921-07-13
-17	17	944	1920-09-24
-18	18	1020	1919-04-05
-19	19	1171	1921-01-13
-20	20	1057	1919-12-16
-21	21	772	1920-09-04
-22	22	1194	1919-04-28
-23	23	973	1917-10-08
-24	24	783	1917-12-04
-25	25	414	1919-10-14
-26	26	621	1917-02-05
-27	27	1214	1918-04-13
-28	28	234	1920-02-18
-29	29	321	1922-06-25
-30	30	1022	1921-12-03
-31	31	442	1917-03-27
-32	32	671	1897-09-14
-33	33	1076	1897-11-12
-34	34	745	1894-03-13
-35	35	858	1895-11-22
-36	36	523	1893-04-07
-37	37	1138	1894-06-17
-38	38	970	1891-10-04
-39	39	1209	1895-12-02
-40	40	1196	1894-06-02
-41	41	904	1896-09-05
-42	42	969	1893-04-19
-43	43	724	1897-05-03
-44	44	572	1892-03-20
-45	45	322	1891-05-24
-46	46	542	1896-12-26
-47	47	602	1894-03-28
-48	48	1012	1893-04-10
-49	49	646	1895-12-21
-50	50	809	1892-02-03
-51	51	1200	1892-01-18
-52	52	424	1895-04-26
-53	53	321	1896-12-03
-54	54	845	1896-11-15
-55	55	714	1892-07-06
-56	56	902	1893-11-15
-57	57	71	1895-09-23
-58	58	805	1893-12-20
-59	59	601	1895-09-05
-60	60	1047	1896-12-16
-61	61	481	1892-10-13
-62	62	850	1897-11-08
-63	63	864	1896-05-11
-64	64	455	1871-09-12
-65	65	717	1865-03-12
-66	66	762	1869-03-06
-67	67	1043	1870-05-04
-68	68	145	1869-06-02
-69	69	1057	1870-10-28
-70	70	363	1872-02-01
-71	71	474	1872-07-16
-72	72	1016	1865-10-28
-73	73	751	1869-04-04
-74	74	421	1870-12-09
-75	75	396	1867-04-09
-76	76	561	1870-06-03
-77	77	780	1871-07-14
-78	78	933	1871-07-02
-79	79	194	1865-03-05
-80	80	903	1870-03-24
-81	81	794	1869-02-05
-82	82	406	1867-01-25
-83	83	910	1868-10-08
-84	84	716	1865-03-25
-85	85	1230	1867-07-14
-86	86	1246	1865-07-06
-87	87	235	1868-08-17
-88	88	63	1870-12-09
-89	89	1125	1865-09-11
-90	90	1122	1869-11-03
-91	91	140	1872-09-16
-92	92	927	1865-03-28
-93	93	504	1867-02-14
-94	94	850	1871-05-23
-95	95	790	1869-12-04
-96	96	707	1869-05-20
-97	97	346	1872-07-07
-98	98	941	1867-10-20
-99	99	439	1866-06-16
-100	100	750	1868-09-06
-101	101	394	1865-10-28
-102	102	214	1872-12-13
-103	103	657	1867-06-20
-104	104	1222	1866-03-05
-105	105	335	1866-10-04
-106	106	1154	1871-06-09
-107	107	720	1868-07-27
-108	108	781	1867-03-28
-109	109	1000	1867-08-10
-110	110	115	1866-12-17
-111	111	566	1867-03-18
-112	112	977	1867-01-22
-113	113	756	1872-05-01
-114	114	234	1865-06-13
-115	115	594	1867-12-12
-116	116	33	1870-02-22
-117	117	97	1869-10-10
-118	118	906	1871-09-27
-119	119	791	1869-10-09
-120	120	548	1867-09-16
-121	121	102	1866-12-06
-122	122	606	1866-09-22
-123	123	241	1871-07-08
-124	124	1076	1868-08-21
-125	125	716	1869-01-12
-126	126	770	1870-05-23
-127	127	790	1869-05-04
-128	128	307	1844-07-04
-129	129	1177	1843-11-02
-130	130	435	1845-03-18
-131	131	321	1846-02-03
-132	132	220	1843-02-04
-133	133	1114	1847-01-15
-134	134	1151	1842-09-24
-135	135	770	1845-10-09
-136	136	726	1840-07-28
-137	137	1178	1840-07-17
-138	138	358	1843-01-27
-139	139	949	1845-07-19
-140	140	857	1844-12-20
-141	141	1217	1847-07-28
-142	142	821	1846-11-11
-143	143	735	1844-12-13
-144	144	382	1846-12-20
-145	145	900	1840-10-05
-146	146	499	1845-02-05
-147	147	75	1842-09-07
-148	148	310	1842-10-16
-149	149	127	1847-01-12
-150	150	1195	1845-03-05
-151	151	304	1842-11-17
-152	152	711	1843-10-03
-153	153	229	1843-03-28
-154	154	127	1840-08-08
-155	155	363	1844-08-21
-156	156	743	1840-04-25
-157	157	980	1847-03-23
-158	158	956	1843-06-24
-159	159	146	1842-01-09
-160	160	814	1845-10-17
-161	161	676	1847-03-23
-162	162	558	1847-03-28
-163	163	1019	1845-06-17
-164	164	627	1847-04-09
-165	165	167	1843-02-12
-166	166	569	1846-01-03
-167	167	656	1841-01-02
-168	168	291	1840-03-20
-169	169	660	1844-10-06
-170	170	47	1846-01-01
-171	171	565	1841-05-04
-172	172	699	1840-10-25
-173	173	68	1841-03-03
-174	174	75	1844-11-15
-175	175	875	1840-05-20
-176	176	932	1842-05-02
-177	177	703	1846-12-05
-178	178	559	1847-07-08
-179	179	781	1843-12-01
-180	180	1158	1840-07-27
-181	181	667	1842-02-17
-182	182	145	1845-11-13
-183	183	1057	1847-11-17
-184	184	1170	1840-07-09
-185	185	31	1846-01-21
-186	186	293	1846-01-23
-187	187	146	1844-05-07
-188	188	544	1844-08-28
-189	189	326	1844-07-06
-190	190	532	1845-07-11
-191	191	574	1845-06-12
-192	192	376	1845-01-17
-193	193	750	1840-05-13
-194	194	1160	1847-03-20
-195	195	1	1847-05-17
-196	196	393	1840-12-20
-197	197	66	1843-07-15
-198	198	382	1843-07-04
-199	199	344	1842-03-03
-200	200	781	1844-08-06
-201	201	464	1842-05-06
-202	202	1040	1847-03-20
-203	203	568	1845-04-20
-204	204	1125	1846-01-10
-205	205	1007	1845-11-05
-206	206	1156	1840-03-05
-207	207	74	1845-11-10
-208	208	1034	1846-03-01
-209	209	632	1846-07-18
-210	210	1109	1840-02-20
-211	211	194	1842-12-09
-212	212	980	1842-01-25
-213	213	590	1843-08-09
-214	214	1216	1847-08-12
-215	215	790	1845-09-07
-216	216	292	1841-09-12
-217	217	256	1846-10-20
-218	218	341	1844-12-27
-219	219	605	1845-02-16
-220	220	150	1841-07-14
-221	221	608	1847-11-15
-222	222	464	1846-05-04
-223	223	669	1844-02-06
-224	224	1103	1845-04-21
-225	225	685	1846-01-14
-226	226	113	1841-02-23
-227	227	680	1846-12-03
-228	228	117	1840-02-24
-229	229	1008	1845-12-07
-230	230	291	1840-10-22
-231	231	361	1845-03-20
-232	232	899	1843-08-06
-233	233	770	1844-11-23
-234	234	909	1841-10-11
-235	235	32	1842-10-19
-236	236	949	1841-11-22
-237	237	996	1843-12-05
-238	238	538	1840-12-16
-239	239	1177	1841-10-02
-240	240	181	1845-08-06
-241	241	640	1843-09-18
-242	242	933	1846-04-02
-243	243	1124	1842-11-19
-244	244	1015	1841-12-14
-245	245	1194	1841-10-24
-246	246	663	1847-03-17
-247	247	191	1841-05-03
-248	248	289	1842-10-08
-249	249	869	1846-11-15
+1	1	1217	1984-05-17
+2	2	1062	1959-10-23
+3	3	713	1963-05-22
+4	4	987	1938-06-05
+5	5	347	1938-11-17
+6	6	1235	1932-06-05
+7	7	616	1937-04-05
+8	8	985	1910-02-18
+9	9	578	1910-03-14
+10	10	111	1906-03-22
+11	11	727	1913-04-05
+12	12	311	1912-12-02
+13	13	235	1908-03-19
+14	14	949	1911-09-13
+15	15	892	1906-05-26
+16	16	360	1882-04-06
+17	17	1110	1883-10-10
+18	18	611	1881-12-11
+19	19	99	1888-01-03
+20	20	1049	1886-04-18
+21	21	316	1883-04-04
+22	22	138	1888-09-13
+23	23	234	1884-05-14
+24	24	678	1886-11-22
+25	25	124	1887-04-14
+26	26	931	1882-09-22
+27	27	1137	1883-09-19
+28	28	564	1887-04-05
+29	29	209	1881-06-09
+30	30	1011	1884-01-23
+31	31	943	1885-03-20
+32	32	624	1863-12-07
+33	33	338	1856-07-09
+34	34	90	1863-06-11
+35	35	125	1859-08-17
+36	36	1056	1860-05-09
+37	37	38	1859-09-09
+38	38	613	1863-11-09
+39	39	638	1859-10-20
+40	40	430	1863-07-20
+41	41	616	1861-06-24
+42	42	223	1860-04-23
+43	43	580	1858-08-28
+44	44	1077	1863-04-16
+45	45	545	1856-03-07
+46	46	1196	1862-08-02
+47	47	927	1857-02-19
+48	48	1191	1863-10-27
+49	49	772	1857-05-13
+50	50	729	1863-08-28
+51	51	711	1856-01-18
+52	52	54	1856-10-20
+53	53	1181	1862-03-18
+54	54	761	1862-01-01
+55	55	446	1862-12-16
+56	56	168	1858-08-01
+57	57	669	1863-06-22
+58	58	384	1862-04-15
+59	59	1226	1863-05-06
+60	60	1041	1857-08-11
+61	61	1047	1860-07-12
+62	62	730	1862-02-22
+63	63	1116	1860-03-16
+64	64	958	1837-11-27
+65	65	114	1837-05-22
+66	66	1099	1833-02-01
+67	67	481	1833-02-22
+68	68	552	1834-08-05
+69	69	57	1832-12-04
+70	70	670	1832-04-22
+71	71	813	1834-02-19
+72	72	1094	1835-08-16
+73	73	1094	1836-01-13
+74	74	1158	1838-03-14
+75	75	822	1835-05-18
+76	76	511	1835-11-07
+77	77	730	1832-12-09
+78	78	1241	1836-09-10
+79	79	716	1838-08-01
+80	80	204	1834-10-17
+81	81	496	1833-07-13
+82	82	769	1835-08-26
+83	83	433	1836-12-14
+84	84	1023	1836-09-07
+85	85	872	1832-02-26
+86	86	109	1837-09-10
+87	87	159	1838-12-16
+88	88	1037	1832-04-01
+89	89	165	1834-11-26
+90	90	817	1836-05-28
+91	91	161	1835-09-04
+92	92	225	1837-04-28
+93	93	819	1833-10-12
+94	94	794	1836-12-23
+95	95	961	1833-05-12
+96	96	1003	1837-08-19
+97	97	879	1833-06-16
+98	98	854	1833-06-26
+99	99	73	1838-11-26
+100	100	433	1835-08-06
+101	101	1173	1836-03-21
+102	102	645	1834-06-04
+103	103	1115	1837-10-08
+104	104	347	1831-01-18
+105	105	1188	1831-07-14
+106	106	1047	1836-05-22
+107	107	893	1835-09-05
+108	108	1231	1831-03-02
+109	109	953	1834-11-27
+110	110	186	1834-11-19
+111	111	832	1834-09-11
+112	112	251	1838-08-13
+113	113	997	1831-05-10
+114	114	363	1831-10-07
+115	115	799	1838-11-01
+116	116	1000	1834-06-21
+117	117	90	1834-01-11
+118	118	501	1836-12-16
+119	119	565	1833-01-14
+120	120	184	1837-09-09
+121	121	251	1837-06-03
+122	122	216	1834-07-26
+123	123	995	1833-07-10
+124	124	457	1838-09-12
+125	125	554	1831-05-25
+126	126	1104	1836-02-19
+127	127	367	1833-08-26
+128	128	367	1812-02-10
+129	129	695	1809-06-06
+130	130	434	1812-10-11
+131	131	1016	1813-04-25
+132	132	333	1808-06-06
+133	133	217	1807-08-04
+134	134	1121	1807-06-24
+135	135	394	1807-04-06
+136	136	220	1808-12-20
+137	137	1023	1810-10-25
+138	138	1016	1810-01-04
+139	139	880	1810-10-17
+140	140	145	1809-11-17
+141	141	1112	1807-12-25
+142	142	1130	1807-04-17
+143	143	337	1806-08-06
+144	144	558	1807-03-22
+145	145	1042	1812-03-19
+146	146	119	1808-03-21
+147	147	1120	1809-06-03
+148	148	12	1809-09-22
+149	149	215	1807-03-05
+150	150	949	1808-02-13
+151	151	1157	1807-08-24
+152	152	690	1809-01-02
+153	153	207	1811-11-08
+154	154	942	1810-07-27
+155	155	1120	1809-10-12
+156	156	31	1812-10-27
+157	157	91	1809-07-20
+158	158	265	1809-07-02
+159	159	291	1811-10-03
+160	160	934	1809-01-01
+161	161	694	1810-02-14
+162	162	1070	1808-07-28
+163	163	1077	1806-02-15
+164	164	118	1811-06-26
+165	165	1035	1810-06-08
+166	166	432	1809-01-16
+167	167	7	1806-04-16
+168	168	942	1810-06-25
+169	169	1195	1809-09-21
+170	170	716	1812-07-19
+171	171	811	1812-04-22
+172	172	251	1810-09-05
+173	173	1124	1813-02-26
+174	174	286	1812-10-06
+175	175	813	1809-05-18
+176	176	61	1809-08-27
+177	177	213	1807-02-20
+178	178	674	1812-02-28
+179	179	205	1813-12-05
+180	180	166	1808-05-09
+181	181	1002	1812-10-17
+182	182	656	1807-10-22
+183	183	58	1811-03-16
+184	184	1161	1813-03-27
+185	185	235	1813-12-03
+186	186	902	1808-03-08
+187	187	148	1809-04-17
+188	188	1144	1809-05-06
+189	189	440	1810-09-19
+190	190	1091	1813-11-10
+191	191	425	1813-02-02
+192	192	333	1809-02-26
+193	193	338	1812-04-05
+194	194	635	1807-01-05
+195	195	592	1806-08-01
+196	196	323	1811-11-25
+197	197	1195	1807-12-21
+198	198	66	1808-05-26
+199	199	958	1812-12-25
+200	200	434	1809-07-27
+201	201	936	1808-08-12
+202	202	157	1810-08-26
+203	203	291	1807-01-04
+204	204	158	1809-02-02
+205	205	479	1813-01-21
+206	206	924	1809-11-14
+207	207	564	1812-02-13
+208	208	1121	1813-02-10
+209	209	193	1806-10-01
+210	210	1136	1809-12-05
+211	211	1114	1813-08-14
+212	212	507	1806-11-12
+213	213	1100	1813-10-18
+214	214	264	1806-06-09
+215	215	457	1811-09-15
+216	216	488	1812-05-15
+217	217	1088	1808-04-25
+218	218	1121	1808-12-12
+219	219	500	1806-03-19
+220	220	880	1809-05-24
+221	221	1003	1811-12-05
+222	222	192	1813-06-08
+223	223	761	1808-11-27
+224	224	388	1807-10-14
+225	225	1248	1809-01-11
+226	226	925	1812-01-04
+227	227	1113	1813-10-20
+228	228	1156	1807-12-19
+229	229	924	1812-04-08
+230	230	1248	1809-12-02
+231	231	533	1813-02-10
+232	232	38	1812-09-03
+233	233	216	1813-06-12
+234	234	599	1809-08-28
+235	235	1088	1806-10-09
+236	236	91	1806-10-14
+237	237	1027	1811-04-14
+238	238	265	1807-09-09
+239	239	496	1808-07-21
+240	240	799	1807-07-28
+241	241	56	1807-12-17
+242	242	778	1808-11-11
+243	243	1112	1813-11-20
+244	244	1168	1810-08-11
+245	245	630	1808-12-23
+246	246	1241	1810-03-15
+247	247	19	1811-05-25
+248	248	71	1810-12-23
+249	249	1191	1808-01-09
 \.
 
 
@@ -16591,255 +16724,255 @@ COPY public.marriage_certificates (id, marriage_id, issuer, issue_date) FROM std
 --
 
 COPY public.marriages (id, person1, person2, marriage_date) FROM stdin;
-1	2	3	2015-07-27
-2	4	5	1992-01-23
-3	6	7	1996-09-08
-4	8	9	1970-08-26
-5	10	11	1967-12-15
-6	12	13	1969-06-08
-7	14	15	1970-11-17
-8	16	17	1942-06-09
-9	18	19	1944-07-06
-10	20	21	1945-06-26
-11	22	23	1943-06-27
-12	24	25	1940-11-26
-13	26	27	1947-07-18
-14	28	29	1945-01-23
-15	30	31	1946-09-02
-16	32	33	1921-07-13
-17	34	35	1920-09-24
-18	36	37	1919-04-05
-19	38	39	1921-01-13
-20	40	41	1919-12-16
-21	42	43	1920-09-04
-22	44	45	1919-04-28
-23	46	47	1917-10-08
-24	48	49	1917-12-04
-25	50	51	1919-10-14
-26	52	53	1917-02-05
-27	54	55	1918-04-13
-28	56	57	1920-02-18
-29	58	59	1922-06-25
-30	60	61	1921-12-03
-31	62	63	1917-03-27
-32	64	65	1897-09-14
-33	66	67	1897-11-12
-34	68	69	1894-03-13
-35	70	71	1895-11-22
-36	72	73	1893-04-07
-37	74	75	1894-06-17
-38	76	77	1891-10-04
-39	78	79	1895-12-02
-40	80	81	1894-06-02
-41	82	83	1896-09-05
-42	84	85	1893-04-19
-43	86	87	1897-05-03
-44	88	89	1892-03-20
-45	90	91	1891-05-24
-46	92	93	1896-12-26
-47	94	95	1894-03-28
-48	96	97	1893-04-10
-49	98	99	1895-12-21
-50	100	101	1892-02-03
-51	102	103	1892-01-18
-52	104	105	1895-04-26
-53	106	107	1896-12-03
-54	108	109	1896-11-15
-55	110	111	1892-07-06
-56	112	113	1893-11-15
-57	114	115	1895-09-23
-58	116	117	1893-12-20
-59	118	119	1895-09-05
-60	120	121	1896-12-16
-61	122	123	1892-10-13
-62	124	125	1897-11-08
-63	126	127	1896-05-11
-64	128	129	1871-09-12
-65	130	131	1865-03-12
-66	132	133	1869-03-06
-67	134	135	1870-05-04
-68	136	137	1869-06-02
-69	138	139	1870-10-28
-70	140	141	1872-02-01
-71	142	143	1872-07-16
-72	144	145	1865-10-28
-73	146	147	1869-04-04
-74	148	149	1870-12-09
-75	150	151	1867-04-09
-76	152	153	1870-06-03
-77	154	155	1871-07-14
-78	156	157	1871-07-02
-79	158	159	1865-03-05
-80	160	161	1870-03-24
-81	162	163	1869-02-05
-82	164	165	1867-01-25
-83	166	167	1868-10-08
-84	168	169	1865-03-25
-85	170	171	1867-07-14
-86	172	173	1865-07-06
-87	174	175	1868-08-17
-88	176	177	1870-12-09
-89	178	179	1865-09-11
-90	180	181	1869-11-03
-91	182	183	1872-09-16
-92	184	185	1865-03-28
-93	186	187	1867-02-14
-94	188	189	1871-05-23
-95	190	191	1869-12-04
-96	192	193	1869-05-20
-97	194	195	1872-07-07
-98	196	197	1867-10-20
-99	198	199	1866-06-16
-100	200	201	1868-09-06
-101	202	203	1865-10-28
-102	204	205	1872-12-13
-103	206	207	1867-06-20
-104	208	209	1866-03-05
-105	210	211	1866-10-04
-106	212	213	1871-06-09
-107	214	215	1868-07-27
-108	216	217	1867-03-28
-109	218	219	1867-08-10
-110	220	221	1866-12-17
-111	222	223	1867-03-18
-112	224	225	1867-01-22
-113	226	227	1872-05-01
-114	228	229	1865-06-13
-115	230	231	1867-12-12
-116	232	233	1870-02-22
-117	234	235	1869-10-10
-118	236	237	1871-09-27
-119	238	239	1869-10-09
-120	240	241	1867-09-16
-121	242	243	1866-12-06
-122	244	245	1866-09-22
-123	246	247	1871-07-08
-124	248	249	1868-08-21
-125	250	251	1869-01-12
-126	252	253	1870-05-23
-127	254	255	1869-05-04
-128	256	257	1844-07-04
-129	258	259	1843-11-02
-130	260	261	1845-03-18
-131	262	263	1846-02-03
-132	264	265	1843-02-04
-133	266	267	1847-01-15
-134	268	269	1842-09-24
-135	270	271	1845-10-09
-136	272	273	1840-07-28
-137	274	275	1840-07-17
-138	276	277	1843-01-27
-139	278	279	1845-07-19
-140	280	281	1844-12-20
-141	282	283	1847-07-28
-142	284	285	1846-11-11
-143	286	287	1844-12-13
-144	288	289	1846-12-20
-145	290	291	1840-10-05
-146	292	293	1845-02-05
-147	294	295	1842-09-07
-148	296	297	1842-10-16
-149	298	299	1847-01-12
-150	300	301	1845-03-05
-151	302	303	1842-11-17
-152	304	305	1843-10-03
-153	306	307	1843-03-28
-154	308	309	1840-08-08
-155	310	311	1844-08-21
-156	312	313	1840-04-25
-157	314	315	1847-03-23
-158	316	317	1843-06-24
-159	318	319	1842-01-09
-160	320	321	1845-10-17
-161	322	323	1847-03-23
-162	324	325	1847-03-28
-163	326	327	1845-06-17
-164	328	329	1847-04-09
-165	330	331	1843-02-12
-166	332	333	1846-01-03
-167	334	335	1841-01-02
-168	336	337	1840-03-20
-169	338	339	1844-10-06
-170	340	341	1846-01-01
-171	342	343	1841-05-04
-172	344	345	1840-10-25
-173	346	347	1841-03-03
-174	348	349	1844-11-15
-175	350	351	1840-05-20
-176	352	353	1842-05-02
-177	354	355	1846-12-05
-178	356	357	1847-07-08
-179	358	359	1843-12-01
-180	360	361	1840-07-27
-181	362	363	1842-02-17
-182	364	365	1845-11-13
-183	366	367	1847-11-17
-184	368	369	1840-07-09
-185	370	371	1846-01-21
-186	372	373	1846-01-23
-187	374	375	1844-05-07
-188	376	377	1844-08-28
-189	378	379	1844-07-06
-190	380	381	1845-07-11
-191	382	383	1845-06-12
-192	384	385	1845-01-17
-193	386	387	1840-05-13
-194	388	389	1847-03-20
-195	390	391	1847-05-17
-196	392	393	1840-12-20
-197	394	395	1843-07-15
-198	396	397	1843-07-04
-199	398	399	1842-03-03
-200	400	401	1844-08-06
-201	402	403	1842-05-06
-202	404	405	1847-03-20
-203	406	407	1845-04-20
-204	408	409	1846-01-10
-205	410	411	1845-11-05
-206	412	413	1840-03-05
-207	414	415	1845-11-10
-208	416	417	1846-03-01
-209	418	419	1846-07-18
-210	420	421	1840-02-20
-211	422	423	1842-12-09
-212	424	425	1842-01-25
-213	426	427	1843-08-09
-214	428	429	1847-08-12
-215	430	431	1845-09-07
-216	432	433	1841-09-12
-217	434	435	1846-10-20
-218	436	437	1844-12-27
-219	438	439	1845-02-16
-220	440	441	1841-07-14
-221	442	443	1847-11-15
-222	444	445	1846-05-04
-223	446	447	1844-02-06
-224	448	449	1845-04-21
-225	450	451	1846-01-14
-226	452	453	1841-02-23
-227	454	455	1846-12-03
-228	456	457	1840-02-24
-229	458	459	1845-12-07
-230	460	461	1840-10-22
-231	462	463	1845-03-20
-232	464	465	1843-08-06
-233	466	467	1844-11-23
-234	468	469	1841-10-11
-235	470	471	1842-10-19
-236	472	473	1841-11-22
-237	474	475	1843-12-05
-238	476	477	1840-12-16
-239	478	479	1841-10-02
-240	480	481	1845-08-06
-241	482	483	1843-09-18
-242	484	485	1846-04-02
-243	486	487	1842-11-19
-244	488	489	1841-12-14
-245	490	491	1841-10-24
-246	492	493	1847-03-17
-247	494	495	1841-05-03
-248	496	497	1842-10-08
-249	498	499	1846-11-15
+1	2	3	1984-05-17
+2	4	5	1959-10-23
+3	6	7	1963-05-22
+4	8	9	1938-06-05
+5	10	11	1938-11-17
+6	12	13	1932-06-05
+7	14	15	1937-04-05
+8	16	17	1910-02-18
+9	18	19	1910-03-14
+10	20	21	1906-03-22
+11	22	23	1913-04-05
+12	24	25	1912-12-02
+13	26	27	1908-03-19
+14	28	29	1911-09-13
+15	30	31	1906-05-26
+16	32	33	1882-04-06
+17	34	35	1883-10-10
+18	36	37	1881-12-11
+19	38	39	1888-01-03
+20	40	41	1886-04-18
+21	42	43	1883-04-04
+22	44	45	1888-09-13
+23	46	47	1884-05-14
+24	48	49	1886-11-22
+25	50	51	1887-04-14
+26	52	53	1882-09-22
+27	54	55	1883-09-19
+28	56	57	1887-04-05
+29	58	59	1881-06-09
+30	60	61	1884-01-23
+31	62	63	1885-03-20
+32	64	65	1863-12-07
+33	66	67	1856-07-09
+34	68	69	1863-06-11
+35	70	71	1859-08-17
+36	72	73	1860-05-09
+37	74	75	1859-09-09
+38	76	77	1863-11-09
+39	78	79	1859-10-20
+40	80	81	1863-07-20
+41	82	83	1861-06-24
+42	84	85	1860-04-23
+43	86	87	1858-08-28
+44	88	89	1863-04-16
+45	90	91	1856-03-07
+46	92	93	1862-08-02
+47	94	95	1857-02-19
+48	96	97	1863-10-27
+49	98	99	1857-05-13
+50	100	101	1863-08-28
+51	102	103	1856-01-18
+52	104	105	1856-10-20
+53	106	107	1862-03-18
+54	108	109	1862-01-01
+55	110	111	1862-12-16
+56	112	113	1858-08-01
+57	114	115	1863-06-22
+58	116	117	1862-04-15
+59	118	119	1863-05-06
+60	120	121	1857-08-11
+61	122	123	1860-07-12
+62	124	125	1862-02-22
+63	126	127	1860-03-16
+64	128	129	1837-11-27
+65	130	131	1837-05-22
+66	132	133	1833-02-01
+67	134	135	1833-02-22
+68	136	137	1834-08-05
+69	138	139	1832-12-04
+70	140	141	1832-04-22
+71	142	143	1834-02-19
+72	144	145	1835-08-16
+73	146	147	1836-01-13
+74	148	149	1838-03-14
+75	150	151	1835-05-18
+76	152	153	1835-11-07
+77	154	155	1832-12-09
+78	156	157	1836-09-10
+79	158	159	1838-08-01
+80	160	161	1834-10-17
+81	162	163	1833-07-13
+82	164	165	1835-08-26
+83	166	167	1836-12-14
+84	168	169	1836-09-07
+85	170	171	1832-02-26
+86	172	173	1837-09-10
+87	174	175	1838-12-16
+88	176	177	1832-04-01
+89	178	179	1834-11-26
+90	180	181	1836-05-28
+91	182	183	1835-09-04
+92	184	185	1837-04-28
+93	186	187	1833-10-12
+94	188	189	1836-12-23
+95	190	191	1833-05-12
+96	192	193	1837-08-19
+97	194	195	1833-06-16
+98	196	197	1833-06-26
+99	198	199	1838-11-26
+100	200	201	1835-08-06
+101	202	203	1836-03-21
+102	204	205	1834-06-04
+103	206	207	1837-10-08
+104	208	209	1831-01-18
+105	210	211	1831-07-14
+106	212	213	1836-05-22
+107	214	215	1835-09-05
+108	216	217	1831-03-02
+109	218	219	1834-11-27
+110	220	221	1834-11-19
+111	222	223	1834-09-11
+112	224	225	1838-08-13
+113	226	227	1831-05-10
+114	228	229	1831-10-07
+115	230	231	1838-11-01
+116	232	233	1834-06-21
+117	234	235	1834-01-11
+118	236	237	1836-12-16
+119	238	239	1833-01-14
+120	240	241	1837-09-09
+121	242	243	1837-06-03
+122	244	245	1834-07-26
+123	246	247	1833-07-10
+124	248	249	1838-09-12
+125	250	251	1831-05-25
+126	252	253	1836-02-19
+127	254	255	1833-08-26
+128	256	257	1812-02-10
+129	258	259	1809-06-06
+130	260	261	1812-10-11
+131	262	263	1813-04-25
+132	264	265	1808-06-06
+133	266	267	1807-08-04
+134	268	269	1807-06-24
+135	270	271	1807-04-06
+136	272	273	1808-12-20
+137	274	275	1810-10-25
+138	276	277	1810-01-04
+139	278	279	1810-10-17
+140	280	281	1809-11-17
+141	282	283	1807-12-25
+142	284	285	1807-04-17
+143	286	287	1806-08-06
+144	288	289	1807-03-22
+145	290	291	1812-03-19
+146	292	293	1808-03-21
+147	294	295	1809-06-03
+148	296	297	1809-09-22
+149	298	299	1807-03-05
+150	300	301	1808-02-13
+151	302	303	1807-08-24
+152	304	305	1809-01-02
+153	306	307	1811-11-08
+154	308	309	1810-07-27
+155	310	311	1809-10-12
+156	312	313	1812-10-27
+157	314	315	1809-07-20
+158	316	317	1809-07-02
+159	318	319	1811-10-03
+160	320	321	1809-01-01
+161	322	323	1810-02-14
+162	324	325	1808-07-28
+163	326	327	1806-02-15
+164	328	329	1811-06-26
+165	330	331	1810-06-08
+166	332	333	1809-01-16
+167	334	335	1806-04-16
+168	336	337	1810-06-25
+169	338	339	1809-09-21
+170	340	341	1812-07-19
+171	342	343	1812-04-22
+172	344	345	1810-09-05
+173	346	347	1813-02-26
+174	348	349	1812-10-06
+175	350	351	1809-05-18
+176	352	353	1809-08-27
+177	354	355	1807-02-20
+178	356	357	1812-02-28
+179	358	359	1813-12-05
+180	360	361	1808-05-09
+181	362	363	1812-10-17
+182	364	365	1807-10-22
+183	366	367	1811-03-16
+184	368	369	1813-03-27
+185	370	371	1813-12-03
+186	372	373	1808-03-08
+187	374	375	1809-04-17
+188	376	377	1809-05-06
+189	378	379	1810-09-19
+190	380	381	1813-11-10
+191	382	383	1813-02-02
+192	384	385	1809-02-26
+193	386	387	1812-04-05
+194	388	389	1807-01-05
+195	390	391	1806-08-01
+196	392	393	1811-11-25
+197	394	395	1807-12-21
+198	396	397	1808-05-26
+199	398	399	1812-12-25
+200	400	401	1809-07-27
+201	402	403	1808-08-12
+202	404	405	1810-08-26
+203	406	407	1807-01-04
+204	408	409	1809-02-02
+205	410	411	1813-01-21
+206	412	413	1809-11-14
+207	414	415	1812-02-13
+208	416	417	1813-02-10
+209	418	419	1806-10-01
+210	420	421	1809-12-05
+211	422	423	1813-08-14
+212	424	425	1806-11-12
+213	426	427	1813-10-18
+214	428	429	1806-06-09
+215	430	431	1811-09-15
+216	432	433	1812-05-15
+217	434	435	1808-04-25
+218	436	437	1808-12-12
+219	438	439	1806-03-19
+220	440	441	1809-05-24
+221	442	443	1811-12-05
+222	444	445	1813-06-08
+223	446	447	1808-11-27
+224	448	449	1807-10-14
+225	450	451	1809-01-11
+226	452	453	1812-01-04
+227	454	455	1813-10-20
+228	456	457	1807-12-19
+229	458	459	1812-04-08
+230	460	461	1809-12-02
+231	462	463	1813-02-10
+232	464	465	1812-09-03
+233	466	467	1813-06-12
+234	468	469	1809-08-28
+235	470	471	1806-10-09
+236	472	473	1806-10-14
+237	474	475	1811-04-14
+238	476	477	1807-09-09
+239	478	479	1808-07-21
+240	480	481	1807-07-28
+241	482	483	1807-12-17
+242	484	485	1808-11-11
+243	486	487	1813-11-20
+244	488	489	1810-08-11
+245	490	491	1808-12-23
+246	492	493	1810-03-15
+247	494	495	1811-05-25
+248	496	497	1810-12-23
+249	498	499	1808-01-09
 \.
 
 
@@ -16855,6 +16988,7 @@ COPY public.office_kinds_documents (document_id, kind_id) FROM stdin;
 1	1
 2	2
 8	1
+10	5
 3	1
 \.
 
@@ -18126,6 +18260,7 @@ COPY public.offices_kinds (kind, description) FROM stdin;
 2	marriage agency
 3	driver schools
 4	medical center
+5	official veterinarian
 \.
 
 
@@ -18134,3118 +18269,3874 @@ COPY public.offices_kinds (kind, description) FROM stdin;
 --
 
 COPY public.offices_kinds_relations (office_id, kind_id) FROM stdin;
+1	5
 1	2
-2	4
+1	4
+2	1
 2	3
+2	4
+2	5
 2	2
+3	5
 3	1
 3	4
-3	3
-4	4
+3	2
+4	1
 5	1
-5	2
-5	3
-5	4
-6	2
-6	3
-7	1
+6	5
 7	3
+7	1
 7	4
 7	2
+8	4
+8	5
 8	1
-9	4
+9	1
+9	5
 9	3
-10	2
+9	4
+9	2
+10	5
 10	3
-11	4
-11	2
+10	4
+10	2
+10	1
+11	5
+12	5
 12	3
+12	4
 12	1
+12	2
 13	3
-13	1
 13	2
+13	5
 14	3
-14	2
+14	1
 14	4
-15	4
+15	5
 15	1
-15	3
-16	2
+16	1
+16	4
+16	5
 17	3
 17	4
-17	1
-18	2
-18	1
+18	5
+18	4
+19	2
 19	1
-19	4
+19	3
 20	4
 20	3
+21	3
+21	2
 21	1
-22	4
-22	1
+22	2
+23	2
 23	4
-23	1
+23	5
 23	3
-24	3
-24	2
-25	4
-25	2
-26	1
-26	2
+23	1
+24	1
+25	3
+26	5
 26	4
-26	3
+27	4
 27	2
-27	3
-28	2
+27	1
+27	5
+28	3
 28	1
+28	5
 29	4
-29	2
-29	3
+29	5
 29	1
+30	1
 30	4
 30	3
+31	1
 31	3
 31	4
 31	2
-32	1
-32	3
+31	5
 32	2
-33	2
+32	4
 33	3
-34	2
-34	4
+33	2
+33	5
 34	3
-35	3
-36	4
+34	1
+34	5
+34	4
+35	5
+35	4
 36	1
-36	2
-37	2
-37	3
-37	1
+36	4
+36	5
 37	4
-38	1
+37	5
+38	5
 38	4
-38	3
 38	2
+38	3
 39	3
 39	1
-39	2
 39	4
-40	3
-40	2
+39	5
 40	4
 40	1
+40	5
 41	2
-42	1
+41	3
+41	5
+41	4
 42	2
 43	2
-43	1
-43	4
-43	3
 44	2
-44	3
-44	4
-45	3
+44	5
 45	1
-45	4
-46	2
-46	4
-46	1
+45	5
+45	3
+45	2
 46	3
-47	1
-47	3
+46	5
+46	1
+46	4
+46	2
 47	2
+47	5
+47	4
+47	1
+48	5
+48	4
 48	1
-48	2
-48	3
-49	2
-49	4
-49	3
 49	1
-50	1
+49	2
+49	5
+49	3
 50	4
-51	1
+50	3
+50	2
+51	5
 51	4
 51	3
-52	3
 52	4
-53	2
+52	2
 53	3
-54	4
-54	2
-54	3
+53	4
+53	1
+53	5
+53	2
 54	1
-55	1
-56	2
-56	4
+54	2
+55	4
 56	1
+56	5
+56	2
 56	3
+57	5
+57	2
+57	4
 57	3
 57	1
-58	1
 58	2
-58	4
 58	3
-59	3
-59	2
-59	1
+58	5
+58	4
+58	1
 59	4
+59	2
+59	3
 60	4
-60	1
 60	2
-60	3
+60	1
+60	5
 61	3
-61	1
+61	4
+61	2
 62	1
+62	3
+62	5
 62	2
-63	2
+62	4
 63	1
 63	4
+63	3
 64	1
-65	2
 65	1
-65	3
-66	3
-66	4
+65	2
 66	2
-67	2
+66	4
+66	1
+67	5
 68	2
-68	4
 68	1
-68	3
+68	4
 69	4
+69	1
+69	2
+69	5
 69	3
-70	4
-71	4
+70	5
 71	2
+71	1
+71	4
+72	4
 72	3
-72	2
+72	1
+72	5
+73	2
+73	1
 73	4
-74	2
 74	3
-75	1
 75	3
-75	4
 75	2
-76	1
+75	1
+76	4
+76	2
+76	3
+77	1
+77	4
 77	2
-77	3
+77	5
+78	3
+78	5
+78	1
 78	4
-78	2
-79	1
+79	5
 79	3
-80	1
-81	3
-81	4
+80	5
+80	2
+80	3
+80	4
+81	1
+82	3
+82	5
 82	4
-83	2
+83	1
 83	3
+83	4
+83	2
+84	4
+84	2
 84	3
-84	1
-85	2
-85	3
+85	1
+85	5
 85	4
-86	2
-86	1
-86	4
-87	4
-87	1
+86	3
 87	2
+88	2
 88	1
+88	5
+88	3
 89	3
-89	2
-90	4
+89	5
 90	1
+90	3
+90	5
 90	2
-91	4
-91	3
 91	1
+91	4
 91	2
+91	3
+91	5
+92	5
 92	2
-92	4
 92	3
-92	1
-93	4
-93	3
-94	1
+92	4
+93	1
+94	5
 94	4
-95	2
-96	3
-96	4
-96	2
+95	1
+95	3
+95	5
+95	4
 96	1
 97	3
 97	1
-97	2
+97	5
 97	4
-98	4
-98	3
-98	2
 98	1
+98	3
+98	5
+98	4
+98	2
+99	4
+99	5
+99	2
 99	1
 99	3
-100	2
-100	4
-101	2
+100	3
+100	5
+100	1
 101	1
+101	2
+101	4
+101	5
 101	3
-102	4
 102	1
-102	2
+102	4
+102	3
 103	1
-104	2
+103	3
+103	5
+103	4
+103	2
 104	1
-105	3
-106	2
+104	3
+104	5
+104	2
+105	1
+105	2
+105	5
 106	4
+106	2
 106	1
+106	5
 106	3
-107	4
-107	1
+107	5
+108	5
+108	2
 108	3
 108	1
-108	2
+109	5
+109	2
 109	4
-110	4
+110	2
 110	3
+110	1
+110	4
+111	5
 111	4
-111	1
 111	2
+111	3
+111	1
 112	1
-112	4
-112	3
 113	1
-113	2
+114	1
+114	4
+114	5
 114	2
-115	4
-115	3
 115	1
-115	2
-116	2
-116	4
+115	3
 116	1
-116	3
 117	2
-117	3
 117	4
 117	1
+117	3
 118	1
 118	2
+118	5
 118	3
 118	4
-119	2
 119	3
-119	4
-120	3
+119	1
+119	2
+120	5
 120	1
-121	3
-121	4
+120	2
 121	1
-122	4
+121	5
+122	2
+123	4
 123	3
-124	3
 124	4
+124	1
+124	3
 124	2
+124	5
+125	3
+125	1
 125	2
-126	3
+125	4
+125	5
+126	4
 126	1
-127	3
-127	2
-127	1
+126	3
+127	5
 127	4
+127	2
+127	3
+127	1
+128	5
 128	1
-129	3
-129	1
-130	4
+128	2
+128	3
+128	4
+129	5
+130	5
 130	1
-130	2
-130	3
+131	5
 131	4
 131	2
-131	1
+131	3
+132	5
 132	4
-132	2
-132	1
-133	3
+133	2
 133	4
-133	1
-134	2
-134	4
-134	3
+134	1
 135	1
-135	4
-135	3
-135	2
-136	1
+135	5
+136	5
 136	3
-137	4
-137	2
-137	1
 137	3
-138	2
-138	3
+138	5
+138	1
 138	4
-139	2
-139	4
+138	3
+138	2
 139	1
 139	3
+139	2
 140	2
-141	1
-142	4
-142	1
-142	2
+140	3
+140	1
+140	5
+140	4
+141	4
 142	3
-143	2
-143	1
-143	3
+142	1
 143	4
-144	1
-144	4
+143	2
+143	3
 144	2
-144	3
 145	4
-145	2
+145	5
 145	1
-146	3
+145	2
+145	3
 146	1
+146	3
+146	4
 146	2
-147	1
 147	3
-147	2
+147	1
 147	4
-148	3
-148	1
+147	2
+147	5
 148	2
-149	2
+148	4
 149	4
 150	2
-151	4
+150	4
+150	1
 151	2
+151	5
+151	1
+151	4
+151	3
 152	3
-152	1
-153	3
-153	2
+152	4
+152	2
+152	5
 153	4
 153	1
-154	2
 154	3
-155	2
+154	5
+154	2
+154	4
+155	3
 155	1
+155	4
+155	2
+156	5
 156	4
+156	3
+156	2
 156	1
-157	4
-157	1
-158	4
+157	2
+157	5
+158	3
+158	2
+158	1
 159	3
-160	1
-160	4
-160	2
-160	3
-161	1
+159	1
+159	2
+159	4
+159	5
+160	5
 161	3
-162	3
-162	4
-162	2
+161	1
+161	2
 162	1
+162	2
+162	5
+163	5
 163	3
 164	3
 165	4
-165	3
-165	2
 165	1
+165	2
+165	3
+165	5
 166	2
-166	3
 166	4
+167	1
+167	3
+167	4
 167	2
+168	5
 168	2
-168	1
-169	4
-169	2
-170	4
+169	3
+170	5
 170	2
-170	3
 170	1
+170	3
+170	4
 171	1
-171	3
+172	4
+172	3
 172	2
-173	3
 173	2
-173	1
+174	3
+174	1
+174	5
 174	4
-174	2
-175	4
-175	1
+175	2
+176	4
+176	3
+176	5
 176	2
-177	2
+176	1
+177	1
+177	5
 177	3
-178	1
+178	4
+179	2
+179	1
 179	4
+179	3
+179	5
+180	5
 180	1
+180	3
 180	2
-181	2
 181	3
 181	4
+181	2
+181	5
+182	1
 182	3
 182	2
+182	4
 183	4
 183	1
-183	3
 183	2
-184	3
+183	5
+184	5
 184	2
-185	4
-185	3
-185	1
+184	3
 185	2
+185	5
+185	1
+186	1
+186	2
 186	3
-187	3
+186	4
 187	2
-187	1
-187	4
-188	1
-188	4
+187	3
+188	2
 189	3
+189	1
+189	2
+189	5
+189	4
+190	5
 190	1
 190	2
-190	3
-191	2
 191	3
-191	1
-191	4
-192	1
+192	5
 192	2
+193	2
 193	3
 193	4
+193	5
 193	1
-194	1
+194	5
 194	2
-194	4
 194	3
+194	4
+195	3
+195	1
 195	2
-196	1
+195	4
+195	5
 196	4
+196	5
+196	3
+197	5
 197	4
-198	4
+197	3
+197	1
 198	1
-199	2
-199	1
-199	3
+198	5
+198	2
+198	4
+198	3
 199	4
-200	1
+199	1
+199	5
+200	5
 200	4
-200	2
 200	3
 201	1
-201	4
-201	3
-202	4
-202	3
 202	2
-202	1
-203	1
-203	3
-203	2
+202	5
+202	4
 203	4
-204	3
-204	4
 204	2
+204	4
 204	1
-205	3
+204	5
+204	3
+205	1
+205	5
 205	2
+205	4
+205	3
+206	4
+206	5
 206	3
 206	1
-206	4
-206	2
-207	3
 207	4
-207	2
 207	1
+207	3
+207	2
+207	5
+208	5
 208	1
 208	3
+208	4
+208	2
 209	4
-210	3
+209	5
+209	3
+209	2
 210	1
+210	3
+210	5
 210	4
-210	2
 211	3
-211	2
-211	1
-212	3
+212	2
 212	4
-212	1
+212	3
+213	5
 213	3
-214	3
+213	2
+213	1
 214	2
-214	1
+214	5
+215	2
 215	4
-215	1
+215	5
+215	3
 216	2
+216	5
+216	4
 216	3
 216	1
-216	4
 217	3
+217	2
 217	4
+217	5
+218	2
 218	4
+218	3
 218	1
+219	5
 219	4
+219	3
 220	2
-221	2
-221	1
-222	1
-222	3
-222	4
+220	1
+220	5
+220	3
+220	4
+221	4
+222	2
+222	5
+223	3
 223	1
+223	2
 224	1
-224	2
-224	3
-224	4
-225	2
+225	3
 225	4
-226	4
-226	3
-227	4
-227	3
-227	1
+225	1
+225	2
+225	5
+226	1
+226	5
 227	2
-228	3
-229	4
-229	2
+227	3
+228	5
+228	2
+228	4
 229	3
 229	1
 230	4
-231	1
+230	1
+230	2
+230	5
+230	3
 231	2
+231	1
 231	3
-231	4
+231	5
 232	1
-232	4
-232	2
 232	3
+232	5
+232	2
 233	3
-234	3
-234	2
+233	1
+233	2
 234	1
+234	2
+234	3
+234	4
+234	5
+235	1
+235	5
 235	2
-235	3
 235	4
-236	3
 236	4
-237	3
-237	4
-238	1
-238	3
+237	5
+237	1
 238	2
-239	2
+238	3
+238	5
 239	4
-239	1
 239	3
+239	1
+239	5
 240	1
+240	5
 240	2
-241	1
-241	4
 241	2
+242	3
+242	1
 242	2
+242	5
 242	4
 243	1
-243	3
-243	2
-243	4
-244	1
+243	5
+244	5
 244	2
+244	1
 244	3
 244	4
+245	4
 245	1
-246	2
+245	3
+245	2
+245	5
+246	4
+246	3
+246	5
+247	5
+247	2
+247	4
+247	3
 247	1
-248	4
-248	3
+248	5
 248	1
-248	2
-249	3
-249	2
+249	1
 250	4
-250	2
-250	3
-250	1
-251	4
-251	3
-251	2
 251	1
-252	2
-253	1
-253	4
+251	2
+251	3
+251	5
+252	4
+252	3
+253	3
 253	2
-254	3
-254	4
-255	3
+253	5
+253	1
+254	5
+255	5
 255	4
+255	2
+256	3
 256	2
-256	4
-257	1
 257	3
-258	4
-258	3
+257	4
 258	2
-258	1
-259	3
-259	2
-259	1
-260	4
+258	3
+259	5
+260	1
 260	3
-261	1
-261	2
+260	4
+260	5
+260	2
+261	5
+261	3
 261	4
-262	3
-263	3
-263	4
+262	1
+262	4
+263	1
+263	5
 264	3
-265	1
-265	3
+264	2
+264	1
+264	5
+264	4
 265	4
-266	3
+265	2
+265	1
+265	5
+265	3
 266	4
+266	3
 266	1
+266	5
 266	2
-267	3
-267	4
 267	2
-267	1
-268	4
-268	2
+267	3
 268	1
-268	3
-269	3
-269	4
+269	5
 270	4
 270	3
 270	1
-271	4
+270	5
 271	1
-271	3
+271	5
+272	5
 272	4
 272	3
-272	2
 272	1
+273	2
 273	1
-274	2
+273	5
+274	5
+274	4
+274	3
 275	3
-276	3
-276	4
+275	2
 276	1
-276	2
-277	1
+277	5
 277	3
-278	4
+277	4
+277	2
+277	1
+278	5
 278	3
+278	4
 278	1
-279	2
-279	1
-280	1
+279	5
+280	4
+280	5
+280	2
 280	3
-281	1
+280	1
+281	4
+281	5
+282	5
+282	4
 282	2
 282	3
-282	1
-283	4
-284	3
-284	4
+283	1
+283	2
+284	5
 285	2
+285	3
+285	1
+286	4
 286	2
-287	3
 287	2
+287	4
+287	5
 287	1
-288	3
+288	5
 288	1
-288	4
-288	2
-289	4
+288	3
 289	2
 289	3
+289	5
+289	1
+289	4
 290	1
+290	5
+290	4
 290	3
-290	2
-291	4
 291	3
-291	2
 291	1
-292	3
+291	2
+292	1
 292	2
+292	3
 293	3
-293	1
-293	4
-293	2
-294	4
-295	2
+293	5
+294	1
+294	5
+294	3
 295	4
-296	4
+295	5
+295	1
 296	2
+296	4
 296	1
-296	3
-297	4
+297	5
+297	1
+298	4
 298	3
+298	5
 298	2
-298	1
+299	2
 299	1
-300	3
+299	4
+300	2
 300	1
+300	5
+300	3
+301	3
 301	2
 301	4
-302	1
+301	5
+302	2
+303	4
 303	2
-303	1
-303	3
+304	3
+304	4
+304	5
 304	2
-304	1
+305	1
 305	3
-305	2
-306	2
-306	1
+306	3
+307	4
 307	3
-307	1
-307	2
-308	1
+308	5
+308	2
+308	3
+308	4
+309	5
+309	2
 309	3
+309	4
 309	1
-310	4
-310	3
-310	2
 310	1
-311	1
-311	4
-311	3
+310	3
+310	5
+311	5
 311	2
 312	3
-313	2
+312	2
+312	4
+312	1
+313	3
+313	5
 313	1
+313	2
 314	2
+314	1
+314	4
+315	5
 315	3
+315	1
 315	2
 315	4
+316	1
+316	2
+316	4
 316	3
-317	2
+316	5
+317	3
+318	4
+318	2
+318	5
+318	3
 318	1
-319	3
-319	1
 319	2
 319	4
+319	5
+319	3
+320	5
+320	1
+320	4
 320	3
-320	2
+321	4
+321	3
 321	2
-322	4
-322	2
-322	1
-322	3
-323	3
+321	5
+322	5
 323	1
+323	2
 323	4
-324	3
+323	3
 324	1
+324	4
 325	1
 325	3
-325	2
-325	4
+326	1
 326	4
-326	2
+326	5
 326	3
+326	2
 327	3
-327	2
+327	1
+327	5
+328	1
 328	4
-329	4
+328	3
+328	2
+328	5
 329	1
 329	2
+329	3
+329	4
+329	5
+330	5
 330	4
-330	1
-330	2
+331	2
+331	1
 331	4
+331	3
 332	2
-332	1
+332	3
 332	4
+332	1
+332	5
 333	4
-333	3
+333	2
+333	1
+334	4
+334	5
 334	3
 335	2
-335	1
 335	4
-335	3
-336	1
-336	2
+336	5
 336	4
-337	1
 337	3
-338	4
-338	3
-338	1
+337	2
+337	5
+338	2
+339	5
 339	2
-339	1
-340	4
-340	3
+339	4
+339	3
 340	2
-341	2
-341	4
+340	4
+340	5
+340	3
+340	1
+341	3
 341	1
-342	3
-342	4
+341	4
+341	5
+342	2
+342	1
+343	5
+343	3
 343	2
-343	1
 343	4
-344	4
-344	2
-345	1
+343	1
+344	5
 345	4
-345	2
 345	3
+345	1
+345	2
+345	5
 346	2
 346	1
-346	3
+346	5
+346	4
+347	3
+347	1
+347	2
+347	5
 347	4
-348	2
 348	4
-348	3
-348	1
+348	5
+349	3
 349	4
+349	5
 349	2
 349	1
-350	4
+350	5
 350	3
-350	2
-350	1
-351	4
-351	1
-351	3
-351	2
-352	1
-352	3
+351	5
 352	4
+352	5
+352	1
 352	2
+353	3
+353	1
+353	2
 353	4
-354	4
-354	2
+353	5
+354	3
 354	1
-355	3
 355	1
-355	2
 355	4
-356	4
-357	2
+355	3
+356	3
+357	5
+357	1
 357	4
 357	3
-358	3
-358	2
-358	1
 358	4
+358	1
+358	2
+358	5
+358	3
 359	4
 359	1
-359	2
 359	3
-360	2
-360	4
+359	2
+359	5
 360	3
-361	3
+360	5
+360	2
+361	4
 361	2
-361	1
-362	4
+361	5
 362	1
+362	2
 363	2
+363	1
+364	3
 364	1
-365	1
-366	3
-367	4
+364	2
+364	4
+364	5
+365	3
+366	4
+367	2
 367	1
-367	3
-368	3
-368	2
+367	4
+367	5
+368	1
 368	4
+368	5
 369	2
+369	5
+369	1
+369	4
 370	3
-370	2
-371	4
+370	4
+370	1
+371	5
 372	3
-372	2
-372	4
-373	4
-373	3
+372	1
+373	5
 373	1
 374	4
-374	3
+374	1
 374	2
+374	3
+374	5
 375	4
-375	3
-376	4
-376	1
 376	2
-377	1
-377	3
+376	1
+376	3
+376	5
 377	2
-377	4
+377	1
+377	5
+377	3
+378	5
+378	2
 378	3
 378	4
 378	1
-379	2
-379	4
+379	3
 379	1
-380	3
-381	1
-381	4
-381	3
-382	2
+380	1
+381	5
+382	3
 383	3
-383	2
-383	4
+384	4
 384	1
+384	5
+384	3
+384	2
 385	3
+385	4
+385	1
+386	4
+386	2
+386	3
+386	5
 386	1
-387	4
-387	3
 387	2
-387	1
-388	1
+388	5
+388	2
 388	3
+388	1
+389	4
+389	5
 389	2
-390	3
+389	1
 390	1
 390	4
-390	2
-391	1
-392	3
-392	2
+391	4
 392	4
+392	5
 392	1
-393	4
-393	2
+393	3
+393	1
+394	1
 394	2
-394	4
+395	3
+395	2
+395	5
 395	4
+395	1
 396	1
-396	2
-396	4
-397	3
-397	1
-397	2
+396	3
 397	4
-398	4
-398	3
+397	2
+397	5
+397	1
+397	3
 398	2
+398	5
+398	4
 398	1
 399	4
-399	2
 399	3
+399	5
 399	1
+399	2
+400	5
 400	3
-400	1
+400	4
 401	3
+401	5
+401	4
 401	1
-402	2
 402	4
-402	1
-402	3
+402	5
+403	1
+403	2
 403	4
-403	3
+403	5
 404	4
-404	1
-404	2
+405	5
+405	3
+405	2
 405	4
-406	1
-406	2
+406	4
+406	3
+407	5
 407	2
-408	3
-408	2
-409	3
+407	3
+407	4
+408	4
+408	5
 409	4
+409	3
+409	2
+409	5
+410	2
+410	3
 410	1
+410	5
+410	4
 411	1
-411	4
-411	2
-411	3
 412	4
+412	5
+412	1
+412	2
+412	3
+413	4
 413	1
+413	3
+413	2
+413	5
+414	5
+414	1
+414	4
 414	3
 414	2
-414	4
-415	1
+415	5
 415	3
-415	4
 415	2
+415	4
+415	1
 416	2
-417	4
+416	5
+416	4
+416	1
+416	3
+417	3
 418	4
+418	5
 418	3
-418	2
-418	1
 419	3
-420	1
+420	3
 420	4
-421	3
-421	2
-421	1
+420	1
+420	5
+420	2
 421	4
-422	1
-422	3
-422	2
-422	4
+421	1
+422	5
 423	1
-423	4
-424	2
-424	1
-425	2
+423	3
+423	5
+423	2
+424	5
 425	1
-425	4
+425	2
 425	3
+425	5
+425	4
 426	4
+426	3
+426	2
+426	5
 426	1
-427	3
-428	3
-428	4
+427	4
+427	2
+428	5
 428	1
-429	2
+429	5
 429	4
 429	3
-430	4
-430	2
-430	3
 430	1
-431	4
-432	3
-433	4
+430	2
+430	4
+430	5
+430	3
+431	5
+432	1
+432	5
+432	2
+432	4
+433	3
 433	1
 433	2
+433	4
 434	2
+434	4
+434	5
 434	1
 434	3
-434	4
-435	4
+435	5
 435	1
-435	2
-436	1
+436	5
 436	4
-437	1
-438	1
+436	1
+436	3
+437	3
+437	2
+438	5
 438	3
+438	1
+438	4
 439	2
+439	4
+440	3
+440	5
+440	2
 440	1
-440	4
-441	4
 441	3
 441	1
+441	5
+441	4
 441	2
 442	1
-442	4
-442	2
+442	5
 442	3
-443	3
+442	4
 443	2
-443	1
+443	5
 443	4
+443	3
+443	1
+444	3
 444	4
-444	2
 444	1
-445	4
+444	5
 445	3
-446	1
+445	1
+445	2
+445	4
+445	5
+446	4
 446	2
-446	3
-447	4
-447	3
+446	5
+447	5
 447	2
+447	4
+447	1
+447	3
+448	1
 448	3
+449	4
+449	5
 449	2
-450	4
-450	3
+449	3
+449	1
 450	2
 450	1
-451	3
-451	4
-451	2
+450	3
+450	5
+451	5
 451	1
+451	2
+451	3
 452	2
 452	1
-452	3
 452	4
-453	2
+452	5
+452	3
 453	1
-454	3
+453	5
+453	4
+453	2
+453	3
 454	1
-455	4
-455	3
+454	5
+455	5
 455	2
-455	1
-456	3
 456	4
 457	2
-457	1
-457	3
-457	4
 458	3
-459	4
+458	4
+458	2
+458	5
+458	1
+459	3
 459	1
+459	4
 459	2
 460	1
-460	2
-461	1
+461	5
+461	3
+461	2
+461	4
+462	5
 462	3
 462	4
-463	1
-463	2
-463	4
 463	3
-464	2
 464	1
 464	3
+464	2
 464	4
 465	1
-465	3
-465	2
-465	4
+465	5
+466	5
+466	4
 466	3
-466	1
 466	2
-467	4
+467	1
+467	5
+467	3
 468	3
+468	5
 468	1
-469	2
-469	4
+468	2
 469	3
 469	1
-470	1
+469	4
 470	4
-471	3
+470	2
+471	5
 471	1
+471	3
+471	4
 472	4
-472	3
+472	5
 472	1
 472	2
-473	1
+472	3
+473	2
 474	2
-474	1
-474	4
-474	3
+474	5
 475	1
-476	1
-477	3
-477	2
-477	1
+475	2
+475	4
+475	5
+476	5
+476	3
+476	4
+477	5
+478	5
 478	3
-478	1
 478	4
 478	2
-479	1
-479	2
+478	1
+479	5
 479	3
-479	4
-480	2
-480	1
-480	3
+479	2
+479	1
+480	4
+481	5
 481	2
 481	4
-481	1
 481	3
-482	3
-482	1
+481	1
+482	4
 483	4
+483	1
+483	2
+483	3
 484	3
-485	4
-485	1
-485	3
+484	1
+484	4
+484	5
+484	2
 485	2
-486	1
+485	5
 486	4
-487	2
-487	4
+486	5
+486	2
+486	1
+486	3
+487	5
 487	3
 487	1
+488	3
+488	4
 488	2
-488	1
-489	3
-489	1
+488	5
 489	4
+489	3
+489	2
+489	1
+489	5
+490	3
+490	5
 490	2
-490	4
-490	1
-491	4
-491	2
-491	3
 491	1
-492	4
-492	1
-492	2
 492	3
-493	4
+492	1
 493	1
 493	2
 493	3
-494	1
+493	5
+493	4
+494	5
 494	2
+494	1
+494	3
+495	5
 495	3
-495	2
 495	4
-495	1
-496	4
-496	3
+496	5
 496	2
-496	1
 497	2
 497	1
-498	2
+497	4
+497	3
+497	5
 498	4
-498	1
-498	3
-499	4
-499	2
 499	3
+499	2
 499	1
-500	2
+499	4
+499	5
+500	5
+500	1
 500	4
+500	2
 501	4
-502	1
+501	2
+501	5
+501	3
+501	1
+502	3
+502	4
+502	2
+503	5
+503	2
+503	3
+503	1
 503	4
-504	4
 504	3
-504	2
-505	4
-505	1
+504	1
 505	2
-506	3
+505	5
+505	1
+506	5
+506	2
+507	2
+507	4
 507	3
 507	1
+507	5
+508	5
+508	3
 508	2
+509	3
 509	1
 509	4
-509	3
-510	2
-510	4
-511	1
-511	3
+509	2
+510	3
+510	1
+510	5
 511	4
+511	2
+511	3
+511	5
+511	1
+512	5
 512	3
 512	1
 512	4
-513	2
-513	4
 513	3
+513	4
+513	5
+513	1
+513	2
 514	3
-515	2
+514	1
+514	4
+515	5
+515	3
 515	4
+515	2
 515	1
 516	3
-516	2
+516	4
 516	1
-517	3
-517	4
-518	3
+517	1
+517	2
+518	5
+518	2
 518	4
 518	1
-519	1
+518	3
 519	3
+519	5
 519	4
 519	2
+519	1
+520	4
+520	5
 520	1
 520	2
-520	3
-521	2
-521	1
 521	3
+521	1
+521	2
+522	1
+522	4
+522	5
 522	3
+522	2
 523	4
-523	2
 523	3
+523	2
+523	5
 523	1
-524	2
-524	4
-524	3
-525	1
+524	1
 525	2
+525	4
+525	5
+525	1
 525	3
-526	3
+526	2
 526	4
+526	3
 526	1
-527	2
-527	1
-527	4
-527	3
+526	5
+527	5
+528	2
+528	4
 528	3
-529	1
-529	2
-529	4
 529	3
-530	4
-530	1
+529	4
+529	5
+529	2
+530	5
 530	2
-531	4
-531	1
+530	3
 531	3
+531	1
+531	4
+531	2
+532	5
 532	1
-532	4
 532	3
-532	2
+533	5
+533	1
 533	3
+533	4
 533	2
-534	3
-534	2
 534	4
-535	1
+534	2
+534	3
+534	5
+534	1
 535	4
-536	2
-536	4
 536	1
+536	3
+536	4
+536	5
 537	1
-538	3
+537	4
 538	2
+538	3
 538	1
-538	4
 539	2
 539	1
+539	5
 539	4
 539	3
-540	1
+540	2
+540	5
 540	4
+541	2
+541	1
+541	3
 541	4
-542	3
+541	5
 542	2
-543	2
-544	2
-544	3
-544	1
+542	4
+542	1
+542	3
+542	5
+543	1
+544	5
+544	4
 545	2
-545	1
-545	3
-545	4
-546	1
+546	5
+546	4
 547	4
-547	3
-547	1
-547	2
-548	2
-548	3
-548	4
 548	1
+548	4
+548	5
 549	1
-549	4
 549	2
+549	5
+549	4
+549	3
+550	1
 550	2
-550	3
 550	4
-551	4
-551	2
+550	3
+551	1
+551	3
+552	2
+552	3
 552	1
-553	4
+552	4
+552	5
 553	2
-553	3
+553	5
+554	4
 554	1
 554	2
-554	4
-555	3
-555	1
-555	2
-555	4
-556	3
+554	3
+554	5
+555	5
 556	2
-556	1
-557	1
-557	2
+556	5
+556	4
+556	3
+557	4
+557	5
 557	3
+558	5
+558	4
+558	2
 558	3
 558	1
-558	2
-558	4
-559	3
-559	4
 559	1
-559	2
+559	5
+559	4
 560	2
-560	1
 561	4
-561	2
-561	1
+561	5
 561	3
+561	1
+561	2
+562	2
 562	1
-562	3
-563	4
-563	3
+562	4
+562	5
 563	1
+563	4
 563	2
+564	5
+564	2
 564	3
-564	1
-565	2
+564	4
 565	1
+565	5
 565	4
+565	2
+565	3
+566	4
+566	5
+566	1
 566	2
 567	2
-568	1
+567	4
+567	1
 568	3
-568	2
 568	4
-569	2
+568	5
 569	1
-569	4
+569	2
+570	3
+570	2
+570	4
+570	5
 570	1
-571	2
-571	1
-571	4
-572	1
+571	3
 572	3
-572	2
 573	1
-573	3
+573	4
+574	3
 574	2
-575	3
 575	1
 575	2
 575	4
-576	3
 576	4
-576	1
-576	2
-577	3
-577	2
 577	1
-577	4
+577	5
+577	2
+578	3
+578	2
+578	1
 578	4
+579	5
 579	4
-579	3
+579	2
+579	1
+580	1
+580	5
 580	2
 580	3
-581	3
+580	4
+581	5
 581	1
-582	1
-583	3
+581	4
+581	2
+582	3
 583	4
-584	4
-584	3
-585	2
-585	1
+583	5
+583	3
+584	1
 585	3
+585	1
+585	4
+585	2
+585	5
+586	2
+586	1
+586	5
 586	3
-587	3
+587	5
 587	2
-587	4
 587	1
-588	4
-588	2
+587	3
 588	3
+588	2
+588	5
 588	1
-589	2
-589	4
-589	1
-590	1
+589	3
+590	4
 590	2
-591	4
-591	2
+590	3
+590	1
+590	5
 591	1
-591	3
-592	4
-592	1
+591	5
+591	2
+591	4
 592	2
+592	5
+592	1
 592	3
-593	3
-594	2
-595	2
+592	4
+593	1
+594	3
+595	3
 595	4
-596	2
-596	1
 596	4
 596	3
+596	2
+596	1
+596	5
 597	3
 597	4
-598	3
-598	2
+597	5
+597	2
 598	4
-599	3
+598	2
+599	5
 599	1
+599	3
 599	2
-599	4
-600	1
-600	2
+600	5
 600	3
-601	3
-601	1
-601	2
-601	4
-602	2
-603	4
+601	5
+602	1
+602	3
+602	4
+602	5
+603	5
+603	1
+603	3
+603	2
+604	2
+604	1
 604	3
-605	2
+604	4
+604	5
+605	3
+605	5
 605	1
-606	1
-606	3
+606	5
 606	2
+606	4
+607	5
 607	4
-607	1
-607	3
 608	3
-608	2
-608	4
-609	1
-609	3
-610	3
-610	4
-610	1
+608	5
+608	1
+609	4
+610	2
+611	1
 611	2
-612	3
-612	2
-612	4
-613	3
+611	3
+611	5
+612	5
+612	1
 613	1
-614	2
-614	1
+613	3
+613	4
+613	5
+613	2
+614	3
+615	2
+615	1
+615	5
 615	4
 616	2
+616	4
+616	3
+616	5
 616	1
+617	1
+617	4
 617	2
+617	5
 618	1
-618	3
-619	3
-619	1
+618	2
+618	4
 619	2
-620	2
-620	4
+619	3
+619	5
+619	1
+619	4
+620	1
+620	3
+621	1
 621	3
-621	2
+622	1
 622	3
-623	2
-623	4
+622	5
+622	2
+622	4
+623	5
 623	3
 624	4
+624	1
+624	3
+624	5
+624	2
 625	4
+626	4
 626	3
-627	4
+626	1
 627	3
-627	1
+627	4
 627	2
+627	1
+627	5
 628	1
-628	3
-629	1
+628	5
+629	3
+629	4
+630	3
+630	1
+630	5
 630	2
+631	3
 631	1
-631	4
-632	1
-632	2
+631	5
+631	2
 632	3
-632	4
-633	3
-633	2
-633	1
+632	2
+632	1
 633	4
-634	3
 634	1
-634	4
 634	2
+634	3
+634	5
+635	3
 635	1
-636	1
+635	2
+635	4
+635	5
+636	4
+636	5
 636	2
+636	3
 637	1
-637	3
-637	2
-637	4
-638	2
-638	1
 638	3
 638	4
+638	2
+638	1
 639	1
-639	2
 639	4
+639	3
+639	5
 640	2
+640	3
+640	4
+640	5
+640	1
 641	3
+641	1
+642	4
 642	3
-643	3
+642	2
+642	5
+643	1
+643	4
 644	1
-644	4
+644	5
+644	3
 644	2
-645	3
+644	4
+645	1
+645	2
+646	5
 646	3
+646	1
 646	4
 646	2
-647	4
-647	3
+647	5
+647	2
+647	1
 648	1
-648	4
 648	3
-648	2
-649	2
-649	1
+649	5
 649	4
 649	3
-650	3
+649	1
+649	2
 650	1
-650	2
-651	2
+650	4
+650	5
+650	3
+651	5
+651	1
 651	3
-652	1
-652	4
+651	4
+652	3
 653	3
-654	4
+653	5
+653	1
+654	1
+654	5
+655	1
 655	3
 655	4
-655	1
-656	1
-656	2
+656	5
 656	4
+656	2
 656	3
-657	4
-657	3
-657	1
 657	2
-658	2
+657	3
+657	5
+657	1
+658	1
+658	5
 658	3
+659	4
 659	3
-659	2
-660	3
-660	1
-660	2
-661	4
-662	1
+659	1
+660	5
+661	1
 662	4
+662	3
+662	2
+662	1
 663	4
-663	1
-663	2
 663	3
-664	4
+664	1
 664	2
-665	2
-666	2
-666	1
+664	3
+664	5
+665	4
+665	5
+665	3
 666	4
+666	1
+667	5
+667	4
 667	1
-667	2
-668	4
-668	1
-668	2
+667	3
 668	3
+668	2
+668	5
 669	4
 669	2
-669	3
-669	1
-670	3
-670	4
 670	2
-670	1
-671	4
-671	1
-671	2
+671	3
+672	5
 672	2
-673	3
+672	4
+673	5
 673	2
-673	1
+673	4
+674	3
 674	4
-674	1
-675	1
-676	1
+674	2
+675	5
+675	4
+675	2
+675	3
 676	4
+676	1
 676	2
-677	3
-677	1
 677	4
-678	2
+677	1
+677	5
+678	5
 678	1
+678	2
 679	4
-679	3
-679	1
 679	2
-680	3
-680	2
 680	1
-680	4
-681	4
-681	3
+681	1
 682	4
-682	3
 682	2
-683	3
+682	1
+682	3
 683	4
+683	1
+683	5
+683	2
 684	2
 684	1
 684	4
-685	2
+684	3
 685	4
-686	2
-686	4
+686	3
 686	1
-687	2
-687	4
-687	3
 687	1
-688	2
+687	4
+687	2
+687	5
+688	3
+689	4
 689	2
-690	1
-691	4
+689	3
+689	1
+690	4
+690	2
+691	2
 692	4
-692	1
-692	3
 692	2
-693	3
-693	4
-694	2
+692	3
+693	1
+693	5
 694	3
-694	4
+694	2
+694	1
+695	3
+695	1
+695	2
 695	4
+695	5
+696	1
+696	2
 696	3
+696	4
+696	5
+697	5
 697	3
 697	4
 697	1
-697	2
 698	1
+698	4
 699	4
-699	2
 700	1
-700	2
-700	4
-700	3
-701	2
+701	1
 701	3
-702	3
+701	5
+702	5
+702	1
 702	4
 703	2
-703	1
+703	5
 703	4
+703	1
+703	3
 704	4
-704	1
 704	3
-704	2
-705	3
-705	4
-705	1
 705	2
-706	3
-707	2
-707	4
+705	1
+706	4
 707	3
 708	3
-708	4
 708	1
-708	2
+708	5
 709	2
+709	1
+709	3
 710	4
-710	1
-710	3
 710	2
+710	5
+710	3
 711	2
 711	1
-711	3
 711	4
-712	2
-712	1
-712	3
+711	5
 712	4
-713	3
-713	1
+712	2
+712	3
+712	5
+712	1
+713	5
 713	4
 713	2
-714	3
-714	2
+713	3
+713	1
+714	5
 714	4
-714	1
+714	2
 715	1
-715	4
-716	2
 716	3
+716	1
+716	5
+716	2
+717	3
+717	5
 717	2
-718	1
-718	2
-718	4
+718	3
+718	5
 719	1
+719	3
+719	2
+720	5
 720	1
-720	3
 720	2
-720	4
-721	4
-721	2
 721	3
-721	1
+721	2
+722	5
 722	3
-722	1
 723	4
-724	3
+723	3
 724	1
-724	2
+724	3
 724	4
-725	4
+724	2
 725	3
-725	2
+725	1
+726	3
 726	4
-726	2
-727	1
+726	5
 727	3
 727	4
 727	2
+727	1
+727	5
+728	4
 728	1
-728	3
+728	5
 729	2
-730	1
+730	3
+730	2
+731	3
 731	1
-731	4
 732	3
-732	1
 732	2
+732	5
+733	1
 733	3
-734	1
-734	4
-734	3
 734	2
-735	2
 735	1
-736	4
+735	5
+735	4
+735	2
+735	3
+736	5
 736	1
-737	2
-737	4
-738	1
-738	3
+736	3
+736	2
+737	5
+737	1
+738	2
 739	3
-739	4
-739	2
-740	2
 740	3
 740	1
+740	5
+740	2
+740	4
 741	4
-742	3
+742	4
+742	5
+742	1
 743	4
-743	3
+743	5
 743	2
+743	3
 744	3
-744	4
-744	2
-744	1
-745	1
 745	2
 745	3
 745	4
-746	1
+745	1
+745	5
 746	2
-747	2
+747	3
+747	5
+747	1
+748	2
+748	5
 748	1
-749	1
-749	2
-750	2
-750	4
+748	4
+749	4
 750	3
 750	1
-751	2
-751	3
+750	5
+751	4
+752	4
 752	1
+753	3
 753	4
+753	2
+753	1
+754	2
 754	3
+754	1
+754	4
 755	4
-755	3
-756	2
-756	1
+755	5
 756	3
-756	4
+756	2
+757	5
+757	1
 757	4
-757	3
 757	2
+757	3
+758	5
+758	1
+758	2
 758	3
-759	2
-760	2
-760	1
-760	4
+758	4
+759	4
+759	3
 760	3
-761	3
+760	5
+760	4
+761	1
 761	2
 762	3
-762	2
-763	2
+763	5
+763	1
+763	3
 764	3
-765	3
-765	4
-765	1
 765	2
 766	1
-766	3
 766	2
+766	3
 766	4
+767	3
+767	5
 767	2
 767	4
-767	3
 767	1
-768	1
+768	5
 768	3
+768	1
+768	4
+769	3
+769	2
 769	4
+769	5
+770	3
+770	5
 770	2
-771	1
+770	4
+770	1
 771	2
+771	3
+771	1
+771	5
+771	4
 772	2
-772	3
-773	2
-773	3
+772	5
+772	1
+773	1
+773	5
+773	4
+774	5
 774	1
+774	4
+774	3
+774	2
+775	5
+775	2
 775	3
+775	1
 776	1
 776	2
-776	4
 777	4
-777	3
 777	1
-778	1
+777	2
+777	3
+777	5
 778	4
+778	5
+778	1
 778	3
+778	2
 779	2
+779	3
+779	5
 779	1
 779	4
-780	4
-780	1
+780	5
 780	2
 780	3
-781	1
-781	2
-781	3
+780	4
+780	1
 781	4
-782	1
-783	2
+781	3
+782	5
 783	4
-783	3
-783	1
-784	3
-784	4
-784	2
+783	2
+783	5
+784	1
+784	5
 785	1
-785	3
 785	4
-786	1
-786	3
+786	2
+787	3
+787	1
 787	2
-788	3
-789	3
+788	2
+788	1
+788	4
+789	4
+789	5
 789	2
 789	1
-790	2
+790	3
 790	4
-790	1
-791	4
-791	2
 791	3
 791	1
+791	2
+791	5
+792	4
+792	5
+792	2
 792	1
-793	2
+792	3
+793	1
 793	4
-794	1
-794	3
+793	2
 794	2
 795	4
 795	2
+795	3
+795	1
+795	5
 796	4
-797	1
+796	3
+796	2
+796	5
+796	1
 797	3
-797	4
-798	2
-798	4
+797	5
 798	1
-799	1
-800	3
-800	1
+799	3
+799	2
+799	4
 800	2
-800	4
-801	2
-801	3
+800	5
+801	1
+801	4
 802	4
-803	3
+802	2
 803	4
-803	1
-804	3
+803	3
+803	2
 804	1
-804	2
-805	4
+804	3
+804	5
 805	3
-805	1
-805	2
+806	3
 806	1
-806	4
+807	1
+807	3
 807	4
-808	4
+807	2
+807	5
+808	3
+808	1
+809	5
 809	1
 809	2
-809	3
 810	4
-811	4
+810	2
+811	2
+811	1
 811	3
-812	2
-813	4
-813	3
-813	1
-814	3
-814	1
+811	5
+811	4
+812	3
+812	4
+813	2
 814	4
-814	2
-815	4
-815	3
+814	5
+814	3
+815	5
 815	1
-816	2
+815	4
+815	2
+816	3
 816	4
-817	4
-817	3
+816	1
+816	2
+816	5
 817	2
-817	1
 818	2
-818	4
-818	3
+819	2
+819	1
+819	3
 819	4
+820	2
 820	1
+820	5
 820	4
+820	3
+821	5
 821	1
 821	2
+821	4
 821	3
-822	3
 822	1
+822	5
 822	4
 822	2
-823	4
-823	3
 823	1
+823	5
 823	2
 824	2
-824	4
 824	3
+824	5
 825	2
+825	3
 825	4
+825	1
+825	5
 826	4
-827	2
-828	4
+826	2
+826	3
+827	4
+827	5
+827	1
+828	5
+828	1
 829	1
 829	4
-829	2
 830	2
-831	2
-831	3
-832	1
+831	4
+832	5
 832	2
-832	4
 833	4
-833	1
 833	2
+833	5
 833	3
+833	1
+834	5
+834	3
+834	2
 834	4
-835	4
-835	1
+834	1
+835	3
+835	5
 836	3
+837	3
 837	1
+837	4
+837	5
 838	2
 838	4
-838	1
-839	3
-839	4
-839	2
-840	2
+839	1
+839	5
 840	4
-840	1
-840	3
-841	3
+840	2
+841	2
+841	5
 841	4
-842	1
+841	1
 842	3
-842	2
-842	4
+843	1
+843	3
+843	5
 843	4
 844	4
 844	2
-844	3
 844	1
-845	4
-845	3
-845	2
+844	3
 845	1
-846	2
+845	2
 846	1
-847	3
+846	4
+846	5
+846	2
+846	3
+847	1
+847	5
+847	4
 848	4
-849	3
-849	1
+848	5
+848	1
 849	4
+849	3
 849	2
-850	2
+849	1
+849	5
 850	1
-850	4
 851	3
-851	1
 851	4
+851	5
 851	2
+851	1
+852	4
 852	2
-853	4
+852	3
+852	5
+852	1
+853	3
 853	2
+853	1
+854	2
+854	5
+854	4
+854	3
 854	1
-855	2
-855	4
 855	1
-856	3
+855	3
+855	4
+855	2
+855	5
 856	4
-856	1
-857	2
-858	2
-859	3
+856	3
+856	2
+857	4
+857	5
+857	1
+858	3
+858	1
+858	4
+858	5
 859	1
 859	4
 859	2
-860	1
-860	3
-861	1
+859	5
+860	4
+861	2
 861	3
 861	4
+861	1
+861	5
 862	1
-862	3
-863	3
+862	4
+862	2
 863	1
-864	2
-864	3
-864	1
-865	4
-866	1
-866	3
+864	5
+865	2
+865	1
+865	5
 866	2
-867	1
+866	1
+866	5
+866	3
 867	4
-868	1
-869	3
+868	3
 869	4
 869	2
+869	3
+869	5
 869	1
-870	2
-870	3
 870	4
-870	1
-871	2
 871	3
+871	5
+871	4
+871	2
 871	1
+872	3
+872	5
+872	4
 872	1
+872	2
 873	1
-874	2
-875	3
+874	3
+874	4
+874	5
+874	1
 875	1
-875	2
 875	4
 876	3
-876	4
-876	2
 876	1
+876	5
+876	2
+876	4
 877	2
-877	3
-877	1
-877	4
-878	3
-878	4
-878	2
+877	5
+878	1
+878	5
 879	2
-879	1
-879	3
+879	5
 879	4
+879	1
+880	5
 880	2
-880	1
-880	4
-881	4
+880	3
 881	1
-882	4
-882	1
-882	2
 882	3
-883	4
-883	2
-883	3
+882	1
+882	5
 883	1
-884	4
-884	3
+883	3
+883	2
+883	5
+883	4
 884	2
+884	4
 884	1
+885	3
+885	5
 885	2
-885	1
-886	2
-886	4
-887	2
-887	4
-887	1
+885	4
+886	1
 887	3
+887	2
+888	1
 888	3
-889	1
+888	2
+888	4
+888	5
+889	2
+889	5
+890	5
 890	4
-891	4
-892	4
-892	3
-892	2
+890	2
+890	1
+891	5
+891	1
 892	1
+892	4
+892	2
+892	5
+893	5
+893	4
+893	1
+893	2
 893	3
 894	4
+895	5
+895	4
 895	1
-896	4
+896	5
+897	1
+897	3
+897	5
+897	2
 897	4
 898	4
-898	1
-899	2
-899	1
+899	5
 899	3
-900	4
-900	1
+899	1
+899	2
+900	3
+900	5
 900	2
-901	3
-901	4
 901	2
 901	1
-902	2
+901	3
+901	4
+902	5
 902	1
 902	4
-903	1
-903	3
+902	2
 903	4
-903	2
 904	4
-904	2
+904	3
+904	5
 905	1
-905	2
 905	4
-906	3
-906	4
+905	2
 906	2
-907	1
+906	5
+906	4
+907	5
 907	2
 907	4
-908	2
-908	1
-908	4
 908	3
-909	2
-910	2
-910	1
-910	4
+908	5
+908	4
+909	3
+909	4
+909	1
 910	3
+911	3
 911	2
 911	1
-911	3
-911	4
+912	3
 912	1
+912	5
 912	4
+912	2
+913	2
 913	1
-914	4
-915	3
-915	2
-915	1
-915	4
+913	5
+914	5
+915	5
 916	4
-916	3
-917	4
-917	2
-917	1
+916	5
 917	3
-918	2
+917	1
+917	2
+917	4
+917	5
+918	5
+918	1
+918	4
 918	3
+918	2
+919	2
 919	4
+919	1
 919	3
+919	5
 920	1
+921	1
+921	4
+921	2
+921	5
 921	3
+922	5
 922	4
-922	1
-922	2
 922	3
+922	2
+922	1
+923	4
+923	1
 923	2
-924	2
+923	3
+924	5
 924	4
-924	3
 924	1
-925	3
+924	3
+924	2
+925	5
 925	4
+925	2
 925	1
-926	2
+926	3
 926	1
+926	5
 926	4
-927	2
 927	1
-927	4
-928	1
-928	3
-928	4
+927	5
+927	2
 928	2
-929	3
+928	1
+928	4
+928	3
+928	5
+929	2
 929	4
-930	1
+929	1
+929	3
 930	4
+930	1
+930	5
+930	2
+930	3
 931	3
+931	4
+931	5
+931	2
 931	1
-932	3
-932	1
 932	2
-933	2
+932	4
+933	5
+933	3
 933	1
+934	5
 934	2
+934	4
+934	3
 934	1
-935	3
+935	2
+936	2
 936	4
+936	3
+936	1
+937	5
+937	2
 937	4
-938	2
+937	1
 938	1
-939	3
+938	3
+938	2
+939	2
+939	1
 939	4
-940	2
+940	4
 940	1
+940	5
 940	3
+940	2
 941	2
+941	5
+941	1
 941	4
 941	3
-941	1
+942	2
+942	3
 942	4
-943	4
+942	5
+942	1
 943	2
-944	4
-944	2
-944	1
+943	3
+943	4
+943	1
+943	5
 944	3
-945	3
-945	2
-946	3
+945	5
+946	5
 946	4
-946	2
-947	3
-948	3
+946	3
+947	5
 948	4
+948	5
+948	3
+949	5
 949	2
 949	4
-950	2
+949	1
+950	1
+950	4
 951	3
-951	2
 951	4
-951	1
 952	4
+952	5
+952	3
+952	2
 952	1
-953	1
-953	4
+953	2
 954	4
-954	2
 954	1
+954	5
 954	3
-955	1
+954	2
 955	2
-955	4
-956	3
+955	3
+956	4
 956	2
-956	1
-957	2
+957	3
+957	4
+957	1
+958	4
 958	2
-959	2
-959	3
+958	1
+958	3
+958	5
 959	1
-959	4
-960	3
-961	3
-961	4
-962	3
+959	3
+960	5
+960	4
+961	2
+961	5
 962	1
-962	4
-963	2
+963	5
 963	4
 963	1
+963	3
+964	1
 964	3
 964	4
-964	1
-965	1
-965	2
+965	5
 965	3
-965	4
+966	1
+966	3
+966	5
 966	4
+967	3
+967	5
+967	1
+967	4
 967	2
-968	2
-969	1
-969	2
-969	4
+968	5
+968	3
 969	3
-970	4
-970	1
+969	4
+969	5
+969	2
 970	2
-971	3
-972	2
-972	1
-972	3
-973	3
-973	2
-973	4
-973	1
-974	1
+970	1
+970	5
+970	4
+971	2
+972	4
+973	5
 974	3
-974	4
-975	3
-975	2
+974	5
+975	1
 976	4
-976	1
-976	3
 976	2
-977	1
+976	5
+977	5
+977	4
 977	3
-977	2
-978	4
-979	1
-979	4
-979	3
-980	3
+978	3
+979	2
 980	4
-980	2
-980	1
-981	4
-982	1
-983	1
+981	3
+982	5
+982	3
 983	4
-984	4
-984	3
+983	2
+983	3
+983	1
+983	5
+984	5
 985	1
 985	2
 985	3
-986	4
-986	2
-986	1
-986	3
+985	5
+986	5
+987	4
+987	1
 987	3
 987	2
-987	4
 988	4
-988	2
-988	1
+989	4
+989	2
+989	3
 989	1
 990	1
-990	4
-990	3
-990	2
 991	1
+991	3
 992	3
-992	4
-992	2
 992	1
+992	4
+992	5
+993	3
 993	2
+994	3
 994	1
+994	5
+995	1
+995	2
+995	5
 995	4
+995	3
+996	1
+996	2
 996	3
 996	4
-996	2
-996	1
+996	5
+997	1
+997	5
 997	4
+997	3
+997	2
 998	1
-998	2
 998	3
+999	5
 999	4
+1000	3
+1000	4
 1000	2
 1000	1
-1000	4
-1001	4
-1001	1
+1000	5
 1001	3
-1002	4
+1001	4
+1002	5
 1002	1
 1002	2
-1003	4
-1003	3
+1002	3
+1002	4
 1003	1
 1003	2
-1004	2
+1003	4
+1004	4
+1005	5
+1005	2
+1005	4
 1005	1
-1005	3
-1006	3
 1006	4
 1006	1
 1006	2
-1007	2
-1007	1
-1007	3
-1007	4
-1008	2
-1008	4
-1008	1
+1006	3
+1007	5
+1008	5
 1008	3
-1009	2
+1008	4
 1009	4
-1009	1
 1009	3
-1010	3
+1009	5
 1010	1
+1010	5
+1010	3
 1010	4
+1010	2
+1011	2
+1011	3
+1011	5
+1011	1
 1011	4
-1012	4
-1012	3
-1012	2
 1012	1
-1013	3
-1013	4
+1012	4
+1012	2
+1012	5
 1013	2
-1013	1
-1014	2
+1013	5
 1014	1
-1014	4
-1015	2
-1015	4
+1015	1
 1016	3
-1016	1
-1016	2
 1016	4
+1016	2
+1016	5
 1017	1
-1017	3
-1018	3
-1018	1
+1017	4
 1018	4
-1018	2
-1019	4
+1018	5
 1019	2
-1020	2
-1020	4
-1021	2
+1020	5
+1020	3
+1021	3
 1021	4
-1022	1
-1022	2
 1022	4
-1023	1
+1022	3
+1022	1
 1023	4
+1023	3
+1023	1
+1023	2
 1024	2
-1024	1
 1024	4
-1024	3
-1025	2
+1024	5
+1024	1
 1025	1
+1025	2
 1025	3
-1026	1
-1026	2
-1026	3
 1026	4
+1026	3
+1026	2
+1026	5
+1026	1
+1027	2
 1027	1
 1027	4
-1027	2
+1027	5
 1027	3
-1028	1
 1028	2
-1028	4
-1028	3
+1028	5
 1029	4
+1029	2
+1030	5
 1030	4
-1030	1
-1030	2
 1031	2
 1031	4
-1031	3
+1032	5
+1032	2
 1032	4
-1033	4
-1034	2
+1032	1
+1032	3
+1033	2
+1033	5
+1034	1
+1034	5
 1034	4
+1035	1
 1035	2
 1035	3
-1035	1
+1035	5
+1036	1
 1036	2
+1036	4
+1036	3
+1037	1
+1037	2
+1037	4
+1037	5
 1037	3
-1038	2
 1038	3
-1038	4
-1039	1
-1039	4
-1040	4
+1038	5
+1039	2
+1040	3
+1040	5
 1040	2
+1040	4
+1040	1
 1041	4
+1041	3
 1041	2
-1041	1
+1041	5
 1042	2
-1042	3
-1043	4
+1042	1
+1042	4
+1042	5
 1043	2
 1043	3
 1043	1
-1044	3
-1044	2
+1043	5
+1043	4
+1044	4
+1045	3
 1045	4
-1046	3
-1046	2
+1046	4
+1046	1
+1047	1
+1047	5
 1047	2
-1047	3
-1048	4
-1048	1
-1048	3
-1048	2
-1049	3
-1049	4
-1049	2
+1048	5
 1049	1
+1049	4
+1049	5
+1049	2
+1049	3
+1050	5
+1050	4
 1050	3
-1051	4
-1051	1
 1051	2
-1052	2
+1051	3
+1051	4
+1051	5
+1051	1
 1052	4
+1052	3
 1053	3
+1053	5
+1053	4
+1054	3
 1054	4
-1055	3
-1056	1
+1055	5
+1055	2
 1056	3
-1056	4
 1056	2
-1057	1
-1057	3
+1056	5
+1056	4
 1057	2
-1058	1
-1058	2
-1059	3
-1059	1
+1057	5
+1057	3
+1058	4
+1058	5
+1059	5
 1060	3
-1060	4
-1060	1
 1060	2
+1060	1
 1061	1
-1061	4
 1061	2
-1061	3
-1062	3
+1062	4
+1062	5
+1062	2
+1063	1
+1063	5
 1063	2
 1063	3
-1063	4
-1063	1
-1064	2
+1064	1
+1064	3
 1064	4
+1064	2
+1064	5
 1065	2
-1066	2
-1066	1
+1065	1
+1066	5
 1066	3
 1067	4
+1067	5
 1067	2
+1067	1
 1067	3
 1068	4
-1069	3
+1068	1
+1068	2
+1068	5
+1068	3
+1069	4
 1069	1
+1069	2
 1070	2
-1071	1
-1071	3
-1072	2
+1070	3
+1070	4
+1070	5
+1070	1
+1071	4
 1072	1
-1073	1
-1074	3
+1072	3
+1073	5
+1074	5
 1074	2
-1075	3
+1074	3
+1074	1
+1074	4
+1075	5
 1075	2
-1075	4
-1076	4
-1076	3
-1076	2
+1075	3
 1076	1
 1077	4
+1077	3
+1077	1
 1077	2
-1078	4
-1078	3
+1077	5
+1078	1
 1079	1
-1079	2
-1080	1
+1079	4
+1079	5
+1080	3
 1080	2
-1081	3
-1081	4
-1081	1
-1082	4
+1081	2
+1081	5
 1082	1
 1082	3
 1083	3
-1083	4
+1083	2
 1083	1
+1083	4
+1083	5
 1084	2
+1085	5
+1085	2
 1085	1
-1085	3
-1086	1
-1086	4
 1086	2
-1087	2
+1086	5
+1086	1
+1086	3
+1087	5
 1088	2
-1088	1
+1088	3
 1088	4
+1088	5
+1088	1
+1089	5
+1089	3
 1089	2
+1089	4
 1089	1
-1090	3
 1090	1
-1091	3
+1090	3
 1091	1
+1091	2
+1091	3
+1091	4
+1091	5
+1092	3
 1092	4
-1093	1
-1093	4
-1094	3
+1092	1
+1092	5
+1093	5
 1094	4
 1094	2
-1094	1
-1095	2
-1095	1
+1094	3
+1094	5
+1095	5
 1095	3
 1096	4
-1096	2
+1096	5
 1096	1
-1097	2
+1096	2
+1096	3
+1097	4
 1097	3
+1097	5
+1097	2
 1097	1
+1098	4
+1098	5
+1098	3
 1098	1
-1099	4
-1099	1
-1099	2
+1098	2
 1099	3
-1100	3
+1099	1
+1099	5
+1099	2
+1099	4
+1100	1
+1100	4
+1100	5
+1100	2
+1101	5
+1101	3
 1101	2
-1101	4
-1102	4
-1103	2
+1102	3
+1102	2
+1102	5
+1102	1
 1103	3
-1103	1
+1103	2
 1103	4
 1104	3
-1105	4
+1104	2
+1104	4
+1104	1
 1105	3
-1105	2
+1105	5
 1106	1
-1107	3
-1107	2
+1106	4
+1106	5
+1106	3
+1106	2
+1107	5
 1107	1
 1107	4
+1107	2
+1108	1
+1108	5
 1108	3
 1108	4
-1109	1
-1109	2
 1109	4
+1109	2
 1109	3
-1110	3
+1109	1
 1110	1
+1110	3
+1110	5
+1110	2
 1110	4
-1111	2
-1111	3
-1111	4
+1111	5
 1111	1
+1111	3
+1111	2
 1112	3
-1112	1
+1112	5
 1112	4
-1113	3
+1112	2
+1112	1
+1113	1
+1113	5
+1113	2
+1113	4
 1114	1
+1114	5
 1114	2
-1114	3
+1115	1
+1115	5
 1115	3
+1115	4
 1115	2
+1116	5
 1116	1
+1116	2
+1116	4
 1117	3
+1117	2
 1117	4
 1117	1
-1117	2
-1118	4
-1118	3
-1119	4
-1119	3
-1119	2
+1118	1
+1119	5
 1119	1
+1119	3
+1120	4
+1120	5
+1120	3
 1120	2
-1121	1
-1121	3
+1120	1
+1121	5
 1121	2
 1121	4
+1121	1
 1122	2
-1122	1
-1122	4
-1122	3
+1123	5
 1123	4
+1123	2
+1124	5
 1124	2
-1124	1
-1124	4
-1124	3
-1125	3
 1125	1
+1125	4
 1125	2
-1126	3
+1125	5
+1126	1
 1127	2
+1127	3
 1127	4
-1128	1
-1129	4
+1127	5
+1127	1
+1128	5
+1128	4
 1129	1
-1129	3
+1129	5
 1129	2
-1130	4
 1130	2
+1130	5
+1131	1
 1131	3
+1131	5
 1132	1
-1132	2
-1132	3
 1132	4
+1132	5
 1133	4
-1134	4
-1134	3
+1133	3
+1133	5
+1133	1
+1133	2
 1134	1
+1134	2
 1135	2
-1135	4
-1135	3
-1135	1
 1136	2
 1136	1
+1136	5
+1136	3
+1136	4
+1137	4
+1137	2
 1137	3
 1137	1
-1137	2
-1138	4
-1138	2
-1138	1
 1138	3
-1139	1
-1140	2
-1140	1
+1139	4
 1140	3
 1140	4
+1140	2
+1140	5
+1140	1
 1141	1
 1141	3
-1142	3
-1142	1
+1141	5
+1141	2
 1142	2
+1142	3
 1142	4
-1143	1
-1144	1
-1144	2
+1143	3
 1144	3
 1144	4
+1144	2
+1144	1
+1145	3
 1145	4
+1145	5
+1146	2
 1146	1
+1146	4
+1146	3
+1147	1
+1147	3
 1147	2
 1147	4
-1147	1
+1147	5
+1148	3
+1148	2
 1148	1
-1148	4
-1149	2
-1150	4
+1148	5
+1149	1
+1149	4
 1150	3
 1151	4
-1151	2
 1151	1
+1151	5
+1151	2
+1151	3
+1152	3
 1152	1
+1152	2
+1153	1
 1153	2
 1153	3
 1153	4
-1154	1
+1153	5
 1154	2
-1154	4
-1154	3
+1154	1
+1154	5
 1155	4
 1155	2
 1155	1
-1155	3
-1156	3
-1156	1
-1156	4
 1156	2
-1157	1
-1157	4
+1156	5
+1156	3
+1156	4
 1157	2
-1157	3
-1158	2
 1158	4
+1158	5
+1158	2
 1158	3
 1158	1
-1159	1
 1159	4
-1160	4
-1160	2
 1160	3
-1160	1
-1161	1
+1160	5
+1160	2
+1161	2
 1161	3
-1162	1
+1161	5
+1161	1
+1161	4
+1162	2
+1163	2
+1163	4
+1163	5
 1163	3
-1164	2
+1164	3
 1164	1
-1164	4
+1165	3
 1165	4
+1165	2
 1165	1
 1166	1
+1166	5
 1166	3
-1166	4
+1166	2
+1167	5
+1167	2
+1167	1
 1167	4
 1167	3
-1168	2
 1168	3
+1168	2
+1168	4
+1168	5
 1168	1
+1169	4
+1169	5
 1169	2
-1170	2
-1170	1
 1170	3
+1170	1
 1170	4
-1171	1
+1170	5
 1171	4
-1171	3
-1171	2
-1172	1
+1172	5
+1172	2
 1173	1
-1174	1
-1174	4
+1173	5
+1173	2
 1174	3
+1175	1
+1175	3
+1175	2
 1175	4
-1176	2
-1176	3
 1176	1
-1176	4
+1176	5
+1176	2
 1177	1
-1177	2
-1177	4
-1178	3
-1178	2
-1178	4
+1177	5
+1178	5
 1178	1
-1179	4
-1179	3
+1178	3
+1178	4
+1179	5
 1179	1
 1179	2
-1180	1
-1180	2
+1179	4
 1180	3
-1181	3
-1181	1
+1180	2
+1180	1
+1180	4
 1181	2
+1181	1
+1181	5
 1181	4
+1181	3
 1182	1
-1182	2
 1182	3
-1182	4
+1183	1
 1183	2
-1183	4
-1184	2
-1184	4
-1185	3
-1185	1
+1183	5
+1184	1
 1185	4
 1186	3
 1186	1
-1187	2
-1187	3
 1187	4
-1187	1
-1188	3
-1188	4
+1188	5
 1188	1
-1189	2
+1188	2
+1188	3
 1189	3
+1189	2
 1189	1
+1189	4
+1189	5
+1190	5
+1190	4
+1190	2
 1190	1
+1191	2
+1191	5
 1191	1
-1192	2
+1192	1
+1193	4
 1193	3
-1193	2
-1193	1
-1194	3
 1194	1
-1194	2
-1194	4
+1194	5
 1195	4
+1195	5
 1195	2
-1196	2
+1195	1
 1196	1
-1197	2
+1196	2
+1196	5
+1196	3
+1197	4
+1197	3
+1197	5
+1197	1
 1198	1
 1198	2
-1199	4
-1199	2
-1199	1
+1198	3
+1199	3
 1200	3
+1200	4
 1200	1
-1200	2
-1201	2
-1202	2
-1202	3
-1203	1
+1201	5
+1202	5
 1203	4
+1203	1
 1203	2
-1203	3
-1204	1
+1203	5
 1204	4
-1204	3
-1205	2
+1204	1
+1204	2
+1204	5
+1205	5
 1205	4
-1206	1
 1206	4
-1206	2
-1206	3
+1206	1
 1207	4
-1207	1
-1207	2
-1208	2
-1208	3
-1208	4
 1208	1
-1209	3
+1208	4
+1208	5
 1209	4
 1209	2
-1210	1
+1209	5
+1209	3
+1209	1
 1210	2
-1210	4
-1211	1
+1210	3
 1211	4
-1211	2
-1211	3
-1212	4
+1212	3
 1212	2
 1212	1
-1213	1
+1212	4
+1212	5
+1213	2
 1213	3
 1213	4
-1214	2
+1213	5
+1213	1
 1214	1
-1215	2
+1214	3
+1214	4
+1214	2
+1214	5
 1215	3
-1216	2
-1217	3
+1215	1
+1215	2
+1215	4
+1215	5
+1216	5
 1217	2
+1217	4
+1218	1
 1218	4
 1218	3
+1218	5
 1218	2
-1218	1
-1219	2
-1219	4
 1219	3
+1219	4
+1219	5
 1220	4
-1221	2
+1220	2
 1221	1
 1221	4
 1221	3
-1222	4
+1221	5
+1222	1
 1222	2
-1223	4
+1222	3
+1222	5
+1222	4
 1223	2
+1224	3
 1224	4
-1224	2
-1225	2
+1224	1
+1224	5
 1225	3
-1225	1
-1226	3
+1225	2
+1225	4
+1226	4
+1226	5
 1226	1
+1226	2
 1227	4
 1227	3
-1227	2
-1227	1
+1227	5
 1228	2
-1228	4
-1228	3
-1228	1
+1229	5
+1229	4
 1229	3
-1229	1
-1230	4
-1230	2
-1230	3
 1230	1
-1231	3
-1231	4
-1232	4
-1232	3
-1233	4
-1233	2
+1230	3
+1230	2
+1230	4
+1230	5
+1231	2
+1232	1
 1233	1
+1233	3
+1233	2
+1233	4
+1233	5
 1234	4
-1234	2
-1234	3
-1234	1
+1235	1
+1235	5
 1235	4
-1236	4
+1235	2
+1235	3
 1236	3
 1236	1
-1237	2
-1238	3
+1236	4
+1237	3
 1238	1
+1238	3
+1238	2
+1238	4
+1238	5
+1239	5
+1239	3
 1239	2
-1239	4
 1239	1
-1240	2
-1240	1
-1240	4
 1240	3
+1240	2
+1241	4
+1241	1
 1241	3
+1241	2
 1242	4
-1242	2
+1242	1
+1242	5
 1243	3
+1243	1
 1243	2
 1243	4
-1244	2
+1244	3
 1244	4
-1245	4
+1244	5
+1245	5
+1245	1
+1245	3
 1245	2
+1245	4
+1246	5
 1246	4
 1246	1
-1246	2
-1247	1
-1247	3
-1247	2
+1246	3
 1247	4
-1248	2
-1248	1
+1247	5
+1247	3
+1247	1
+1247	2
 1248	3
-1249	4
+1248	2
+1248	4
+1248	1
+1248	5
+1249	3
+1249	2
+1249	1
+1249	5
+1250	5
+1250	3
+1250	4
+1250	2
 1250	1
 \.
 
@@ -21255,506 +22146,506 @@ COPY public.offices_kinds_relations (office_id, kind_id) FROM stdin;
 --
 
 COPY public.passports (id, original_surname, original_name, en_name, en_surname, issue_date, expiration_date, sex, issuer, passport_owner, lost, invalidated) FROM stdin;
-1	Sandra	Frye	Sandra	Frye	2032-11-02	2052-07-08	F	270	1	f	f
-2	Tyler	Brandt	Tyler	Brandt	2007-11-21	2027-04-11	M	650	2	f	f
-3	Amanda	Hayes	Amanda	Hayes	2007-11-22	2027-01-12	F	962	3	f	f
-4	Anthony	Knight	Anthony	Knight	1982-04-03	2002-01-10	M	515	4	f	f
-5	Lawrence	Suarez	Lawrence	Suarez	1982-08-08	2002-11-11	F	877	5	f	f
-6	Tamara	Snyder	Tamara	Snyder	1982-11-17	2002-01-21	M	22	6	f	f
-7	Timothy	Elliott	Timothy	Elliott	1982-07-08	2002-06-13	F	1148	7	f	f
-8	Jamie	Smith	Jamie	Smith	1957-06-18	1977-09-24	M	1211	8	f	f
-9	Nicole	Martinez	Nicole	Martinez	1957-07-11	1977-11-15	F	303	9	f	f
-10	Kyle	Foster	Kyle	Foster	1957-11-18	1977-10-06	M	1135	10	f	f
-11	Logan	Adams	Logan	Adams	1957-04-27	1977-01-25	F	234	11	f	f
-12	Paul	Hanson	Paul	Hanson	1957-01-07	1977-05-15	M	791	12	f	f
-13	Michael	Cole	Michael	Cole	1957-04-28	1977-11-17	F	378	13	f	f
-14	Robert	Foster	Robert	Foster	1957-05-12	1977-12-24	M	261	14	f	f
-15	Brandon	Rodriguez	Brandon	Rodriguez	1957-01-06	1977-03-11	F	97	15	f	f
-16	Melinda	Evans	Melinda	Evans	1932-06-12	1952-04-27	M	711	16	f	f
-17	Emily	George	Emily	George	1932-02-21	1952-06-13	F	435	17	f	f
-18	John	Nelson	John	Nelson	1932-07-15	1952-09-23	M	1207	18	f	f
-19	Julie	Crane	Julie	Crane	1932-06-06	1952-04-18	F	679	19	f	f
-20	Sandra	Smith	Sandra	Smith	1932-12-11	1952-05-18	M	428	20	f	f
-21	Tony	Harris	Tony	Harris	1932-01-21	1952-05-08	F	872	21	f	f
-22	Calvin	Garza	Calvin	Garza	1932-08-13	1952-03-20	M	1208	22	f	f
-23	Aaron	Calhoun	Aaron	Calhoun	1932-06-23	1952-09-02	F	318	23	f	f
-24	Crystal	Scott	Crystal	Scott	1932-09-25	1952-03-09	M	400	24	f	f
-25	Walter	Bowen	Walter	Bowen	1932-04-14	1952-04-21	F	666	25	f	f
-26	Lucas	Austin	Lucas	Austin	1932-06-07	1952-08-21	M	774	26	f	f
-27	Kristen	Long	Kristen	Long	1932-02-20	1952-07-18	F	335	27	f	f
-28	Christina	Taylor	Christina	Taylor	1932-10-10	1952-05-12	M	381	28	f	f
-29	Melissa	Thomas	Melissa	Thomas	1932-04-28	1952-01-07	F	322	29	f	f
-30	Robert	Fuller	Robert	Fuller	1932-05-27	1952-06-08	M	190	30	f	f
-31	Whitney	Harris	Whitney	Harris	1932-06-05	1952-10-15	F	221	31	f	f
-32	Andrea	Shepard	Andrea	Shepard	1907-01-28	1927-07-09	M	748	32	f	f
-33	Luis	Barron	Luis	Barron	1907-06-21	1927-11-14	F	397	33	f	f
-34	David	Weaver	David	Weaver	1907-03-02	1927-02-07	M	940	34	f	f
-35	Emma	Matthews	Emma	Matthews	1907-10-12	1927-05-14	F	1233	35	f	f
-36	Allen	Gallagher	Allen	Gallagher	1907-09-15	1927-11-06	M	539	36	f	f
-37	Ryan	Luna	Ryan	Luna	1907-09-15	1927-08-10	F	51	37	f	f
-38	Alejandro	Brown	Alejandro	Brown	1907-03-18	1927-04-27	M	745	38	f	f
-39	Emily	Ayers	Emily	Ayers	1907-09-22	1927-08-28	F	1165	39	f	f
-40	Gina	Clay	Gina	Clay	1907-11-05	1927-05-17	M	892	40	f	f
-41	Amanda	Davenport	Amanda	Davenport	1907-12-09	1927-05-25	F	426	41	f	f
-42	Toni	Miller	Toni	Miller	1907-01-23	1927-12-18	M	728	42	f	f
-43	Jeffrey	Ryan	Jeffrey	Ryan	1907-02-12	1927-08-12	F	391	43	f	f
-44	John	Smith	John	Smith	1907-01-18	1927-02-03	M	969	44	f	f
-45	Kristin	Williams	Kristin	Williams	1907-11-19	1927-05-11	F	1124	45	f	f
-46	Tracy	Caldwell	Tracy	Caldwell	1907-04-07	1927-07-24	M	37	46	f	f
-47	Alan	Nunez	Alan	Nunez	1907-12-18	1927-08-28	F	1048	47	f	f
-48	Amber	Green	Amber	Green	1907-04-01	1927-06-05	M	680	48	f	f
-49	Darryl	Olson	Darryl	Olson	1907-09-20	1927-08-21	F	989	49	f	f
-50	Brenda	Rollins	Brenda	Rollins	1907-08-07	1927-10-04	M	1073	50	f	f
-51	Grant	Roberson	Grant	Roberson	1907-06-23	1927-02-20	F	250	51	f	f
-52	Lauren	Wood	Lauren	Wood	1907-06-01	1927-12-19	M	175	52	f	f
-53	Jon	Dickson	Jon	Dickson	1907-06-11	1927-07-23	F	336	53	f	f
-54	Kyle	Gonzales	Kyle	Gonzales	1907-10-25	1927-06-20	M	338	54	f	f
-55	Jessica	White	Jessica	White	1907-11-14	1927-12-17	F	1152	55	f	f
-56	Tyler	Salazar	Tyler	Salazar	1907-10-08	1927-01-14	M	303	56	f	f
-57	Paul	Wheeler	Paul	Wheeler	1907-11-04	1927-07-26	F	1170	57	f	f
-58	Kyle	Blake	Kyle	Blake	1907-03-07	1927-08-05	M	452	58	f	f
-59	Nicholas	Bowen	Nicholas	Bowen	1907-06-02	1927-04-16	F	339	59	f	f
-60	Kristopher	Hancock	Kristopher	Hancock	1907-12-16	1927-12-22	M	388	60	f	f
-61	Hector	Edwards	Hector	Edwards	1907-02-23	1927-06-21	F	473	61	f	f
-62	Cindy	Marquez	Cindy	Marquez	1907-11-05	1927-11-06	M	1008	62	f	f
-63	John	Simmons	John	Simmons	1907-01-25	1927-11-15	F	211	63	f	f
-64	Edward	Grant	Edward	Grant	1882-05-19	1902-10-08	M	1114	64	f	f
-65	Samuel	Nielsen	Samuel	Nielsen	1882-02-03	1902-07-20	F	239	65	f	f
-66	Scott	Guerrero	Scott	Guerrero	1882-07-28	1902-08-17	M	846	66	f	f
-67	Jennifer	Jones	Jennifer	Jones	1882-05-25	1902-01-13	F	288	67	f	f
-68	Thomas	Neal	Thomas	Neal	1882-12-19	1902-08-22	M	391	68	f	f
-69	Steven	Morgan	Steven	Morgan	1882-05-11	1902-02-05	F	1168	69	f	f
-70	Stephen	Bender	Stephen	Bender	1882-04-16	1902-12-15	M	860	70	f	f
-71	Rebecca	Haynes	Rebecca	Haynes	1882-12-20	1902-02-03	F	1135	71	f	f
-72	Corey	Daniels	Corey	Daniels	1882-10-06	1902-08-03	M	606	72	f	f
-73	Julie	Martinez	Julie	Martinez	1882-04-19	1902-07-05	F	782	73	f	f
-74	Kyle	Tucker	Kyle	Tucker	1882-11-19	1902-02-03	M	79	74	f	f
-75	Nathan	Martin	Nathan	Martin	1882-10-24	1902-02-20	F	1008	75	f	f
-76	Levi	Long	Levi	Long	1882-09-26	1902-10-08	M	740	76	f	f
-77	Zachary	Jackson	Zachary	Jackson	1882-08-01	1902-09-18	F	652	77	f	f
-78	Juan	Smith	Juan	Smith	1882-12-22	1902-08-09	M	734	78	f	f
-79	Michael	Young	Michael	Young	1882-03-09	1902-01-23	F	561	79	f	f
-80	Carolyn	Rivera	Carolyn	Rivera	1882-10-13	1902-12-06	M	303	80	f	f
-81	John	Robinson	John	Robinson	1882-12-26	1902-01-15	F	346	81	f	f
-82	Justin	Hughes	Justin	Hughes	1882-12-10	1902-06-11	M	1083	82	f	f
-83	Michael	Murillo	Michael	Murillo	1882-04-18	1902-02-04	F	490	83	f	f
-84	Wyatt	Brennan	Wyatt	Brennan	1882-08-22	1902-07-17	M	94	84	f	f
-85	Christy	Obrien	Christy	Obrien	1882-06-27	1902-04-20	F	538	85	f	f
-86	Martin	Greer	Martin	Greer	1882-11-13	1902-12-21	M	171	86	f	f
-87	Cynthia	Walker	Cynthia	Walker	1882-10-13	1902-11-21	F	90	87	f	f
-88	Adam	Hunt	Adam	Hunt	1882-02-25	1902-11-01	M	779	88	f	f
-89	Joseph	Nelson	Joseph	Nelson	1882-09-18	1902-09-14	F	433	89	f	f
-90	Damon	Valenzuela	Damon	Valenzuela	1882-01-05	1902-08-09	M	337	90	f	f
-91	Linda	Golden	Linda	Golden	1882-07-17	1902-11-20	F	697	91	f	f
-92	Richard	Flores	Richard	Flores	1882-07-16	1902-10-01	M	248	92	f	f
-93	Matthew	Tucker	Matthew	Tucker	1882-04-22	1902-08-16	F	88	93	f	f
-94	Rebecca	Hughes	Rebecca	Hughes	1882-05-01	1902-03-18	M	607	94	f	f
-95	Jennifer	Nelson	Jennifer	Nelson	1882-09-07	1902-10-13	F	820	95	f	f
-96	Megan	Davis	Megan	Davis	1882-12-28	1902-02-04	M	346	96	f	f
-97	Daniel	Wilson	Daniel	Wilson	1882-04-13	1902-06-12	F	760	97	f	f
-98	Henry	Carrillo	Henry	Carrillo	1882-12-07	1902-08-14	M	1137	98	f	f
-99	Dalton	Henderson	Dalton	Henderson	1882-03-05	1902-06-04	F	410	99	f	f
-100	James	Hill	James	Hill	1882-12-11	1902-01-27	M	675	100	f	f
-101	Patricia	Garcia	Patricia	Garcia	1882-12-10	1902-04-18	F	1158	101	f	f
-102	John	Hawkins	John	Hawkins	1882-08-09	1902-03-26	M	1161	102	f	f
-103	Danielle	Phillips	Danielle	Phillips	1882-05-16	1902-05-02	F	1187	103	f	f
-104	Michael	Davis	Michael	Davis	1882-10-11	1902-07-10	M	922	104	f	f
-105	Danielle	Anderson	Danielle	Anderson	1882-01-28	1902-04-17	F	113	105	f	f
-106	Lisa	Rodriguez	Lisa	Rodriguez	1882-02-27	1902-09-16	M	404	106	f	f
-107	Ryan	Jenkins	Ryan	Jenkins	1882-05-20	1902-06-14	F	8	107	f	f
-108	Scott	Patterson	Scott	Patterson	1882-04-10	1902-05-09	M	216	108	f	f
-109	John	Gonzalez	John	Gonzalez	1882-09-19	1902-06-19	F	132	109	f	f
-110	Kathy	Fry	Kathy	Fry	1882-10-13	1902-08-09	M	364	110	f	f
-111	Kelly	Mejia	Kelly	Mejia	1882-09-26	1902-10-14	F	310	111	f	f
-112	Lisa	Le	Lisa	Le	1882-02-04	1902-08-24	M	42	112	f	f
-113	John	Nelson	John	Nelson	1882-11-28	1902-04-03	F	485	113	f	f
-114	Angela	Marsh	Angela	Marsh	1882-02-07	1902-07-06	M	1012	114	f	f
-115	Jonathan	Edwards	Jonathan	Edwards	1882-12-10	1902-05-21	F	180	115	f	f
-116	David	Williams	David	Williams	1882-04-14	1902-07-18	M	547	116	f	f
-117	Kristin	Gonzalez	Kristin	Gonzalez	1882-12-18	1902-02-24	F	990	117	f	f
-118	Susan	Neal	Susan	Neal	1882-07-23	1902-01-04	M	964	118	f	f
-119	Lucas	Gilbert	Lucas	Gilbert	1882-10-07	1902-04-03	F	955	119	f	f
-120	Cody	Meyer	Cody	Meyer	1882-12-23	1902-07-18	M	639	120	f	f
-121	Michelle	Ross	Michelle	Ross	1882-09-16	1902-12-03	F	310	121	f	f
-122	Donna	Daniels	Donna	Daniels	1882-03-05	1902-09-25	M	930	122	f	f
-123	Joel	Miller	Joel	Miller	1882-07-23	1902-10-25	F	1152	123	f	f
-124	Jennifer	Johnson	Jennifer	Johnson	1882-05-03	1902-11-03	M	392	124	f	f
-125	Maurice	Smith	Maurice	Smith	1882-02-25	1902-11-11	F	355	125	f	f
-126	Ryan	Matthews	Ryan	Matthews	1882-01-05	1902-01-28	M	703	126	f	f
-127	Sharon	Perry	Sharon	Perry	1882-05-07	1902-07-19	F	245	127	f	f
-128	Ashley	Reed	Ashley	Reed	1857-04-07	1877-05-28	M	589	128	f	f
-129	Teresa	Shaw	Teresa	Shaw	1857-04-28	1877-10-24	F	565	129	f	f
-130	Stacy	Jenkins	Stacy	Jenkins	1857-10-14	1877-03-28	M	251	130	f	f
-131	David	Brooks	David	Brooks	1857-02-27	1877-05-20	F	299	131	f	f
-132	Angelica	Reyes	Angelica	Reyes	1857-10-03	1877-05-01	M	443	132	f	f
-133	Natalie	Holmes	Natalie	Holmes	1857-03-16	1877-07-02	F	139	133	f	f
-134	Joshua	Flores	Joshua	Flores	1857-12-05	1877-09-25	M	190	134	f	f
-135	Melissa	Young	Melissa	Young	1857-06-15	1877-03-07	F	794	135	f	f
-136	Tracey	Williams	Tracey	Williams	1857-01-15	1877-03-02	M	341	136	f	f
-137	Jessica	Rubio	Jessica	Rubio	1857-04-25	1877-08-03	F	899	137	f	f
-138	Darlene	Kelley	Darlene	Kelley	1857-11-07	1877-11-06	M	850	138	f	f
-139	Sherry	Melton	Sherry	Melton	1857-11-03	1877-11-15	F	1134	139	f	f
-140	Emily	Garner	Emily	Garner	1857-10-06	1877-04-24	M	932	140	f	f
-141	Amber	Dickerson	Amber	Dickerson	1857-03-21	1877-07-19	F	531	141	f	f
-142	Kathryn	Leach	Kathryn	Leach	1857-07-02	1877-03-05	M	903	142	f	f
-143	Andrew	Scott	Andrew	Scott	1857-07-17	1877-09-09	F	451	143	f	f
-144	Jerry	Grant	Jerry	Grant	1857-06-20	1877-03-25	M	443	144	f	f
-145	Wesley	Cross	Wesley	Cross	1857-05-15	1877-04-20	F	1172	145	f	f
-146	Randy	Miller	Randy	Miller	1857-07-28	1877-08-05	M	519	146	f	f
-147	Jamie	Vaughn	Jamie	Vaughn	1857-09-10	1877-07-20	F	451	147	f	f
-148	Melissa	Callahan	Melissa	Callahan	1857-02-03	1877-01-06	M	1119	148	f	f
-149	Samantha	Williams	Samantha	Williams	1857-08-14	1877-06-23	F	1188	149	f	f
-150	Cathy	Michael	Cathy	Michael	1857-01-23	1877-05-27	M	37	150	f	f
-151	Abigail	Patterson	Abigail	Patterson	1857-09-11	1877-07-13	F	972	151	f	f
-152	Allison	Dudley	Allison	Dudley	1857-11-16	1877-04-26	M	94	152	f	f
-153	Kaitlyn	Peters	Kaitlyn	Peters	1857-10-11	1877-02-18	F	497	153	f	f
-154	Darlene	Byrd	Darlene	Byrd	1857-01-03	1877-02-11	M	954	154	f	f
-155	David	Huang	David	Huang	1857-08-26	1877-12-10	F	157	155	f	f
-156	Phillip	Sullivan	Phillip	Sullivan	1857-10-18	1877-03-23	M	575	156	f	f
-157	Morgan	Duncan	Morgan	Duncan	1857-11-02	1877-03-13	F	291	157	f	f
-158	Danielle	Martinez	Danielle	Martinez	1857-03-08	1877-11-23	M	887	158	f	f
-159	Natasha	Grant	Natasha	Grant	1857-10-24	1877-01-14	F	951	159	f	f
-160	Stephanie	Wheeler	Stephanie	Wheeler	1857-02-17	1877-04-02	M	1196	160	f	f
-161	Raymond	Terrell	Raymond	Terrell	1857-05-09	1877-03-03	F	423	161	f	f
-162	Krista	Marquez	Krista	Marquez	1857-07-24	1877-03-02	M	1203	162	f	f
-163	Tamara	Tucker	Tamara	Tucker	1857-11-16	1877-04-20	F	679	163	f	f
-164	Connie	Garza	Connie	Garza	1857-07-06	1877-06-04	M	518	164	f	f
-165	David	King	David	King	1857-03-21	1877-06-03	F	499	165	f	f
-166	Tracey	Ponce	Tracey	Ponce	1857-05-07	1877-07-28	M	12	166	f	f
-167	Michael	Morrow	Michael	Morrow	1857-05-11	1877-10-15	F	293	167	f	f
-168	Laura	Richardson	Laura	Richardson	1857-08-17	1877-06-17	M	573	168	f	f
-169	Melinda	Atkins	Melinda	Atkins	1857-05-26	1877-03-28	F	786	169	f	f
-170	Pamela	Robinson	Pamela	Robinson	1857-10-02	1877-06-09	M	441	170	f	f
-171	Tara	Murray	Tara	Murray	1857-07-08	1877-09-01	F	1185	171	f	f
-172	Elizabeth	Glover	Elizabeth	Glover	1857-06-21	1877-06-18	M	350	172	f	f
-173	Dennis	Gomez	Dennis	Gomez	1857-06-07	1877-08-02	F	955	173	f	f
-174	Jenna	Schroeder	Jenna	Schroeder	1857-10-13	1877-06-02	M	1112	174	f	f
-175	Amber	Hill	Amber	Hill	1857-10-06	1877-09-04	F	568	175	f	f
-176	Brittany	Kim	Brittany	Kim	1857-10-07	1877-03-03	M	780	176	f	f
-177	Diana	Hall	Diana	Hall	1857-01-05	1877-09-05	F	1018	177	f	f
-178	Logan	Morris	Logan	Morris	1857-06-18	1877-08-20	M	855	178	f	f
-179	Ashley	Delgado	Ashley	Delgado	1857-05-27	1877-09-24	F	956	179	f	f
-180	Rachel	Frederick	Rachel	Frederick	1857-08-19	1877-08-26	M	491	180	f	f
-181	Rachel	Andrews	Rachel	Andrews	1857-02-16	1877-08-27	F	387	181	f	f
-182	Mario	Harris	Mario	Harris	1857-03-22	1877-12-14	M	1214	182	f	f
-183	Scott	Martin	Scott	Martin	1857-11-21	1877-03-28	F	1234	183	f	f
-184	Alyssa	Williams	Alyssa	Williams	1857-04-25	1877-06-02	M	196	184	f	f
-185	Steven	Silva	Steven	Silva	1857-11-25	1877-07-10	F	480	185	f	f
-186	John	Knox	John	Knox	1857-10-13	1877-07-15	M	206	186	f	f
-187	Donna	Green	Donna	Green	1857-01-11	1877-11-18	F	791	187	f	f
-188	Natalie	Taylor	Natalie	Taylor	1857-07-25	1877-01-21	M	887	188	f	f
-189	Robert	Lam	Robert	Lam	1857-04-25	1877-09-14	F	127	189	f	f
-190	Nathan	Campbell	Nathan	Campbell	1857-04-24	1877-02-28	M	36	190	f	f
-191	Crystal	Meza	Crystal	Meza	1857-09-24	1877-02-04	F	261	191	f	f
-192	Robert	Lane	Robert	Lane	1857-07-04	1877-10-28	M	271	192	f	f
-193	Valerie	Wade	Valerie	Wade	1857-06-16	1877-01-19	F	575	193	f	f
-194	Tiffany	Patterson	Tiffany	Patterson	1857-08-05	1877-10-20	M	587	194	f	f
-195	Stephanie	Garza	Stephanie	Garza	1857-08-11	1877-09-19	F	97	195	f	f
-196	Kimberly	Shields	Kimberly	Shields	1857-09-18	1877-10-05	M	804	196	f	f
-197	Austin	Martinez	Austin	Martinez	1857-01-09	1877-01-02	F	495	197	f	f
-198	Timothy	Carter	Timothy	Carter	1857-12-08	1877-07-07	M	1141	198	f	f
-199	Timothy	Harris	Timothy	Harris	1857-06-16	1877-03-09	F	496	199	f	f
-200	Martin	Riley	Martin	Riley	1857-06-16	1877-01-15	M	32	200	f	f
-201	Walter	Clarke	Walter	Clarke	1857-06-12	1877-12-02	F	421	201	f	f
-202	Kayla	Herrera	Kayla	Herrera	1857-11-12	1877-02-03	M	193	202	f	f
-203	William	Adams	William	Adams	1857-03-13	1877-12-21	F	982	203	f	f
-204	Bryan	Blackwell	Bryan	Blackwell	1857-12-16	1877-02-07	M	183	204	f	f
-205	Donald	Anderson	Donald	Anderson	1857-03-12	1877-05-16	F	1026	205	f	f
-206	Jonathan	Gutierrez	Jonathan	Gutierrez	1857-04-04	1877-06-07	M	806	206	f	f
-207	Jennifer	Marquez	Jennifer	Marquez	1857-08-15	1877-11-18	F	411	207	f	f
-208	Kelsey	Smith	Kelsey	Smith	1857-08-05	1877-09-22	M	662	208	f	f
-209	Mark	Ware	Mark	Ware	1857-01-19	1877-04-12	F	309	209	f	f
-210	Jonathan	Haynes	Jonathan	Haynes	1857-07-01	1877-11-03	M	234	210	f	f
-211	Sandra	Kirk	Sandra	Kirk	1857-02-21	1877-04-25	F	330	211	f	f
-212	Elizabeth	Pope	Elizabeth	Pope	1857-03-24	1877-08-27	M	1141	212	f	f
-213	Misty	Hart	Misty	Hart	1857-01-10	1877-09-26	F	876	213	f	f
-214	Darrell	Moyer	Darrell	Moyer	1857-07-26	1877-01-13	M	420	214	f	f
-215	Bernard	Mann	Bernard	Mann	1857-01-11	1877-10-23	F	679	215	f	f
-216	Jerry	Huffman	Jerry	Huffman	1857-09-10	1877-10-05	M	527	216	f	f
-217	Chad	Park	Chad	Park	1857-05-28	1877-07-22	F	1144	217	f	f
-218	Pamela	Wagner	Pamela	Wagner	1857-07-28	1877-10-05	M	471	218	f	f
-219	Lauren	Lamb	Lauren	Lamb	1857-11-12	1877-05-01	F	365	219	f	f
-220	Sandra	Wright	Sandra	Wright	1857-10-05	1877-07-19	M	1091	220	f	f
-221	Kathryn	Cain	Kathryn	Cain	1857-03-17	1877-07-07	F	703	221	f	f
-222	Molly	Newman	Molly	Newman	1857-08-06	1877-06-11	M	478	222	f	f
-223	Keith	Wallace	Keith	Wallace	1857-10-21	1877-06-13	F	749	223	f	f
-224	Rebecca	Hogan	Rebecca	Hogan	1857-11-28	1877-04-01	M	171	224	f	f
-225	Daniel	Chen	Daniel	Chen	1857-10-18	1877-12-15	F	1035	225	f	f
-226	Jason	Stewart	Jason	Stewart	1857-12-19	1877-08-18	M	218	226	f	f
-227	Christopher	Bailey	Christopher	Bailey	1857-02-15	1877-09-04	F	977	227	f	f
-228	Phillip	Martin	Phillip	Martin	1857-07-12	1877-01-15	M	1189	228	f	f
-229	Kelsey	Mayo	Kelsey	Mayo	1857-12-22	1877-11-01	F	568	229	f	f
-230	Karen	Thompson	Karen	Thompson	1857-07-10	1877-01-09	M	206	230	f	f
-231	Jamie	Atkins	Jamie	Atkins	1857-04-24	1877-01-12	F	1164	231	f	f
-232	Edward	Strong	Edward	Strong	1857-06-09	1877-02-26	M	842	232	f	f
-233	Stacy	Kim	Stacy	Kim	1857-05-16	1877-06-21	F	381	233	f	f
-234	Bryan	Ross	Bryan	Ross	1857-08-19	1877-12-24	M	955	234	f	f
-235	David	Kirby	David	Kirby	1857-06-03	1877-03-10	F	185	235	f	f
-236	Andrew	Freeman	Andrew	Freeman	1857-10-10	1877-03-22	M	599	236	f	f
-237	Jennifer	Hudson	Jennifer	Hudson	1857-09-09	1877-05-15	F	457	237	f	f
-238	Scott	Moreno	Scott	Moreno	1857-01-15	1877-05-20	M	76	238	f	f
-239	Shannon	King	Shannon	King	1857-04-21	1877-05-26	F	628	239	f	f
-240	Kristen	Thomas	Kristen	Thomas	1857-03-27	1877-02-02	M	290	240	f	f
-241	Brittany	Dickerson	Brittany	Dickerson	1857-09-12	1877-05-03	F	605	241	f	f
-242	Laura	Robles	Laura	Robles	1857-11-19	1877-04-20	M	1081	242	f	f
-243	Rick	Murphy	Rick	Murphy	1857-06-20	1877-09-11	F	55	243	f	f
-244	Jennifer	Black	Jennifer	Black	1857-06-17	1877-05-07	M	837	244	f	f
-245	Janet	Nelson	Janet	Nelson	1857-05-12	1877-08-26	F	908	245	f	f
-246	Susan	Smith	Susan	Smith	1857-04-10	1877-03-28	M	563	246	f	f
-247	Chad	Nelson	Chad	Nelson	1857-09-26	1877-10-26	F	912	247	f	f
-248	Cesar	Peterson	Cesar	Peterson	1857-11-20	1877-01-27	M	636	248	f	f
-249	Amanda	Green	Amanda	Green	1857-09-04	1877-04-24	F	175	249	f	f
-250	Jennifer	Brown	Jennifer	Brown	1857-04-11	1877-05-25	M	648	250	f	f
-251	Rebecca	Novak	Rebecca	Novak	1857-04-04	1877-12-12	F	873	251	f	f
-252	Michael	Smith	Michael	Smith	1857-05-27	1877-10-20	M	724	252	f	f
-253	Melissa	Barron	Melissa	Barron	1857-08-04	1877-12-22	F	96	253	f	f
-254	Aaron	Richardson	Aaron	Richardson	1857-02-21	1877-07-20	M	464	254	f	f
-255	Patrick	Jacobs	Patrick	Jacobs	1857-06-06	1877-07-03	F	1085	255	f	f
-256	Crystal	Braun	Crystal	Braun	1832-11-12	1852-09-28	M	778	256	f	f
-257	John	Mullen	John	Mullen	1832-01-16	1852-03-19	F	325	257	f	f
-258	Rachel	Martinez	Rachel	Martinez	1832-12-18	1852-10-27	M	1080	258	f	f
-259	Joseph	Lawson	Joseph	Lawson	1832-02-23	1852-03-26	F	636	259	f	f
-260	Dana	Hicks	Dana	Hicks	1832-11-28	1852-11-07	M	515	260	f	f
-261	Jillian	Russell	Jillian	Russell	1832-09-04	1852-01-02	F	86	261	f	f
-262	Scott	Williams	Scott	Williams	1832-06-05	1852-07-19	M	1239	262	f	f
-263	Ronald	Sharp	Ronald	Sharp	1832-01-11	1852-11-28	F	988	263	f	f
-264	Ronald	Rodriguez	Ronald	Rodriguez	1832-01-27	1852-02-02	M	113	264	f	f
-265	Christopher	Davis	Christopher	Davis	1832-04-08	1852-09-27	F	1110	265	f	f
-266	Maria	Fletcher	Maria	Fletcher	1832-09-27	1852-04-19	M	111	266	f	f
-267	James	Chambers	James	Chambers	1832-11-23	1852-02-19	F	1138	267	f	f
-268	Michael	Morris	Michael	Morris	1832-03-25	1852-01-23	M	464	268	f	f
-269	Deborah	Williams	Deborah	Williams	1832-12-14	1852-10-24	F	614	269	f	f
-270	Patrick	Jimenez	Patrick	Jimenez	1832-02-26	1852-10-11	M	1063	270	f	f
-271	Debra	Rojas	Debra	Rojas	1832-04-20	1852-01-03	F	1107	271	f	f
-272	Amy	Mitchell	Amy	Mitchell	1832-09-22	1852-11-06	M	291	272	f	f
-273	Angela	Macias	Angela	Macias	1832-09-18	1852-05-15	F	126	273	f	f
-274	Jessica	Young	Jessica	Young	1832-04-23	1852-12-22	M	257	274	f	f
-275	Lance	Evans	Lance	Evans	1832-06-11	1852-05-18	F	330	275	f	f
-276	Nicholas	Phillips	Nicholas	Phillips	1832-11-13	1852-12-21	M	161	276	f	f
-277	Robert	Smith	Robert	Smith	1832-08-04	1852-11-13	F	933	277	f	f
-278	Lori	Kennedy	Lori	Kennedy	1832-09-25	1852-08-01	M	663	278	f	f
-279	Wesley	Williams	Wesley	Williams	1832-02-18	1852-08-13	F	933	279	f	f
-280	Kevin	Bailey	Kevin	Bailey	1832-04-10	1852-02-12	M	1180	280	f	f
-281	Kimberly	Finley	Kimberly	Finley	1832-12-17	1852-08-19	F	190	281	f	f
-282	Mitchell	Madden	Mitchell	Madden	1832-01-27	1852-06-14	M	964	282	f	f
-283	Sophia	Williams	Sophia	Williams	1832-08-15	1852-03-06	F	1246	283	f	f
-284	Craig	Luna	Craig	Luna	1832-04-11	1852-01-22	M	740	284	f	f
-285	Jeff	Ramirez	Jeff	Ramirez	1832-01-27	1852-10-14	F	548	285	f	f
-286	Angelica	Owens	Angelica	Owens	1832-11-14	1852-01-03	M	113	286	f	f
-287	Crystal	Mitchell	Crystal	Mitchell	1832-02-04	1852-01-07	F	1117	287	f	f
-288	Carrie	Holloway	Carrie	Holloway	1832-12-06	1852-01-11	M	1124	288	f	f
-289	Alicia	Clark	Alicia	Clark	1832-11-15	1852-05-23	F	422	289	f	f
-290	Michael	Gonzalez	Michael	Gonzalez	1832-10-13	1852-06-13	M	563	290	f	f
-291	Carlos	Griffith	Carlos	Griffith	1832-01-18	1852-06-16	F	600	291	f	f
-292	Gary	Dean	Gary	Dean	1832-12-25	1852-02-01	M	835	292	f	f
-293	Kevin	Smith	Kevin	Smith	1832-01-20	1852-06-19	F	38	293	f	f
-294	Travis	Jensen	Travis	Jensen	1832-01-27	1852-03-04	M	730	294	f	f
-295	Elizabeth	Nichols	Elizabeth	Nichols	1832-06-24	1852-04-19	F	1191	295	f	f
-296	Sean	Castillo	Sean	Castillo	1832-05-15	1852-01-03	M	1069	296	f	f
-297	David	Yu	David	Yu	1832-09-28	1852-12-12	F	538	297	f	f
-298	Edward	Davis	Edward	Davis	1832-12-04	1852-08-07	M	341	298	f	f
-299	Donna	David	Donna	David	1832-12-19	1852-10-13	F	137	299	f	f
-300	Lisa	Moss	Lisa	Moss	1832-04-20	1852-02-02	M	876	300	f	f
-301	Frank	Robinson	Frank	Robinson	1832-01-09	1852-02-22	F	785	301	f	f
-302	Courtney	Moore	Courtney	Moore	1832-12-07	1852-01-17	M	424	302	f	f
-303	Samantha	Gill	Samantha	Gill	1832-05-08	1852-11-04	F	464	303	f	f
-304	Betty	Bauer	Betty	Bauer	1832-10-15	1852-06-20	M	722	304	f	f
-305	Matthew	Vang	Matthew	Vang	1832-01-08	1852-08-23	F	358	305	f	f
-306	Jessica	Mata	Jessica	Mata	1832-10-19	1852-09-12	M	907	306	f	f
-307	Karen	Jones	Karen	Jones	1832-11-05	1852-05-02	F	15	307	f	f
-308	Robert	Garza	Robert	Garza	1832-08-06	1852-03-18	M	1125	308	f	f
-309	Charles	Norton	Charles	Norton	1832-03-09	1852-12-12	F	465	309	f	f
-310	Daniel	Garner	Daniel	Garner	1832-01-04	1852-08-27	M	998	310	f	f
-311	David	Singleton	David	Singleton	1832-08-07	1852-12-26	F	690	311	f	f
-312	Justin	Baker	Justin	Baker	1832-03-25	1852-10-27	M	494	312	f	f
-313	Heather	Taylor	Heather	Taylor	1832-10-08	1852-06-20	F	313	313	f	f
-314	Brandon	Velasquez	Brandon	Velasquez	1832-12-13	1852-06-03	M	1016	314	f	f
-315	Adam	Black	Adam	Black	1832-06-26	1852-07-04	F	194	315	f	f
-316	Albert	Smith	Albert	Smith	1832-05-09	1852-06-16	M	143	316	f	f
-317	David	Barnes	David	Barnes	1832-05-04	1852-01-20	F	79	317	f	f
-318	Katherine	Benjamin	Katherine	Benjamin	1832-03-08	1852-03-25	M	676	318	f	f
-319	Amber	Lopez	Amber	Lopez	1832-03-24	1852-04-15	F	657	319	f	f
-320	Cynthia	Phelps	Cynthia	Phelps	1832-06-23	1852-09-15	M	867	320	f	f
-321	Jonathon	Hurley	Jonathon	Hurley	1832-07-01	1852-07-26	F	162	321	f	f
-322	Evan	Bowers	Evan	Bowers	1832-12-12	1852-01-23	M	478	322	f	f
-323	Kristen	Wolfe	Kristen	Wolfe	1832-08-19	1852-01-20	F	884	323	f	f
-324	Christopher	Lee	Christopher	Lee	1832-08-04	1852-09-28	M	781	324	f	f
-325	Kristin	Sawyer	Kristin	Sawyer	1832-03-28	1852-12-09	F	441	325	f	f
-326	Nicholas	Dickerson	Nicholas	Dickerson	1832-05-05	1852-03-03	M	832	326	f	f
-327	Katherine	Figueroa	Katherine	Figueroa	1832-11-24	1852-08-18	F	478	327	f	f
-328	Lisa	Le	Lisa	Le	1832-06-09	1852-07-16	M	1161	328	f	f
-329	Jon	Thornton	Jon	Thornton	1832-02-26	1852-02-12	F	1089	329	f	f
-330	David	Wilkins	David	Wilkins	1832-03-26	1852-05-22	M	719	330	f	f
-331	Michael	Nash	Michael	Nash	1832-03-08	1852-03-07	F	1076	331	f	f
-332	Olivia	George	Olivia	George	1832-02-14	1852-08-12	M	486	332	f	f
-333	Benjamin	Oneill	Benjamin	Oneill	1832-10-18	1852-11-27	F	1147	333	f	f
-334	Scott	Ashley	Scott	Ashley	1832-04-21	1852-06-21	M	855	334	f	f
-335	Edward	Frank	Edward	Frank	1832-01-18	1852-08-20	F	221	335	f	f
-336	Tamara	Flores	Tamara	Flores	1832-10-25	1852-02-17	M	130	336	f	f
-337	Jerry	Ramsey	Jerry	Ramsey	1832-03-07	1852-07-23	F	632	337	f	f
-338	Anna	Merritt	Anna	Merritt	1832-10-21	1852-11-04	M	1009	338	f	f
-339	Laurie	Benson	Laurie	Benson	1832-12-18	1852-11-11	F	876	339	f	f
-340	Matthew	Sandoval	Matthew	Sandoval	1832-01-10	1852-04-21	M	411	340	f	f
-341	Jerry	Taylor	Jerry	Taylor	1832-11-14	1852-07-25	F	990	341	f	f
-342	Robert	Garcia	Robert	Garcia	1832-09-19	1852-10-02	M	1000	342	f	f
-343	Ashley	Keller	Ashley	Keller	1832-01-24	1852-03-28	F	245	343	f	f
-344	Melissa	Thompson	Melissa	Thompson	1832-02-15	1852-03-10	M	556	344	f	f
-345	Kathleen	Gray	Kathleen	Gray	1832-04-04	1852-08-19	F	43	345	f	f
-346	Ryan	Cochran	Ryan	Cochran	1832-11-04	1852-04-14	M	750	346	f	f
-347	Ashley	Wilkinson	Ashley	Wilkinson	1832-06-11	1852-01-09	F	103	347	f	f
-348	Jacqueline	Yates	Jacqueline	Yates	1832-03-12	1852-07-13	M	258	348	f	f
-349	Erin	Fisher	Erin	Fisher	1832-11-14	1852-05-03	F	84	349	f	f
-350	Christine	Garcia	Christine	Garcia	1832-09-19	1852-08-18	M	68	350	f	f
-351	David	Bowman	David	Bowman	1832-01-26	1852-11-27	F	899	351	f	f
-352	Lance	Mosley	Lance	Mosley	1832-02-04	1852-08-09	M	141	352	f	f
-353	Kim	Rodriguez	Kim	Rodriguez	1832-09-11	1852-02-14	F	1035	353	f	f
-354	Erin	Erickson	Erin	Erickson	1832-05-23	1852-04-07	M	309	354	f	f
-355	Rachel	Robbins	Rachel	Robbins	1832-06-13	1852-09-19	F	387	355	f	f
-356	Jake	Reilly	Jake	Reilly	1832-12-01	1852-05-13	M	1236	356	f	f
-357	Christian	Thomas	Christian	Thomas	1832-05-16	1852-05-11	F	860	357	f	f
-358	Leonard	Michael	Leonard	Michael	1832-05-24	1852-12-13	M	351	358	f	f
-359	Alyssa	Ellison	Alyssa	Ellison	1832-05-16	1852-12-11	F	80	359	f	f
-360	Amber	Lee	Amber	Lee	1832-02-19	1852-10-17	M	529	360	f	f
-361	Barbara	Jones	Barbara	Jones	1832-07-27	1852-10-07	F	887	361	f	f
-362	Michael	Pierce	Michael	Pierce	1832-11-16	1852-01-21	M	1207	362	f	f
-363	David	Dean	David	Dean	1832-12-09	1852-10-22	F	873	363	f	f
-364	Samantha	Evans	Samantha	Evans	1832-06-08	1852-01-15	M	88	364	f	f
-365	Carla	Lyons	Carla	Lyons	1832-12-05	1852-03-08	F	511	365	f	f
-366	Taylor	Williams	Taylor	Williams	1832-01-07	1852-03-18	M	435	366	f	f
-367	Charles	Madden	Charles	Madden	1832-02-24	1852-07-15	F	478	367	f	f
-368	Michael	Davis	Michael	Davis	1832-10-02	1852-08-06	M	657	368	f	f
-369	Donna	Nelson	Donna	Nelson	1832-11-10	1852-06-04	F	814	369	f	f
-370	Shari	Jimenez	Shari	Jimenez	1832-02-22	1852-03-06	M	785	370	f	f
-371	Raymond	Lopez	Raymond	Lopez	1832-06-27	1852-10-22	F	938	371	f	f
-372	Amanda	Levy	Amanda	Levy	1832-11-15	1852-04-11	M	76	372	f	f
-373	Keith	Rowland	Keith	Rowland	1832-09-20	1852-06-16	F	502	373	f	f
-374	Robert	Shelton	Robert	Shelton	1832-07-05	1852-04-21	M	351	374	f	f
-375	Robert	Hutchinson	Robert	Hutchinson	1832-08-14	1852-03-16	F	466	375	f	f
-376	Tammy	Gomez	Tammy	Gomez	1832-08-23	1852-05-07	M	451	376	f	f
-377	Randy	Herrera	Randy	Herrera	1832-01-18	1852-09-17	F	130	377	f	f
-378	Wendy	Oneal	Wendy	Oneal	1832-08-18	1852-10-01	M	214	378	f	f
-379	Caitlin	Wright	Caitlin	Wright	1832-05-14	1852-02-01	F	745	379	f	f
-380	Joshua	Jones	Joshua	Jones	1832-09-09	1852-10-13	M	75	380	f	f
-381	Chris	Moore	Chris	Moore	1832-12-24	1852-11-21	F	1196	381	f	f
-382	Daniel	Anderson	Daniel	Anderson	1832-01-25	1852-09-04	M	57	382	f	f
-383	Erin	Johnson	Erin	Johnson	1832-04-12	1852-03-20	F	1239	383	f	f
-384	Erika	Diaz	Erika	Diaz	1832-12-15	1852-10-25	M	861	384	f	f
-385	Angela	Wood	Angela	Wood	1832-10-14	1852-09-25	F	983	385	f	f
-386	Shaun	Gates	Shaun	Gates	1832-03-28	1852-01-12	M	210	386	f	f
-387	Jessica	Garza	Jessica	Garza	1832-01-09	1852-10-11	F	1230	387	f	f
-388	Margaret	Henderson	Margaret	Henderson	1832-07-10	1852-01-25	M	433	388	f	f
-389	Rebecca	Miller	Rebecca	Miller	1832-10-18	1852-01-14	F	47	389	f	f
-390	Lori	Wright	Lori	Wright	1832-03-02	1852-06-03	M	1147	390	f	f
-391	Mark	Jenkins	Mark	Jenkins	1832-08-17	1852-08-11	F	756	391	f	f
-392	Elizabeth	Pierce	Elizabeth	Pierce	1832-07-16	1852-02-22	M	54	392	f	f
-393	Thomas	Davis	Thomas	Davis	1832-10-06	1852-03-06	F	789	393	f	f
-394	Kenneth	Gaines	Kenneth	Gaines	1832-11-21	1852-07-11	M	391	394	f	f
-395	Jennifer	Wall	Jennifer	Wall	1832-06-10	1852-09-17	F	494	395	f	f
-396	Elizabeth	Robertson	Elizabeth	Robertson	1832-03-13	1852-06-26	M	1072	396	f	f
-397	Kristin	Todd	Kristin	Todd	1832-12-14	1852-07-11	F	660	397	f	f
-398	Sarah	Haynes	Sarah	Haynes	1832-10-02	1852-04-10	M	306	398	f	f
-399	Margaret	Beard	Margaret	Beard	1832-05-14	1852-10-02	F	222	399	f	f
-400	Jonathan	Garza	Jonathan	Garza	1832-12-08	1852-09-22	M	1071	400	f	f
-401	Kristi	Stewart	Kristi	Stewart	1832-04-15	1852-01-18	F	809	401	f	f
-402	Dwayne	Mcgee	Dwayne	Mcgee	1832-03-01	1852-03-10	M	1079	402	f	f
-403	Richard	Jones	Richard	Jones	1832-11-01	1852-02-06	F	730	403	f	f
-404	Alexandria	Alvarado	Alexandria	Alvarado	1832-05-03	1852-12-13	M	437	404	f	f
-405	Christina	Smith	Christina	Smith	1832-08-17	1852-06-04	F	1116	405	f	f
-406	Michael	Trujillo	Michael	Trujillo	1832-02-07	1852-12-16	M	872	406	f	f
-407	Jennifer	Gutierrez	Jennifer	Gutierrez	1832-07-21	1852-08-01	F	1017	407	f	f
-408	Christian	Cooper	Christian	Cooper	1832-09-05	1852-12-06	M	1236	408	f	f
-409	Anthony	Jones	Anthony	Jones	1832-06-15	1852-07-05	F	325	409	f	f
-410	Pedro	Skinner	Pedro	Skinner	1832-06-10	1852-08-17	M	203	410	f	f
-411	Dean	Griffin	Dean	Griffin	1832-09-25	1852-10-20	F	47	411	f	f
-412	Sharon	Wells	Sharon	Wells	1832-12-21	1852-12-08	M	387	412	f	f
-413	Kristy	Blake	Kristy	Blake	1832-12-15	1852-01-08	F	387	413	f	f
-414	Stephen	Morales	Stephen	Morales	1832-09-09	1852-11-28	M	1170	414	f	f
-415	Meghan	Patton	Meghan	Patton	1832-02-22	1852-04-23	F	634	415	f	f
-416	Debra	Rivera	Debra	Rivera	1832-03-28	1852-04-25	M	486	416	f	f
-417	Chad	White	Chad	White	1832-12-05	1852-09-20	F	392	417	f	f
-418	Darrell	Pace	Darrell	Pace	1832-08-12	1852-08-08	M	362	418	f	f
-419	Paul	Miller	Paul	Miller	1832-03-02	1852-06-26	F	469	419	f	f
-420	Martha	Ware	Martha	Ware	1832-06-23	1852-03-28	M	421	420	f	f
-421	Leslie	Roberts	Leslie	Roberts	1832-04-15	1852-12-05	F	234	421	f	f
-422	Phillip	Nelson	Phillip	Nelson	1832-10-18	1852-12-03	M	270	422	f	f
-423	Jack	Miller	Jack	Miller	1832-10-09	1852-01-04	F	1010	423	f	f
-424	Justin	Williams	Justin	Williams	1832-01-04	1852-09-15	M	903	424	f	f
-425	Marcia	Mcdonald	Marcia	Mcdonald	1832-02-22	1852-08-18	F	178	425	f	f
-426	Erin	Cox	Erin	Cox	1832-11-21	1852-01-18	M	355	426	f	f
-427	Richard	Barker	Richard	Barker	1832-12-13	1852-09-10	F	962	427	f	f
-428	Meredith	Woodward	Meredith	Woodward	1832-01-14	1852-02-18	M	68	428	f	f
-429	Emma	Mendez	Emma	Mendez	1832-06-13	1852-09-09	F	111	429	f	f
-430	John	Guzman	John	Guzman	1832-05-13	1852-11-06	M	676	430	f	f
-431	Kelly	Medina	Kelly	Medina	1832-08-27	1852-08-28	F	435	431	f	f
-432	Erica	Middleton	Erica	Middleton	1832-09-12	1852-06-03	M	215	432	f	f
-433	Natalie	Mata	Natalie	Mata	1832-07-17	1852-06-14	F	350	433	f	f
-434	Monique	Harris	Monique	Harris	1832-04-20	1852-04-08	M	900	434	f	f
-435	Amber	Williams	Amber	Williams	1832-12-10	1852-02-04	F	911	435	f	f
-436	Jessica	Gibson	Jessica	Gibson	1832-09-28	1852-07-21	M	708	436	f	f
-437	Jennifer	Woods	Jennifer	Woods	1832-09-03	1852-11-25	F	844	437	f	f
-438	Stacie	Burns	Stacie	Burns	1832-04-18	1852-01-11	M	1121	438	f	f
-439	Tyler	Martinez	Tyler	Martinez	1832-06-07	1852-02-07	F	697	439	f	f
-440	Ana	Douglas	Ana	Douglas	1832-06-19	1852-08-07	M	771	440	f	f
-441	Alan	Frazier	Alan	Frazier	1832-08-01	1852-03-17	F	433	441	f	f
-442	Stephen	Murphy	Stephen	Murphy	1832-09-26	1852-02-15	M	760	442	f	f
-443	Jeffrey	Miller	Jeffrey	Miller	1832-03-25	1852-04-27	F	565	443	f	f
-444	Emily	Mooney	Emily	Mooney	1832-11-20	1852-06-24	M	859	444	f	f
-445	Justin	Palmer	Justin	Palmer	1832-07-11	1852-05-22	F	974	445	f	f
-446	Christy	Robbins	Christy	Robbins	1832-03-10	1852-12-20	M	703	446	f	f
-447	Joseph	Kennedy	Joseph	Kennedy	1832-02-11	1852-04-14	F	8	447	f	f
-448	Veronica	Waters	Veronica	Waters	1832-02-25	1852-11-15	M	60	448	f	f
-449	Benjamin	Blair	Benjamin	Blair	1832-06-11	1852-08-22	F	126	449	f	f
-450	Amanda	Morgan	Amanda	Morgan	1832-11-05	1852-02-15	M	459	450	f	f
-451	Nathaniel	Jackson	Nathaniel	Jackson	1832-02-03	1852-11-24	F	840	451	f	f
-452	John	Hensley	John	Hensley	1832-03-03	1852-06-03	M	804	452	f	f
-453	Veronica	Hart	Veronica	Hart	1832-06-27	1852-06-05	F	1119	453	f	f
-454	Jeremy	Snyder	Jeremy	Snyder	1832-07-26	1852-07-14	M	336	454	f	f
-455	Amanda	Lambert	Amanda	Lambert	1832-12-28	1852-12-19	F	152	455	f	f
-456	Christopher	Stark	Christopher	Stark	1832-07-25	1852-07-09	M	559	456	f	f
-457	Daniel	Duran	Daniel	Duran	1832-10-07	1852-12-03	F	989	457	f	f
-458	Kevin	Mcconnell	Kevin	Mcconnell	1832-04-04	1852-03-13	M	188	458	f	f
-459	Troy	Montes	Troy	Montes	1832-03-04	1852-09-15	F	440	459	f	f
-460	Jose	Smith	Jose	Smith	1832-04-01	1852-01-24	M	107	460	f	f
-461	Kevin	Kramer	Kevin	Kramer	1832-09-21	1852-05-10	F	1082	461	f	f
-462	Elizabeth	Carter	Elizabeth	Carter	1832-06-15	1852-07-18	M	1198	462	f	f
-463	Anthony	Woods	Anthony	Woods	1832-09-08	1852-02-08	F	871	463	f	f
-464	Jennifer	Shaffer	Jennifer	Shaffer	1832-04-18	1852-12-05	M	564	464	f	f
-465	Erika	Tran	Erika	Tran	1832-11-24	1852-04-18	F	492	465	f	f
-466	Colleen	Hampton	Colleen	Hampton	1832-06-05	1852-02-06	M	1114	466	f	f
-467	Allison	Johnson	Allison	Johnson	1832-01-06	1852-07-03	F	591	467	f	f
-468	Donald	Mcguire	Donald	Mcguire	1832-08-12	1852-01-13	M	1098	468	f	f
-469	Elizabeth	Snyder	Elizabeth	Snyder	1832-03-06	1852-06-09	F	988	469	f	f
-470	Nathan	Elliott	Nathan	Elliott	1832-07-16	1852-08-14	M	879	470	f	f
-471	Ana	Ford	Ana	Ford	1832-08-27	1852-06-20	F	924	471	f	f
-472	Matthew	Juarez	Matthew	Juarez	1832-12-21	1852-09-19	M	1088	472	f	f
-473	Monica	Stewart	Monica	Stewart	1832-10-11	1852-08-18	F	703	473	f	f
-474	Preston	Jensen	Preston	Jensen	1832-04-27	1852-05-13	M	991	474	f	f
-475	Valerie	Strickland	Valerie	Strickland	1832-05-19	1852-02-02	F	674	475	f	f
-476	Amy	Murphy	Amy	Murphy	1832-02-02	1852-10-04	M	476	476	f	f
-477	Krista	Morgan	Krista	Morgan	1832-07-02	1852-12-24	F	188	477	f	f
-478	Samuel	Le	Samuel	Le	1832-08-23	1852-11-03	M	418	478	f	f
-479	Sierra	Bentley	Sierra	Bentley	1832-02-07	1852-12-13	F	206	479	f	f
-480	Wyatt	Nelson	Wyatt	Nelson	1832-03-10	1852-02-28	M	728	480	f	f
-481	Steven	Ramos	Steven	Ramos	1832-07-23	1852-11-25	F	1189	481	f	f
-482	Jason	Peters	Jason	Peters	1832-04-26	1852-06-17	M	1190	482	f	f
-483	Frank	Sanchez	Frank	Sanchez	1832-06-05	1852-06-22	F	266	483	f	f
-484	James	Sloan	James	Sloan	1832-09-07	1852-03-16	M	211	484	f	f
-485	Thomas	Anderson	Thomas	Anderson	1832-06-20	1852-03-19	F	573	485	f	f
-486	Samuel	Cuevas	Samuel	Cuevas	1832-03-21	1852-11-24	M	441	486	f	f
-487	Ian	Hoffman	Ian	Hoffman	1832-01-11	1852-05-22	F	599	487	f	f
-488	Derek	Blair	Derek	Blair	1832-01-16	1852-08-19	M	934	488	f	f
-489	Alexandria	Richard	Alexandria	Richard	1832-01-27	1852-12-17	F	512	489	f	f
-490	Craig	Blake	Craig	Blake	1832-08-22	1852-03-06	M	75	490	f	f
-491	Jonathan	Alvarado	Jonathan	Alvarado	1832-12-11	1852-08-26	F	461	491	f	f
-492	Steven	Miranda	Steven	Miranda	1832-01-07	1852-10-06	M	829	492	f	f
-493	Dennis	Wiggins	Dennis	Wiggins	1832-05-12	1852-01-06	F	210	493	f	f
-494	Elizabeth	Bailey	Elizabeth	Bailey	1832-03-13	1852-07-02	M	277	494	f	f
-495	Cheryl	Henry	Cheryl	Henry	1832-12-14	1852-11-05	F	872	495	f	f
-496	Jacqueline	Bailey	Jacqueline	Bailey	1832-10-12	1852-07-10	M	663	496	f	f
-497	Ashley	Baker	Ashley	Baker	1832-01-13	1852-01-26	F	1176	497	f	f
-498	Kenneth	Williams	Kenneth	Williams	1832-06-25	1852-04-18	M	302	498	f	f
-499	Donald	Mejia	Donald	Mejia	1832-09-03	1852-07-07	F	910	499	f	f
-500					1832-12-26	1852-07-11	M	1028	500	f	f
+1	Sandra	Frye	Sandra	Frye	1998-03-18	2018-03-28	F	58	1	f	f
+2	Tyler	Brandt	Tyler	Brandt	1973-07-15	1993-02-05	M	585	2	f	f
+3	Amanda	Hayes	Amanda	Hayes	1973-12-23	1993-03-15	F	622	3	f	f
+4	Anthony	Knight	Anthony	Knight	1948-12-17	1968-08-19	M	49	4	f	f
+5	Lawrence	Suarez	Lawrence	Suarez	1948-11-26	1968-10-14	F	183	5	f	f
+6	Tamara	Snyder	Tamara	Snyder	1948-02-28	1968-08-26	M	861	6	f	f
+7	Timothy	Elliott	Timothy	Elliott	1948-03-14	1968-10-09	F	373	7	f	f
+8	Jamie	Smith	Jamie	Smith	1923-10-28	1943-07-04	M	358	8	f	f
+9	Nicole	Martinez	Nicole	Martinez	1923-01-02	1943-07-06	F	127	9	f	f
+10	Kyle	Foster	Kyle	Foster	1923-12-02	1943-05-15	M	326	10	f	f
+11	Logan	Adams	Logan	Adams	1923-11-10	1943-12-02	F	237	11	f	f
+12	Paul	Hanson	Paul	Hanson	1923-03-07	1943-06-28	M	919	12	f	f
+13	Michael	Cole	Michael	Cole	1923-10-15	1943-05-07	F	101	13	f	f
+14	Robert	Foster	Robert	Foster	1923-08-25	1943-09-08	M	220	14	f	f
+15	Brandon	Rodriguez	Brandon	Rodriguez	1923-09-07	1943-12-10	F	1100	15	f	f
+16	Melinda	Evans	Melinda	Evans	1898-02-17	1918-09-07	M	113	16	f	f
+17	Emily	George	Emily	George	1898-01-05	1918-04-21	F	124	17	f	f
+18	John	Nelson	John	Nelson	1898-11-02	1918-08-09	M	355	18	f	f
+19	Julie	Crane	Julie	Crane	1898-05-18	1918-10-15	F	57	19	f	f
+20	Sandra	Smith	Sandra	Smith	1898-04-25	1918-12-16	M	491	20	f	f
+21	Tony	Harris	Tony	Harris	1898-03-07	1918-07-03	F	617	21	f	f
+22	Calvin	Garza	Calvin	Garza	1898-01-12	1918-12-27	M	193	22	f	f
+23	Aaron	Calhoun	Aaron	Calhoun	1898-02-15	1918-12-17	F	575	23	f	f
+24	Crystal	Scott	Crystal	Scott	1898-07-03	1918-08-18	M	156	24	f	f
+25	Walter	Bowen	Walter	Bowen	1898-10-19	1918-08-02	F	1149	25	f	f
+26	Lucas	Austin	Lucas	Austin	1898-11-28	1918-06-04	M	179	26	f	f
+27	Kristen	Long	Kristen	Long	1898-04-23	1918-04-18	F	231	27	f	f
+28	Christina	Taylor	Christina	Taylor	1898-04-09	1918-03-02	M	40	28	f	f
+29	Melissa	Thomas	Melissa	Thomas	1898-07-22	1918-12-03	F	1065	29	f	f
+30	Robert	Fuller	Robert	Fuller	1898-04-18	1918-09-13	M	499	30	f	f
+31	Whitney	Harris	Whitney	Harris	1898-05-03	1918-09-14	F	1085	31	f	f
+32	Andrea	Shepard	Andrea	Shepard	1873-01-19	1893-02-07	M	449	32	f	f
+33	Luis	Barron	Luis	Barron	1873-05-20	1893-10-02	F	150	33	f	f
+34	David	Weaver	David	Weaver	1873-02-25	1893-12-22	M	698	34	f	f
+35	Emma	Matthews	Emma	Matthews	1873-01-21	1893-01-18	F	713	35	f	f
+36	Allen	Gallagher	Allen	Gallagher	1873-10-22	1893-11-05	M	917	36	f	f
+37	Ryan	Luna	Ryan	Luna	1873-08-26	1893-07-26	F	264	37	f	f
+38	Alejandro	Brown	Alejandro	Brown	1873-10-08	1893-03-21	M	368	38	f	f
+39	Emily	Ayers	Emily	Ayers	1873-07-08	1893-01-08	F	182	39	f	f
+40	Gina	Clay	Gina	Clay	1873-04-03	1893-03-28	M	859	40	f	f
+41	Amanda	Davenport	Amanda	Davenport	1873-10-22	1893-10-03	F	128	41	f	f
+42	Toni	Miller	Toni	Miller	1873-06-03	1893-11-27	M	1065	42	f	f
+43	Jeffrey	Ryan	Jeffrey	Ryan	1873-08-17	1893-11-09	F	1025	43	f	f
+44	John	Smith	John	Smith	1873-07-02	1893-09-11	M	14	44	f	f
+45	Kristin	Williams	Kristin	Williams	1873-01-23	1893-11-03	F	923	45	f	f
+46	Tracy	Caldwell	Tracy	Caldwell	1873-11-17	1893-07-12	M	754	46	f	f
+47	Alan	Nunez	Alan	Nunez	1873-04-11	1893-12-24	F	116	47	f	f
+48	Amber	Green	Amber	Green	1873-04-24	1893-02-20	M	853	48	f	f
+49	Darryl	Olson	Darryl	Olson	1873-09-21	1893-03-25	F	518	49	f	f
+50	Brenda	Rollins	Brenda	Rollins	1873-06-05	1893-06-02	M	1065	50	f	f
+51	Grant	Roberson	Grant	Roberson	1873-12-06	1893-09-13	F	145	51	f	f
+52	Lauren	Wood	Lauren	Wood	1873-12-21	1893-06-04	M	1131	52	f	f
+53	Jon	Dickson	Jon	Dickson	1873-07-12	1893-06-19	F	581	53	f	f
+54	Kyle	Gonzales	Kyle	Gonzales	1873-04-16	1893-01-21	M	171	54	f	f
+55	Jessica	White	Jessica	White	1873-05-20	1893-07-05	F	849	55	f	f
+56	Tyler	Salazar	Tyler	Salazar	1873-03-09	1893-03-25	M	1250	56	f	f
+57	Paul	Wheeler	Paul	Wheeler	1873-02-21	1893-10-09	F	112	57	f	f
+58	Kyle	Blake	Kyle	Blake	1873-11-24	1893-11-25	M	725	58	f	f
+59	Nicholas	Bowen	Nicholas	Bowen	1873-07-20	1893-04-11	F	549	59	f	f
+60	Kristopher	Hancock	Kristopher	Hancock	1873-05-16	1893-09-26	M	1032	60	f	f
+61	Hector	Edwards	Hector	Edwards	1873-07-07	1893-03-25	F	1155	61	f	f
+62	Cindy	Marquez	Cindy	Marquez	1873-05-12	1893-12-13	M	1213	62	f	f
+63	John	Simmons	John	Simmons	1873-08-05	1893-08-20	F	716	63	f	f
+64	Edward	Grant	Edward	Grant	1848-06-27	1868-01-20	M	412	64	f	f
+65	Samuel	Nielsen	Samuel	Nielsen	1848-08-26	1868-04-07	F	1027	65	f	f
+66	Scott	Guerrero	Scott	Guerrero	1848-08-02	1868-08-15	M	581	66	f	f
+67	Jennifer	Jones	Jennifer	Jones	1848-09-25	1868-04-05	F	742	67	f	f
+68	Thomas	Neal	Thomas	Neal	1848-12-20	1868-12-07	M	1167	68	f	f
+69	Steven	Morgan	Steven	Morgan	1848-04-10	1868-04-04	F	475	69	f	f
+70	Stephen	Bender	Stephen	Bender	1848-12-28	1868-09-11	M	452	70	f	f
+71	Rebecca	Haynes	Rebecca	Haynes	1848-04-24	1868-01-12	F	155	71	f	f
+72	Corey	Daniels	Corey	Daniels	1848-10-26	1868-05-23	M	145	72	f	f
+73	Julie	Martinez	Julie	Martinez	1848-10-13	1868-09-03	F	370	73	f	f
+74	Kyle	Tucker	Kyle	Tucker	1848-01-23	1868-06-17	M	435	74	f	f
+75	Nathan	Martin	Nathan	Martin	1848-01-27	1868-02-15	F	1194	75	f	f
+76	Levi	Long	Levi	Long	1848-12-25	1868-08-13	M	14	76	f	f
+77	Zachary	Jackson	Zachary	Jackson	1848-07-06	1868-04-02	F	1006	77	f	f
+78	Juan	Smith	Juan	Smith	1848-05-18	1868-03-04	M	48	78	f	f
+79	Michael	Young	Michael	Young	1848-08-05	1868-03-28	F	882	79	f	f
+80	Carolyn	Rivera	Carolyn	Rivera	1848-02-06	1868-01-12	M	140	80	f	f
+81	John	Robinson	John	Robinson	1848-01-24	1868-07-22	F	423	81	f	f
+82	Justin	Hughes	Justin	Hughes	1848-03-24	1868-03-22	M	81	82	f	f
+83	Michael	Murillo	Michael	Murillo	1848-12-28	1868-07-24	F	768	83	f	f
+84	Wyatt	Brennan	Wyatt	Brennan	1848-06-26	1868-03-13	M	784	84	f	f
+85	Christy	Obrien	Christy	Obrien	1848-03-01	1868-04-14	F	234	85	f	f
+86	Martin	Greer	Martin	Greer	1848-08-23	1868-12-23	M	499	86	f	f
+87	Cynthia	Walker	Cynthia	Walker	1848-10-15	1868-12-24	F	531	87	f	f
+88	Adam	Hunt	Adam	Hunt	1848-08-05	1868-10-03	M	1068	88	f	f
+89	Joseph	Nelson	Joseph	Nelson	1848-04-07	1868-10-10	F	363	89	f	f
+90	Damon	Valenzuela	Damon	Valenzuela	1848-04-01	1868-01-12	M	114	90	f	f
+91	Linda	Golden	Linda	Golden	1848-08-16	1868-10-12	F	299	91	f	f
+92	Richard	Flores	Richard	Flores	1848-05-07	1868-12-22	M	23	92	f	f
+93	Matthew	Tucker	Matthew	Tucker	1848-06-05	1868-01-28	F	198	93	f	f
+94	Rebecca	Hughes	Rebecca	Hughes	1848-09-24	1868-08-04	M	106	94	f	f
+95	Jennifer	Nelson	Jennifer	Nelson	1848-09-18	1868-06-20	F	748	95	f	f
+96	Megan	Davis	Megan	Davis	1848-01-09	1868-10-04	M	115	96	f	f
+97	Daniel	Wilson	Daniel	Wilson	1848-01-11	1868-10-06	F	681	97	f	f
+98	Henry	Carrillo	Henry	Carrillo	1848-09-01	1868-08-01	M	444	98	f	f
+99	Dalton	Henderson	Dalton	Henderson	1848-07-08	1868-05-04	F	930	99	f	f
+100	James	Hill	James	Hill	1848-11-20	1868-11-27	M	837	100	f	f
+101	Patricia	Garcia	Patricia	Garcia	1848-08-23	1868-08-19	F	517	101	f	f
+102	John	Hawkins	John	Hawkins	1848-03-14	1868-10-12	M	27	102	f	f
+103	Danielle	Phillips	Danielle	Phillips	1848-10-26	1868-09-23	F	1197	103	f	f
+104	Michael	Davis	Michael	Davis	1848-07-07	1868-11-08	M	731	104	f	f
+105	Danielle	Anderson	Danielle	Anderson	1848-09-07	1868-10-16	F	559	105	f	f
+106	Lisa	Rodriguez	Lisa	Rodriguez	1848-09-02	1868-02-14	M	737	106	f	f
+107	Ryan	Jenkins	Ryan	Jenkins	1848-09-06	1868-09-04	F	159	107	f	f
+108	Scott	Patterson	Scott	Patterson	1848-07-16	1868-09-26	M	634	108	f	f
+109	John	Gonzalez	John	Gonzalez	1848-03-16	1868-07-24	F	346	109	f	f
+110	Kathy	Fry	Kathy	Fry	1848-01-22	1868-05-28	M	377	110	f	f
+111	Kelly	Mejia	Kelly	Mejia	1848-06-18	1868-03-14	F	262	111	f	f
+112	Lisa	Le	Lisa	Le	1848-11-22	1868-08-06	M	213	112	f	f
+113	John	Nelson	John	Nelson	1848-04-07	1868-07-19	F	114	113	f	f
+114	Angela	Marsh	Angela	Marsh	1848-10-02	1868-04-11	M	189	114	f	f
+115	Jonathan	Edwards	Jonathan	Edwards	1848-05-17	1868-11-09	F	1089	115	f	f
+116	David	Williams	David	Williams	1848-03-19	1868-12-24	M	287	116	f	f
+117	Kristin	Gonzalez	Kristin	Gonzalez	1848-08-01	1868-02-06	F	748	117	f	f
+118	Susan	Neal	Susan	Neal	1848-03-15	1868-07-28	M	190	118	f	f
+119	Lucas	Gilbert	Lucas	Gilbert	1848-10-16	1868-06-10	F	588	119	f	f
+120	Cody	Meyer	Cody	Meyer	1848-09-16	1868-09-08	M	878	120	f	f
+121	Michelle	Ross	Michelle	Ross	1848-06-03	1868-05-07	F	970	121	f	f
+122	Donna	Daniels	Donna	Daniels	1848-01-08	1868-08-01	M	1246	122	f	f
+123	Joel	Miller	Joel	Miller	1848-04-08	1868-01-09	F	1233	123	f	f
+124	Jennifer	Johnson	Jennifer	Johnson	1848-12-24	1868-10-16	M	364	124	f	f
+125	Maurice	Smith	Maurice	Smith	1848-04-07	1868-06-23	F	998	125	f	f
+126	Ryan	Matthews	Ryan	Matthews	1848-11-18	1868-08-24	M	249	126	f	f
+127	Sharon	Perry	Sharon	Perry	1848-05-10	1868-02-12	F	248	127	f	f
+128	Ashley	Reed	Ashley	Reed	1823-01-08	1843-11-02	M	676	128	f	f
+129	Teresa	Shaw	Teresa	Shaw	1823-07-14	1843-07-19	F	539	129	f	f
+130	Stacy	Jenkins	Stacy	Jenkins	1823-07-03	1843-12-18	M	475	130	f	f
+131	David	Brooks	David	Brooks	1823-06-02	1843-07-15	F	985	131	f	f
+132	Angelica	Reyes	Angelica	Reyes	1823-05-04	1843-05-14	M	998	132	f	f
+133	Natalie	Holmes	Natalie	Holmes	1823-12-26	1843-04-27	F	787	133	f	f
+134	Joshua	Flores	Joshua	Flores	1823-10-19	1843-10-20	M	1035	134	f	f
+135	Melissa	Young	Melissa	Young	1823-08-14	1843-12-13	F	561	135	f	f
+136	Tracey	Williams	Tracey	Williams	1823-09-22	1843-09-01	M	95	136	f	f
+137	Jessica	Rubio	Jessica	Rubio	1823-11-06	1843-02-03	F	71	137	f	f
+138	Darlene	Kelley	Darlene	Kelley	1823-07-08	1843-08-09	M	1222	138	f	f
+139	Sherry	Melton	Sherry	Melton	1823-04-07	1843-06-11	F	1043	139	f	f
+140	Emily	Garner	Emily	Garner	1823-05-09	1843-04-13	M	881	140	f	f
+141	Amber	Dickerson	Amber	Dickerson	1823-12-11	1843-03-18	F	1011	141	f	f
+142	Kathryn	Leach	Kathryn	Leach	1823-06-08	1843-11-02	M	532	142	f	f
+143	Andrew	Scott	Andrew	Scott	1823-04-28	1843-07-08	F	139	143	f	f
+144	Jerry	Grant	Jerry	Grant	1823-08-17	1843-04-06	M	939	144	f	f
+145	Wesley	Cross	Wesley	Cross	1823-03-28	1843-11-16	F	693	145	f	f
+146	Randy	Miller	Randy	Miller	1823-10-20	1843-07-22	M	1091	146	f	f
+147	Jamie	Vaughn	Jamie	Vaughn	1823-05-07	1843-07-03	F	839	147	f	f
+148	Melissa	Callahan	Melissa	Callahan	1823-10-18	1843-07-15	M	1118	148	f	f
+149	Samantha	Williams	Samantha	Williams	1823-08-03	1843-03-21	F	135	149	f	f
+150	Cathy	Michael	Cathy	Michael	1823-11-17	1843-12-26	M	931	150	f	f
+151	Abigail	Patterson	Abigail	Patterson	1823-06-28	1843-06-04	F	491	151	f	f
+152	Allison	Dudley	Allison	Dudley	1823-04-18	1843-06-13	M	839	152	f	f
+153	Kaitlyn	Peters	Kaitlyn	Peters	1823-03-27	1843-01-04	F	248	153	f	f
+154	Darlene	Byrd	Darlene	Byrd	1823-05-15	1843-01-16	M	1100	154	f	f
+155	David	Huang	David	Huang	1823-02-11	1843-07-01	F	1063	155	f	f
+156	Phillip	Sullivan	Phillip	Sullivan	1823-10-17	1843-03-03	M	593	156	f	f
+157	Morgan	Duncan	Morgan	Duncan	1823-05-18	1843-05-14	F	863	157	f	f
+158	Danielle	Martinez	Danielle	Martinez	1823-03-17	1843-09-21	M	677	158	f	f
+159	Natasha	Grant	Natasha	Grant	1823-03-20	1843-02-18	F	234	159	f	f
+160	Stephanie	Wheeler	Stephanie	Wheeler	1823-10-25	1843-08-27	M	752	160	f	f
+161	Raymond	Terrell	Raymond	Terrell	1823-08-04	1843-03-26	F	543	161	f	f
+162	Krista	Marquez	Krista	Marquez	1823-03-08	1843-03-21	M	551	162	f	f
+163	Tamara	Tucker	Tamara	Tucker	1823-12-20	1843-04-19	F	450	163	f	f
+164	Connie	Garza	Connie	Garza	1823-12-19	1843-09-04	M	398	164	f	f
+165	David	King	David	King	1823-04-19	1843-01-25	F	231	165	f	f
+166	Tracey	Ponce	Tracey	Ponce	1823-10-06	1843-12-15	M	218	166	f	f
+167	Michael	Morrow	Michael	Morrow	1823-04-05	1843-08-14	F	541	167	f	f
+168	Laura	Richardson	Laura	Richardson	1823-04-19	1843-02-03	M	60	168	f	f
+169	Melinda	Atkins	Melinda	Atkins	1823-02-03	1843-02-17	F	952	169	f	f
+170	Pamela	Robinson	Pamela	Robinson	1823-09-05	1843-03-01	M	441	170	f	f
+171	Tara	Murray	Tara	Murray	1823-10-17	1843-12-24	F	651	171	f	f
+172	Elizabeth	Glover	Elizabeth	Glover	1823-03-25	1843-11-15	M	869	172	f	f
+173	Dennis	Gomez	Dennis	Gomez	1823-06-09	1843-04-16	F	899	173	f	f
+174	Jenna	Schroeder	Jenna	Schroeder	1823-12-04	1843-02-13	M	451	174	f	f
+175	Amber	Hill	Amber	Hill	1823-08-21	1843-01-17	F	1040	175	f	f
+176	Brittany	Kim	Brittany	Kim	1823-11-25	1843-05-10	M	1096	176	f	f
+177	Diana	Hall	Diana	Hall	1823-01-16	1843-07-22	F	778	177	f	f
+178	Logan	Morris	Logan	Morris	1823-04-05	1843-02-21	M	333	178	f	f
+179	Ashley	Delgado	Ashley	Delgado	1823-12-18	1843-11-04	F	385	179	f	f
+180	Rachel	Frederick	Rachel	Frederick	1823-12-17	1843-01-12	M	525	180	f	f
+181	Rachel	Andrews	Rachel	Andrews	1823-09-02	1843-07-19	F	748	181	f	f
+182	Mario	Harris	Mario	Harris	1823-12-12	1843-01-07	M	784	182	f	f
+183	Scott	Martin	Scott	Martin	1823-06-04	1843-09-05	F	788	183	f	f
+184	Alyssa	Williams	Alyssa	Williams	1823-02-02	1843-08-17	M	40	184	f	f
+185	Steven	Silva	Steven	Silva	1823-10-28	1843-02-08	F	585	185	f	f
+186	John	Knox	John	Knox	1823-06-06	1843-08-24	M	996	186	f	f
+187	Donna	Green	Donna	Green	1823-04-18	1843-12-25	F	657	187	f	f
+188	Natalie	Taylor	Natalie	Taylor	1823-12-18	1843-05-27	M	389	188	f	f
+189	Robert	Lam	Robert	Lam	1823-08-05	1843-08-26	F	682	189	f	f
+190	Nathan	Campbell	Nathan	Campbell	1823-04-13	1843-04-17	M	325	190	f	f
+191	Crystal	Meza	Crystal	Meza	1823-04-10	1843-12-10	F	299	191	f	f
+192	Robert	Lane	Robert	Lane	1823-12-19	1843-09-20	M	1233	192	f	f
+193	Valerie	Wade	Valerie	Wade	1823-03-22	1843-11-27	F	628	193	f	f
+194	Tiffany	Patterson	Tiffany	Patterson	1823-04-02	1843-05-22	M	1061	194	f	f
+195	Stephanie	Garza	Stephanie	Garza	1823-08-21	1843-01-10	F	702	195	f	f
+196	Kimberly	Shields	Kimberly	Shields	1823-09-06	1843-05-24	M	65	196	f	f
+197	Austin	Martinez	Austin	Martinez	1823-05-28	1843-08-18	F	1181	197	f	f
+198	Timothy	Carter	Timothy	Carter	1823-08-28	1843-11-18	M	106	198	f	f
+199	Timothy	Harris	Timothy	Harris	1823-02-08	1843-10-20	F	91	199	f	f
+200	Martin	Riley	Martin	Riley	1823-08-21	1843-09-14	M	411	200	f	f
+201	Walter	Clarke	Walter	Clarke	1823-04-12	1843-10-10	F	27	201	f	f
+202	Kayla	Herrera	Kayla	Herrera	1823-03-09	1843-02-21	M	230	202	f	f
+203	William	Adams	William	Adams	1823-02-21	1843-02-19	F	888	203	f	f
+204	Bryan	Blackwell	Bryan	Blackwell	1823-07-18	1843-08-02	M	552	204	f	f
+205	Donald	Anderson	Donald	Anderson	1823-05-23	1843-11-26	F	1010	205	f	f
+206	Jonathan	Gutierrez	Jonathan	Gutierrez	1823-09-07	1843-07-15	M	213	206	f	f
+207	Jennifer	Marquez	Jennifer	Marquez	1823-02-09	1843-01-06	F	440	207	f	f
+208	Kelsey	Smith	Kelsey	Smith	1823-05-01	1843-02-06	M	24	208	f	f
+209	Mark	Ware	Mark	Ware	1823-05-09	1843-12-03	F	1189	209	f	f
+210	Jonathan	Haynes	Jonathan	Haynes	1823-05-03	1843-09-04	M	174	210	f	f
+211	Sandra	Kirk	Sandra	Kirk	1823-02-25	1843-08-06	F	314	211	f	f
+212	Elizabeth	Pope	Elizabeth	Pope	1823-02-10	1843-10-19	M	492	212	f	f
+213	Misty	Hart	Misty	Hart	1823-12-21	1843-01-13	F	918	213	f	f
+214	Darrell	Moyer	Darrell	Moyer	1823-02-01	1843-04-23	M	1035	214	f	f
+215	Bernard	Mann	Bernard	Mann	1823-10-14	1843-10-16	F	684	215	f	f
+216	Jerry	Huffman	Jerry	Huffman	1823-06-09	1843-01-12	M	305	216	f	f
+217	Chad	Park	Chad	Park	1823-11-05	1843-10-02	F	603	217	f	f
+218	Pamela	Wagner	Pamela	Wagner	1823-05-14	1843-03-18	M	430	218	f	f
+219	Lauren	Lamb	Lauren	Lamb	1823-07-09	1843-08-01	F	352	219	f	f
+220	Sandra	Wright	Sandra	Wright	1823-06-19	1843-10-23	M	767	220	f	f
+221	Kathryn	Cain	Kathryn	Cain	1823-05-25	1843-03-13	F	290	221	f	f
+222	Molly	Newman	Molly	Newman	1823-03-05	1843-06-03	M	16	222	f	f
+223	Keith	Wallace	Keith	Wallace	1823-03-23	1843-07-02	F	270	223	f	f
+224	Rebecca	Hogan	Rebecca	Hogan	1823-12-15	1843-09-26	M	231	224	f	f
+225	Daniel	Chen	Daniel	Chen	1823-06-04	1843-09-23	F	12	225	f	f
+226	Jason	Stewart	Jason	Stewart	1823-12-12	1843-06-24	M	177	226	f	f
+227	Christopher	Bailey	Christopher	Bailey	1823-07-07	1843-09-11	F	526	227	f	f
+228	Phillip	Martin	Phillip	Martin	1823-12-03	1843-12-07	M	619	228	f	f
+229	Kelsey	Mayo	Kelsey	Mayo	1823-01-11	1843-05-20	F	58	229	f	f
+230	Karen	Thompson	Karen	Thompson	1823-12-11	1843-10-02	M	882	230	f	f
+231	Jamie	Atkins	Jamie	Atkins	1823-03-25	1843-03-08	F	471	231	f	f
+232	Edward	Strong	Edward	Strong	1823-11-04	1843-06-19	M	1037	232	f	f
+233	Stacy	Kim	Stacy	Kim	1823-02-26	1843-11-28	F	780	233	f	f
+234	Bryan	Ross	Bryan	Ross	1823-09-24	1843-05-14	M	958	234	f	f
+235	David	Kirby	David	Kirby	1823-09-18	1843-09-17	F	245	235	f	f
+236	Andrew	Freeman	Andrew	Freeman	1823-11-05	1843-01-03	M	820	236	f	f
+237	Jennifer	Hudson	Jennifer	Hudson	1823-09-05	1843-12-17	F	873	237	f	f
+238	Scott	Moreno	Scott	Moreno	1823-01-23	1843-12-09	M	604	238	f	f
+239	Shannon	King	Shannon	King	1823-07-24	1843-05-23	F	57	239	f	f
+240	Kristen	Thomas	Kristen	Thomas	1823-05-06	1843-09-11	M	103	240	f	f
+241	Brittany	Dickerson	Brittany	Dickerson	1823-02-12	1843-02-23	F	2	241	f	f
+242	Laura	Robles	Laura	Robles	1823-07-18	1843-05-05	M	593	242	f	f
+243	Rick	Murphy	Rick	Murphy	1823-09-16	1843-04-16	F	815	243	f	f
+244	Jennifer	Black	Jennifer	Black	1823-08-16	1843-12-16	M	139	244	f	f
+245	Janet	Nelson	Janet	Nelson	1823-11-09	1843-08-28	F	1092	245	f	f
+246	Susan	Smith	Susan	Smith	1823-06-26	1843-08-22	M	299	246	f	f
+247	Chad	Nelson	Chad	Nelson	1823-08-12	1843-06-15	F	578	247	f	f
+248	Cesar	Peterson	Cesar	Peterson	1823-03-18	1843-05-17	M	372	248	f	f
+249	Amanda	Green	Amanda	Green	1823-05-12	1843-06-26	F	975	249	f	f
+250	Jennifer	Brown	Jennifer	Brown	1823-03-04	1843-12-10	M	1017	250	f	f
+251	Rebecca	Novak	Rebecca	Novak	1823-05-13	1843-12-19	F	53	251	f	f
+252	Michael	Smith	Michael	Smith	1823-12-06	1843-09-15	M	711	252	f	f
+253	Melissa	Barron	Melissa	Barron	1823-05-19	1843-05-13	F	300	253	f	f
+254	Aaron	Richardson	Aaron	Richardson	1823-12-07	1843-11-01	M	562	254	f	f
+255	Patrick	Jacobs	Patrick	Jacobs	1823-07-25	1843-03-20	F	807	255	f	f
+256	Crystal	Braun	Crystal	Braun	1798-11-26	1818-09-13	M	16	256	f	f
+257	John	Mullen	John	Mullen	1798-12-11	1818-07-05	F	886	257	f	f
+258	Rachel	Martinez	Rachel	Martinez	1798-11-27	1818-04-06	M	7	258	f	f
+259	Joseph	Lawson	Joseph	Lawson	1798-08-03	1818-02-02	F	569	259	f	f
+260	Dana	Hicks	Dana	Hicks	1798-11-16	1818-02-20	M	1061	260	f	f
+261	Jillian	Russell	Jillian	Russell	1798-01-20	1818-05-03	F	384	261	f	f
+262	Scott	Williams	Scott	Williams	1798-11-13	1818-04-13	M	450	262	f	f
+263	Ronald	Sharp	Ronald	Sharp	1798-11-21	1818-08-06	F	296	263	f	f
+264	Ronald	Rodriguez	Ronald	Rodriguez	1798-08-21	1818-02-19	M	1190	264	f	f
+265	Christopher	Davis	Christopher	Davis	1798-04-18	1818-11-12	F	753	265	f	f
+266	Maria	Fletcher	Maria	Fletcher	1798-06-09	1818-10-06	M	358	266	f	f
+267	James	Chambers	James	Chambers	1798-09-11	1818-05-15	F	346	267	f	f
+268	Michael	Morris	Michael	Morris	1798-03-15	1818-08-06	M	963	268	f	f
+269	Deborah	Williams	Deborah	Williams	1798-06-16	1818-11-06	F	602	269	f	f
+270	Patrick	Jimenez	Patrick	Jimenez	1798-01-23	1818-09-25	M	552	270	f	f
+271	Debra	Rojas	Debra	Rojas	1798-02-20	1818-11-19	F	121	271	f	f
+272	Amy	Mitchell	Amy	Mitchell	1798-12-04	1818-07-11	M	566	272	f	f
+273	Angela	Macias	Angela	Macias	1798-07-01	1818-08-19	F	332	273	f	f
+274	Jessica	Young	Jessica	Young	1798-08-12	1818-08-02	M	1085	274	f	f
+275	Lance	Evans	Lance	Evans	1798-11-19	1818-02-06	F	854	275	f	f
+276	Nicholas	Phillips	Nicholas	Phillips	1798-12-24	1818-09-12	M	318	276	f	f
+277	Robert	Smith	Robert	Smith	1798-01-09	1818-01-20	F	849	277	f	f
+278	Lori	Kennedy	Lori	Kennedy	1798-12-03	1818-08-11	M	565	278	f	f
+279	Wesley	Williams	Wesley	Williams	1798-07-06	1818-04-28	F	541	279	f	f
+280	Kevin	Bailey	Kevin	Bailey	1798-06-24	1818-06-18	M	513	280	f	f
+281	Kimberly	Finley	Kimberly	Finley	1798-06-04	1818-06-27	F	15	281	f	f
+282	Mitchell	Madden	Mitchell	Madden	1798-10-25	1818-09-21	M	912	282	f	f
+283	Sophia	Williams	Sophia	Williams	1798-05-12	1818-01-26	F	345	283	f	f
+284	Craig	Luna	Craig	Luna	1798-07-23	1818-06-20	M	1107	284	f	f
+285	Jeff	Ramirez	Jeff	Ramirez	1798-07-11	1818-08-13	F	1179	285	f	f
+286	Angelica	Owens	Angelica	Owens	1798-09-18	1818-04-04	M	388	286	f	f
+287	Crystal	Mitchell	Crystal	Mitchell	1798-02-07	1818-07-20	F	226	287	f	f
+288	Carrie	Holloway	Carrie	Holloway	1798-03-19	1818-09-08	M	1011	288	f	f
+289	Alicia	Clark	Alicia	Clark	1798-03-12	1818-01-15	F	1173	289	f	f
+290	Michael	Gonzalez	Michael	Gonzalez	1798-01-26	1818-07-04	M	442	290	f	f
+291	Carlos	Griffith	Carlos	Griffith	1798-01-27	1818-12-24	F	283	291	f	f
+292	Gary	Dean	Gary	Dean	1798-06-18	1818-12-05	M	248	292	f	f
+293	Kevin	Smith	Kevin	Smith	1798-04-02	1818-05-27	F	1183	293	f	f
+294	Travis	Jensen	Travis	Jensen	1798-11-27	1818-10-15	M	581	294	f	f
+295	Elizabeth	Nichols	Elizabeth	Nichols	1798-04-06	1818-02-28	F	559	295	f	f
+296	Sean	Castillo	Sean	Castillo	1798-12-23	1818-07-02	M	537	296	f	f
+297	David	Yu	David	Yu	1798-10-14	1818-10-13	F	318	297	f	f
+298	Edward	Davis	Edward	Davis	1798-10-15	1818-06-26	M	563	298	f	f
+299	Donna	David	Donna	David	1798-01-23	1818-10-20	F	1153	299	f	f
+300	Lisa	Moss	Lisa	Moss	1798-03-01	1818-06-18	M	372	300	f	f
+301	Frank	Robinson	Frank	Robinson	1798-07-07	1818-02-07	F	62	301	f	f
+302	Courtney	Moore	Courtney	Moore	1798-04-13	1818-05-06	M	709	302	f	f
+303	Samantha	Gill	Samantha	Gill	1798-04-07	1818-01-17	F	449	303	f	f
+304	Betty	Bauer	Betty	Bauer	1798-03-01	1818-11-12	M	411	304	f	f
+305	Matthew	Vang	Matthew	Vang	1798-01-08	1818-09-20	F	881	305	f	f
+306	Jessica	Mata	Jessica	Mata	1798-10-10	1818-06-10	M	592	306	f	f
+307	Karen	Jones	Karen	Jones	1798-03-04	1818-01-08	F	874	307	f	f
+308	Robert	Garza	Robert	Garza	1798-10-10	1818-06-07	M	591	308	f	f
+309	Charles	Norton	Charles	Norton	1798-03-23	1818-07-19	F	359	309	f	f
+310	Daniel	Garner	Daniel	Garner	1798-11-09	1818-11-13	M	436	310	f	f
+311	David	Singleton	David	Singleton	1798-02-28	1818-03-26	F	75	311	f	f
+312	Justin	Baker	Justin	Baker	1798-02-12	1818-12-01	M	845	312	f	f
+313	Heather	Taylor	Heather	Taylor	1798-10-06	1818-12-14	F	1230	313	f	f
+314	Brandon	Velasquez	Brandon	Velasquez	1798-07-25	1818-10-05	M	393	314	f	f
+315	Adam	Black	Adam	Black	1798-11-19	1818-11-26	F	913	315	f	f
+316	Albert	Smith	Albert	Smith	1798-01-17	1818-12-09	M	806	316	f	f
+317	David	Barnes	David	Barnes	1798-11-04	1818-10-07	F	147	317	f	f
+318	Katherine	Benjamin	Katherine	Benjamin	1798-02-27	1818-07-21	M	1070	318	f	f
+319	Amber	Lopez	Amber	Lopez	1798-09-06	1818-12-04	F	1224	319	f	f
+320	Cynthia	Phelps	Cynthia	Phelps	1798-11-21	1818-07-09	M	56	320	f	f
+321	Jonathon	Hurley	Jonathon	Hurley	1798-07-23	1818-01-25	F	975	321	f	f
+322	Evan	Bowers	Evan	Bowers	1798-05-09	1818-11-05	M	273	322	f	f
+323	Kristen	Wolfe	Kristen	Wolfe	1798-05-21	1818-04-28	F	850	323	f	f
+324	Christopher	Lee	Christopher	Lee	1798-04-03	1818-10-13	M	57	324	f	f
+325	Kristin	Sawyer	Kristin	Sawyer	1798-07-23	1818-08-04	F	276	325	f	f
+326	Nicholas	Dickerson	Nicholas	Dickerson	1798-06-28	1818-03-20	M	750	326	f	f
+327	Katherine	Figueroa	Katherine	Figueroa	1798-12-22	1818-04-08	F	151	327	f	f
+328	Lisa	Le	Lisa	Le	1798-08-08	1818-03-01	M	1153	328	f	f
+329	Jon	Thornton	Jon	Thornton	1798-02-20	1818-06-21	F	708	329	f	f
+330	David	Wilkins	David	Wilkins	1798-10-09	1818-07-11	M	378	330	f	f
+331	Michael	Nash	Michael	Nash	1798-05-12	1818-01-01	F	315	331	f	f
+332	Olivia	George	Olivia	George	1798-05-21	1818-10-24	M	249	332	f	f
+333	Benjamin	Oneill	Benjamin	Oneill	1798-07-19	1818-04-28	F	1183	333	f	f
+334	Scott	Ashley	Scott	Ashley	1798-01-11	1818-10-02	M	1108	334	f	f
+335	Edward	Frank	Edward	Frank	1798-08-13	1818-03-17	F	676	335	f	f
+336	Tamara	Flores	Tamara	Flores	1798-03-08	1818-10-01	M	820	336	f	f
+337	Jerry	Ramsey	Jerry	Ramsey	1798-01-01	1818-06-01	F	939	337	f	f
+338	Anna	Merritt	Anna	Merritt	1798-05-01	1818-10-18	M	112	338	f	f
+339	Laurie	Benson	Laurie	Benson	1798-12-04	1818-05-06	F	815	339	f	f
+340	Matthew	Sandoval	Matthew	Sandoval	1798-09-28	1818-08-20	M	88	340	f	f
+341	Jerry	Taylor	Jerry	Taylor	1798-11-03	1818-05-10	F	312	341	f	f
+342	Robert	Garcia	Robert	Garcia	1798-11-10	1818-02-02	M	1114	342	f	f
+343	Ashley	Keller	Ashley	Keller	1798-07-27	1818-09-18	F	888	343	f	f
+344	Melissa	Thompson	Melissa	Thompson	1798-01-16	1818-01-06	M	891	344	f	f
+345	Kathleen	Gray	Kathleen	Gray	1798-02-04	1818-05-06	F	328	345	f	f
+346	Ryan	Cochran	Ryan	Cochran	1798-11-17	1818-11-15	M	224	346	f	f
+347	Ashley	Wilkinson	Ashley	Wilkinson	1798-08-05	1818-07-09	F	650	347	f	f
+348	Jacqueline	Yates	Jacqueline	Yates	1798-06-14	1818-08-21	M	295	348	f	f
+349	Erin	Fisher	Erin	Fisher	1798-06-01	1818-03-02	F	1036	349	f	f
+350	Christine	Garcia	Christine	Garcia	1798-08-23	1818-10-13	M	399	350	f	f
+351	David	Bowman	David	Bowman	1798-10-07	1818-10-13	F	271	351	f	f
+352	Lance	Mosley	Lance	Mosley	1798-06-23	1818-11-04	M	878	352	f	f
+353	Kim	Rodriguez	Kim	Rodriguez	1798-11-05	1818-10-20	F	888	353	f	f
+354	Erin	Erickson	Erin	Erickson	1798-12-19	1818-09-26	M	863	354	f	f
+355	Rachel	Robbins	Rachel	Robbins	1798-10-10	1818-12-26	F	808	355	f	f
+356	Jake	Reilly	Jake	Reilly	1798-03-13	1818-08-03	M	486	356	f	f
+357	Christian	Thomas	Christian	Thomas	1798-10-14	1818-03-13	F	989	357	f	f
+358	Leonard	Michael	Leonard	Michael	1798-05-05	1818-05-12	M	526	358	f	f
+359	Alyssa	Ellison	Alyssa	Ellison	1798-02-28	1818-04-23	F	193	359	f	f
+360	Amber	Lee	Amber	Lee	1798-03-08	1818-01-04	M	135	360	f	f
+361	Barbara	Jones	Barbara	Jones	1798-05-17	1818-08-27	F	367	361	f	f
+362	Michael	Pierce	Michael	Pierce	1798-04-12	1818-04-07	M	1168	362	f	f
+363	David	Dean	David	Dean	1798-08-06	1818-09-07	F	332	363	f	f
+364	Samantha	Evans	Samantha	Evans	1798-05-06	1818-01-24	M	774	364	f	f
+365	Carla	Lyons	Carla	Lyons	1798-11-25	1818-01-25	F	81	365	f	f
+366	Taylor	Williams	Taylor	Williams	1798-09-19	1818-12-09	M	447	366	f	f
+367	Charles	Madden	Charles	Madden	1798-07-02	1818-06-27	F	774	367	f	f
+368	Michael	Davis	Michael	Davis	1798-06-25	1818-06-25	M	1141	368	f	f
+369	Donna	Nelson	Donna	Nelson	1798-06-10	1818-04-09	F	619	369	f	f
+370	Shari	Jimenez	Shari	Jimenez	1798-12-07	1818-05-06	M	811	370	f	f
+371	Raymond	Lopez	Raymond	Lopez	1798-01-28	1818-07-17	F	198	371	f	f
+372	Amanda	Levy	Amanda	Levy	1798-02-11	1818-07-25	M	713	372	f	f
+373	Keith	Rowland	Keith	Rowland	1798-03-03	1818-06-18	F	501	373	f	f
+374	Robert	Shelton	Robert	Shelton	1798-11-12	1818-03-23	M	111	374	f	f
+375	Robert	Hutchinson	Robert	Hutchinson	1798-04-20	1818-05-02	F	825	375	f	f
+376	Tammy	Gomez	Tammy	Gomez	1798-04-06	1818-07-17	M	998	376	f	f
+377	Randy	Herrera	Randy	Herrera	1798-06-11	1818-07-20	F	445	377	f	f
+378	Wendy	Oneal	Wendy	Oneal	1798-03-09	1818-12-14	M	1104	378	f	f
+379	Caitlin	Wright	Caitlin	Wright	1798-04-23	1818-08-08	F	958	379	f	f
+380	Joshua	Jones	Joshua	Jones	1798-04-27	1818-10-26	M	1082	380	f	f
+381	Chris	Moore	Chris	Moore	1798-04-14	1818-05-10	F	451	381	f	f
+382	Daniel	Anderson	Daniel	Anderson	1798-05-17	1818-03-19	M	398	382	f	f
+383	Erin	Johnson	Erin	Johnson	1798-12-05	1818-07-22	F	736	383	f	f
+384	Erika	Diaz	Erika	Diaz	1798-09-15	1818-10-12	M	205	384	f	f
+385	Angela	Wood	Angela	Wood	1798-07-05	1818-06-07	F	486	385	f	f
+386	Shaun	Gates	Shaun	Gates	1798-06-17	1818-09-18	M	640	386	f	f
+387	Jessica	Garza	Jessica	Garza	1798-05-04	1818-01-02	F	658	387	f	f
+388	Margaret	Henderson	Margaret	Henderson	1798-08-24	1818-04-12	M	1188	388	f	f
+389	Rebecca	Miller	Rebecca	Miller	1798-11-19	1818-02-23	F	448	389	f	f
+390	Lori	Wright	Lori	Wright	1798-11-21	1818-12-11	M	891	390	f	f
+391	Mark	Jenkins	Mark	Jenkins	1798-12-23	1818-12-20	F	703	391	f	f
+392	Elizabeth	Pierce	Elizabeth	Pierce	1798-02-22	1818-04-17	M	1146	392	f	f
+393	Thomas	Davis	Thomas	Davis	1798-03-28	1818-05-10	F	139	393	f	f
+394	Kenneth	Gaines	Kenneth	Gaines	1798-11-20	1818-11-15	M	561	394	f	f
+395	Jennifer	Wall	Jennifer	Wall	1798-11-16	1818-11-15	F	189	395	f	f
+396	Elizabeth	Robertson	Elizabeth	Robertson	1798-07-05	1818-07-12	M	1125	396	f	f
+397	Kristin	Todd	Kristin	Todd	1798-10-26	1818-05-07	F	565	397	f	f
+398	Sarah	Haynes	Sarah	Haynes	1798-06-25	1818-07-09	M	62	398	f	f
+399	Margaret	Beard	Margaret	Beard	1798-02-07	1818-08-18	F	551	399	f	f
+400	Jonathan	Garza	Jonathan	Garza	1798-06-06	1818-04-24	M	45	400	f	f
+401	Kristi	Stewart	Kristi	Stewart	1798-12-20	1818-05-03	F	966	401	f	f
+402	Dwayne	Mcgee	Dwayne	Mcgee	1798-12-10	1818-06-22	M	170	402	f	f
+403	Richard	Jones	Richard	Jones	1798-06-05	1818-03-19	F	719	403	f	f
+404	Alexandria	Alvarado	Alexandria	Alvarado	1798-10-24	1818-03-03	M	954	404	f	f
+405	Christina	Smith	Christina	Smith	1798-07-05	1818-08-19	F	1191	405	f	f
+406	Michael	Trujillo	Michael	Trujillo	1798-07-26	1818-05-18	M	611	406	f	f
+407	Jennifer	Gutierrez	Jennifer	Gutierrez	1798-02-19	1818-10-23	F	587	407	f	f
+408	Christian	Cooper	Christian	Cooper	1798-03-25	1818-10-05	M	1083	408	f	f
+409	Anthony	Jones	Anthony	Jones	1798-04-20	1818-12-21	F	925	409	f	f
+410	Pedro	Skinner	Pedro	Skinner	1798-05-18	1818-04-06	M	715	410	f	f
+411	Dean	Griffin	Dean	Griffin	1798-01-20	1818-11-20	F	224	411	f	f
+412	Sharon	Wells	Sharon	Wells	1798-07-24	1818-04-22	M	563	412	f	f
+413	Kristy	Blake	Kristy	Blake	1798-01-27	1818-02-19	F	465	413	f	f
+414	Stephen	Morales	Stephen	Morales	1798-07-27	1818-12-13	M	937	414	f	f
+415	Meghan	Patton	Meghan	Patton	1798-11-15	1818-09-01	F	959	415	f	f
+416	Debra	Rivera	Debra	Rivera	1798-05-13	1818-01-07	M	34	416	f	f
+417	Chad	White	Chad	White	1798-11-01	1818-07-16	F	854	417	f	f
+418	Darrell	Pace	Darrell	Pace	1798-11-05	1818-09-04	M	1133	418	f	f
+419	Paul	Miller	Paul	Miller	1798-06-01	1818-07-18	F	1046	419	f	f
+420	Martha	Ware	Martha	Ware	1798-03-28	1818-07-23	M	1212	420	f	f
+421	Leslie	Roberts	Leslie	Roberts	1798-12-26	1818-05-23	F	349	421	f	f
+422	Phillip	Nelson	Phillip	Nelson	1798-10-02	1818-09-02	M	886	422	f	f
+423	Jack	Miller	Jack	Miller	1798-04-06	1818-11-24	F	158	423	f	f
+424	Justin	Williams	Justin	Williams	1798-06-26	1818-04-26	M	468	424	f	f
+425	Marcia	Mcdonald	Marcia	Mcdonald	1798-09-02	1818-04-09	F	95	425	f	f
+426	Erin	Cox	Erin	Cox	1798-05-21	1818-11-27	M	1167	426	f	f
+427	Richard	Barker	Richard	Barker	1798-03-21	1818-02-28	F	19	427	f	f
+428	Meredith	Woodward	Meredith	Woodward	1798-05-25	1818-03-02	M	436	428	f	f
+429	Emma	Mendez	Emma	Mendez	1798-07-09	1818-07-24	F	622	429	f	f
+430	John	Guzman	John	Guzman	1798-03-22	1818-07-14	M	684	430	f	f
+431	Kelly	Medina	Kelly	Medina	1798-03-28	1818-05-14	F	465	431	f	f
+432	Erica	Middleton	Erica	Middleton	1798-09-04	1818-12-06	M	1092	432	f	f
+433	Natalie	Mata	Natalie	Mata	1798-11-03	1818-05-22	F	464	433	f	f
+434	Monique	Harris	Monique	Harris	1798-05-09	1818-12-01	M	347	434	f	f
+435	Amber	Williams	Amber	Williams	1798-10-27	1818-10-03	F	1023	435	f	f
+436	Jessica	Gibson	Jessica	Gibson	1798-12-24	1818-06-27	M	54	436	f	f
+437	Jennifer	Woods	Jennifer	Woods	1798-03-21	1818-01-27	F	1108	437	f	f
+438	Stacie	Burns	Stacie	Burns	1798-09-21	1818-08-15	M	1221	438	f	f
+439	Tyler	Martinez	Tyler	Martinez	1798-01-09	1818-11-02	F	354	439	f	f
+440	Ana	Douglas	Ana	Douglas	1798-09-02	1818-09-01	M	239	440	f	f
+441	Alan	Frazier	Alan	Frazier	1798-09-11	1818-08-08	F	787	441	f	f
+442	Stephen	Murphy	Stephen	Murphy	1798-02-17	1818-08-06	M	130	442	f	f
+443	Jeffrey	Miller	Jeffrey	Miller	1798-05-16	1818-02-08	F	599	443	f	f
+444	Emily	Mooney	Emily	Mooney	1798-01-07	1818-10-12	M	128	444	f	f
+445	Justin	Palmer	Justin	Palmer	1798-04-16	1818-08-03	F	519	445	f	f
+446	Christy	Robbins	Christy	Robbins	1798-03-26	1818-08-13	M	747	446	f	f
+447	Joseph	Kennedy	Joseph	Kennedy	1798-08-13	1818-08-05	F	590	447	f	f
+448	Veronica	Waters	Veronica	Waters	1798-10-25	1818-01-24	M	511	448	f	f
+449	Benjamin	Blair	Benjamin	Blair	1798-11-09	1818-11-10	F	100	449	f	f
+450	Amanda	Morgan	Amanda	Morgan	1798-06-06	1818-03-26	M	1089	450	f	f
+451	Nathaniel	Jackson	Nathaniel	Jackson	1798-01-10	1818-05-15	F	554	451	f	f
+452	John	Hensley	John	Hensley	1798-03-11	1818-02-15	M	223	452	f	f
+453	Veronica	Hart	Veronica	Hart	1798-05-23	1818-11-24	F	592	453	f	f
+454	Jeremy	Snyder	Jeremy	Snyder	1798-01-15	1818-02-22	M	484	454	f	f
+455	Amanda	Lambert	Amanda	Lambert	1798-12-05	1818-08-10	F	505	455	f	f
+456	Christopher	Stark	Christopher	Stark	1798-06-01	1818-08-19	M	1047	456	f	f
+457	Daniel	Duran	Daniel	Duran	1798-11-18	1818-12-18	F	1168	457	f	f
+458	Kevin	Mcconnell	Kevin	Mcconnell	1798-04-26	1818-04-06	M	248	458	f	f
+459	Troy	Montes	Troy	Montes	1798-03-05	1818-03-04	F	1085	459	f	f
+460	Jose	Smith	Jose	Smith	1798-02-08	1818-08-08	M	118	460	f	f
+461	Kevin	Kramer	Kevin	Kramer	1798-08-14	1818-01-22	F	299	461	f	f
+462	Elizabeth	Carter	Elizabeth	Carter	1798-09-26	1818-01-17	M	442	462	f	f
+463	Anthony	Woods	Anthony	Woods	1798-06-13	1818-08-17	F	892	463	f	f
+464	Jennifer	Shaffer	Jennifer	Shaffer	1798-11-17	1818-06-16	M	433	464	f	f
+465	Erika	Tran	Erika	Tran	1798-02-28	1818-03-27	F	539	465	f	f
+466	Colleen	Hampton	Colleen	Hampton	1798-09-11	1818-12-04	M	278	466	f	f
+467	Allison	Johnson	Allison	Johnson	1798-03-23	1818-06-23	F	1098	467	f	f
+468	Donald	Mcguire	Donald	Mcguire	1798-12-14	1818-07-10	M	1034	468	f	f
+469	Elizabeth	Snyder	Elizabeth	Snyder	1798-09-17	1818-02-12	F	1221	469	f	f
+470	Nathan	Elliott	Nathan	Elliott	1798-01-08	1818-08-19	M	151	470	f	f
+471	Ana	Ford	Ana	Ford	1798-02-14	1818-03-10	F	412	471	f	f
+472	Matthew	Juarez	Matthew	Juarez	1798-09-04	1818-07-28	M	183	472	f	f
+473	Monica	Stewart	Monica	Stewart	1798-05-14	1818-08-14	F	876	473	f	f
+474	Preston	Jensen	Preston	Jensen	1798-01-13	1818-10-23	M	844	474	f	f
+475	Valerie	Strickland	Valerie	Strickland	1798-04-10	1818-06-24	F	851	475	f	f
+476	Amy	Murphy	Amy	Murphy	1798-07-09	1818-09-23	M	752	476	f	f
+477	Krista	Morgan	Krista	Morgan	1798-03-04	1818-10-08	F	499	477	f	f
+478	Samuel	Le	Samuel	Le	1798-06-24	1818-12-14	M	518	478	f	f
+479	Sierra	Bentley	Sierra	Bentley	1798-08-27	1818-05-12	F	1035	479	f	f
+480	Wyatt	Nelson	Wyatt	Nelson	1798-04-15	1818-08-27	M	745	480	f	f
+481	Steven	Ramos	Steven	Ramos	1798-01-08	1818-01-10	F	697	481	f	f
+482	Jason	Peters	Jason	Peters	1798-03-08	1818-10-05	M	355	482	f	f
+483	Frank	Sanchez	Frank	Sanchez	1798-07-05	1818-07-17	F	975	483	f	f
+484	James	Sloan	James	Sloan	1798-05-10	1818-10-09	M	913	484	f	f
+485	Thomas	Anderson	Thomas	Anderson	1798-03-06	1818-04-22	F	577	485	f	f
+486	Samuel	Cuevas	Samuel	Cuevas	1798-05-23	1818-08-17	M	56	486	f	f
+487	Ian	Hoffman	Ian	Hoffman	1798-12-10	1818-07-20	F	852	487	f	f
+488	Derek	Blair	Derek	Blair	1798-08-11	1818-07-11	M	171	488	f	f
+489	Alexandria	Richard	Alexandria	Richard	1798-10-19	1818-03-17	F	536	489	f	f
+490	Craig	Blake	Craig	Blake	1798-10-27	1818-10-24	M	728	490	f	f
+491	Jonathan	Alvarado	Jonathan	Alvarado	1798-05-16	1818-08-06	F	573	491	f	f
+492	Steven	Miranda	Steven	Miranda	1798-09-03	1818-07-06	M	1120	492	f	f
+493	Dennis	Wiggins	Dennis	Wiggins	1798-10-28	1818-06-20	F	349	493	f	f
+494	Elizabeth	Bailey	Elizabeth	Bailey	1798-04-14	1818-03-09	M	296	494	f	f
+495	Cheryl	Henry	Cheryl	Henry	1798-01-28	1818-04-18	F	1072	495	f	f
+496	Jacqueline	Bailey	Jacqueline	Bailey	1798-04-16	1818-11-01	M	1108	496	f	f
+497	Ashley	Baker	Ashley	Baker	1798-11-13	1818-11-24	F	95	497	f	f
+498	Kenneth	Williams	Kenneth	Williams	1798-02-04	1818-02-01	M	639	498	f	f
+499	Donald	Mejia	Donald	Mejia	1798-11-12	1818-10-20	F	1192	499	f	f
+500					1798-02-03	1818-09-06	M	697	500	f	f
 \.
 
 
@@ -21763,506 +22654,506 @@ COPY public.passports (id, original_surname, original_name, en_name, en_surname,
 --
 
 COPY public.people (id, date_of_birth, date_of_death, name, surname) FROM stdin;
-1	2024-09-11	\N	Ralph	Mahoney
-2	1999-02-08	\N	Sandra	Frye
-3	1999-04-11	\N	Tyler	Brandt
-4	1974-08-01	\N	Amanda	Hayes
-5	1974-03-25	\N	Anthony	Knight
-6	1974-04-15	\N	Lawrence	Suarez
-7	1974-12-01	\N	Tamara	Snyder
-8	1949-01-18	\N	Timothy	Elliott
-9	1949-01-28	\N	Jamie	Smith
-10	1949-09-09	\N	Nicole	Martinez
-11	1949-05-09	\N	Kyle	Foster
-12	1949-12-25	\N	Logan	Adams
-13	1949-01-26	\N	Paul	Hanson
-14	1949-04-02	\N	Michael	Cole
-15	1949-09-04	\N	Robert	Foster
-16	1924-09-11	\N	Brandon	Rodriguez
-17	1924-07-08	\N	Melinda	Evans
-18	1924-03-02	\N	Emily	George
-19	1924-08-21	\N	John	Nelson
-20	1924-09-06	\N	Julie	Crane
-21	1924-05-26	\N	Sandra	Smith
-22	1924-10-13	\N	Tony	Harris
-23	1924-12-04	\N	Calvin	Garza
-24	1924-03-09	\N	Aaron	Calhoun
-25	1924-02-10	\N	Crystal	Scott
-26	1924-10-11	\N	Walter	Bowen
-27	1924-09-14	\N	Lucas	Austin
-28	1924-12-21	\N	Kristen	Long
-29	1924-09-06	\N	Christina	Taylor
-30	1924-04-16	\N	Melissa	Thomas
-31	1924-12-24	\N	Robert	Fuller
-32	1899-03-17	\N	Whitney	Harris
-33	1899-01-13	\N	Andrea	Shepard
-34	1899-09-03	\N	Luis	Barron
-35	1899-04-26	\N	David	Weaver
-36	1899-11-11	\N	Emma	Matthews
-37	1899-06-24	\N	Allen	Gallagher
-38	1899-02-03	\N	Ryan	Luna
-39	1899-09-19	\N	Alejandro	Brown
-40	1899-12-05	\N	Emily	Ayers
-41	1899-07-04	\N	Gina	Clay
-42	1899-11-08	\N	Amanda	Davenport
-43	1899-05-24	\N	Toni	Miller
-44	1899-07-19	\N	Jeffrey	Ryan
-45	1899-09-15	\N	John	Smith
-46	1899-08-06	\N	Kristin	Williams
-47	1899-07-01	\N	Tracy	Caldwell
-48	1899-07-25	\N	Alan	Nunez
-49	1899-10-07	\N	Amber	Green
-50	1899-11-20	\N	Darryl	Olson
-51	1899-07-25	\N	Brenda	Rollins
-52	1899-06-09	\N	Grant	Roberson
-53	1899-05-15	\N	Lauren	Wood
-54	1899-11-10	\N	Jon	Dickson
-55	1899-02-25	\N	Kyle	Gonzales
-56	1899-11-20	\N	Jessica	White
-57	1899-08-23	\N	Tyler	Salazar
-58	1899-08-26	\N	Paul	Wheeler
-59	1899-12-01	\N	Kyle	Blake
-60	1899-07-22	\N	Nicholas	Bowen
-61	1899-06-25	\N	Kristopher	Hancock
-62	1899-04-27	\N	Hector	Edwards
-63	1899-12-03	\N	Cindy	Marquez
-64	1874-05-09	\N	John	Simmons
-65	1874-07-01	\N	Edward	Grant
-66	1874-04-02	\N	Samuel	Nielsen
-67	1874-04-06	\N	Scott	Guerrero
-68	1874-12-12	\N	Jennifer	Jones
-69	1874-10-05	\N	Thomas	Neal
-70	1874-02-07	\N	Steven	Morgan
-71	1874-05-26	\N	Stephen	Bender
-72	1874-05-19	\N	Rebecca	Haynes
-73	1874-04-02	\N	Corey	Daniels
-74	1874-04-23	\N	Julie	Martinez
-75	1874-09-18	\N	Kyle	Tucker
-76	1874-05-10	\N	Nathan	Martin
-77	1874-01-06	\N	Levi	Long
-78	1874-01-27	\N	Zachary	Jackson
-79	1874-01-02	\N	Juan	Smith
-80	1874-04-06	\N	Michael	Young
-81	1874-06-12	\N	Carolyn	Rivera
-82	1874-02-21	\N	John	Robinson
-83	1874-04-26	\N	Justin	Hughes
-84	1874-11-09	\N	Michael	Murillo
-85	1874-03-27	\N	Wyatt	Brennan
-86	1874-06-07	\N	Christy	Obrien
-87	1874-02-27	\N	Martin	Greer
-88	1874-06-07	\N	Cynthia	Walker
-89	1874-09-21	\N	Adam	Hunt
-90	1874-09-02	\N	Joseph	Nelson
-91	1874-07-06	\N	Damon	Valenzuela
-92	1874-12-11	\N	Linda	Golden
-93	1874-12-23	\N	Richard	Flores
-94	1874-08-10	\N	Matthew	Tucker
-95	1874-03-26	\N	Rebecca	Hughes
-96	1874-08-07	\N	Jennifer	Nelson
-97	1874-06-25	\N	Megan	Davis
-98	1874-07-19	\N	Daniel	Wilson
-99	1874-02-04	\N	Henry	Carrillo
-100	1874-07-16	\N	Dalton	Henderson
-101	1874-02-19	\N	James	Hill
-102	1874-01-23	\N	Patricia	Garcia
-103	1874-02-02	\N	John	Hawkins
-104	1874-09-11	\N	Danielle	Phillips
-105	1874-10-11	\N	Michael	Davis
-106	1874-08-25	\N	Danielle	Anderson
-107	1874-07-18	\N	Lisa	Rodriguez
-108	1874-04-14	\N	Ryan	Jenkins
-109	1874-02-03	\N	Scott	Patterson
-110	1874-09-03	\N	John	Gonzalez
-111	1874-08-07	\N	Kathy	Fry
-112	1874-07-09	\N	Kelly	Mejia
-113	1874-07-09	\N	Lisa	Le
-114	1874-04-23	\N	John	Nelson
-115	1874-03-24	\N	Angela	Marsh
-116	1874-10-16	\N	Jonathan	Edwards
-117	1874-12-04	\N	David	Williams
-118	1874-06-08	\N	Kristin	Gonzalez
-119	1874-02-15	\N	Susan	Neal
-120	1874-09-11	\N	Lucas	Gilbert
-121	1874-09-22	\N	Cody	Meyer
-122	1874-02-22	\N	Michelle	Ross
-123	1874-05-15	\N	Donna	Daniels
-124	1874-04-22	\N	Joel	Miller
-125	1874-06-06	\N	Jennifer	Johnson
-126	1874-12-04	\N	Maurice	Smith
-127	1874-11-21	\N	Ryan	Matthews
-128	1849-11-08	\N	Sharon	Perry
-129	1849-05-09	\N	Ashley	Reed
-130	1849-09-07	\N	Teresa	Shaw
-131	1849-01-07	\N	Stacy	Jenkins
-132	1849-01-28	\N	David	Brooks
-133	1849-02-04	\N	Angelica	Reyes
-134	1849-11-02	\N	Natalie	Holmes
-135	1849-09-27	\N	Joshua	Flores
-136	1849-03-20	\N	Melissa	Young
-137	1849-09-06	\N	Tracey	Williams
-138	1849-09-22	\N	Jessica	Rubio
-139	1849-12-20	\N	Darlene	Kelley
-140	1849-08-23	\N	Sherry	Melton
-141	1849-02-12	\N	Emily	Garner
-142	1849-01-15	\N	Amber	Dickerson
-143	1849-03-11	\N	Kathryn	Leach
-144	1849-09-06	\N	Andrew	Scott
-145	1849-05-13	\N	Jerry	Grant
-146	1849-07-28	\N	Wesley	Cross
-147	1849-11-12	\N	Randy	Miller
-148	1849-04-25	\N	Jamie	Vaughn
-149	1849-11-12	\N	Melissa	Callahan
-150	1849-01-21	\N	Samantha	Williams
-151	1849-07-05	\N	Cathy	Michael
-152	1849-12-28	\N	Abigail	Patterson
-153	1849-04-25	\N	Allison	Dudley
-154	1849-11-26	\N	Kaitlyn	Peters
-155	1849-06-07	\N	Darlene	Byrd
-156	1849-09-07	\N	David	Huang
-157	1849-11-26	\N	Phillip	Sullivan
-158	1849-06-17	\N	Morgan	Duncan
-159	1849-08-20	\N	Danielle	Martinez
-160	1849-02-24	\N	Natasha	Grant
-161	1849-04-21	\N	Stephanie	Wheeler
-162	1849-01-24	\N	Raymond	Terrell
-163	1849-09-22	\N	Krista	Marquez
-164	1849-04-22	\N	Tamara	Tucker
-165	1849-03-20	\N	Connie	Garza
-166	1849-10-18	\N	David	King
-167	1849-01-03	\N	Tracey	Ponce
-168	1849-06-17	\N	Michael	Morrow
-169	1849-05-22	\N	Laura	Richardson
-170	1849-04-16	\N	Melinda	Atkins
-171	1849-02-15	\N	Pamela	Robinson
-172	1849-04-19	\N	Tara	Murray
-173	1849-12-23	\N	Elizabeth	Glover
-174	1849-01-21	\N	Dennis	Gomez
-175	1849-04-10	\N	Jenna	Schroeder
-176	1849-07-19	\N	Amber	Hill
-177	1849-10-22	\N	Brittany	Kim
-178	1849-07-09	\N	Diana	Hall
-179	1849-03-25	\N	Logan	Morris
-180	1849-02-20	\N	Ashley	Delgado
-181	1849-06-19	\N	Rachel	Frederick
-182	1849-01-01	\N	Rachel	Andrews
-183	1849-07-16	\N	Mario	Harris
-184	1849-12-06	\N	Scott	Martin
-185	1849-12-12	\N	Alyssa	Williams
-186	1849-02-01	\N	Steven	Silva
-187	1849-10-13	\N	John	Knox
-188	1849-02-07	\N	Donna	Green
-189	1849-02-26	\N	Natalie	Taylor
-190	1849-07-15	\N	Robert	Lam
-191	1849-01-12	\N	Nathan	Campbell
-192	1849-06-17	\N	Crystal	Meza
-193	1849-01-27	\N	Robert	Lane
-194	1849-05-17	\N	Valerie	Wade
-195	1849-06-13	\N	Tiffany	Patterson
-196	1849-02-18	\N	Stephanie	Garza
-197	1849-11-18	\N	Kimberly	Shields
-198	1849-09-14	\N	Austin	Martinez
-199	1849-07-28	\N	Timothy	Carter
-200	1849-09-17	\N	Timothy	Harris
-201	1849-09-02	\N	Martin	Riley
-202	1849-06-15	\N	Walter	Clarke
-203	1849-06-20	\N	Kayla	Herrera
-204	1849-10-21	\N	William	Adams
-205	1849-08-19	\N	Bryan	Blackwell
-206	1849-04-23	\N	Donald	Anderson
-207	1849-07-22	\N	Jonathan	Gutierrez
-208	1849-04-01	\N	Jennifer	Marquez
-209	1849-08-20	\N	Kelsey	Smith
-210	1849-12-24	\N	Mark	Ware
-211	1849-10-12	\N	Jonathan	Haynes
-212	1849-12-09	\N	Sandra	Kirk
-213	1849-09-02	\N	Elizabeth	Pope
-214	1849-10-21	\N	Misty	Hart
-215	1849-02-17	\N	Darrell	Moyer
-216	1849-10-01	\N	Bernard	Mann
-217	1849-12-18	\N	Jerry	Huffman
-218	1849-10-07	\N	Chad	Park
-219	1849-05-03	\N	Pamela	Wagner
-220	1849-08-05	\N	Lauren	Lamb
-221	1849-09-03	\N	Sandra	Wright
-222	1849-06-12	\N	Kathryn	Cain
-223	1849-11-12	\N	Molly	Newman
-224	1849-09-10	\N	Keith	Wallace
-225	1849-01-04	\N	Rebecca	Hogan
-226	1849-09-01	\N	Daniel	Chen
-227	1849-09-11	\N	Jason	Stewart
-228	1849-02-01	\N	Christopher	Bailey
-229	1849-05-21	\N	Phillip	Martin
-230	1849-07-11	\N	Kelsey	Mayo
-231	1849-10-17	\N	Karen	Thompson
-232	1849-10-04	\N	Jamie	Atkins
-233	1849-05-06	\N	Edward	Strong
-234	1849-04-16	\N	Stacy	Kim
-235	1849-01-11	\N	Bryan	Ross
-236	1849-12-26	\N	David	Kirby
-237	1849-02-04	\N	Andrew	Freeman
-238	1849-08-20	\N	Jennifer	Hudson
-239	1849-04-17	\N	Scott	Moreno
-240	1849-08-09	\N	Shannon	King
-241	1849-06-11	\N	Kristen	Thomas
-242	1849-10-06	\N	Brittany	Dickerson
-243	1849-08-06	\N	Laura	Robles
-244	1849-08-01	\N	Rick	Murphy
-245	1849-03-02	\N	Jennifer	Black
-246	1849-02-20	\N	Janet	Nelson
-247	1849-12-05	\N	Susan	Smith
-248	1849-03-14	\N	Chad	Nelson
-249	1849-08-12	\N	Cesar	Peterson
-250	1849-04-06	\N	Amanda	Green
-251	1849-12-07	\N	Jennifer	Brown
-252	1849-11-24	\N	Rebecca	Novak
-253	1849-10-07	\N	Michael	Smith
-254	1849-05-14	\N	Melissa	Barron
-255	1849-12-10	\N	Aaron	Richardson
-256	1824-12-17	\N	Patrick	Jacobs
-257	1824-08-03	\N	Crystal	Braun
-258	1824-11-28	\N	John	Mullen
-259	1824-08-08	\N	Rachel	Martinez
-260	1824-04-03	\N	Joseph	Lawson
-261	1824-05-10	\N	Dana	Hicks
-262	1824-07-10	\N	Jillian	Russell
-263	1824-07-14	\N	Scott	Williams
-264	1824-02-09	\N	Ronald	Sharp
-265	1824-08-12	\N	Ronald	Rodriguez
-266	1824-07-22	\N	Christopher	Davis
-267	1824-03-19	\N	Maria	Fletcher
-268	1824-06-15	\N	James	Chambers
-269	1824-04-11	\N	Michael	Morris
-270	1824-05-10	\N	Deborah	Williams
-271	1824-12-26	\N	Patrick	Jimenez
-272	1824-06-07	\N	Debra	Rojas
-273	1824-02-24	\N	Amy	Mitchell
-274	1824-02-06	\N	Angela	Macias
-275	1824-08-17	\N	Jessica	Young
-276	1824-10-23	\N	Lance	Evans
-277	1824-07-11	\N	Nicholas	Phillips
-278	1824-11-25	\N	Robert	Smith
-279	1824-12-19	\N	Lori	Kennedy
-280	1824-01-04	\N	Wesley	Williams
-281	1824-01-18	\N	Kevin	Bailey
-282	1824-08-22	\N	Kimberly	Finley
-283	1824-01-07	\N	Mitchell	Madden
-284	1824-04-24	\N	Sophia	Williams
-285	1824-06-10	\N	Craig	Luna
-286	1824-08-19	\N	Jeff	Ramirez
-287	1824-12-02	\N	Angelica	Owens
-288	1824-10-09	\N	Crystal	Mitchell
-289	1824-08-13	\N	Carrie	Holloway
-290	1824-06-25	\N	Alicia	Clark
-291	1824-11-07	\N	Michael	Gonzalez
-292	1824-09-15	\N	Carlos	Griffith
-293	1824-07-16	\N	Gary	Dean
-294	1824-05-19	\N	Kevin	Smith
-295	1824-07-20	\N	Travis	Jensen
-296	1824-02-12	\N	Elizabeth	Nichols
-297	1824-01-19	\N	Sean	Castillo
-298	1824-02-06	\N	David	Yu
-299	1824-06-05	\N	Edward	Davis
-300	1824-06-28	\N	Donna	David
-301	1824-03-10	\N	Lisa	Moss
-302	1824-04-02	\N	Frank	Robinson
-303	1824-12-12	\N	Courtney	Moore
-304	1824-04-26	\N	Samantha	Gill
-305	1824-09-28	\N	Betty	Bauer
-306	1824-01-25	\N	Matthew	Vang
-307	1824-12-20	\N	Jessica	Mata
-308	1824-02-03	\N	Karen	Jones
-309	1824-04-11	\N	Robert	Garza
-310	1824-06-28	\N	Charles	Norton
-311	1824-11-03	\N	Daniel	Garner
-312	1824-05-04	\N	David	Singleton
-313	1824-02-25	\N	Justin	Baker
-314	1824-02-14	\N	Heather	Taylor
-315	1824-01-24	\N	Brandon	Velasquez
-316	1824-06-06	\N	Adam	Black
-317	1824-05-02	\N	Albert	Smith
-318	1824-09-07	\N	David	Barnes
-319	1824-07-01	\N	Katherine	Benjamin
-320	1824-10-14	\N	Amber	Lopez
-321	1824-04-04	\N	Cynthia	Phelps
-322	1824-11-15	\N	Jonathon	Hurley
-323	1824-06-09	\N	Evan	Bowers
-324	1824-12-05	\N	Kristen	Wolfe
-325	1824-11-23	\N	Christopher	Lee
-326	1824-02-10	\N	Kristin	Sawyer
-327	1824-05-15	\N	Nicholas	Dickerson
-328	1824-05-20	\N	Katherine	Figueroa
-329	1824-05-17	\N	Lisa	Le
-330	1824-03-11	\N	Jon	Thornton
-331	1824-02-15	\N	David	Wilkins
-332	1824-10-02	\N	Michael	Nash
-333	1824-08-04	\N	Olivia	George
-334	1824-10-09	\N	Benjamin	Oneill
-335	1824-01-15	\N	Scott	Ashley
-336	1824-09-21	\N	Edward	Frank
-337	1824-10-28	\N	Tamara	Flores
-338	1824-08-14	\N	Jerry	Ramsey
-339	1824-01-24	\N	Anna	Merritt
-340	1824-04-19	\N	Laurie	Benson
-341	1824-05-19	\N	Matthew	Sandoval
-342	1824-08-05	\N	Jerry	Taylor
-343	1824-04-26	\N	Robert	Garcia
-344	1824-05-13	\N	Ashley	Keller
-345	1824-10-13	\N	Melissa	Thompson
-346	1824-10-07	\N	Kathleen	Gray
-347	1824-09-15	\N	Ryan	Cochran
-348	1824-04-22	\N	Ashley	Wilkinson
-349	1824-10-11	\N	Jacqueline	Yates
-350	1824-07-24	\N	Erin	Fisher
-351	1824-12-14	\N	Christine	Garcia
-352	1824-11-11	\N	David	Bowman
-353	1824-08-07	\N	Lance	Mosley
-354	1824-07-09	\N	Kim	Rodriguez
-355	1824-09-17	\N	Erin	Erickson
-356	1824-11-13	\N	Rachel	Robbins
-357	1824-04-27	\N	Jake	Reilly
-358	1824-05-14	\N	Christian	Thomas
-359	1824-09-15	\N	Leonard	Michael
-360	1824-12-01	\N	Alyssa	Ellison
-361	1824-09-10	\N	Amber	Lee
-362	1824-03-21	\N	Barbara	Jones
-363	1824-07-26	\N	Michael	Pierce
-364	1824-03-04	\N	David	Dean
-365	1824-04-16	\N	Samantha	Evans
-366	1824-12-19	\N	Carla	Lyons
-367	1824-12-04	\N	Taylor	Williams
-368	1824-10-16	\N	Charles	Madden
-369	1824-12-03	\N	Michael	Davis
-370	1824-04-28	\N	Donna	Nelson
-371	1824-11-16	\N	Shari	Jimenez
-372	1824-11-10	\N	Raymond	Lopez
-373	1824-03-07	\N	Amanda	Levy
-374	1824-08-03	\N	Keith	Rowland
-375	1824-07-19	\N	Robert	Shelton
-376	1824-11-28	\N	Robert	Hutchinson
-377	1824-03-15	\N	Tammy	Gomez
-378	1824-09-02	\N	Randy	Herrera
-379	1824-07-11	\N	Wendy	Oneal
-380	1824-12-17	\N	Caitlin	Wright
-381	1824-08-19	\N	Joshua	Jones
-382	1824-01-27	\N	Chris	Moore
-383	1824-08-18	\N	Daniel	Anderson
-384	1824-11-23	\N	Erin	Johnson
-385	1824-01-13	\N	Erika	Diaz
-386	1824-02-26	\N	Angela	Wood
-387	1824-03-19	\N	Shaun	Gates
-388	1824-02-22	\N	Jessica	Garza
-389	1824-09-02	\N	Margaret	Henderson
-390	1824-12-23	\N	Rebecca	Miller
-391	1824-09-08	\N	Lori	Wright
-392	1824-03-03	\N	Mark	Jenkins
-393	1824-05-05	\N	Elizabeth	Pierce
-394	1824-08-20	\N	Thomas	Davis
-395	1824-10-11	\N	Kenneth	Gaines
-396	1824-03-18	\N	Jennifer	Wall
-397	1824-12-02	\N	Elizabeth	Robertson
-398	1824-07-04	\N	Kristin	Todd
-399	1824-11-24	\N	Sarah	Haynes
-400	1824-04-07	\N	Margaret	Beard
-401	1824-11-06	\N	Jonathan	Garza
-402	1824-04-08	\N	Kristi	Stewart
-403	1824-11-23	\N	Dwayne	Mcgee
-404	1824-09-25	\N	Richard	Jones
-405	1824-12-09	\N	Alexandria	Alvarado
-406	1824-09-26	\N	Christina	Smith
-407	1824-11-17	\N	Michael	Trujillo
-408	1824-12-01	\N	Jennifer	Gutierrez
-409	1824-04-07	\N	Christian	Cooper
-410	1824-03-16	\N	Anthony	Jones
-411	1824-05-04	\N	Pedro	Skinner
-412	1824-03-18	\N	Dean	Griffin
-413	1824-05-21	\N	Sharon	Wells
-414	1824-05-08	\N	Kristy	Blake
-415	1824-09-19	\N	Stephen	Morales
-416	1824-10-05	\N	Meghan	Patton
-417	1824-04-22	\N	Debra	Rivera
-418	1824-01-08	\N	Chad	White
-419	1824-07-19	\N	Darrell	Pace
-420	1824-12-27	\N	Paul	Miller
-421	1824-12-16	\N	Martha	Ware
-422	1824-09-23	\N	Leslie	Roberts
-423	1824-09-23	\N	Phillip	Nelson
-424	1824-05-17	\N	Jack	Miller
-425	1824-06-14	\N	Justin	Williams
-426	1824-07-10	\N	Marcia	Mcdonald
-427	1824-08-12	\N	Erin	Cox
-428	1824-03-21	\N	Richard	Barker
-429	1824-08-17	\N	Meredith	Woodward
-430	1824-08-18	\N	Emma	Mendez
-431	1824-04-28	\N	John	Guzman
-432	1824-01-01	\N	Kelly	Medina
-433	1824-01-01	\N	Erica	Middleton
-434	1824-07-11	\N	Natalie	Mata
-435	1824-06-06	\N	Monique	Harris
-436	1824-09-24	\N	Amber	Williams
-437	1824-02-01	\N	Jessica	Gibson
-438	1824-05-17	\N	Jennifer	Woods
-439	1824-01-13	\N	Stacie	Burns
-440	1824-07-13	\N	Tyler	Martinez
-441	1824-07-26	\N	Ana	Douglas
-442	1824-03-24	\N	Alan	Frazier
-443	1824-05-17	\N	Stephen	Murphy
-444	1824-10-24	\N	Jeffrey	Miller
-445	1824-01-15	\N	Emily	Mooney
-446	1824-11-21	\N	Justin	Palmer
-447	1824-11-08	\N	Christy	Robbins
-448	1824-06-11	\N	Joseph	Kennedy
-449	1824-09-02	\N	Veronica	Waters
-450	1824-03-19	\N	Benjamin	Blair
-451	1824-10-12	\N	Amanda	Morgan
-452	1824-06-09	\N	Nathaniel	Jackson
-453	1824-10-04	\N	John	Hensley
-454	1824-03-10	\N	Veronica	Hart
-455	1824-11-10	\N	Jeremy	Snyder
-456	1824-01-18	\N	Amanda	Lambert
-457	1824-07-03	\N	Christopher	Stark
-458	1824-05-27	\N	Daniel	Duran
-459	1824-09-03	\N	Kevin	Mcconnell
-460	1824-11-01	\N	Troy	Montes
-461	1824-01-11	\N	Jose	Smith
-462	1824-09-08	\N	Kevin	Kramer
-463	1824-01-28	\N	Elizabeth	Carter
-464	1824-08-14	\N	Anthony	Woods
-465	1824-05-01	\N	Jennifer	Shaffer
-466	1824-01-21	\N	Erika	Tran
-467	1824-07-03	\N	Colleen	Hampton
-468	1824-11-28	\N	Allison	Johnson
-469	1824-04-22	\N	Donald	Mcguire
-470	1824-06-24	\N	Elizabeth	Snyder
-471	1824-12-01	\N	Nathan	Elliott
-472	1824-06-11	\N	Ana	Ford
-473	1824-09-09	\N	Matthew	Juarez
-474	1824-01-16	\N	Monica	Stewart
-475	1824-05-06	\N	Preston	Jensen
-476	1824-09-26	\N	Valerie	Strickland
-477	1824-12-25	\N	Amy	Murphy
-478	1824-06-26	\N	Krista	Morgan
-479	1824-01-06	\N	Samuel	Le
-480	1824-10-21	\N	Sierra	Bentley
-481	1824-02-19	\N	Wyatt	Nelson
-482	1824-06-09	\N	Steven	Ramos
-483	1824-04-01	\N	Jason	Peters
-484	1824-01-10	\N	Frank	Sanchez
-485	1824-01-05	\N	James	Sloan
-486	1824-02-11	\N	Thomas	Anderson
-487	1824-09-19	\N	Samuel	Cuevas
-488	1824-12-21	\N	Ian	Hoffman
-489	1824-11-28	\N	Derek	Blair
-490	1824-06-27	\N	Alexandria	Richard
-491	1824-09-21	\N	Craig	Blake
-492	1824-09-03	\N	Jonathan	Alvarado
-493	1824-06-24	\N	Steven	Miranda
-494	1824-04-09	\N	Dennis	Wiggins
-495	1824-06-12	\N	Elizabeth	Bailey
-496	1824-09-08	\N	Cheryl	Henry
-497	1824-10-18	\N	Jacqueline	Bailey
-498	1824-06-06	\N	Ashley	Baker
-499	1824-05-28	\N	Kenneth	Williams
-500	1824-01-21	\N	Donald	Mejia
+1	1990-05-02	\N	Ralph	Mahoney
+2	1965-08-26	\N	Sandra	Frye
+3	1965-09-16	\N	Tyler	Brandt
+4	1940-12-25	\N	Amanda	Hayes
+5	1940-12-11	\N	Anthony	Knight
+6	1940-06-21	\N	Lawrence	Suarez
+7	1940-08-27	\N	Tamara	Snyder
+8	1915-05-27	\N	Timothy	Elliott
+9	1915-02-27	\N	Jamie	Smith
+10	1915-09-03	\N	Nicole	Martinez
+11	1915-06-15	\N	Kyle	Foster
+12	1915-06-10	\N	Logan	Adams
+13	1915-06-01	\N	Paul	Hanson
+14	1915-01-12	\N	Michael	Cole
+15	1915-01-07	\N	Robert	Foster
+16	1890-07-08	\N	Brandon	Rodriguez
+17	1890-12-20	\N	Melinda	Evans
+18	1890-11-11	\N	Emily	George
+19	1890-05-08	\N	John	Nelson
+20	1890-10-26	\N	Julie	Crane
+21	1890-11-12	\N	Sandra	Smith
+22	1890-08-01	\N	Tony	Harris
+23	1890-03-05	\N	Calvin	Garza
+24	1890-03-02	\N	Aaron	Calhoun
+25	1890-08-19	\N	Crystal	Scott
+26	1890-11-06	\N	Walter	Bowen
+27	1890-03-15	\N	Lucas	Austin
+28	1890-07-02	\N	Kristen	Long
+29	1890-08-02	\N	Christina	Taylor
+30	1890-12-13	\N	Melissa	Thomas
+31	1890-05-02	\N	Robert	Fuller
+32	1865-03-06	\N	Whitney	Harris
+33	1865-09-11	\N	Andrea	Shepard
+34	1865-12-01	\N	Luis	Barron
+35	1865-02-03	\N	David	Weaver
+36	1865-07-28	\N	Emma	Matthews
+37	1865-07-01	\N	Allen	Gallagher
+38	1865-06-09	\N	Ryan	Luna
+39	1865-03-17	\N	Alejandro	Brown
+40	1865-04-02	\N	Emily	Ayers
+41	1865-03-09	\N	Gina	Clay
+42	1865-05-18	\N	Amanda	Davenport
+43	1865-09-21	\N	Toni	Miller
+44	1865-07-05	\N	Jeffrey	Ryan
+45	1865-03-12	\N	John	Smith
+46	1865-05-01	\N	Kristin	Williams
+47	1865-06-01	\N	Tracy	Caldwell
+48	1865-04-20	\N	Alan	Nunez
+49	1865-11-10	\N	Amber	Green
+50	1865-05-18	\N	Darryl	Olson
+51	1865-11-14	\N	Brenda	Rollins
+52	1865-08-15	\N	Grant	Roberson
+53	1865-11-19	\N	Lauren	Wood
+54	1865-07-05	\N	Jon	Dickson
+55	1865-05-07	\N	Kyle	Gonzales
+56	1865-01-22	\N	Jessica	White
+57	1865-04-28	\N	Tyler	Salazar
+58	1865-07-19	\N	Paul	Wheeler
+59	1865-01-17	\N	Kyle	Blake
+60	1865-02-10	\N	Nicholas	Bowen
+61	1865-12-06	\N	Kristopher	Hancock
+62	1865-06-19	\N	Hector	Edwards
+63	1865-02-05	\N	Cindy	Marquez
+64	1840-05-23	\N	John	Simmons
+65	1840-08-07	\N	Edward	Grant
+66	1840-11-20	\N	Samuel	Nielsen
+67	1840-02-27	\N	Scott	Guerrero
+68	1840-03-22	\N	Jennifer	Jones
+69	1840-07-24	\N	Thomas	Neal
+70	1840-07-02	\N	Steven	Morgan
+71	1840-12-13	\N	Stephen	Bender
+72	1840-11-22	\N	Rebecca	Haynes
+73	1840-08-15	\N	Corey	Daniels
+74	1840-12-08	\N	Julie	Martinez
+75	1840-06-16	\N	Kyle	Tucker
+76	1840-04-28	\N	Nathan	Martin
+77	1840-01-06	\N	Levi	Long
+78	1840-12-04	\N	Zachary	Jackson
+79	1840-03-19	\N	Juan	Smith
+80	1840-03-03	\N	Michael	Young
+81	1840-11-02	\N	Carolyn	Rivera
+82	1840-01-21	\N	John	Robinson
+83	1840-01-02	\N	Justin	Hughes
+84	1840-12-24	\N	Michael	Murillo
+85	1840-05-16	\N	Wyatt	Brennan
+86	1840-04-09	\N	Christy	Obrien
+87	1840-02-06	\N	Martin	Greer
+88	1840-09-11	\N	Cynthia	Walker
+89	1840-09-07	\N	Adam	Hunt
+90	1840-07-20	\N	Joseph	Nelson
+91	1840-06-11	\N	Damon	Valenzuela
+92	1840-08-07	\N	Linda	Golden
+93	1840-08-05	\N	Richard	Flores
+94	1840-11-07	\N	Matthew	Tucker
+95	1840-04-20	\N	Rebecca	Hughes
+96	1840-05-24	\N	Jennifer	Nelson
+97	1840-01-24	\N	Megan	Davis
+98	1840-09-12	\N	Daniel	Wilson
+99	1840-02-09	\N	Henry	Carrillo
+100	1840-04-19	\N	Dalton	Henderson
+101	1840-09-09	\N	James	Hill
+102	1840-06-19	\N	Patricia	Garcia
+103	1840-01-17	\N	John	Hawkins
+104	1840-09-06	\N	Danielle	Phillips
+105	1840-06-15	\N	Michael	Davis
+106	1840-04-08	\N	Danielle	Anderson
+107	1840-03-23	\N	Lisa	Rodriguez
+108	1840-02-12	\N	Ryan	Jenkins
+109	1840-05-04	\N	Scott	Patterson
+110	1840-04-26	\N	John	Gonzalez
+111	1840-05-17	\N	Kathy	Fry
+112	1840-12-19	\N	Kelly	Mejia
+113	1840-02-25	\N	Lisa	Le
+114	1840-04-23	\N	John	Nelson
+115	1840-03-25	\N	Angela	Marsh
+116	1840-02-03	\N	Jonathan	Edwards
+117	1840-03-24	\N	David	Williams
+118	1840-05-04	\N	Kristin	Gonzalez
+119	1840-12-03	\N	Susan	Neal
+120	1840-05-09	\N	Lucas	Gilbert
+121	1840-04-10	\N	Cody	Meyer
+122	1840-04-04	\N	Michelle	Ross
+123	1840-03-04	\N	Donna	Daniels
+124	1840-09-15	\N	Joel	Miller
+125	1840-06-12	\N	Jennifer	Johnson
+126	1840-07-01	\N	Maurice	Smith
+127	1840-11-11	\N	Ryan	Matthews
+128	1815-10-15	\N	Sharon	Perry
+129	1815-10-20	\N	Ashley	Reed
+130	1815-12-10	\N	Teresa	Shaw
+131	1815-02-26	\N	Stacy	Jenkins
+132	1815-05-11	\N	David	Brooks
+133	1815-11-12	\N	Angelica	Reyes
+134	1815-01-28	\N	Natalie	Holmes
+135	1815-05-09	\N	Joshua	Flores
+136	1815-09-27	\N	Melissa	Young
+137	1815-11-01	\N	Tracey	Williams
+138	1815-12-28	\N	Jessica	Rubio
+139	1815-06-01	\N	Darlene	Kelley
+140	1815-10-06	\N	Sherry	Melton
+141	1815-10-05	\N	Emily	Garner
+142	1815-06-13	\N	Amber	Dickerson
+143	1815-01-19	\N	Kathryn	Leach
+144	1815-10-01	\N	Andrew	Scott
+145	1815-06-14	\N	Jerry	Grant
+146	1815-01-14	\N	Wesley	Cross
+147	1815-03-04	\N	Randy	Miller
+148	1815-12-11	\N	Jamie	Vaughn
+149	1815-10-05	\N	Melissa	Callahan
+150	1815-03-20	\N	Samantha	Williams
+151	1815-11-15	\N	Cathy	Michael
+152	1815-10-23	\N	Abigail	Patterson
+153	1815-10-04	\N	Allison	Dudley
+154	1815-10-25	\N	Kaitlyn	Peters
+155	1815-09-13	\N	Darlene	Byrd
+156	1815-02-07	\N	David	Huang
+157	1815-07-11	\N	Phillip	Sullivan
+158	1815-03-27	\N	Morgan	Duncan
+159	1815-12-10	\N	Danielle	Martinez
+160	1815-10-04	\N	Natasha	Grant
+161	1815-09-17	\N	Stephanie	Wheeler
+162	1815-12-26	\N	Raymond	Terrell
+163	1815-05-20	\N	Krista	Marquez
+164	1815-06-08	\N	Tamara	Tucker
+165	1815-05-21	\N	Connie	Garza
+166	1815-08-07	\N	David	King
+167	1815-06-01	\N	Tracey	Ponce
+168	1815-11-08	\N	Michael	Morrow
+169	1815-06-15	\N	Laura	Richardson
+170	1815-04-19	\N	Melinda	Atkins
+171	1815-05-03	\N	Pamela	Robinson
+172	1815-10-27	\N	Tara	Murray
+173	1815-08-22	\N	Elizabeth	Glover
+174	1815-09-15	\N	Dennis	Gomez
+175	1815-01-10	\N	Jenna	Schroeder
+176	1815-06-01	\N	Amber	Hill
+177	1815-10-27	\N	Brittany	Kim
+178	1815-07-25	\N	Diana	Hall
+179	1815-09-12	\N	Logan	Morris
+180	1815-03-02	\N	Ashley	Delgado
+181	1815-07-18	\N	Rachel	Frederick
+182	1815-04-04	\N	Rachel	Andrews
+183	1815-06-02	\N	Mario	Harris
+184	1815-05-09	\N	Scott	Martin
+185	1815-09-13	\N	Alyssa	Williams
+186	1815-07-08	\N	Steven	Silva
+187	1815-11-24	\N	John	Knox
+188	1815-06-09	\N	Donna	Green
+189	1815-03-05	\N	Natalie	Taylor
+190	1815-12-26	\N	Robert	Lam
+191	1815-04-26	\N	Nathan	Campbell
+192	1815-02-28	\N	Crystal	Meza
+193	1815-08-14	\N	Robert	Lane
+194	1815-06-12	\N	Valerie	Wade
+195	1815-11-02	\N	Tiffany	Patterson
+196	1815-12-20	\N	Stephanie	Garza
+197	1815-02-22	\N	Kimberly	Shields
+198	1815-02-19	\N	Austin	Martinez
+199	1815-01-11	\N	Timothy	Carter
+200	1815-05-02	\N	Timothy	Harris
+201	1815-06-07	\N	Martin	Riley
+202	1815-11-02	\N	Walter	Clarke
+203	1815-11-19	\N	Kayla	Herrera
+204	1815-04-06	\N	William	Adams
+205	1815-11-20	\N	Bryan	Blackwell
+206	1815-05-06	\N	Donald	Anderson
+207	1815-03-27	\N	Jonathan	Gutierrez
+208	1815-04-22	\N	Jennifer	Marquez
+209	1815-02-08	\N	Kelsey	Smith
+210	1815-06-06	\N	Mark	Ware
+211	1815-05-14	\N	Jonathan	Haynes
+212	1815-06-09	\N	Sandra	Kirk
+213	1815-03-25	\N	Elizabeth	Pope
+214	1815-07-20	\N	Misty	Hart
+215	1815-10-26	\N	Darrell	Moyer
+216	1815-12-09	\N	Bernard	Mann
+217	1815-12-24	\N	Jerry	Huffman
+218	1815-01-26	\N	Chad	Park
+219	1815-01-24	\N	Pamela	Wagner
+220	1815-12-08	\N	Lauren	Lamb
+221	1815-02-16	\N	Sandra	Wright
+222	1815-09-26	\N	Kathryn	Cain
+223	1815-12-03	\N	Molly	Newman
+224	1815-02-20	\N	Keith	Wallace
+225	1815-01-03	\N	Rebecca	Hogan
+226	1815-03-19	\N	Daniel	Chen
+227	1815-03-28	\N	Jason	Stewart
+228	1815-06-08	\N	Christopher	Bailey
+229	1815-09-17	\N	Phillip	Martin
+230	1815-02-09	\N	Kelsey	Mayo
+231	1815-11-27	\N	Karen	Thompson
+232	1815-03-28	\N	Jamie	Atkins
+233	1815-07-26	\N	Edward	Strong
+234	1815-11-05	\N	Stacy	Kim
+235	1815-01-25	\N	Bryan	Ross
+236	1815-12-08	\N	David	Kirby
+237	1815-06-02	\N	Andrew	Freeman
+238	1815-04-12	\N	Jennifer	Hudson
+239	1815-03-22	\N	Scott	Moreno
+240	1815-11-20	\N	Shannon	King
+241	1815-12-08	\N	Kristen	Thomas
+242	1815-02-28	\N	Brittany	Dickerson
+243	1815-08-05	\N	Laura	Robles
+244	1815-02-18	\N	Rick	Murphy
+245	1815-06-03	\N	Jennifer	Black
+246	1815-05-28	\N	Janet	Nelson
+247	1815-03-10	\N	Susan	Smith
+248	1815-03-23	\N	Chad	Nelson
+249	1815-12-10	\N	Cesar	Peterson
+250	1815-08-01	\N	Amanda	Green
+251	1815-01-01	\N	Jennifer	Brown
+252	1815-03-03	\N	Rebecca	Novak
+253	1815-02-04	\N	Michael	Smith
+254	1815-06-23	\N	Melissa	Barron
+255	1815-07-25	\N	Aaron	Richardson
+256	1790-06-25	\N	Patrick	Jacobs
+257	1790-01-12	\N	Crystal	Braun
+258	1790-11-08	\N	John	Mullen
+259	1790-11-11	\N	Rachel	Martinez
+260	1790-05-28	\N	Joseph	Lawson
+261	1790-06-06	\N	Dana	Hicks
+262	1790-10-27	\N	Jillian	Russell
+263	1790-01-21	\N	Scott	Williams
+264	1790-10-21	\N	Ronald	Sharp
+265	1790-10-02	\N	Ronald	Rodriguez
+266	1790-03-19	\N	Christopher	Davis
+267	1790-06-05	\N	Maria	Fletcher
+268	1790-08-08	\N	James	Chambers
+269	1790-12-15	\N	Michael	Morris
+270	1790-11-06	\N	Deborah	Williams
+271	1790-03-23	\N	Patrick	Jimenez
+272	1790-12-08	\N	Debra	Rojas
+273	1790-08-24	\N	Amy	Mitchell
+274	1790-07-18	\N	Angela	Macias
+275	1790-09-17	\N	Jessica	Young
+276	1790-05-01	\N	Lance	Evans
+277	1790-03-24	\N	Nicholas	Phillips
+278	1790-12-12	\N	Robert	Smith
+279	1790-08-28	\N	Lori	Kennedy
+280	1790-01-26	\N	Wesley	Williams
+281	1790-02-25	\N	Kevin	Bailey
+282	1790-05-19	\N	Kimberly	Finley
+283	1790-01-23	\N	Mitchell	Madden
+284	1790-07-16	\N	Sophia	Williams
+285	1790-03-03	\N	Craig	Luna
+286	1790-03-26	\N	Jeff	Ramirez
+287	1790-01-10	\N	Angelica	Owens
+288	1790-06-10	\N	Crystal	Mitchell
+289	1790-01-18	\N	Carrie	Holloway
+290	1790-02-07	\N	Alicia	Clark
+291	1790-02-14	\N	Michael	Gonzalez
+292	1790-03-28	\N	Carlos	Griffith
+293	1790-12-10	\N	Gary	Dean
+294	1790-12-06	\N	Kevin	Smith
+295	1790-08-08	\N	Travis	Jensen
+296	1790-05-06	\N	Elizabeth	Nichols
+297	1790-06-01	\N	Sean	Castillo
+298	1790-09-26	\N	David	Yu
+299	1790-02-11	\N	Edward	Davis
+300	1790-12-26	\N	Donna	David
+301	1790-11-08	\N	Lisa	Moss
+302	1790-05-21	\N	Frank	Robinson
+303	1790-02-09	\N	Courtney	Moore
+304	1790-08-08	\N	Samantha	Gill
+305	1790-05-20	\N	Betty	Bauer
+306	1790-09-09	\N	Matthew	Vang
+307	1790-07-19	\N	Jessica	Mata
+308	1790-11-04	\N	Karen	Jones
+309	1790-10-16	\N	Robert	Garza
+310	1790-08-19	\N	Charles	Norton
+311	1790-09-09	\N	Daniel	Garner
+312	1790-08-15	\N	David	Singleton
+313	1790-09-20	\N	Justin	Baker
+314	1790-08-17	\N	Heather	Taylor
+315	1790-09-23	\N	Brandon	Velasquez
+316	1790-04-07	\N	Adam	Black
+317	1790-06-12	\N	Albert	Smith
+318	1790-04-05	\N	David	Barnes
+319	1790-01-08	\N	Katherine	Benjamin
+320	1790-02-25	\N	Amber	Lopez
+321	1790-02-08	\N	Cynthia	Phelps
+322	1790-01-16	\N	Jonathon	Hurley
+323	1790-05-25	\N	Evan	Bowers
+324	1790-02-21	\N	Kristen	Wolfe
+325	1790-02-08	\N	Christopher	Lee
+326	1790-08-26	\N	Kristin	Sawyer
+327	1790-11-11	\N	Nicholas	Dickerson
+328	1790-02-25	\N	Katherine	Figueroa
+329	1790-10-11	\N	Lisa	Le
+330	1790-10-01	\N	Jon	Thornton
+331	1790-04-03	\N	David	Wilkins
+332	1790-06-12	\N	Michael	Nash
+333	1790-10-27	\N	Olivia	George
+334	1790-02-26	\N	Benjamin	Oneill
+335	1790-03-28	\N	Scott	Ashley
+336	1790-02-18	\N	Edward	Frank
+337	1790-05-13	\N	Tamara	Flores
+338	1790-04-02	\N	Jerry	Ramsey
+339	1790-11-27	\N	Anna	Merritt
+340	1790-01-16	\N	Laurie	Benson
+341	1790-02-21	\N	Matthew	Sandoval
+342	1790-12-01	\N	Jerry	Taylor
+343	1790-11-20	\N	Robert	Garcia
+344	1790-11-09	\N	Ashley	Keller
+345	1790-09-10	\N	Melissa	Thompson
+346	1790-05-16	\N	Kathleen	Gray
+347	1790-06-18	\N	Ryan	Cochran
+348	1790-01-14	\N	Ashley	Wilkinson
+349	1790-04-21	\N	Jacqueline	Yates
+350	1790-10-16	\N	Erin	Fisher
+351	1790-02-26	\N	Christine	Garcia
+352	1790-11-28	\N	David	Bowman
+353	1790-05-10	\N	Lance	Mosley
+354	1790-08-28	\N	Kim	Rodriguez
+355	1790-04-21	\N	Erin	Erickson
+356	1790-04-19	\N	Rachel	Robbins
+357	1790-11-28	\N	Jake	Reilly
+358	1790-08-02	\N	Christian	Thomas
+359	1790-02-19	\N	Leonard	Michael
+360	1790-09-01	\N	Alyssa	Ellison
+361	1790-07-15	\N	Amber	Lee
+362	1790-11-24	\N	Barbara	Jones
+363	1790-09-28	\N	Michael	Pierce
+364	1790-12-03	\N	David	Dean
+365	1790-12-05	\N	Samantha	Evans
+366	1790-06-20	\N	Carla	Lyons
+367	1790-09-01	\N	Taylor	Williams
+368	1790-06-15	\N	Charles	Madden
+369	1790-10-27	\N	Michael	Davis
+370	1790-07-04	\N	Donna	Nelson
+371	1790-04-03	\N	Shari	Jimenez
+372	1790-11-03	\N	Raymond	Lopez
+373	1790-12-26	\N	Amanda	Levy
+374	1790-07-21	\N	Keith	Rowland
+375	1790-03-01	\N	Robert	Shelton
+376	1790-02-14	\N	Robert	Hutchinson
+377	1790-05-13	\N	Tammy	Gomez
+378	1790-12-01	\N	Randy	Herrera
+379	1790-08-26	\N	Wendy	Oneal
+380	1790-11-02	\N	Caitlin	Wright
+381	1790-01-04	\N	Joshua	Jones
+382	1790-09-26	\N	Chris	Moore
+383	1790-09-06	\N	Daniel	Anderson
+384	1790-12-15	\N	Erin	Johnson
+385	1790-03-24	\N	Erika	Diaz
+386	1790-06-27	\N	Angela	Wood
+387	1790-05-13	\N	Shaun	Gates
+388	1790-10-11	\N	Jessica	Garza
+389	1790-12-05	\N	Margaret	Henderson
+390	1790-10-12	\N	Rebecca	Miller
+391	1790-04-03	\N	Lori	Wright
+392	1790-02-01	\N	Mark	Jenkins
+393	1790-07-26	\N	Elizabeth	Pierce
+394	1790-02-08	\N	Thomas	Davis
+395	1790-12-10	\N	Kenneth	Gaines
+396	1790-03-22	\N	Jennifer	Wall
+397	1790-08-17	\N	Elizabeth	Robertson
+398	1790-02-27	\N	Kristin	Todd
+399	1790-02-09	\N	Sarah	Haynes
+400	1790-02-23	\N	Margaret	Beard
+401	1790-07-01	\N	Jonathan	Garza
+402	1790-07-27	\N	Kristi	Stewart
+403	1790-02-22	\N	Dwayne	Mcgee
+404	1790-10-01	\N	Richard	Jones
+405	1790-10-03	\N	Alexandria	Alvarado
+406	1790-07-02	\N	Christina	Smith
+407	1790-04-10	\N	Michael	Trujillo
+408	1790-11-15	\N	Jennifer	Gutierrez
+409	1790-12-06	\N	Christian	Cooper
+410	1790-07-25	\N	Anthony	Jones
+411	1790-06-18	\N	Pedro	Skinner
+412	1790-01-20	\N	Dean	Griffin
+413	1790-07-09	\N	Sharon	Wells
+414	1790-05-28	\N	Kristy	Blake
+415	1790-09-01	\N	Stephen	Morales
+416	1790-06-21	\N	Meghan	Patton
+417	1790-10-23	\N	Debra	Rivera
+418	1790-08-09	\N	Chad	White
+419	1790-06-24	\N	Darrell	Pace
+420	1790-12-26	\N	Paul	Miller
+421	1790-11-20	\N	Martha	Ware
+422	1790-08-05	\N	Leslie	Roberts
+423	1790-07-23	\N	Phillip	Nelson
+424	1790-05-21	\N	Jack	Miller
+425	1790-08-11	\N	Justin	Williams
+426	1790-01-10	\N	Marcia	Mcdonald
+427	1790-08-05	\N	Erin	Cox
+428	1790-06-22	\N	Richard	Barker
+429	1790-07-09	\N	Meredith	Woodward
+430	1790-05-09	\N	Emma	Mendez
+431	1790-10-07	\N	John	Guzman
+432	1790-05-24	\N	Kelly	Medina
+433	1790-08-24	\N	Erica	Middleton
+434	1790-12-04	\N	Natalie	Mata
+435	1790-08-14	\N	Monique	Harris
+436	1790-09-27	\N	Amber	Williams
+437	1790-10-23	\N	Jessica	Gibson
+438	1790-07-03	\N	Jennifer	Woods
+439	1790-12-24	\N	Stacie	Burns
+440	1790-06-06	\N	Tyler	Martinez
+441	1790-05-09	\N	Ana	Douglas
+442	1790-08-06	\N	Alan	Frazier
+443	1790-03-17	\N	Stephen	Murphy
+444	1790-05-23	\N	Jeffrey	Miller
+445	1790-03-06	\N	Emily	Mooney
+446	1790-12-28	\N	Justin	Palmer
+447	1790-03-06	\N	Christy	Robbins
+448	1790-06-13	\N	Joseph	Kennedy
+449	1790-02-22	\N	Veronica	Waters
+450	1790-01-03	\N	Benjamin	Blair
+451	1790-07-08	\N	Amanda	Morgan
+452	1790-08-23	\N	Nathaniel	Jackson
+453	1790-03-15	\N	John	Hensley
+454	1790-03-01	\N	Veronica	Hart
+455	1790-06-09	\N	Jeremy	Snyder
+456	1790-02-15	\N	Amanda	Lambert
+457	1790-09-07	\N	Christopher	Stark
+458	1790-11-28	\N	Daniel	Duran
+459	1790-02-18	\N	Kevin	Mcconnell
+460	1790-06-23	\N	Troy	Montes
+461	1790-10-23	\N	Jose	Smith
+462	1790-12-24	\N	Kevin	Kramer
+463	1790-07-20	\N	Elizabeth	Carter
+464	1790-08-01	\N	Anthony	Woods
+465	1790-10-20	\N	Jennifer	Shaffer
+466	1790-02-07	\N	Erika	Tran
+467	1790-02-18	\N	Colleen	Hampton
+468	1790-12-11	\N	Allison	Johnson
+469	1790-03-27	\N	Donald	Mcguire
+470	1790-05-01	\N	Elizabeth	Snyder
+471	1790-08-07	\N	Nathan	Elliott
+472	1790-04-11	\N	Ana	Ford
+473	1790-08-10	\N	Matthew	Juarez
+474	1790-11-18	\N	Monica	Stewart
+475	1790-02-20	\N	Preston	Jensen
+476	1790-09-24	\N	Valerie	Strickland
+477	1790-12-17	\N	Amy	Murphy
+478	1790-08-04	\N	Krista	Morgan
+479	1790-11-01	\N	Samuel	Le
+480	1790-02-24	\N	Sierra	Bentley
+481	1790-10-23	\N	Wyatt	Nelson
+482	1790-05-22	\N	Steven	Ramos
+483	1790-09-04	\N	Jason	Peters
+484	1790-08-08	\N	Frank	Sanchez
+485	1790-10-04	\N	James	Sloan
+486	1790-10-12	\N	Thomas	Anderson
+487	1790-03-25	\N	Samuel	Cuevas
+488	1790-09-22	\N	Ian	Hoffman
+489	1790-09-19	\N	Derek	Blair
+490	1790-08-02	\N	Alexandria	Richard
+491	1790-05-28	\N	Craig	Blake
+492	1790-11-18	\N	Jonathan	Alvarado
+493	1790-02-20	\N	Steven	Miranda
+494	1790-03-12	\N	Dennis	Wiggins
+495	1790-08-07	\N	Elizabeth	Bailey
+496	1790-02-01	\N	Cheryl	Henry
+497	1790-02-12	\N	Jacqueline	Bailey
+498	1790-06-24	\N	Ashley	Baker
+499	1790-08-02	\N	Kenneth	Williams
+500	1790-01-09	\N	Donald	Mejia
 \.
 
 
@@ -22271,6 +23162,185 @@ COPY public.people (id, date_of_birth, date_of_death, name, surname) FROM stdin;
 --
 
 COPY public.pet_passports (id, name, pet_owner, issuer, date_of_birth, species) FROM stdin;
+0	Charlie	1	977	2006-12-26	Pogona vitticeps
+1	Luna	2	1008	1982-09-25	Betta splendens
+2	Charlie	5	67	1954-11-16	Eublepharis macularius
+3	Bailey	6	39	1959-09-07	Mesocricetus auratus
+4	Zoey	10	247	1932-10-28	Mesocricetus auratus
+5	Chloe	11	839	1928-08-26	Psittacus erithacus
+6	Charlie	14	426	1928-05-19	Chinchilla lanigera
+7	Cooper	15	315	1932-09-01	Serinus canaria domestica
+8	Chloe	22	861	1908-03-12	Pogona vitticeps
+9	Toby	24	1208	1905-09-08	Rattus norvegicus domestica
+10	Rocky	25	238	1904-02-12	Testudo hermanni
+11	Chloe	26	152	1902-05-27	Carassius auratus
+12	Lucy	33	436	1875-06-14	Chinchilla lanigera
+13	Sadie	34	902	1884-09-22	Canis lupus familiaris
+14	Lola	37	1100	1885-02-11	Nymphicus hollandicus
+15	Zoey	38	969	1876-03-22	Acanthoscurria geniculata
+16	Toby	41	401	1879-04-14	Testudo hermanni
+17	Rocky	47	326	1882-01-02	Felis catus
+18	Luna	52	468	1881-11-09	Oryctolagus cuniculus
+19	Zoey	53	915	1876-03-11	Rattus norvegicus domestica
+20	Toby	55	559	1885-11-04	Mesocricetus auratus
+21	Buddy	60	1169	1875-09-24	Ctenosaura similis
+22	Max	66	1156	1860-08-20	Serinus canaria domestica
+23	Toby	72	1089	1852-03-15	Oryctolagus cuniculus
+24	Luna	74	246	1860-01-12	Oryctolagus cuniculus
+25	Cooper	75	763	1854-01-24	Testudo hermanni
+26	Toby	76	837	1852-09-02	Python regius
+27	Oliver	79	1168	1857-12-10	Felis catus
+28	Cooper	81	1064	1853-09-22	Melopsittacus undulatus
+29	Milo	82	118	1859-11-19	Oryctolagus cuniculus
+30	Oliver	85	9	1850-03-13	Chinchilla lanigera
+31	Milo	86	319	1850-01-26	Testudo hermanni
+32	Molly	88	1189	1850-06-05	Betta splendens
+33	Zoey	89	450	1858-07-14	Oryctolagus cuniculus
+34	Daisy	91	623	1853-03-04	Acanthoscurria geniculata
+35	Zoey	94	1093	1856-06-23	Rattus norvegicus domestica
+36	Luna	100	565	1850-04-21	Cavia porcellus
+37	Lola	101	554	1851-12-11	Cavia porcellus
+38	Oliver	103	735	1851-09-15	Pogona vitticeps
+39	Stella	105	332	1851-04-18	Pogona vitticeps
+40	Sadie	110	386	1858-10-22	Melopsittacus undulatus
+41	Oliver	122	851	1850-04-17	Testudo hermanni
+42	Stella	124	918	1855-01-04	Chinchilla lanigera
+43	Luna	125	843	1860-04-20	Felis catus
+44	Bentley	131	360	1833-05-21	Psittacus erithacus
+45	Bentley	132	771	1833-03-13	Testudo hermanni
+46	Toby	139	11	1828-09-21	Python regius
+47	Toby	140	841	1826-04-26	Felis catus
+48	Buddy	144	2	1833-02-13	Chinchilla lanigera
+49	Bella	149	98	1828-08-06	Serinus canaria domestica
+50	Cooper	151	908	1826-06-19	Python regius
+51	Stella	160	554	1831-05-05	Pogona vitticeps
+52	Charlie	161	943	1827-07-23	Oryctolagus cuniculus
+53	Bella	163	420	1827-02-11	Testudo hermanni
+54	Lucy	164	1	1828-09-25	Pogona vitticeps
+55	Daisy	167	156	1832-08-05	Serinus canaria domestica
+56	Luna	170	815	1825-03-05	Testudo hermanni
+57	Molly	172	361	1828-05-06	Mesocricetus auratus
+58	Oliver	173	29	1835-03-17	Serinus canaria domestica
+59	Chloe	174	555	1830-07-09	Mesocricetus auratus
+60	Zoey	182	494	1825-08-10	Serinus canaria domestica
+61	Bailey	184	506	1830-03-14	Rattus norvegicus domestica
+62	Zoey	185	1131	1833-05-04	Betta splendens
+63	Stella	186	132	1834-10-20	Oryctolagus cuniculus
+64	Luna	188	226	1830-01-23	Serinus canaria domestica
+65	Toby	191	1239	1826-04-25	Serinus canaria domestica
+66	Rocky	193	653	1829-01-20	Serinus canaria domestica
+67	Lola	195	1120	1826-10-18	Chinchilla lanigera
+68	Daisy	196	453	1835-10-24	Rattus norvegicus domestica
+69	Bella	203	928	1830-01-06	Canis lupus familiaris
+70	Chloe	209	484	1830-06-19	Melopsittacus undulatus
+71	Bella	210	127	1830-02-12	Mesocricetus auratus
+72	Rocky	212	763	1830-06-13	Canis lupus familiaris
+73	Milo	216	1085	1834-07-16	Serinus canaria domestica
+74	Max	217	999	1834-04-18	Canis lupus familiaris
+75	Lucy	220	410	1828-10-26	Eublepharis macularius
+76	Bailey	222	768	1831-06-27	Melopsittacus undulatus
+77	Bailey	226	1131	1833-12-15	Acanthoscurria geniculata
+78	Sadie	236	539	1826-08-20	Mesocricetus auratus
+79	Bailey	237	336	1826-06-14	Melopsittacus undulatus
+80	Bella	238	192	1830-02-16	Melopsittacus undulatus
+81	Bentley	239	1205	1829-11-03	Ctenosaura similis
+82	Lola	240	592	1832-09-06	Mesocricetus auratus
+83	Lucy	247	965	1826-05-01	Testudo hermanni
+84	Sadie	254	914	1826-10-15	Felis catus
+85	Milo	259	36	1802-11-03	Canis lupus familiaris
+86	Daisy	261	264	1809-06-17	Nymphicus hollandicus
+87	Sadie	267	607	1810-05-26	Rattus norvegicus domestica
+88	Buddy	268	339	1810-01-19	Nymphicus hollandicus
+89	Bailey	271	1215	1806-02-20	Carassius auratus
+90	Luna	273	301	1801-09-14	Canis lupus familiaris
+91	Oliver	274	23	1802-02-16	Serinus canaria domestica
+92	Lola	275	1249	1800-03-03	Mesocricetus auratus
+93	Oliver	277	1188	1803-10-05	Pogona vitticeps
+94	Daisy	285	874	1806-10-08	Cavia porcellus
+95	Bella	288	1033	1810-07-08	Betta splendens
+96	Lucy	289	1098	1809-06-05	Python regius
+97	Oliver	290	908	1805-07-20	Python regius
+98	Zoey	292	15	1800-11-20	Mesocricetus auratus
+99	Luna	298	635	1804-03-16	Ctenosaura similis
+100	Chloe	299	667	1805-12-18	Psittacus erithacus
+101	Oliver	301	80	1804-09-03	Melopsittacus undulatus
+102	Molly	304	892	1806-02-21	Eublepharis macularius
+103	Charlie	305	1177	1802-09-21	Chinchilla lanigera
+104	Oliver	306	237	1810-07-01	Oryctolagus cuniculus
+105	Stella	308	1032	1802-12-24	Canis lupus familiaris
+106	Toby	310	757	1806-01-15	Rattus norvegicus domestica
+107	Bentley	311	1110	1802-04-10	Chinchilla lanigera
+108	Bailey	314	97	1807-09-02	Mesocricetus auratus
+109	Chloe	318	852	1800-07-15	Pogona vitticeps
+110	Chloe	319	109	1801-12-02	Pogona vitticeps
+111	Luna	322	895	1805-02-18	Melopsittacus undulatus
+112	Zoey	327	230	1810-04-05	Betta splendens
+113	Stella	329	796	1807-08-07	Psittacus erithacus
+114	Zoey	330	1132	1806-10-22	Testudo hermanni
+115	Stella	333	474	1802-01-25	Felis catus
+116	Milo	336	1087	1805-07-13	Canis lupus familiaris
+117	Chloe	341	230	1810-08-08	Python regius
+118	Charlie	342	9	1804-01-07	Pogona vitticeps
+119	Luna	345	104	1804-10-01	Oryctolagus cuniculus
+120	Molly	347	1083	1808-09-14	Eublepharis macularius
+121	Toby	349	728	1809-09-06	Pogona vitticeps
+122	Stella	350	1166	1801-02-07	Ctenosaura similis
+123	Stella	351	1097	1804-05-10	Pogona vitticeps
+124	Lucy	352	481	1806-01-28	Ctenosaura similis
+125	Lola	355	282	1805-10-11	Ctenosaura similis
+126	Chloe	356	1087	1806-07-13	Psittacus erithacus
+127	Max	358	176	1805-08-02	Felis catus
+128	Buddy	361	848	1804-05-13	Rattus norvegicus domestica
+129	Bailey	362	536	1802-01-20	Chinchilla lanigera
+130	Stella	370	608	1803-01-10	Cavia porcellus
+131	Bentley	373	539	1804-03-17	Ctenosaura similis
+132	Charlie	381	400	1809-10-03	Testudo hermanni
+133	Chloe	382	553	1803-12-26	Betta splendens
+134	Stella	384	444	1805-05-21	Serinus canaria domestica
+135	Chloe	386	77	1802-09-07	Ctenosaura similis
+136	Lucy	387	231	1801-01-28	Psittacus erithacus
+137	Toby	388	405	1810-06-09	Melopsittacus undulatus
+138	Bailey	389	947	1809-07-03	Felis catus
+139	Milo	392	436	1803-10-21	Chinchilla lanigera
+140	Lucy	395	415	1800-11-08	Canis lupus familiaris
+141	Toby	399	646	1802-05-27	Eublepharis macularius
+142	Stella	400	369	1802-12-07	Testudo hermanni
+143	Charlie	402	352	1808-09-03	Chinchilla lanigera
+144	Rocky	403	858	1806-10-02	Chinchilla lanigera
+145	Bailey	407	29	1805-02-27	Cavia porcellus
+146	Lucy	412	449	1809-05-01	Canis lupus familiaris
+147	Bella	413	809	1803-07-11	Pogona vitticeps
+148	Buddy	415	958	1809-01-12	Betta splendens
+149	Luna	416	376	1800-08-06	Canis lupus familiaris
+150	Luna	417	1176	1807-04-27	Felis catus
+151	Buddy	418	636	1801-03-19	Nymphicus hollandicus
+152	Cooper	419	973	1801-05-03	Chinchilla lanigera
+153	Chloe	420	430	1801-12-04	Melopsittacus undulatus
+154	Toby	429	608	1808-08-13	Mesocricetus auratus
+155	Sadie	430	348	1810-04-15	Cavia porcellus
+156	Rocky	438	526	1804-09-02	Pogona vitticeps
+157	Stella	440	1018	1801-09-25	Betta splendens
+158	Lola	445	1047	1810-05-07	Chinchilla lanigera
+159	Molly	446	183	1803-03-14	Eublepharis macularius
+160	Lola	447	145	1802-12-01	Cavia porcellus
+161	Bailey	451	94	1806-01-11	Cavia porcellus
+162	Zoey	452	1176	1808-07-02	Canis lupus familiaris
+163	Zoey	455	854	1804-06-22	Rattus norvegicus domestica
+164	Daisy	463	1110	1803-11-23	Betta splendens
+165	Cooper	467	357	1802-09-10	Acanthoscurria geniculata
+166	Max	468	1063	1802-03-14	Psittacus erithacus
+167	Rocky	469	277	1806-07-02	Pogona vitticeps
+168	Oliver	471	1051	1808-08-23	Carassius auratus
+169	Charlie	474	346	1810-10-03	Serinus canaria domestica
+170	Buddy	475	1108	1802-09-08	Carassius auratus
+171	Cooper	477	192	1805-05-12	Ctenosaura similis
+172	Bella	478	945	1802-01-05	Mesocricetus auratus
+173	Chloe	479	273	1801-06-03	Nymphicus hollandicus
+174	Daisy	482	308	1801-06-27	Ctenosaura similis
+175	Cooper	483	678	1805-02-01	Eublepharis macularius
+176	Bailey	484	449	1801-09-10	Melopsittacus undulatus
+177	Luna	498	1213	1805-11-15	Pogona vitticeps
+178	Toby	500	199	1801-04-05	Mesocricetus auratus
 \.
 
 
@@ -22279,1500 +23349,1500 @@ COPY public.pet_passports (id, name, pet_owner, issuer, date_of_birth, species) 
 --
 
 COPY public.visa_categories (type, description, working_permit, residence_permit, duration, country) FROM stdin;
-1	Tourist Visas	f	f	8 years	Afghanistan
-2	Business Visas	t	f	5 years	Afghanistan
-3	Work Visas	t	f	7 years	Afghanistan
+1	Tourist Visas	f	f	10 years	Afghanistan
+2	Business Visas	t	f	9 years	Afghanistan
+3	Work Visas	t	f	6 years	Afghanistan
 4	Student Visas	t	f	5 years	Afghanistan
-5	Transit Visas	f	f	10 years	Afghanistan
-6	Family and Dependent Visas	t	f	10 years	Afghanistan
-7	Immigrant Visas	t	t	5 years	Afghanistan
-8	Refugee and Asylum Visas	t	f	10 years	Afghanistan
-9	Special Purpose Visas	t	f	7 years	Afghanistan
-1	Tourist Visas	f	f	10 years	Albania
-2	Business Visas	t	f	6 years	Albania
+5	Transit Visas	f	f	8 years	Afghanistan
+6	Family and Dependent Visas	t	f	6 years	Afghanistan
+7	Immigrant Visas	t	t	8 years	Afghanistan
+8	Refugee and Asylum Visas	t	f	9 years	Afghanistan
+9	Special Purpose Visas	t	f	9 years	Afghanistan
+1	Tourist Visas	f	f	6 years	Albania
+2	Business Visas	t	f	8 years	Albania
 3	Work Visas	t	f	9 years	Albania
-4	Student Visas	t	f	10 years	Albania
-5	Transit Visas	f	f	6 years	Albania
+4	Student Visas	t	f	6 years	Albania
+5	Transit Visas	f	f	8 years	Albania
 6	Family and Dependent Visas	t	f	9 years	Albania
-7	Immigrant Visas	t	t	10 years	Albania
-8	Refugee and Asylum Visas	t	f	9 years	Albania
-9	Special Purpose Visas	t	f	10 years	Albania
-1	Tourist Visas	f	f	7 years	Algeria
+7	Immigrant Visas	t	t	7 years	Albania
+8	Refugee and Asylum Visas	t	f	7 years	Albania
+9	Special Purpose Visas	t	f	6 years	Albania
+1	Tourist Visas	f	f	6 years	Algeria
 2	Business Visas	t	f	7 years	Algeria
-3	Work Visas	t	f	9 years	Algeria
-4	Student Visas	t	f	10 years	Algeria
-5	Transit Visas	f	f	8 years	Algeria
-6	Family and Dependent Visas	t	f	5 years	Algeria
-7	Immigrant Visas	t	t	7 years	Algeria
-8	Refugee and Asylum Visas	t	f	7 years	Algeria
-9	Special Purpose Visas	t	f	10 years	Algeria
-1	Tourist Visas	f	f	6 years	Angola
-2	Business Visas	t	f	10 years	Angola
-3	Work Visas	t	f	8 years	Angola
-4	Student Visas	t	f	6 years	Angola
-5	Transit Visas	f	f	6 years	Angola
-6	Family and Dependent Visas	t	f	5 years	Angola
-7	Immigrant Visas	t	t	5 years	Angola
-8	Refugee and Asylum Visas	t	f	8 years	Angola
-9	Special Purpose Visas	t	f	9 years	Angola
-1	Tourist Visas	f	f	6 years	Argentina
-2	Business Visas	t	f	6 years	Argentina
-3	Work Visas	t	f	8 years	Argentina
-4	Student Visas	t	f	10 years	Argentina
+3	Work Visas	t	f	5 years	Algeria
+4	Student Visas	t	f	8 years	Algeria
+5	Transit Visas	f	f	5 years	Algeria
+6	Family and Dependent Visas	t	f	10 years	Algeria
+7	Immigrant Visas	t	t	9 years	Algeria
+8	Refugee and Asylum Visas	t	f	6 years	Algeria
+9	Special Purpose Visas	t	f	6 years	Algeria
+1	Tourist Visas	f	f	8 years	Angola
+2	Business Visas	t	f	5 years	Angola
+3	Work Visas	t	f	5 years	Angola
+4	Student Visas	t	f	5 years	Angola
+5	Transit Visas	f	f	7 years	Angola
+6	Family and Dependent Visas	t	f	9 years	Angola
+7	Immigrant Visas	t	t	10 years	Angola
+8	Refugee and Asylum Visas	t	f	9 years	Angola
+9	Special Purpose Visas	t	f	7 years	Angola
+1	Tourist Visas	f	f	9 years	Argentina
+2	Business Visas	t	f	9 years	Argentina
+3	Work Visas	t	f	5 years	Argentina
+4	Student Visas	t	f	7 years	Argentina
 5	Transit Visas	f	f	10 years	Argentina
 6	Family and Dependent Visas	t	f	9 years	Argentina
-7	Immigrant Visas	t	t	6 years	Argentina
-8	Refugee and Asylum Visas	t	f	8 years	Argentina
-9	Special Purpose Visas	t	f	5 years	Argentina
-1	Tourist Visas	f	f	10 years	Armenia
-2	Business Visas	t	f	10 years	Armenia
-3	Work Visas	t	f	5 years	Armenia
-4	Student Visas	t	f	9 years	Armenia
-5	Transit Visas	f	f	9 years	Armenia
-6	Family and Dependent Visas	t	f	6 years	Armenia
-7	Immigrant Visas	t	t	8 years	Armenia
-8	Refugee and Asylum Visas	t	f	7 years	Armenia
-9	Special Purpose Visas	t	f	7 years	Armenia
-1	Tourist Visas	f	f	7 years	Aruba
-2	Business Visas	t	f	7 years	Aruba
-3	Work Visas	t	f	6 years	Aruba
-4	Student Visas	t	f	10 years	Aruba
-5	Transit Visas	f	f	10 years	Aruba
-6	Family and Dependent Visas	t	f	10 years	Aruba
-7	Immigrant Visas	t	t	9 years	Aruba
-8	Refugee and Asylum Visas	t	f	7 years	Aruba
-9	Special Purpose Visas	t	f	5 years	Aruba
-1	Tourist Visas	f	f	8 years	Australia
-2	Business Visas	t	f	5 years	Australia
-3	Work Visas	t	f	7 years	Australia
-4	Student Visas	t	f	6 years	Australia
+7	Immigrant Visas	t	t	5 years	Argentina
+8	Refugee and Asylum Visas	t	f	5 years	Argentina
+9	Special Purpose Visas	t	f	9 years	Argentina
+1	Tourist Visas	f	f	7 years	Armenia
+2	Business Visas	t	f	5 years	Armenia
+3	Work Visas	t	f	8 years	Armenia
+4	Student Visas	t	f	7 years	Armenia
+5	Transit Visas	f	f	7 years	Armenia
+6	Family and Dependent Visas	t	f	7 years	Armenia
+7	Immigrant Visas	t	t	5 years	Armenia
+8	Refugee and Asylum Visas	t	f	10 years	Armenia
+9	Special Purpose Visas	t	f	6 years	Armenia
+1	Tourist Visas	f	f	9 years	Aruba
+2	Business Visas	t	f	9 years	Aruba
+3	Work Visas	t	f	8 years	Aruba
+4	Student Visas	t	f	5 years	Aruba
+5	Transit Visas	f	f	6 years	Aruba
+6	Family and Dependent Visas	t	f	7 years	Aruba
+7	Immigrant Visas	t	t	10 years	Aruba
+8	Refugee and Asylum Visas	t	f	5 years	Aruba
+9	Special Purpose Visas	t	f	8 years	Aruba
+1	Tourist Visas	f	f	10 years	Australia
+2	Business Visas	t	f	8 years	Australia
+3	Work Visas	t	f	10 years	Australia
+4	Student Visas	t	f	7 years	Australia
 5	Transit Visas	f	f	9 years	Australia
-6	Family and Dependent Visas	t	f	10 years	Australia
+6	Family and Dependent Visas	t	f	5 years	Australia
 7	Immigrant Visas	t	t	5 years	Australia
-8	Refugee and Asylum Visas	t	f	9 years	Australia
-9	Special Purpose Visas	t	f	6 years	Australia
-1	Tourist Visas	f	f	7 years	Austria
-2	Business Visas	t	f	9 years	Austria
-3	Work Visas	t	f	7 years	Austria
-4	Student Visas	t	f	9 years	Austria
-5	Transit Visas	f	f	8 years	Austria
-6	Family and Dependent Visas	t	f	5 years	Austria
+8	Refugee and Asylum Visas	t	f	7 years	Australia
+9	Special Purpose Visas	t	f	10 years	Australia
+1	Tourist Visas	f	f	5 years	Austria
+2	Business Visas	t	f	10 years	Austria
+3	Work Visas	t	f	10 years	Austria
+4	Student Visas	t	f	7 years	Austria
+5	Transit Visas	f	f	10 years	Austria
+6	Family and Dependent Visas	t	f	8 years	Austria
 7	Immigrant Visas	t	t	6 years	Austria
-8	Refugee and Asylum Visas	t	f	7 years	Austria
-9	Special Purpose Visas	t	f	5 years	Austria
-1	Tourist Visas	f	f	9 years	Azerbaijan
-2	Business Visas	t	f	7 years	Azerbaijan
-3	Work Visas	t	f	10 years	Azerbaijan
-4	Student Visas	t	f	10 years	Azerbaijan
-5	Transit Visas	f	f	7 years	Azerbaijan
-6	Family and Dependent Visas	t	f	6 years	Azerbaijan
-7	Immigrant Visas	t	t	7 years	Azerbaijan
-8	Refugee and Asylum Visas	t	f	8 years	Azerbaijan
-9	Special Purpose Visas	t	f	6 years	Azerbaijan
-1	Tourist Visas	f	f	5 years	Bahamas
-2	Business Visas	t	f	8 years	Bahamas
-3	Work Visas	t	f	5 years	Bahamas
-4	Student Visas	t	f	10 years	Bahamas
-5	Transit Visas	f	f	7 years	Bahamas
+8	Refugee and Asylum Visas	t	f	6 years	Austria
+9	Special Purpose Visas	t	f	7 years	Austria
+1	Tourist Visas	f	f	7 years	Azerbaijan
+2	Business Visas	t	f	6 years	Azerbaijan
+3	Work Visas	t	f	9 years	Azerbaijan
+4	Student Visas	t	f	5 years	Azerbaijan
+5	Transit Visas	f	f	6 years	Azerbaijan
+6	Family and Dependent Visas	t	f	9 years	Azerbaijan
+7	Immigrant Visas	t	t	9 years	Azerbaijan
+8	Refugee and Asylum Visas	t	f	7 years	Azerbaijan
+9	Special Purpose Visas	t	f	10 years	Azerbaijan
+1	Tourist Visas	f	f	9 years	Bahamas
+2	Business Visas	t	f	9 years	Bahamas
+3	Work Visas	t	f	6 years	Bahamas
+4	Student Visas	t	f	5 years	Bahamas
+5	Transit Visas	f	f	8 years	Bahamas
 6	Family and Dependent Visas	t	f	5 years	Bahamas
-7	Immigrant Visas	t	t	8 years	Bahamas
+7	Immigrant Visas	t	t	7 years	Bahamas
 8	Refugee and Asylum Visas	t	f	10 years	Bahamas
-9	Special Purpose Visas	t	f	6 years	Bahamas
-1	Tourist Visas	f	f	6 years	Bahrain
-2	Business Visas	t	f	8 years	Bahrain
-3	Work Visas	t	f	8 years	Bahrain
-4	Student Visas	t	f	7 years	Bahrain
-5	Transit Visas	f	f	9 years	Bahrain
-6	Family and Dependent Visas	t	f	7 years	Bahrain
+9	Special Purpose Visas	t	f	7 years	Bahamas
+1	Tourist Visas	f	f	8 years	Bahrain
+2	Business Visas	t	f	5 years	Bahrain
+3	Work Visas	t	f	10 years	Bahrain
+4	Student Visas	t	f	5 years	Bahrain
+5	Transit Visas	f	f	6 years	Bahrain
+6	Family and Dependent Visas	t	f	10 years	Bahrain
 7	Immigrant Visas	t	t	7 years	Bahrain
-8	Refugee and Asylum Visas	t	f	5 years	Bahrain
-9	Special Purpose Visas	t	f	8 years	Bahrain
-1	Tourist Visas	f	f	7 years	Bangladesh
-2	Business Visas	t	f	5 years	Bangladesh
+8	Refugee and Asylum Visas	t	f	7 years	Bahrain
+9	Special Purpose Visas	t	f	5 years	Bahrain
+1	Tourist Visas	f	f	5 years	Bangladesh
+2	Business Visas	t	f	9 years	Bangladesh
 3	Work Visas	t	f	7 years	Bangladesh
-4	Student Visas	t	f	8 years	Bangladesh
-5	Transit Visas	f	f	7 years	Bangladesh
-6	Family and Dependent Visas	t	f	7 years	Bangladesh
-7	Immigrant Visas	t	t	8 years	Bangladesh
-8	Refugee and Asylum Visas	t	f	5 years	Bangladesh
-9	Special Purpose Visas	t	f	10 years	Bangladesh
+4	Student Visas	t	f	5 years	Bangladesh
+5	Transit Visas	f	f	9 years	Bangladesh
+6	Family and Dependent Visas	t	f	10 years	Bangladesh
+7	Immigrant Visas	t	t	9 years	Bangladesh
+8	Refugee and Asylum Visas	t	f	6 years	Bangladesh
+9	Special Purpose Visas	t	f	9 years	Bangladesh
 1	Tourist Visas	f	f	10 years	Barbados
-2	Business Visas	t	f	10 years	Barbados
-3	Work Visas	t	f	10 years	Barbados
-4	Student Visas	t	f	6 years	Barbados
-5	Transit Visas	f	f	8 years	Barbados
-6	Family and Dependent Visas	t	f	10 years	Barbados
-7	Immigrant Visas	t	t	10 years	Barbados
-8	Refugee and Asylum Visas	t	f	10 years	Barbados
-9	Special Purpose Visas	t	f	7 years	Barbados
-1	Tourist Visas	f	f	10 years	Belarus
-2	Business Visas	t	f	10 years	Belarus
-3	Work Visas	t	f	6 years	Belarus
-4	Student Visas	t	f	8 years	Belarus
-5	Transit Visas	f	f	6 years	Belarus
-6	Family and Dependent Visas	t	f	7 years	Belarus
-7	Immigrant Visas	t	t	5 years	Belarus
-8	Refugee and Asylum Visas	t	f	7 years	Belarus
-9	Special Purpose Visas	t	f	10 years	Belarus
+2	Business Visas	t	f	8 years	Barbados
+3	Work Visas	t	f	8 years	Barbados
+4	Student Visas	t	f	5 years	Barbados
+5	Transit Visas	f	f	5 years	Barbados
+6	Family and Dependent Visas	t	f	6 years	Barbados
+7	Immigrant Visas	t	t	7 years	Barbados
+8	Refugee and Asylum Visas	t	f	9 years	Barbados
+9	Special Purpose Visas	t	f	5 years	Barbados
+1	Tourist Visas	f	f	9 years	Belarus
+2	Business Visas	t	f	9 years	Belarus
+3	Work Visas	t	f	9 years	Belarus
+4	Student Visas	t	f	9 years	Belarus
+5	Transit Visas	f	f	7 years	Belarus
+6	Family and Dependent Visas	t	f	5 years	Belarus
+7	Immigrant Visas	t	t	10 years	Belarus
+8	Refugee and Asylum Visas	t	f	8 years	Belarus
+9	Special Purpose Visas	t	f	7 years	Belarus
 1	Tourist Visas	f	f	8 years	Belgium
-2	Business Visas	t	f	10 years	Belgium
-3	Work Visas	t	f	5 years	Belgium
-4	Student Visas	t	f	9 years	Belgium
-5	Transit Visas	f	f	10 years	Belgium
+2	Business Visas	t	f	5 years	Belgium
+3	Work Visas	t	f	10 years	Belgium
+4	Student Visas	t	f	5 years	Belgium
+5	Transit Visas	f	f	9 years	Belgium
 6	Family and Dependent Visas	t	f	5 years	Belgium
 7	Immigrant Visas	t	t	7 years	Belgium
 8	Refugee and Asylum Visas	t	f	8 years	Belgium
-9	Special Purpose Visas	t	f	6 years	Belgium
+9	Special Purpose Visas	t	f	5 years	Belgium
 1	Tourist Visas	f	f	9 years	Belize
-2	Business Visas	t	f	6 years	Belize
-3	Work Visas	t	f	7 years	Belize
+2	Business Visas	t	f	10 years	Belize
+3	Work Visas	t	f	6 years	Belize
 4	Student Visas	t	f	10 years	Belize
-5	Transit Visas	f	f	8 years	Belize
-6	Family and Dependent Visas	t	f	9 years	Belize
+5	Transit Visas	f	f	10 years	Belize
+6	Family and Dependent Visas	t	f	7 years	Belize
 7	Immigrant Visas	t	t	5 years	Belize
-8	Refugee and Asylum Visas	t	f	9 years	Belize
-9	Special Purpose Visas	t	f	8 years	Belize
+8	Refugee and Asylum Visas	t	f	8 years	Belize
+9	Special Purpose Visas	t	f	6 years	Belize
 1	Tourist Visas	f	f	5 years	Benin
-2	Business Visas	t	f	5 years	Benin
+2	Business Visas	t	f	10 years	Benin
 3	Work Visas	t	f	5 years	Benin
-4	Student Visas	t	f	5 years	Benin
+4	Student Visas	t	f	7 years	Benin
 5	Transit Visas	f	f	5 years	Benin
-6	Family and Dependent Visas	t	f	8 years	Benin
-7	Immigrant Visas	t	t	7 years	Benin
-8	Refugee and Asylum Visas	t	f	6 years	Benin
-9	Special Purpose Visas	t	f	8 years	Benin
-1	Tourist Visas	f	f	9 years	Bermuda
-2	Business Visas	t	f	5 years	Bermuda
+6	Family and Dependent Visas	t	f	10 years	Benin
+7	Immigrant Visas	t	t	5 years	Benin
+8	Refugee and Asylum Visas	t	f	10 years	Benin
+9	Special Purpose Visas	t	f	6 years	Benin
+1	Tourist Visas	f	f	6 years	Bermuda
+2	Business Visas	t	f	7 years	Bermuda
 3	Work Visas	t	f	5 years	Bermuda
-4	Student Visas	t	f	5 years	Bermuda
-5	Transit Visas	f	f	8 years	Bermuda
-6	Family and Dependent Visas	t	f	8 years	Bermuda
-7	Immigrant Visas	t	t	5 years	Bermuda
-8	Refugee and Asylum Visas	t	f	10 years	Bermuda
-9	Special Purpose Visas	t	f	9 years	Bermuda
-1	Tourist Visas	f	f	10 years	Bhutan
-2	Business Visas	t	f	5 years	Bhutan
-3	Work Visas	t	f	7 years	Bhutan
-4	Student Visas	t	f	7 years	Bhutan
-5	Transit Visas	f	f	9 years	Bhutan
-6	Family and Dependent Visas	t	f	8 years	Bhutan
-7	Immigrant Visas	t	t	6 years	Bhutan
+4	Student Visas	t	f	6 years	Bermuda
+5	Transit Visas	f	f	10 years	Bermuda
+6	Family and Dependent Visas	t	f	6 years	Bermuda
+7	Immigrant Visas	t	t	8 years	Bermuda
+8	Refugee and Asylum Visas	t	f	5 years	Bermuda
+9	Special Purpose Visas	t	f	5 years	Bermuda
+1	Tourist Visas	f	f	8 years	Bhutan
+2	Business Visas	t	f	6 years	Bhutan
+3	Work Visas	t	f	8 years	Bhutan
+4	Student Visas	t	f	8 years	Bhutan
+5	Transit Visas	f	f	8 years	Bhutan
+6	Family and Dependent Visas	t	f	5 years	Bhutan
+7	Immigrant Visas	t	t	5 years	Bhutan
 8	Refugee and Asylum Visas	t	f	7 years	Bhutan
-9	Special Purpose Visas	t	f	6 years	Bhutan
+9	Special Purpose Visas	t	f	9 years	Bhutan
 1	Tourist Visas	f	f	7 years	Bolivia
-2	Business Visas	t	f	10 years	Bolivia
-3	Work Visas	t	f	10 years	Bolivia
-4	Student Visas	t	f	6 years	Bolivia
-5	Transit Visas	f	f	8 years	Bolivia
-6	Family and Dependent Visas	t	f	7 years	Bolivia
-7	Immigrant Visas	t	t	6 years	Bolivia
-8	Refugee and Asylum Visas	t	f	8 years	Bolivia
-9	Special Purpose Visas	t	f	5 years	Bolivia
-1	Tourist Visas	f	f	10 years	Botswana
-2	Business Visas	t	f	7 years	Botswana
+2	Business Visas	t	f	6 years	Bolivia
+3	Work Visas	t	f	8 years	Bolivia
+4	Student Visas	t	f	7 years	Bolivia
+5	Transit Visas	f	f	5 years	Bolivia
+6	Family and Dependent Visas	t	f	8 years	Bolivia
+7	Immigrant Visas	t	t	8 years	Bolivia
+8	Refugee and Asylum Visas	t	f	7 years	Bolivia
+9	Special Purpose Visas	t	f	6 years	Bolivia
+1	Tourist Visas	f	f	6 years	Botswana
+2	Business Visas	t	f	6 years	Botswana
 3	Work Visas	t	f	10 years	Botswana
 4	Student Visas	t	f	8 years	Botswana
-5	Transit Visas	f	f	7 years	Botswana
-6	Family and Dependent Visas	t	f	8 years	Botswana
-7	Immigrant Visas	t	t	5 years	Botswana
-8	Refugee and Asylum Visas	t	f	6 years	Botswana
-9	Special Purpose Visas	t	f	10 years	Botswana
+5	Transit Visas	f	f	9 years	Botswana
+6	Family and Dependent Visas	t	f	5 years	Botswana
+7	Immigrant Visas	t	t	8 years	Botswana
+8	Refugee and Asylum Visas	t	f	5 years	Botswana
+9	Special Purpose Visas	t	f	5 years	Botswana
 1	Tourist Visas	f	f	9 years	Brazil
-2	Business Visas	t	f	9 years	Brazil
-3	Work Visas	t	f	9 years	Brazil
-4	Student Visas	t	f	7 years	Brazil
-5	Transit Visas	f	f	10 years	Brazil
-6	Family and Dependent Visas	t	f	10 years	Brazil
+2	Business Visas	t	f	5 years	Brazil
+3	Work Visas	t	f	8 years	Brazil
+4	Student Visas	t	f	9 years	Brazil
+5	Transit Visas	f	f	7 years	Brazil
+6	Family and Dependent Visas	t	f	5 years	Brazil
 7	Immigrant Visas	t	t	9 years	Brazil
-8	Refugee and Asylum Visas	t	f	5 years	Brazil
-9	Special Purpose Visas	t	f	7 years	Brazil
-1	Tourist Visas	f	f	8 years	Brunei
-2	Business Visas	t	f	5 years	Brunei
-3	Work Visas	t	f	8 years	Brunei
+8	Refugee and Asylum Visas	t	f	10 years	Brazil
+9	Special Purpose Visas	t	f	8 years	Brazil
+1	Tourist Visas	f	f	5 years	Brunei
+2	Business Visas	t	f	9 years	Brunei
+3	Work Visas	t	f	6 years	Brunei
 4	Student Visas	t	f	10 years	Brunei
-5	Transit Visas	f	f	8 years	Brunei
-6	Family and Dependent Visas	t	f	7 years	Brunei
-7	Immigrant Visas	t	t	5 years	Brunei
-8	Refugee and Asylum Visas	t	f	9 years	Brunei
+5	Transit Visas	f	f	7 years	Brunei
+6	Family and Dependent Visas	t	f	10 years	Brunei
+7	Immigrant Visas	t	t	7 years	Brunei
+8	Refugee and Asylum Visas	t	f	8 years	Brunei
 9	Special Purpose Visas	t	f	9 years	Brunei
-1	Tourist Visas	f	f	5 years	Bulgaria
-2	Business Visas	t	f	9 years	Bulgaria
-3	Work Visas	t	f	7 years	Bulgaria
-4	Student Visas	t	f	6 years	Bulgaria
-5	Transit Visas	f	f	7 years	Bulgaria
-6	Family and Dependent Visas	t	f	10 years	Bulgaria
-7	Immigrant Visas	t	t	8 years	Bulgaria
-8	Refugee and Asylum Visas	t	f	6 years	Bulgaria
-9	Special Purpose Visas	t	f	5 years	Bulgaria
-1	Tourist Visas	f	f	10 years	Burundi
-2	Business Visas	t	f	9 years	Burundi
-3	Work Visas	t	f	10 years	Burundi
-4	Student Visas	t	f	6 years	Burundi
-5	Transit Visas	f	f	10 years	Burundi
-6	Family and Dependent Visas	t	f	5 years	Burundi
+1	Tourist Visas	f	f	9 years	Bulgaria
+2	Business Visas	t	f	7 years	Bulgaria
+3	Work Visas	t	f	10 years	Bulgaria
+4	Student Visas	t	f	7 years	Bulgaria
+5	Transit Visas	f	f	5 years	Bulgaria
+6	Family and Dependent Visas	t	f	9 years	Bulgaria
+7	Immigrant Visas	t	t	7 years	Bulgaria
+8	Refugee and Asylum Visas	t	f	9 years	Bulgaria
+9	Special Purpose Visas	t	f	10 years	Bulgaria
+1	Tourist Visas	f	f	5 years	Burundi
+2	Business Visas	t	f	7 years	Burundi
+3	Work Visas	t	f	6 years	Burundi
+4	Student Visas	t	f	7 years	Burundi
+5	Transit Visas	f	f	9 years	Burundi
+6	Family and Dependent Visas	t	f	6 years	Burundi
 7	Immigrant Visas	t	t	6 years	Burundi
-8	Refugee and Asylum Visas	t	f	7 years	Burundi
-9	Special Purpose Visas	t	f	10 years	Burundi
-1	Tourist Visas	f	f	9 years	Cambodia
-2	Business Visas	t	f	5 years	Cambodia
-3	Work Visas	t	f	10 years	Cambodia
-4	Student Visas	t	f	8 years	Cambodia
-5	Transit Visas	f	f	6 years	Cambodia
-6	Family and Dependent Visas	t	f	9 years	Cambodia
-7	Immigrant Visas	t	t	6 years	Cambodia
-8	Refugee and Asylum Visas	t	f	8 years	Cambodia
-9	Special Purpose Visas	t	f	9 years	Cambodia
-1	Tourist Visas	f	f	5 years	Cameroon
-2	Business Visas	t	f	10 years	Cameroon
-3	Work Visas	t	f	7 years	Cameroon
-4	Student Visas	t	f	7 years	Cameroon
-5	Transit Visas	f	f	8 years	Cameroon
-6	Family and Dependent Visas	t	f	9 years	Cameroon
-7	Immigrant Visas	t	t	10 years	Cameroon
-8	Refugee and Asylum Visas	t	f	10 years	Cameroon
-9	Special Purpose Visas	t	f	10 years	Cameroon
-1	Tourist Visas	f	f	7 years	Canada
-2	Business Visas	t	f	10 years	Canada
+8	Refugee and Asylum Visas	t	f	10 years	Burundi
+9	Special Purpose Visas	t	f	8 years	Burundi
+1	Tourist Visas	f	f	5 years	Cambodia
+2	Business Visas	t	f	8 years	Cambodia
+3	Work Visas	t	f	8 years	Cambodia
+4	Student Visas	t	f	6 years	Cambodia
+5	Transit Visas	f	f	7 years	Cambodia
+6	Family and Dependent Visas	t	f	5 years	Cambodia
+7	Immigrant Visas	t	t	10 years	Cambodia
+8	Refugee and Asylum Visas	t	f	7 years	Cambodia
+9	Special Purpose Visas	t	f	8 years	Cambodia
+1	Tourist Visas	f	f	8 years	Cameroon
+2	Business Visas	t	f	9 years	Cameroon
+3	Work Visas	t	f	8 years	Cameroon
+4	Student Visas	t	f	10 years	Cameroon
+5	Transit Visas	f	f	10 years	Cameroon
+6	Family and Dependent Visas	t	f	6 years	Cameroon
+7	Immigrant Visas	t	t	8 years	Cameroon
+8	Refugee and Asylum Visas	t	f	6 years	Cameroon
+9	Special Purpose Visas	t	f	6 years	Cameroon
+1	Tourist Visas	f	f	5 years	Canada
+2	Business Visas	t	f	7 years	Canada
 3	Work Visas	t	f	10 years	Canada
-4	Student Visas	t	f	9 years	Canada
-5	Transit Visas	f	f	7 years	Canada
-6	Family and Dependent Visas	t	f	6 years	Canada
-7	Immigrant Visas	t	t	7 years	Canada
-8	Refugee and Asylum Visas	t	f	10 years	Canada
-9	Special Purpose Visas	t	f	7 years	Canada
-1	Tourist Visas	f	f	10 years	Chad
-2	Business Visas	t	f	7 years	Chad
-3	Work Visas	t	f	5 years	Chad
-4	Student Visas	t	f	7 years	Chad
-5	Transit Visas	f	f	7 years	Chad
-6	Family and Dependent Visas	t	f	5 years	Chad
-7	Immigrant Visas	t	t	9 years	Chad
-8	Refugee and Asylum Visas	t	f	8 years	Chad
+4	Student Visas	t	f	10 years	Canada
+5	Transit Visas	f	f	5 years	Canada
+6	Family and Dependent Visas	t	f	8 years	Canada
+7	Immigrant Visas	t	t	9 years	Canada
+8	Refugee and Asylum Visas	t	f	9 years	Canada
+9	Special Purpose Visas	t	f	9 years	Canada
+1	Tourist Visas	f	f	8 years	Chad
+2	Business Visas	t	f	5 years	Chad
+3	Work Visas	t	f	10 years	Chad
+4	Student Visas	t	f	9 years	Chad
+5	Transit Visas	f	f	10 years	Chad
+6	Family and Dependent Visas	t	f	9 years	Chad
+7	Immigrant Visas	t	t	7 years	Chad
+8	Refugee and Asylum Visas	t	f	6 years	Chad
 9	Special Purpose Visas	t	f	10 years	Chad
-1	Tourist Visas	f	f	9 years	Chile
-2	Business Visas	t	f	9 years	Chile
-3	Work Visas	t	f	9 years	Chile
-4	Student Visas	t	f	5 years	Chile
-5	Transit Visas	f	f	5 years	Chile
-6	Family and Dependent Visas	t	f	9 years	Chile
+1	Tourist Visas	f	f	8 years	Chile
+2	Business Visas	t	f	8 years	Chile
+3	Work Visas	t	f	5 years	Chile
+4	Student Visas	t	f	10 years	Chile
+5	Transit Visas	f	f	9 years	Chile
+6	Family and Dependent Visas	t	f	7 years	Chile
 7	Immigrant Visas	t	t	10 years	Chile
 8	Refugee and Asylum Visas	t	f	9 years	Chile
-9	Special Purpose Visas	t	f	8 years	Chile
+9	Special Purpose Visas	t	f	9 years	Chile
 1	Tourist Visas	f	f	7 years	China
-2	Business Visas	t	f	9 years	China
-3	Work Visas	t	f	7 years	China
-4	Student Visas	t	f	7 years	China
-5	Transit Visas	f	f	8 years	China
-6	Family and Dependent Visas	t	f	6 years	China
+2	Business Visas	t	f	6 years	China
+3	Work Visas	t	f	8 years	China
+4	Student Visas	t	f	10 years	China
+5	Transit Visas	f	f	9 years	China
+6	Family and Dependent Visas	t	f	7 years	China
 7	Immigrant Visas	t	t	8 years	China
-8	Refugee and Asylum Visas	t	f	7 years	China
-9	Special Purpose Visas	t	f	6 years	China
-1	Tourist Visas	f	f	9 years	Colombia
-2	Business Visas	t	f	5 years	Colombia
-3	Work Visas	t	f	8 years	Colombia
-4	Student Visas	t	f	6 years	Colombia
-5	Transit Visas	f	f	7 years	Colombia
-6	Family and Dependent Visas	t	f	5 years	Colombia
-7	Immigrant Visas	t	t	9 years	Colombia
-8	Refugee and Asylum Visas	t	f	9 years	Colombia
+8	Refugee and Asylum Visas	t	f	9 years	China
+9	Special Purpose Visas	t	f	7 years	China
+1	Tourist Visas	f	f	6 years	Colombia
+2	Business Visas	t	f	6 years	Colombia
+3	Work Visas	t	f	5 years	Colombia
+4	Student Visas	t	f	7 years	Colombia
+5	Transit Visas	f	f	9 years	Colombia
+6	Family and Dependent Visas	t	f	9 years	Colombia
+7	Immigrant Visas	t	t	6 years	Colombia
+8	Refugee and Asylum Visas	t	f	6 years	Colombia
 9	Special Purpose Visas	t	f	5 years	Colombia
-1	Tourist Visas	f	f	6 years	Comoros
-2	Business Visas	t	f	10 years	Comoros
-3	Work Visas	t	f	9 years	Comoros
-4	Student Visas	t	f	7 years	Comoros
-5	Transit Visas	f	f	9 years	Comoros
-6	Family and Dependent Visas	t	f	7 years	Comoros
-7	Immigrant Visas	t	t	7 years	Comoros
-8	Refugee and Asylum Visas	t	f	6 years	Comoros
-9	Special Purpose Visas	t	f	5 years	Comoros
-1	Tourist Visas	f	f	8 years	Croatia
+1	Tourist Visas	f	f	7 years	Comoros
+2	Business Visas	t	f	8 years	Comoros
+3	Work Visas	t	f	10 years	Comoros
+4	Student Visas	t	f	8 years	Comoros
+5	Transit Visas	f	f	7 years	Comoros
+6	Family and Dependent Visas	t	f	5 years	Comoros
+7	Immigrant Visas	t	t	9 years	Comoros
+8	Refugee and Asylum Visas	t	f	7 years	Comoros
+9	Special Purpose Visas	t	f	10 years	Comoros
+1	Tourist Visas	f	f	9 years	Croatia
 2	Business Visas	t	f	8 years	Croatia
-3	Work Visas	t	f	6 years	Croatia
-4	Student Visas	t	f	6 years	Croatia
+3	Work Visas	t	f	8 years	Croatia
+4	Student Visas	t	f	5 years	Croatia
 5	Transit Visas	f	f	8 years	Croatia
-6	Family and Dependent Visas	t	f	6 years	Croatia
-7	Immigrant Visas	t	t	7 years	Croatia
-8	Refugee and Asylum Visas	t	f	6 years	Croatia
-9	Special Purpose Visas	t	f	10 years	Croatia
-1	Tourist Visas	f	f	10 years	Cuba
-2	Business Visas	t	f	9 years	Cuba
-3	Work Visas	t	f	9 years	Cuba
-4	Student Visas	t	f	5 years	Cuba
-5	Transit Visas	f	f	6 years	Cuba
-6	Family and Dependent Visas	t	f	5 years	Cuba
-7	Immigrant Visas	t	t	8 years	Cuba
-8	Refugee and Asylum Visas	t	f	10 years	Cuba
-9	Special Purpose Visas	t	f	9 years	Cuba
-1	Tourist Visas	f	f	6 years	Curacao
-2	Business Visas	t	f	8 years	Curacao
-3	Work Visas	t	f	9 years	Curacao
-4	Student Visas	t	f	8 years	Curacao
+6	Family and Dependent Visas	t	f	7 years	Croatia
+7	Immigrant Visas	t	t	8 years	Croatia
+8	Refugee and Asylum Visas	t	f	5 years	Croatia
+9	Special Purpose Visas	t	f	8 years	Croatia
+1	Tourist Visas	f	f	8 years	Cuba
+2	Business Visas	t	f	6 years	Cuba
+3	Work Visas	t	f	10 years	Cuba
+4	Student Visas	t	f	10 years	Cuba
+5	Transit Visas	f	f	5 years	Cuba
+6	Family and Dependent Visas	t	f	8 years	Cuba
+7	Immigrant Visas	t	t	9 years	Cuba
+8	Refugee and Asylum Visas	t	f	9 years	Cuba
+9	Special Purpose Visas	t	f	5 years	Cuba
+1	Tourist Visas	f	f	8 years	Curacao
+2	Business Visas	t	f	9 years	Curacao
+3	Work Visas	t	f	5 years	Curacao
+4	Student Visas	t	f	5 years	Curacao
 5	Transit Visas	f	f	8 years	Curacao
-6	Family and Dependent Visas	t	f	8 years	Curacao
-7	Immigrant Visas	t	t	8 years	Curacao
-8	Refugee and Asylum Visas	t	f	9 years	Curacao
+6	Family and Dependent Visas	t	f	6 years	Curacao
+7	Immigrant Visas	t	t	6 years	Curacao
+8	Refugee and Asylum Visas	t	f	10 years	Curacao
 9	Special Purpose Visas	t	f	9 years	Curacao
-1	Tourist Visas	f	f	10 years	Cyprus
-2	Business Visas	t	f	6 years	Cyprus
-3	Work Visas	t	f	6 years	Cyprus
-4	Student Visas	t	f	8 years	Cyprus
-5	Transit Visas	f	f	10 years	Cyprus
-6	Family and Dependent Visas	t	f	8 years	Cyprus
-7	Immigrant Visas	t	t	10 years	Cyprus
+1	Tourist Visas	f	f	5 years	Cyprus
+2	Business Visas	t	f	9 years	Cyprus
+3	Work Visas	t	f	5 years	Cyprus
+4	Student Visas	t	f	9 years	Cyprus
+5	Transit Visas	f	f	7 years	Cyprus
+6	Family and Dependent Visas	t	f	6 years	Cyprus
+7	Immigrant Visas	t	t	9 years	Cyprus
 8	Refugee and Asylum Visas	t	f	5 years	Cyprus
-9	Special Purpose Visas	t	f	9 years	Cyprus
+9	Special Purpose Visas	t	f	6 years	Cyprus
 1	Tourist Visas	f	f	6 years	Denmark
-2	Business Visas	t	f	6 years	Denmark
+2	Business Visas	t	f	10 years	Denmark
 3	Work Visas	t	f	10 years	Denmark
-4	Student Visas	t	f	7 years	Denmark
-5	Transit Visas	f	f	10 years	Denmark
-6	Family and Dependent Visas	t	f	8 years	Denmark
-7	Immigrant Visas	t	t	6 years	Denmark
-8	Refugee and Asylum Visas	t	f	7 years	Denmark
-9	Special Purpose Visas	t	f	10 years	Denmark
-1	Tourist Visas	f	f	9 years	Djibouti
-2	Business Visas	t	f	9 years	Djibouti
+4	Student Visas	t	f	5 years	Denmark
+5	Transit Visas	f	f	7 years	Denmark
+6	Family and Dependent Visas	t	f	10 years	Denmark
+7	Immigrant Visas	t	t	8 years	Denmark
+8	Refugee and Asylum Visas	t	f	6 years	Denmark
+9	Special Purpose Visas	t	f	7 years	Denmark
+1	Tourist Visas	f	f	5 years	Djibouti
+2	Business Visas	t	f	10 years	Djibouti
 3	Work Visas	t	f	7 years	Djibouti
-4	Student Visas	t	f	9 years	Djibouti
+4	Student Visas	t	f	5 years	Djibouti
 5	Transit Visas	f	f	5 years	Djibouti
-6	Family and Dependent Visas	t	f	10 years	Djibouti
-7	Immigrant Visas	t	t	6 years	Djibouti
-8	Refugee and Asylum Visas	t	f	9 years	Djibouti
+6	Family and Dependent Visas	t	f	7 years	Djibouti
+7	Immigrant Visas	t	t	9 years	Djibouti
+8	Refugee and Asylum Visas	t	f	10 years	Djibouti
 9	Special Purpose Visas	t	f	9 years	Djibouti
-1	Tourist Visas	f	f	10 years	Dominica
-2	Business Visas	t	f	7 years	Dominica
-3	Work Visas	t	f	9 years	Dominica
-4	Student Visas	t	f	5 years	Dominica
-5	Transit Visas	f	f	10 years	Dominica
-6	Family and Dependent Visas	t	f	10 years	Dominica
-7	Immigrant Visas	t	t	7 years	Dominica
+1	Tourist Visas	f	f	5 years	Dominica
+2	Business Visas	t	f	9 years	Dominica
+3	Work Visas	t	f	6 years	Dominica
+4	Student Visas	t	f	8 years	Dominica
+5	Transit Visas	f	f	8 years	Dominica
+6	Family and Dependent Visas	t	f	6 years	Dominica
+7	Immigrant Visas	t	t	9 years	Dominica
 8	Refugee and Asylum Visas	t	f	7 years	Dominica
-9	Special Purpose Visas	t	f	9 years	Dominica
-1	Tourist Visas	f	f	9 years	Ecuador
-2	Business Visas	t	f	9 years	Ecuador
-3	Work Visas	t	f	10 years	Ecuador
+9	Special Purpose Visas	t	f	6 years	Dominica
+1	Tourist Visas	f	f	5 years	Ecuador
+2	Business Visas	t	f	7 years	Ecuador
+3	Work Visas	t	f	9 years	Ecuador
 4	Student Visas	t	f	5 years	Ecuador
-5	Transit Visas	f	f	10 years	Ecuador
-6	Family and Dependent Visas	t	f	6 years	Ecuador
+5	Transit Visas	f	f	8 years	Ecuador
+6	Family and Dependent Visas	t	f	8 years	Ecuador
 7	Immigrant Visas	t	t	7 years	Ecuador
-8	Refugee and Asylum Visas	t	f	8 years	Ecuador
-9	Special Purpose Visas	t	f	9 years	Ecuador
-1	Tourist Visas	f	f	5 years	Egypt
-2	Business Visas	t	f	10 years	Egypt
+8	Refugee and Asylum Visas	t	f	9 years	Ecuador
+9	Special Purpose Visas	t	f	6 years	Ecuador
+1	Tourist Visas	f	f	7 years	Egypt
+2	Business Visas	t	f	9 years	Egypt
 3	Work Visas	t	f	6 years	Egypt
-4	Student Visas	t	f	9 years	Egypt
-5	Transit Visas	f	f	6 years	Egypt
+4	Student Visas	t	f	6 years	Egypt
+5	Transit Visas	f	f	5 years	Egypt
 6	Family and Dependent Visas	t	f	8 years	Egypt
 7	Immigrant Visas	t	t	6 years	Egypt
-8	Refugee and Asylum Visas	t	f	10 years	Egypt
-9	Special Purpose Visas	t	f	5 years	Egypt
-1	Tourist Visas	f	f	9 years	Eritrea
+8	Refugee and Asylum Visas	t	f	5 years	Egypt
+9	Special Purpose Visas	t	f	9 years	Egypt
+1	Tourist Visas	f	f	6 years	Eritrea
 2	Business Visas	t	f	9 years	Eritrea
-3	Work Visas	t	f	9 years	Eritrea
+3	Work Visas	t	f	6 years	Eritrea
 4	Student Visas	t	f	5 years	Eritrea
-5	Transit Visas	f	f	10 years	Eritrea
-6	Family and Dependent Visas	t	f	5 years	Eritrea
+5	Transit Visas	f	f	6 years	Eritrea
+6	Family and Dependent Visas	t	f	9 years	Eritrea
 7	Immigrant Visas	t	t	5 years	Eritrea
-8	Refugee and Asylum Visas	t	f	7 years	Eritrea
-9	Special Purpose Visas	t	f	10 years	Eritrea
+8	Refugee and Asylum Visas	t	f	10 years	Eritrea
+9	Special Purpose Visas	t	f	5 years	Eritrea
 1	Tourist Visas	f	f	6 years	Estonia
-2	Business Visas	t	f	5 years	Estonia
+2	Business Visas	t	f	6 years	Estonia
 3	Work Visas	t	f	9 years	Estonia
 4	Student Visas	t	f	10 years	Estonia
-5	Transit Visas	f	f	9 years	Estonia
-6	Family and Dependent Visas	t	f	7 years	Estonia
-7	Immigrant Visas	t	t	8 years	Estonia
-8	Refugee and Asylum Visas	t	f	5 years	Estonia
-9	Special Purpose Visas	t	f	9 years	Estonia
-1	Tourist Visas	f	f	9 years	Ethiopia
-2	Business Visas	t	f	8 years	Ethiopia
-3	Work Visas	t	f	7 years	Ethiopia
-4	Student Visas	t	f	10 years	Ethiopia
-5	Transit Visas	f	f	7 years	Ethiopia
-6	Family and Dependent Visas	t	f	6 years	Ethiopia
-7	Immigrant Visas	t	t	6 years	Ethiopia
+5	Transit Visas	f	f	6 years	Estonia
+6	Family and Dependent Visas	t	f	6 years	Estonia
+7	Immigrant Visas	t	t	5 years	Estonia
+8	Refugee and Asylum Visas	t	f	9 years	Estonia
+9	Special Purpose Visas	t	f	5 years	Estonia
+1	Tourist Visas	f	f	10 years	Ethiopia
+2	Business Visas	t	f	9 years	Ethiopia
+3	Work Visas	t	f	6 years	Ethiopia
+4	Student Visas	t	f	8 years	Ethiopia
+5	Transit Visas	f	f	6 years	Ethiopia
+6	Family and Dependent Visas	t	f	7 years	Ethiopia
+7	Immigrant Visas	t	t	10 years	Ethiopia
 8	Refugee and Asylum Visas	t	f	7 years	Ethiopia
-9	Special Purpose Visas	t	f	8 years	Ethiopia
-1	Tourist Visas	f	f	6 years	Fiji
-2	Business Visas	t	f	7 years	Fiji
-3	Work Visas	t	f	9 years	Fiji
+9	Special Purpose Visas	t	f	7 years	Ethiopia
+1	Tourist Visas	f	f	8 years	Fiji
+2	Business Visas	t	f	9 years	Fiji
+3	Work Visas	t	f	8 years	Fiji
 4	Student Visas	t	f	9 years	Fiji
-5	Transit Visas	f	f	7 years	Fiji
-6	Family and Dependent Visas	t	f	8 years	Fiji
-7	Immigrant Visas	t	t	10 years	Fiji
-8	Refugee and Asylum Visas	t	f	8 years	Fiji
-9	Special Purpose Visas	t	f	9 years	Fiji
-1	Tourist Visas	f	f	9 years	Finland
-2	Business Visas	t	f	10 years	Finland
+5	Transit Visas	f	f	10 years	Fiji
+6	Family and Dependent Visas	t	f	5 years	Fiji
+7	Immigrant Visas	t	t	7 years	Fiji
+8	Refugee and Asylum Visas	t	f	10 years	Fiji
+9	Special Purpose Visas	t	f	10 years	Fiji
+1	Tourist Visas	f	f	6 years	Finland
+2	Business Visas	t	f	5 years	Finland
 3	Work Visas	t	f	10 years	Finland
 4	Student Visas	t	f	8 years	Finland
-5	Transit Visas	f	f	10 years	Finland
-6	Family and Dependent Visas	t	f	8 years	Finland
+5	Transit Visas	f	f	7 years	Finland
+6	Family and Dependent Visas	t	f	10 years	Finland
 7	Immigrant Visas	t	t	7 years	Finland
-8	Refugee and Asylum Visas	t	f	6 years	Finland
-9	Special Purpose Visas	t	f	7 years	Finland
-1	Tourist Visas	f	f	6 years	France
-2	Business Visas	t	f	10 years	France
-3	Work Visas	t	f	9 years	France
-4	Student Visas	t	f	8 years	France
-5	Transit Visas	f	f	7 years	France
-6	Family and Dependent Visas	t	f	6 years	France
-7	Immigrant Visas	t	t	8 years	France
-8	Refugee and Asylum Visas	t	f	7 years	France
-9	Special Purpose Visas	t	f	8 years	France
-1	Tourist Visas	f	f	7 years	Gabon
-2	Business Visas	t	f	8 years	Gabon
-3	Work Visas	t	f	7 years	Gabon
-4	Student Visas	t	f	6 years	Gabon
-5	Transit Visas	f	f	10 years	Gabon
-6	Family and Dependent Visas	t	f	7 years	Gabon
-7	Immigrant Visas	t	t	10 years	Gabon
-8	Refugee and Asylum Visas	t	f	5 years	Gabon
-9	Special Purpose Visas	t	f	5 years	Gabon
-1	Tourist Visas	f	f	8 years	Gambia
-2	Business Visas	t	f	6 years	Gambia
+8	Refugee and Asylum Visas	t	f	9 years	Finland
+9	Special Purpose Visas	t	f	8 years	Finland
+1	Tourist Visas	f	f	7 years	France
+2	Business Visas	t	f	8 years	France
+3	Work Visas	t	f	7 years	France
+4	Student Visas	t	f	6 years	France
+5	Transit Visas	f	f	8 years	France
+6	Family and Dependent Visas	t	f	9 years	France
+7	Immigrant Visas	t	t	6 years	France
+8	Refugee and Asylum Visas	t	f	6 years	France
+9	Special Purpose Visas	t	f	10 years	France
+1	Tourist Visas	f	f	9 years	Gabon
+2	Business Visas	t	f	9 years	Gabon
+3	Work Visas	t	f	9 years	Gabon
+4	Student Visas	t	f	9 years	Gabon
+5	Transit Visas	f	f	5 years	Gabon
+6	Family and Dependent Visas	t	f	5 years	Gabon
+7	Immigrant Visas	t	t	5 years	Gabon
+8	Refugee and Asylum Visas	t	f	6 years	Gabon
+9	Special Purpose Visas	t	f	8 years	Gabon
+1	Tourist Visas	f	f	6 years	Gambia
+2	Business Visas	t	f	8 years	Gambia
 3	Work Visas	t	f	7 years	Gambia
 4	Student Visas	t	f	9 years	Gambia
-5	Transit Visas	f	f	9 years	Gambia
-6	Family and Dependent Visas	t	f	9 years	Gambia
-7	Immigrant Visas	t	t	5 years	Gambia
+5	Transit Visas	f	f	8 years	Gambia
+6	Family and Dependent Visas	t	f	5 years	Gambia
+7	Immigrant Visas	t	t	8 years	Gambia
 8	Refugee and Asylum Visas	t	f	7 years	Gambia
-9	Special Purpose Visas	t	f	8 years	Gambia
-1	Tourist Visas	f	f	6 years	Georgia
-2	Business Visas	t	f	6 years	Georgia
-3	Work Visas	t	f	9 years	Georgia
-4	Student Visas	t	f	5 years	Georgia
+9	Special Purpose Visas	t	f	9 years	Gambia
+1	Tourist Visas	f	f	7 years	Georgia
+2	Business Visas	t	f	5 years	Georgia
+3	Work Visas	t	f	7 years	Georgia
+4	Student Visas	t	f	9 years	Georgia
 5	Transit Visas	f	f	8 years	Georgia
-6	Family and Dependent Visas	t	f	8 years	Georgia
-7	Immigrant Visas	t	t	5 years	Georgia
-8	Refugee and Asylum Visas	t	f	10 years	Georgia
+6	Family and Dependent Visas	t	f	6 years	Georgia
+7	Immigrant Visas	t	t	8 years	Georgia
+8	Refugee and Asylum Visas	t	f	9 years	Georgia
 9	Special Purpose Visas	t	f	9 years	Georgia
-1	Tourist Visas	f	f	5 years	Germany
+1	Tourist Visas	f	f	6 years	Germany
 2	Business Visas	t	f	6 years	Germany
-3	Work Visas	t	f	5 years	Germany
+3	Work Visas	t	f	10 years	Germany
 4	Student Visas	t	f	6 years	Germany
-5	Transit Visas	f	f	5 years	Germany
-6	Family and Dependent Visas	t	f	5 years	Germany
+5	Transit Visas	f	f	7 years	Germany
+6	Family and Dependent Visas	t	f	7 years	Germany
 7	Immigrant Visas	t	t	5 years	Germany
 8	Refugee and Asylum Visas	t	f	5 years	Germany
 9	Special Purpose Visas	t	f	5 years	Germany
-1	Tourist Visas	f	f	6 years	Ghana
-2	Business Visas	t	f	9 years	Ghana
-3	Work Visas	t	f	6 years	Ghana
-4	Student Visas	t	f	7 years	Ghana
-5	Transit Visas	f	f	6 years	Ghana
+1	Tourist Visas	f	f	10 years	Ghana
+2	Business Visas	t	f	6 years	Ghana
+3	Work Visas	t	f	7 years	Ghana
+4	Student Visas	t	f	10 years	Ghana
+5	Transit Visas	f	f	5 years	Ghana
 6	Family and Dependent Visas	t	f	7 years	Ghana
-7	Immigrant Visas	t	t	8 years	Ghana
-8	Refugee and Asylum Visas	t	f	7 years	Ghana
-9	Special Purpose Visas	t	f	8 years	Ghana
-1	Tourist Visas	f	f	9 years	Gibraltar
-2	Business Visas	t	f	9 years	Gibraltar
-3	Work Visas	t	f	5 years	Gibraltar
-4	Student Visas	t	f	10 years	Gibraltar
-5	Transit Visas	f	f	5 years	Gibraltar
-6	Family and Dependent Visas	t	f	9 years	Gibraltar
-7	Immigrant Visas	t	t	6 years	Gibraltar
-8	Refugee and Asylum Visas	t	f	8 years	Gibraltar
-9	Special Purpose Visas	t	f	9 years	Gibraltar
+7	Immigrant Visas	t	t	10 years	Ghana
+8	Refugee and Asylum Visas	t	f	10 years	Ghana
+9	Special Purpose Visas	t	f	10 years	Ghana
+1	Tourist Visas	f	f	5 years	Gibraltar
+2	Business Visas	t	f	8 years	Gibraltar
+3	Work Visas	t	f	6 years	Gibraltar
+4	Student Visas	t	f	8 years	Gibraltar
+5	Transit Visas	f	f	6 years	Gibraltar
+6	Family and Dependent Visas	t	f	5 years	Gibraltar
+7	Immigrant Visas	t	t	5 years	Gibraltar
+8	Refugee and Asylum Visas	t	f	5 years	Gibraltar
+9	Special Purpose Visas	t	f	10 years	Gibraltar
 1	Tourist Visas	f	f	9 years	Greece
-2	Business Visas	t	f	7 years	Greece
+2	Business Visas	t	f	9 years	Greece
 3	Work Visas	t	f	10 years	Greece
-4	Student Visas	t	f	10 years	Greece
-5	Transit Visas	f	f	10 years	Greece
-6	Family and Dependent Visas	t	f	6 years	Greece
-7	Immigrant Visas	t	t	5 years	Greece
-8	Refugee and Asylum Visas	t	f	9 years	Greece
-9	Special Purpose Visas	t	f	9 years	Greece
-1	Tourist Visas	f	f	6 years	Greenland
-2	Business Visas	t	f	10 years	Greenland
+4	Student Visas	t	f	7 years	Greece
+5	Transit Visas	f	f	7 years	Greece
+6	Family and Dependent Visas	t	f	10 years	Greece
+7	Immigrant Visas	t	t	8 years	Greece
+8	Refugee and Asylum Visas	t	f	10 years	Greece
+9	Special Purpose Visas	t	f	8 years	Greece
+1	Tourist Visas	f	f	7 years	Greenland
+2	Business Visas	t	f	6 years	Greenland
 3	Work Visas	t	f	8 years	Greenland
 4	Student Visas	t	f	5 years	Greenland
-5	Transit Visas	f	f	5 years	Greenland
-6	Family and Dependent Visas	t	f	8 years	Greenland
-7	Immigrant Visas	t	t	5 years	Greenland
-8	Refugee and Asylum Visas	t	f	7 years	Greenland
-9	Special Purpose Visas	t	f	6 years	Greenland
-1	Tourist Visas	f	f	7 years	Guatemala
-2	Business Visas	t	f	5 years	Guatemala
-3	Work Visas	t	f	6 years	Guatemala
-4	Student Visas	t	f	6 years	Guatemala
-5	Transit Visas	f	f	9 years	Guatemala
-6	Family and Dependent Visas	t	f	10 years	Guatemala
-7	Immigrant Visas	t	t	10 years	Guatemala
+5	Transit Visas	f	f	6 years	Greenland
+6	Family and Dependent Visas	t	f	9 years	Greenland
+7	Immigrant Visas	t	t	7 years	Greenland
+8	Refugee and Asylum Visas	t	f	6 years	Greenland
+9	Special Purpose Visas	t	f	7 years	Greenland
+1	Tourist Visas	f	f	9 years	Guatemala
+2	Business Visas	t	f	7 years	Guatemala
+3	Work Visas	t	f	5 years	Guatemala
+4	Student Visas	t	f	10 years	Guatemala
+5	Transit Visas	f	f	6 years	Guatemala
+6	Family and Dependent Visas	t	f	7 years	Guatemala
+7	Immigrant Visas	t	t	5 years	Guatemala
 8	Refugee and Asylum Visas	t	f	10 years	Guatemala
-9	Special Purpose Visas	t	f	8 years	Guatemala
-1	Tourist Visas	f	f	7 years	Guinea
-2	Business Visas	t	f	9 years	Guinea
-3	Work Visas	t	f	8 years	Guinea
-4	Student Visas	t	f	6 years	Guinea
-5	Transit Visas	f	f	9 years	Guinea
-6	Family and Dependent Visas	t	f	10 years	Guinea
+9	Special Purpose Visas	t	f	5 years	Guatemala
+1	Tourist Visas	f	f	5 years	Guinea
+2	Business Visas	t	f	5 years	Guinea
+3	Work Visas	t	f	6 years	Guinea
+4	Student Visas	t	f	10 years	Guinea
+5	Transit Visas	f	f	6 years	Guinea
+6	Family and Dependent Visas	t	f	9 years	Guinea
 7	Immigrant Visas	t	t	10 years	Guinea
-8	Refugee and Asylum Visas	t	f	8 years	Guinea
-9	Special Purpose Visas	t	f	8 years	Guinea
-1	Tourist Visas	f	f	6 years	Guyana
-2	Business Visas	t	f	9 years	Guyana
-3	Work Visas	t	f	7 years	Guyana
+8	Refugee and Asylum Visas	t	f	7 years	Guinea
+9	Special Purpose Visas	t	f	9 years	Guinea
+1	Tourist Visas	f	f	7 years	Guyana
+2	Business Visas	t	f	8 years	Guyana
+3	Work Visas	t	f	6 years	Guyana
 4	Student Visas	t	f	6 years	Guyana
-5	Transit Visas	f	f	8 years	Guyana
-6	Family and Dependent Visas	t	f	5 years	Guyana
-7	Immigrant Visas	t	t	10 years	Guyana
-8	Refugee and Asylum Visas	t	f	8 years	Guyana
+5	Transit Visas	f	f	10 years	Guyana
+6	Family and Dependent Visas	t	f	7 years	Guyana
+7	Immigrant Visas	t	t	9 years	Guyana
+8	Refugee and Asylum Visas	t	f	6 years	Guyana
 9	Special Purpose Visas	t	f	8 years	Guyana
-1	Tourist Visas	f	f	6 years	Haiti
-2	Business Visas	t	f	9 years	Haiti
-3	Work Visas	t	f	5 years	Haiti
-4	Student Visas	t	f	10 years	Haiti
-5	Transit Visas	f	f	10 years	Haiti
-6	Family and Dependent Visas	t	f	10 years	Haiti
+1	Tourist Visas	f	f	5 years	Haiti
+2	Business Visas	t	f	8 years	Haiti
+3	Work Visas	t	f	7 years	Haiti
+4	Student Visas	t	f	5 years	Haiti
+5	Transit Visas	f	f	8 years	Haiti
+6	Family and Dependent Visas	t	f	8 years	Haiti
 7	Immigrant Visas	t	t	8 years	Haiti
-8	Refugee and Asylum Visas	t	f	9 years	Haiti
-9	Special Purpose Visas	t	f	7 years	Haiti
-1	Tourist Visas	f	f	6 years	Honduras
-2	Business Visas	t	f	6 years	Honduras
-3	Work Visas	t	f	8 years	Honduras
-4	Student Visas	t	f	9 years	Honduras
-5	Transit Visas	f	f	8 years	Honduras
-6	Family and Dependent Visas	t	f	9 years	Honduras
+8	Refugee and Asylum Visas	t	f	5 years	Haiti
+9	Special Purpose Visas	t	f	6 years	Haiti
+1	Tourist Visas	f	f	7 years	Honduras
+2	Business Visas	t	f	7 years	Honduras
+3	Work Visas	t	f	5 years	Honduras
+4	Student Visas	t	f	6 years	Honduras
+5	Transit Visas	f	f	10 years	Honduras
+6	Family and Dependent Visas	t	f	5 years	Honduras
 7	Immigrant Visas	t	t	7 years	Honduras
-8	Refugee and Asylum Visas	t	f	9 years	Honduras
-9	Special Purpose Visas	t	f	7 years	Honduras
-1	Tourist Visas	f	f	8 years	Hungary
-2	Business Visas	t	f	10 years	Hungary
+8	Refugee and Asylum Visas	t	f	5 years	Honduras
+9	Special Purpose Visas	t	f	9 years	Honduras
+1	Tourist Visas	f	f	6 years	Hungary
+2	Business Visas	t	f	5 years	Hungary
 3	Work Visas	t	f	6 years	Hungary
-4	Student Visas	t	f	8 years	Hungary
-5	Transit Visas	f	f	8 years	Hungary
+4	Student Visas	t	f	5 years	Hungary
+5	Transit Visas	f	f	6 years	Hungary
 6	Family and Dependent Visas	t	f	6 years	Hungary
-7	Immigrant Visas	t	t	5 years	Hungary
-8	Refugee and Asylum Visas	t	f	5 years	Hungary
-9	Special Purpose Visas	t	f	9 years	Hungary
-1	Tourist Visas	f	f	5 years	Iceland
-2	Business Visas	t	f	5 years	Iceland
-3	Work Visas	t	f	9 years	Iceland
-4	Student Visas	t	f	8 years	Iceland
-5	Transit Visas	f	f	6 years	Iceland
-6	Family and Dependent Visas	t	f	10 years	Iceland
-7	Immigrant Visas	t	t	10 years	Iceland
-8	Refugee and Asylum Visas	t	f	8 years	Iceland
-9	Special Purpose Visas	t	f	10 years	Iceland
+7	Immigrant Visas	t	t	6 years	Hungary
+8	Refugee and Asylum Visas	t	f	8 years	Hungary
+9	Special Purpose Visas	t	f	10 years	Hungary
+1	Tourist Visas	f	f	7 years	Iceland
+2	Business Visas	t	f	9 years	Iceland
+3	Work Visas	t	f	5 years	Iceland
+4	Student Visas	t	f	6 years	Iceland
+5	Transit Visas	f	f	9 years	Iceland
+6	Family and Dependent Visas	t	f	5 years	Iceland
+7	Immigrant Visas	t	t	5 years	Iceland
+8	Refugee and Asylum Visas	t	f	9 years	Iceland
+9	Special Purpose Visas	t	f	7 years	Iceland
 1	Tourist Visas	f	f	8 years	India
-2	Business Visas	t	f	6 years	India
-3	Work Visas	t	f	10 years	India
+2	Business Visas	t	f	9 years	India
+3	Work Visas	t	f	6 years	India
 4	Student Visas	t	f	5 years	India
-5	Transit Visas	f	f	8 years	India
-6	Family and Dependent Visas	t	f	7 years	India
-7	Immigrant Visas	t	t	9 years	India
-8	Refugee and Asylum Visas	t	f	9 years	India
-9	Special Purpose Visas	t	f	10 years	India
-1	Tourist Visas	f	f	9 years	Indonesia
-2	Business Visas	t	f	10 years	Indonesia
-3	Work Visas	t	f	7 years	Indonesia
-4	Student Visas	t	f	9 years	Indonesia
-5	Transit Visas	f	f	10 years	Indonesia
+5	Transit Visas	f	f	10 years	India
+6	Family and Dependent Visas	t	f	5 years	India
+7	Immigrant Visas	t	t	8 years	India
+8	Refugee and Asylum Visas	t	f	6 years	India
+9	Special Purpose Visas	t	f	6 years	India
+1	Tourist Visas	f	f	8 years	Indonesia
+2	Business Visas	t	f	7 years	Indonesia
+3	Work Visas	t	f	10 years	Indonesia
+4	Student Visas	t	f	6 years	Indonesia
+5	Transit Visas	f	f	6 years	Indonesia
 6	Family and Dependent Visas	t	f	5 years	Indonesia
-7	Immigrant Visas	t	t	6 years	Indonesia
-8	Refugee and Asylum Visas	t	f	7 years	Indonesia
-9	Special Purpose Visas	t	f	10 years	Indonesia
-1	Tourist Visas	f	f	6 years	Iran
-2	Business Visas	t	f	7 years	Iran
-3	Work Visas	t	f	10 years	Iran
+7	Immigrant Visas	t	t	10 years	Indonesia
+8	Refugee and Asylum Visas	t	f	6 years	Indonesia
+9	Special Purpose Visas	t	f	6 years	Indonesia
+1	Tourist Visas	f	f	9 years	Iran
+2	Business Visas	t	f	10 years	Iran
+3	Work Visas	t	f	8 years	Iran
 4	Student Visas	t	f	6 years	Iran
-5	Transit Visas	f	f	9 years	Iran
-6	Family and Dependent Visas	t	f	5 years	Iran
-7	Immigrant Visas	t	t	6 years	Iran
-8	Refugee and Asylum Visas	t	f	9 years	Iran
-9	Special Purpose Visas	t	f	9 years	Iran
+5	Transit Visas	f	f	7 years	Iran
+6	Family and Dependent Visas	t	f	8 years	Iran
+7	Immigrant Visas	t	t	9 years	Iran
+8	Refugee and Asylum Visas	t	f	7 years	Iran
+9	Special Purpose Visas	t	f	7 years	Iran
 1	Tourist Visas	f	f	5 years	Iraq
-2	Business Visas	t	f	9 years	Iraq
+2	Business Visas	t	f	5 years	Iraq
 3	Work Visas	t	f	9 years	Iraq
-4	Student Visas	t	f	5 years	Iraq
-5	Transit Visas	f	f	6 years	Iraq
-6	Family and Dependent Visas	t	f	9 years	Iraq
-7	Immigrant Visas	t	t	10 years	Iraq
-8	Refugee and Asylum Visas	t	f	6 years	Iraq
-9	Special Purpose Visas	t	f	8 years	Iraq
-1	Tourist Visas	f	f	9 years	Ireland
-2	Business Visas	t	f	8 years	Ireland
-3	Work Visas	t	f	9 years	Ireland
-4	Student Visas	t	f	8 years	Ireland
-5	Transit Visas	f	f	8 years	Ireland
-6	Family and Dependent Visas	t	f	8 years	Ireland
-7	Immigrant Visas	t	t	10 years	Ireland
-8	Refugee and Asylum Visas	t	f	9 years	Ireland
-9	Special Purpose Visas	t	f	6 years	Ireland
-1	Tourist Visas	f	f	5 years	Israel
-2	Business Visas	t	f	9 years	Israel
+4	Student Visas	t	f	7 years	Iraq
+5	Transit Visas	f	f	8 years	Iraq
+6	Family and Dependent Visas	t	f	8 years	Iraq
+7	Immigrant Visas	t	t	5 years	Iraq
+8	Refugee and Asylum Visas	t	f	10 years	Iraq
+9	Special Purpose Visas	t	f	9 years	Iraq
+1	Tourist Visas	f	f	7 years	Ireland
+2	Business Visas	t	f	6 years	Ireland
+3	Work Visas	t	f	7 years	Ireland
+4	Student Visas	t	f	7 years	Ireland
+5	Transit Visas	f	f	6 years	Ireland
+6	Family and Dependent Visas	t	f	5 years	Ireland
+7	Immigrant Visas	t	t	5 years	Ireland
+8	Refugee and Asylum Visas	t	f	10 years	Ireland
+9	Special Purpose Visas	t	f	5 years	Ireland
+1	Tourist Visas	f	f	6 years	Israel
+2	Business Visas	t	f	5 years	Israel
 3	Work Visas	t	f	10 years	Israel
-4	Student Visas	t	f	6 years	Israel
-5	Transit Visas	f	f	7 years	Israel
+4	Student Visas	t	f	5 years	Israel
+5	Transit Visas	f	f	5 years	Israel
 6	Family and Dependent Visas	t	f	6 years	Israel
-7	Immigrant Visas	t	t	9 years	Israel
-8	Refugee and Asylum Visas	t	f	7 years	Israel
-9	Special Purpose Visas	t	f	6 years	Israel
-1	Tourist Visas	f	f	10 years	Italy
+7	Immigrant Visas	t	t	8 years	Israel
+8	Refugee and Asylum Visas	t	f	9 years	Israel
+9	Special Purpose Visas	t	f	8 years	Israel
+1	Tourist Visas	f	f	8 years	Italy
 2	Business Visas	t	f	6 years	Italy
-3	Work Visas	t	f	8 years	Italy
-4	Student Visas	t	f	7 years	Italy
-5	Transit Visas	f	f	5 years	Italy
-6	Family and Dependent Visas	t	f	6 years	Italy
-7	Immigrant Visas	t	t	5 years	Italy
-8	Refugee and Asylum Visas	t	f	6 years	Italy
+3	Work Visas	t	f	10 years	Italy
+4	Student Visas	t	f	8 years	Italy
+5	Transit Visas	f	f	10 years	Italy
+6	Family and Dependent Visas	t	f	7 years	Italy
+7	Immigrant Visas	t	t	10 years	Italy
+8	Refugee and Asylum Visas	t	f	8 years	Italy
 9	Special Purpose Visas	t	f	8 years	Italy
-1	Tourist Visas	f	f	10 years	Jamaica
+1	Tourist Visas	f	f	7 years	Jamaica
 2	Business Visas	t	f	7 years	Jamaica
-3	Work Visas	t	f	5 years	Jamaica
+3	Work Visas	t	f	6 years	Jamaica
 4	Student Visas	t	f	8 years	Jamaica
-5	Transit Visas	f	f	5 years	Jamaica
-6	Family and Dependent Visas	t	f	7 years	Jamaica
-7	Immigrant Visas	t	t	10 years	Jamaica
-8	Refugee and Asylum Visas	t	f	8 years	Jamaica
-9	Special Purpose Visas	t	f	7 years	Jamaica
-1	Tourist Visas	f	f	5 years	Japan
+5	Transit Visas	f	f	9 years	Jamaica
+6	Family and Dependent Visas	t	f	8 years	Jamaica
+7	Immigrant Visas	t	t	7 years	Jamaica
+8	Refugee and Asylum Visas	t	f	6 years	Jamaica
+9	Special Purpose Visas	t	f	10 years	Jamaica
+1	Tourist Visas	f	f	10 years	Japan
 2	Business Visas	t	f	6 years	Japan
-3	Work Visas	t	f	7 years	Japan
+3	Work Visas	t	f	10 years	Japan
 4	Student Visas	t	f	10 years	Japan
-5	Transit Visas	f	f	9 years	Japan
-6	Family and Dependent Visas	t	f	9 years	Japan
+5	Transit Visas	f	f	10 years	Japan
+6	Family and Dependent Visas	t	f	5 years	Japan
 7	Immigrant Visas	t	t	8 years	Japan
-8	Refugee and Asylum Visas	t	f	9 years	Japan
-9	Special Purpose Visas	t	f	5 years	Japan
-1	Tourist Visas	f	f	6 years	Jordan
-2	Business Visas	t	f	10 years	Jordan
-3	Work Visas	t	f	9 years	Jordan
-4	Student Visas	t	f	5 years	Jordan
-5	Transit Visas	f	f	9 years	Jordan
-6	Family and Dependent Visas	t	f	5 years	Jordan
-7	Immigrant Visas	t	t	5 years	Jordan
-8	Refugee and Asylum Visas	t	f	10 years	Jordan
-9	Special Purpose Visas	t	f	7 years	Jordan
-1	Tourist Visas	f	f	9 years	Kazakhstan
-2	Business Visas	t	f	6 years	Kazakhstan
-3	Work Visas	t	f	8 years	Kazakhstan
-4	Student Visas	t	f	7 years	Kazakhstan
-5	Transit Visas	f	f	8 years	Kazakhstan
-6	Family and Dependent Visas	t	f	6 years	Kazakhstan
-7	Immigrant Visas	t	t	5 years	Kazakhstan
-8	Refugee and Asylum Visas	t	f	10 years	Kazakhstan
-9	Special Purpose Visas	t	f	6 years	Kazakhstan
-1	Tourist Visas	f	f	8 years	Kenya
-2	Business Visas	t	f	9 years	Kenya
-3	Work Visas	t	f	5 years	Kenya
-4	Student Visas	t	f	8 years	Kenya
-5	Transit Visas	f	f	8 years	Kenya
-6	Family and Dependent Visas	t	f	5 years	Kenya
-7	Immigrant Visas	t	t	10 years	Kenya
-8	Refugee and Asylum Visas	t	f	6 years	Kenya
-9	Special Purpose Visas	t	f	10 years	Kenya
+8	Refugee and Asylum Visas	t	f	8 years	Japan
+9	Special Purpose Visas	t	f	10 years	Japan
+1	Tourist Visas	f	f	7 years	Jordan
+2	Business Visas	t	f	7 years	Jordan
+3	Work Visas	t	f	5 years	Jordan
+4	Student Visas	t	f	10 years	Jordan
+5	Transit Visas	f	f	8 years	Jordan
+6	Family and Dependent Visas	t	f	9 years	Jordan
+7	Immigrant Visas	t	t	8 years	Jordan
+8	Refugee and Asylum Visas	t	f	5 years	Jordan
+9	Special Purpose Visas	t	f	6 years	Jordan
+1	Tourist Visas	f	f	7 years	Kazakhstan
+2	Business Visas	t	f	5 years	Kazakhstan
+3	Work Visas	t	f	10 years	Kazakhstan
+4	Student Visas	t	f	10 years	Kazakhstan
+5	Transit Visas	f	f	5 years	Kazakhstan
+6	Family and Dependent Visas	t	f	9 years	Kazakhstan
+7	Immigrant Visas	t	t	9 years	Kazakhstan
+8	Refugee and Asylum Visas	t	f	8 years	Kazakhstan
+9	Special Purpose Visas	t	f	5 years	Kazakhstan
+1	Tourist Visas	f	f	7 years	Kenya
+2	Business Visas	t	f	5 years	Kenya
+3	Work Visas	t	f	9 years	Kenya
+4	Student Visas	t	f	7 years	Kenya
+5	Transit Visas	f	f	10 years	Kenya
+6	Family and Dependent Visas	t	f	7 years	Kenya
+7	Immigrant Visas	t	t	5 years	Kenya
+8	Refugee and Asylum Visas	t	f	8 years	Kenya
+9	Special Purpose Visas	t	f	6 years	Kenya
 1	Tourist Visas	f	f	5 years	Kiribati
-2	Business Visas	t	f	10 years	Kiribati
-3	Work Visas	t	f	10 years	Kiribati
+2	Business Visas	t	f	6 years	Kiribati
+3	Work Visas	t	f	5 years	Kiribati
 4	Student Visas	t	f	10 years	Kiribati
-5	Transit Visas	f	f	5 years	Kiribati
-6	Family and Dependent Visas	t	f	10 years	Kiribati
+5	Transit Visas	f	f	7 years	Kiribati
+6	Family and Dependent Visas	t	f	7 years	Kiribati
 7	Immigrant Visas	t	t	6 years	Kiribati
-8	Refugee and Asylum Visas	t	f	7 years	Kiribati
-9	Special Purpose Visas	t	f	5 years	Kiribati
-1	Tourist Visas	f	f	7 years	Kosovo
-2	Business Visas	t	f	6 years	Kosovo
-3	Work Visas	t	f	8 years	Kosovo
-4	Student Visas	t	f	9 years	Kosovo
-5	Transit Visas	f	f	9 years	Kosovo
-6	Family and Dependent Visas	t	f	8 years	Kosovo
-7	Immigrant Visas	t	t	7 years	Kosovo
-8	Refugee and Asylum Visas	t	f	5 years	Kosovo
-9	Special Purpose Visas	t	f	6 years	Kosovo
-1	Tourist Visas	f	f	7 years	Kyrgyzstan
+8	Refugee and Asylum Visas	t	f	6 years	Kiribati
+9	Special Purpose Visas	t	f	7 years	Kiribati
+1	Tourist Visas	f	f	5 years	Kosovo
+2	Business Visas	t	f	10 years	Kosovo
+3	Work Visas	t	f	7 years	Kosovo
+4	Student Visas	t	f	7 years	Kosovo
+5	Transit Visas	f	f	10 years	Kosovo
+6	Family and Dependent Visas	t	f	7 years	Kosovo
+7	Immigrant Visas	t	t	6 years	Kosovo
+8	Refugee and Asylum Visas	t	f	8 years	Kosovo
+9	Special Purpose Visas	t	f	10 years	Kosovo
+1	Tourist Visas	f	f	10 years	Kyrgyzstan
 2	Business Visas	t	f	8 years	Kyrgyzstan
-3	Work Visas	t	f	6 years	Kyrgyzstan
-4	Student Visas	t	f	10 years	Kyrgyzstan
-5	Transit Visas	f	f	7 years	Kyrgyzstan
-6	Family and Dependent Visas	t	f	9 years	Kyrgyzstan
-7	Immigrant Visas	t	t	9 years	Kyrgyzstan
+3	Work Visas	t	f	9 years	Kyrgyzstan
+4	Student Visas	t	f	8 years	Kyrgyzstan
+5	Transit Visas	f	f	10 years	Kyrgyzstan
+6	Family and Dependent Visas	t	f	8 years	Kyrgyzstan
+7	Immigrant Visas	t	t	8 years	Kyrgyzstan
 8	Refugee and Asylum Visas	t	f	5 years	Kyrgyzstan
 9	Special Purpose Visas	t	f	8 years	Kyrgyzstan
-1	Tourist Visas	f	f	8 years	Laos
-2	Business Visas	t	f	9 years	Laos
+1	Tourist Visas	f	f	5 years	Laos
+2	Business Visas	t	f	10 years	Laos
 3	Work Visas	t	f	7 years	Laos
-4	Student Visas	t	f	8 years	Laos
+4	Student Visas	t	f	9 years	Laos
 5	Transit Visas	f	f	6 years	Laos
-6	Family and Dependent Visas	t	f	9 years	Laos
-7	Immigrant Visas	t	t	9 years	Laos
-8	Refugee and Asylum Visas	t	f	5 years	Laos
-9	Special Purpose Visas	t	f	10 years	Laos
-1	Tourist Visas	f	f	7 years	Latvia
-2	Business Visas	t	f	6 years	Latvia
-3	Work Visas	t	f	7 years	Latvia
-4	Student Visas	t	f	10 years	Latvia
-5	Transit Visas	f	f	5 years	Latvia
+6	Family and Dependent Visas	t	f	7 years	Laos
+7	Immigrant Visas	t	t	7 years	Laos
+8	Refugee and Asylum Visas	t	f	7 years	Laos
+9	Special Purpose Visas	t	f	8 years	Laos
+1	Tourist Visas	f	f	6 years	Latvia
+2	Business Visas	t	f	7 years	Latvia
+3	Work Visas	t	f	9 years	Latvia
+4	Student Visas	t	f	8 years	Latvia
+5	Transit Visas	f	f	6 years	Latvia
 6	Family and Dependent Visas	t	f	5 years	Latvia
-7	Immigrant Visas	t	t	8 years	Latvia
-8	Refugee and Asylum Visas	t	f	10 years	Latvia
+7	Immigrant Visas	t	t	9 years	Latvia
+8	Refugee and Asylum Visas	t	f	7 years	Latvia
 9	Special Purpose Visas	t	f	8 years	Latvia
-1	Tourist Visas	f	f	6 years	Lebanon
-2	Business Visas	t	f	7 years	Lebanon
-3	Work Visas	t	f	9 years	Lebanon
-4	Student Visas	t	f	6 years	Lebanon
-5	Transit Visas	f	f	5 years	Lebanon
-6	Family and Dependent Visas	t	f	10 years	Lebanon
-7	Immigrant Visas	t	t	5 years	Lebanon
-8	Refugee and Asylum Visas	t	f	9 years	Lebanon
-9	Special Purpose Visas	t	f	10 years	Lebanon
+1	Tourist Visas	f	f	9 years	Lebanon
+2	Business Visas	t	f	8 years	Lebanon
+3	Work Visas	t	f	8 years	Lebanon
+4	Student Visas	t	f	8 years	Lebanon
+5	Transit Visas	f	f	10 years	Lebanon
+6	Family and Dependent Visas	t	f	8 years	Lebanon
+7	Immigrant Visas	t	t	7 years	Lebanon
+8	Refugee and Asylum Visas	t	f	7 years	Lebanon
+9	Special Purpose Visas	t	f	8 years	Lebanon
 1	Tourist Visas	f	f	8 years	Lesotho
-2	Business Visas	t	f	9 years	Lesotho
-3	Work Visas	t	f	10 years	Lesotho
-4	Student Visas	t	f	10 years	Lesotho
-5	Transit Visas	f	f	9 years	Lesotho
-6	Family and Dependent Visas	t	f	8 years	Lesotho
-7	Immigrant Visas	t	t	7 years	Lesotho
-8	Refugee and Asylum Visas	t	f	9 years	Lesotho
+2	Business Visas	t	f	10 years	Lesotho
+3	Work Visas	t	f	9 years	Lesotho
+4	Student Visas	t	f	9 years	Lesotho
+5	Transit Visas	f	f	7 years	Lesotho
+6	Family and Dependent Visas	t	f	9 years	Lesotho
+7	Immigrant Visas	t	t	6 years	Lesotho
+8	Refugee and Asylum Visas	t	f	7 years	Lesotho
 9	Special Purpose Visas	t	f	10 years	Lesotho
-1	Tourist Visas	f	f	9 years	Liberia
-2	Business Visas	t	f	5 years	Liberia
+1	Tourist Visas	f	f	10 years	Liberia
+2	Business Visas	t	f	8 years	Liberia
 3	Work Visas	t	f	9 years	Liberia
-4	Student Visas	t	f	8 years	Liberia
-5	Transit Visas	f	f	6 years	Liberia
-6	Family and Dependent Visas	t	f	8 years	Liberia
-7	Immigrant Visas	t	t	10 years	Liberia
-8	Refugee and Asylum Visas	t	f	5 years	Liberia
+4	Student Visas	t	f	9 years	Liberia
+5	Transit Visas	f	f	5 years	Liberia
+6	Family and Dependent Visas	t	f	5 years	Liberia
+7	Immigrant Visas	t	t	9 years	Liberia
+8	Refugee and Asylum Visas	t	f	10 years	Liberia
 9	Special Purpose Visas	t	f	10 years	Liberia
-1	Tourist Visas	f	f	7 years	Libya
-2	Business Visas	t	f	5 years	Libya
-3	Work Visas	t	f	8 years	Libya
-4	Student Visas	t	f	9 years	Libya
-5	Transit Visas	f	f	6 years	Libya
-6	Family and Dependent Visas	t	f	6 years	Libya
-7	Immigrant Visas	t	t	5 years	Libya
+1	Tourist Visas	f	f	10 years	Libya
+2	Business Visas	t	f	6 years	Libya
+3	Work Visas	t	f	6 years	Libya
+4	Student Visas	t	f	6 years	Libya
+5	Transit Visas	f	f	10 years	Libya
+6	Family and Dependent Visas	t	f	10 years	Libya
+7	Immigrant Visas	t	t	9 years	Libya
 8	Refugee and Asylum Visas	t	f	10 years	Libya
-9	Special Purpose Visas	t	f	8 years	Libya
-1	Tourist Visas	f	f	9 years	Liechtenstein
-2	Business Visas	t	f	5 years	Liechtenstein
-3	Work Visas	t	f	9 years	Liechtenstein
-4	Student Visas	t	f	8 years	Liechtenstein
+9	Special Purpose Visas	t	f	9 years	Libya
+1	Tourist Visas	f	f	5 years	Liechtenstein
+2	Business Visas	t	f	7 years	Liechtenstein
+3	Work Visas	t	f	5 years	Liechtenstein
+4	Student Visas	t	f	7 years	Liechtenstein
 5	Transit Visas	f	f	8 years	Liechtenstein
 6	Family and Dependent Visas	t	f	5 years	Liechtenstein
-7	Immigrant Visas	t	t	10 years	Liechtenstein
-8	Refugee and Asylum Visas	t	f	9 years	Liechtenstein
-9	Special Purpose Visas	t	f	10 years	Liechtenstein
-1	Tourist Visas	f	f	10 years	Lithuania
-2	Business Visas	t	f	10 years	Lithuania
+7	Immigrant Visas	t	t	7 years	Liechtenstein
+8	Refugee and Asylum Visas	t	f	7 years	Liechtenstein
+9	Special Purpose Visas	t	f	8 years	Liechtenstein
+1	Tourist Visas	f	f	9 years	Lithuania
+2	Business Visas	t	f	7 years	Lithuania
 3	Work Visas	t	f	10 years	Lithuania
 4	Student Visas	t	f	7 years	Lithuania
-5	Transit Visas	f	f	7 years	Lithuania
-6	Family and Dependent Visas	t	f	8 years	Lithuania
-7	Immigrant Visas	t	t	7 years	Lithuania
-8	Refugee and Asylum Visas	t	f	5 years	Lithuania
-9	Special Purpose Visas	t	f	6 years	Lithuania
-1	Tourist Visas	f	f	10 years	Luxembourg
-2	Business Visas	t	f	5 years	Luxembourg
-3	Work Visas	t	f	8 years	Luxembourg
+5	Transit Visas	f	f	10 years	Lithuania
+6	Family and Dependent Visas	t	f	10 years	Lithuania
+7	Immigrant Visas	t	t	10 years	Lithuania
+8	Refugee and Asylum Visas	t	f	6 years	Lithuania
+9	Special Purpose Visas	t	f	8 years	Lithuania
+1	Tourist Visas	f	f	8 years	Luxembourg
+2	Business Visas	t	f	7 years	Luxembourg
+3	Work Visas	t	f	6 years	Luxembourg
 4	Student Visas	t	f	8 years	Luxembourg
 5	Transit Visas	f	f	10 years	Luxembourg
-6	Family and Dependent Visas	t	f	7 years	Luxembourg
+6	Family and Dependent Visas	t	f	8 years	Luxembourg
 7	Immigrant Visas	t	t	6 years	Luxembourg
-8	Refugee and Asylum Visas	t	f	8 years	Luxembourg
+8	Refugee and Asylum Visas	t	f	10 years	Luxembourg
 9	Special Purpose Visas	t	f	9 years	Luxembourg
-1	Tourist Visas	f	f	8 years	Macao
+1	Tourist Visas	f	f	6 years	Macao
 2	Business Visas	t	f	8 years	Macao
 3	Work Visas	t	f	9 years	Macao
-4	Student Visas	t	f	7 years	Macao
+4	Student Visas	t	f	9 years	Macao
 5	Transit Visas	f	f	8 years	Macao
-6	Family and Dependent Visas	t	f	10 years	Macao
-7	Immigrant Visas	t	t	10 years	Macao
-8	Refugee and Asylum Visas	t	f	9 years	Macao
-9	Special Purpose Visas	t	f	9 years	Macao
-1	Tourist Visas	f	f	8 years	Macedonia
-2	Business Visas	t	f	10 years	Macedonia
-3	Work Visas	t	f	10 years	Macedonia
-4	Student Visas	t	f	7 years	Macedonia
-5	Transit Visas	f	f	6 years	Macedonia
-6	Family and Dependent Visas	t	f	6 years	Macedonia
+6	Family and Dependent Visas	t	f	5 years	Macao
+7	Immigrant Visas	t	t	7 years	Macao
+8	Refugee and Asylum Visas	t	f	8 years	Macao
+9	Special Purpose Visas	t	f	8 years	Macao
+1	Tourist Visas	f	f	5 years	Macedonia
+2	Business Visas	t	f	9 years	Macedonia
+3	Work Visas	t	f	5 years	Macedonia
+4	Student Visas	t	f	8 years	Macedonia
+5	Transit Visas	f	f	10 years	Macedonia
+6	Family and Dependent Visas	t	f	5 years	Macedonia
 7	Immigrant Visas	t	t	7 years	Macedonia
 8	Refugee and Asylum Visas	t	f	7 years	Macedonia
-9	Special Purpose Visas	t	f	9 years	Macedonia
+9	Special Purpose Visas	t	f	10 years	Macedonia
 1	Tourist Visas	f	f	10 years	Madagascar
-2	Business Visas	t	f	7 years	Madagascar
-3	Work Visas	t	f	5 years	Madagascar
+2	Business Visas	t	f	10 years	Madagascar
+3	Work Visas	t	f	7 years	Madagascar
 4	Student Visas	t	f	5 years	Madagascar
-5	Transit Visas	f	f	8 years	Madagascar
-6	Family and Dependent Visas	t	f	9 years	Madagascar
-7	Immigrant Visas	t	t	6 years	Madagascar
-8	Refugee and Asylum Visas	t	f	8 years	Madagascar
+5	Transit Visas	f	f	9 years	Madagascar
+6	Family and Dependent Visas	t	f	8 years	Madagascar
+7	Immigrant Visas	t	t	7 years	Madagascar
+8	Refugee and Asylum Visas	t	f	9 years	Madagascar
 9	Special Purpose Visas	t	f	5 years	Madagascar
-1	Tourist Visas	f	f	5 years	Malawi
-2	Business Visas	t	f	7 years	Malawi
-3	Work Visas	t	f	10 years	Malawi
-4	Student Visas	t	f	7 years	Malawi
-5	Transit Visas	f	f	10 years	Malawi
+1	Tourist Visas	f	f	10 years	Malawi
+2	Business Visas	t	f	6 years	Malawi
+3	Work Visas	t	f	7 years	Malawi
+4	Student Visas	t	f	10 years	Malawi
+5	Transit Visas	f	f	9 years	Malawi
 6	Family and Dependent Visas	t	f	7 years	Malawi
-7	Immigrant Visas	t	t	6 years	Malawi
-8	Refugee and Asylum Visas	t	f	10 years	Malawi
+7	Immigrant Visas	t	t	7 years	Malawi
+8	Refugee and Asylum Visas	t	f	8 years	Malawi
 9	Special Purpose Visas	t	f	9 years	Malawi
-1	Tourist Visas	f	f	10 years	Malaysia
-2	Business Visas	t	f	5 years	Malaysia
-3	Work Visas	t	f	10 years	Malaysia
-4	Student Visas	t	f	5 years	Malaysia
-5	Transit Visas	f	f	5 years	Malaysia
-6	Family and Dependent Visas	t	f	5 years	Malaysia
-7	Immigrant Visas	t	t	5 years	Malaysia
+1	Tourist Visas	f	f	8 years	Malaysia
+2	Business Visas	t	f	6 years	Malaysia
+3	Work Visas	t	f	7 years	Malaysia
+4	Student Visas	t	f	10 years	Malaysia
+5	Transit Visas	f	f	7 years	Malaysia
+6	Family and Dependent Visas	t	f	7 years	Malaysia
+7	Immigrant Visas	t	t	7 years	Malaysia
 8	Refugee and Asylum Visas	t	f	10 years	Malaysia
 9	Special Purpose Visas	t	f	9 years	Malaysia
-1	Tourist Visas	f	f	5 years	Maldives
+1	Tourist Visas	f	f	7 years	Maldives
 2	Business Visas	t	f	6 years	Maldives
-3	Work Visas	t	f	9 years	Maldives
-4	Student Visas	t	f	5 years	Maldives
-5	Transit Visas	f	f	8 years	Maldives
-6	Family and Dependent Visas	t	f	10 years	Maldives
-7	Immigrant Visas	t	t	9 years	Maldives
-8	Refugee and Asylum Visas	t	f	5 years	Maldives
-9	Special Purpose Visas	t	f	5 years	Maldives
+3	Work Visas	t	f	6 years	Maldives
+4	Student Visas	t	f	7 years	Maldives
+5	Transit Visas	f	f	9 years	Maldives
+6	Family and Dependent Visas	t	f	7 years	Maldives
+7	Immigrant Visas	t	t	8 years	Maldives
+8	Refugee and Asylum Visas	t	f	9 years	Maldives
+9	Special Purpose Visas	t	f	8 years	Maldives
 1	Tourist Visas	f	f	5 years	Mali
-2	Business Visas	t	f	5 years	Mali
-3	Work Visas	t	f	5 years	Mali
-4	Student Visas	t	f	9 years	Mali
-5	Transit Visas	f	f	9 years	Mali
+2	Business Visas	t	f	10 years	Mali
+3	Work Visas	t	f	9 years	Mali
+4	Student Visas	t	f	6 years	Mali
+5	Transit Visas	f	f	6 years	Mali
 6	Family and Dependent Visas	t	f	5 years	Mali
-7	Immigrant Visas	t	t	8 years	Mali
-8	Refugee and Asylum Visas	t	f	6 years	Mali
-9	Special Purpose Visas	t	f	6 years	Mali
+7	Immigrant Visas	t	t	10 years	Mali
+8	Refugee and Asylum Visas	t	f	7 years	Mali
+9	Special Purpose Visas	t	f	10 years	Mali
 1	Tourist Visas	f	f	9 years	Malta
-2	Business Visas	t	f	7 years	Malta
-3	Work Visas	t	f	7 years	Malta
-4	Student Visas	t	f	7 years	Malta
+2	Business Visas	t	f	10 years	Malta
+3	Work Visas	t	f	8 years	Malta
+4	Student Visas	t	f	10 years	Malta
 5	Transit Visas	f	f	9 years	Malta
 6	Family and Dependent Visas	t	f	7 years	Malta
 7	Immigrant Visas	t	t	10 years	Malta
-8	Refugee and Asylum Visas	t	f	10 years	Malta
-9	Special Purpose Visas	t	f	8 years	Malta
-1	Tourist Visas	f	f	6 years	Martinique
-2	Business Visas	t	f	9 years	Martinique
-3	Work Visas	t	f	10 years	Martinique
-4	Student Visas	t	f	9 years	Martinique
-5	Transit Visas	f	f	6 years	Martinique
-6	Family and Dependent Visas	t	f	7 years	Martinique
-7	Immigrant Visas	t	t	8 years	Martinique
-8	Refugee and Asylum Visas	t	f	8 years	Martinique
-9	Special Purpose Visas	t	f	6 years	Martinique
-1	Tourist Visas	f	f	5 years	Mauritania
-2	Business Visas	t	f	6 years	Mauritania
-3	Work Visas	t	f	8 years	Mauritania
-4	Student Visas	t	f	6 years	Mauritania
-5	Transit Visas	f	f	8 years	Mauritania
+8	Refugee and Asylum Visas	t	f	7 years	Malta
+9	Special Purpose Visas	t	f	7 years	Malta
+1	Tourist Visas	f	f	7 years	Martinique
+2	Business Visas	t	f	7 years	Martinique
+3	Work Visas	t	f	7 years	Martinique
+4	Student Visas	t	f	5 years	Martinique
+5	Transit Visas	f	f	5 years	Martinique
+6	Family and Dependent Visas	t	f	5 years	Martinique
+7	Immigrant Visas	t	t	6 years	Martinique
+8	Refugee and Asylum Visas	t	f	5 years	Martinique
+9	Special Purpose Visas	t	f	7 years	Martinique
+1	Tourist Visas	f	f	10 years	Mauritania
+2	Business Visas	t	f	10 years	Mauritania
+3	Work Visas	t	f	6 years	Mauritania
+4	Student Visas	t	f	10 years	Mauritania
+5	Transit Visas	f	f	7 years	Mauritania
 6	Family and Dependent Visas	t	f	5 years	Mauritania
-7	Immigrant Visas	t	t	8 years	Mauritania
-8	Refugee and Asylum Visas	t	f	8 years	Mauritania
-9	Special Purpose Visas	t	f	9 years	Mauritania
-1	Tourist Visas	f	f	10 years	Mauritius
-2	Business Visas	t	f	9 years	Mauritius
+7	Immigrant Visas	t	t	9 years	Mauritania
+8	Refugee and Asylum Visas	t	f	5 years	Mauritania
+9	Special Purpose Visas	t	f	7 years	Mauritania
+1	Tourist Visas	f	f	9 years	Mauritius
+2	Business Visas	t	f	8 years	Mauritius
 3	Work Visas	t	f	8 years	Mauritius
-4	Student Visas	t	f	10 years	Mauritius
-5	Transit Visas	f	f	5 years	Mauritius
-6	Family and Dependent Visas	t	f	9 years	Mauritius
-7	Immigrant Visas	t	t	5 years	Mauritius
-8	Refugee and Asylum Visas	t	f	9 years	Mauritius
+4	Student Visas	t	f	9 years	Mauritius
+5	Transit Visas	f	f	6 years	Mauritius
+6	Family and Dependent Visas	t	f	7 years	Mauritius
+7	Immigrant Visas	t	t	7 years	Mauritius
+8	Refugee and Asylum Visas	t	f	6 years	Mauritius
 9	Special Purpose Visas	t	f	7 years	Mauritius
-1	Tourist Visas	f	f	6 years	Mayotte
-2	Business Visas	t	f	5 years	Mayotte
-3	Work Visas	t	f	7 years	Mayotte
-4	Student Visas	t	f	9 years	Mayotte
-5	Transit Visas	f	f	5 years	Mayotte
-6	Family and Dependent Visas	t	f	10 years	Mayotte
-7	Immigrant Visas	t	t	10 years	Mayotte
-8	Refugee and Asylum Visas	t	f	9 years	Mayotte
+1	Tourist Visas	f	f	9 years	Mayotte
+2	Business Visas	t	f	7 years	Mayotte
+3	Work Visas	t	f	9 years	Mayotte
+4	Student Visas	t	f	5 years	Mayotte
+5	Transit Visas	f	f	8 years	Mayotte
+6	Family and Dependent Visas	t	f	6 years	Mayotte
+7	Immigrant Visas	t	t	9 years	Mayotte
+8	Refugee and Asylum Visas	t	f	6 years	Mayotte
 9	Special Purpose Visas	t	f	5 years	Mayotte
-1	Tourist Visas	f	f	5 years	Mexico
-2	Business Visas	t	f	6 years	Mexico
-3	Work Visas	t	f	6 years	Mexico
-4	Student Visas	t	f	8 years	Mexico
-5	Transit Visas	f	f	9 years	Mexico
-6	Family and Dependent Visas	t	f	7 years	Mexico
-7	Immigrant Visas	t	t	9 years	Mexico
-8	Refugee and Asylum Visas	t	f	6 years	Mexico
-9	Special Purpose Visas	t	f	7 years	Mexico
-1	Tourist Visas	f	f	9 years	Moldova
+1	Tourist Visas	f	f	10 years	Mexico
+2	Business Visas	t	f	7 years	Mexico
+3	Work Visas	t	f	10 years	Mexico
+4	Student Visas	t	f	7 years	Mexico
+5	Transit Visas	f	f	5 years	Mexico
+6	Family and Dependent Visas	t	f	10 years	Mexico
+7	Immigrant Visas	t	t	7 years	Mexico
+8	Refugee and Asylum Visas	t	f	5 years	Mexico
+9	Special Purpose Visas	t	f	10 years	Mexico
+1	Tourist Visas	f	f	8 years	Moldova
 2	Business Visas	t	f	9 years	Moldova
-3	Work Visas	t	f	6 years	Moldova
-4	Student Visas	t	f	5 years	Moldova
-5	Transit Visas	f	f	10 years	Moldova
-6	Family and Dependent Visas	t	f	5 years	Moldova
-7	Immigrant Visas	t	t	8 years	Moldova
-8	Refugee and Asylum Visas	t	f	10 years	Moldova
+3	Work Visas	t	f	8 years	Moldova
+4	Student Visas	t	f	6 years	Moldova
+5	Transit Visas	f	f	6 years	Moldova
+6	Family and Dependent Visas	t	f	9 years	Moldova
+7	Immigrant Visas	t	t	9 years	Moldova
+8	Refugee and Asylum Visas	t	f	6 years	Moldova
 9	Special Purpose Visas	t	f	5 years	Moldova
-1	Tourist Visas	f	f	5 years	Monaco
-2	Business Visas	t	f	9 years	Monaco
-3	Work Visas	t	f	8 years	Monaco
-4	Student Visas	t	f	9 years	Monaco
+1	Tourist Visas	f	f	6 years	Monaco
+2	Business Visas	t	f	5 years	Monaco
+3	Work Visas	t	f	7 years	Monaco
+4	Student Visas	t	f	5 years	Monaco
 5	Transit Visas	f	f	7 years	Monaco
-6	Family and Dependent Visas	t	f	6 years	Monaco
-7	Immigrant Visas	t	t	7 years	Monaco
-8	Refugee and Asylum Visas	t	f	5 years	Monaco
-9	Special Purpose Visas	t	f	7 years	Monaco
-1	Tourist Visas	f	f	5 years	Mongolia
-2	Business Visas	t	f	6 years	Mongolia
-3	Work Visas	t	f	5 years	Mongolia
-4	Student Visas	t	f	10 years	Mongolia
-5	Transit Visas	f	f	6 years	Mongolia
-6	Family and Dependent Visas	t	f	5 years	Mongolia
+6	Family and Dependent Visas	t	f	5 years	Monaco
+7	Immigrant Visas	t	t	6 years	Monaco
+8	Refugee and Asylum Visas	t	f	7 years	Monaco
+9	Special Purpose Visas	t	f	10 years	Monaco
+1	Tourist Visas	f	f	9 years	Mongolia
+2	Business Visas	t	f	7 years	Mongolia
+3	Work Visas	t	f	7 years	Mongolia
+4	Student Visas	t	f	5 years	Mongolia
+5	Transit Visas	f	f	10 years	Mongolia
+6	Family and Dependent Visas	t	f	10 years	Mongolia
 7	Immigrant Visas	t	t	10 years	Mongolia
-8	Refugee and Asylum Visas	t	f	8 years	Mongolia
-9	Special Purpose Visas	t	f	8 years	Mongolia
-1	Tourist Visas	f	f	9 years	Montenegro
-2	Business Visas	t	f	9 years	Montenegro
+8	Refugee and Asylum Visas	t	f	6 years	Mongolia
+9	Special Purpose Visas	t	f	9 years	Mongolia
+1	Tourist Visas	f	f	10 years	Montenegro
+2	Business Visas	t	f	6 years	Montenegro
 3	Work Visas	t	f	9 years	Montenegro
-4	Student Visas	t	f	10 years	Montenegro
-5	Transit Visas	f	f	8 years	Montenegro
-6	Family and Dependent Visas	t	f	5 years	Montenegro
-7	Immigrant Visas	t	t	8 years	Montenegro
-8	Refugee and Asylum Visas	t	f	8 years	Montenegro
-9	Special Purpose Visas	t	f	6 years	Montenegro
-1	Tourist Visas	f	f	5 years	Montserrat
-2	Business Visas	t	f	10 years	Montserrat
-3	Work Visas	t	f	8 years	Montserrat
-4	Student Visas	t	f	9 years	Montserrat
-5	Transit Visas	f	f	9 years	Montserrat
-6	Family and Dependent Visas	t	f	8 years	Montserrat
-7	Immigrant Visas	t	t	5 years	Montserrat
-8	Refugee and Asylum Visas	t	f	10 years	Montserrat
-9	Special Purpose Visas	t	f	8 years	Montserrat
-1	Tourist Visas	f	f	8 years	Morocco
+4	Student Visas	t	f	6 years	Montenegro
+5	Transit Visas	f	f	9 years	Montenegro
+6	Family and Dependent Visas	t	f	10 years	Montenegro
+7	Immigrant Visas	t	t	10 years	Montenegro
+8	Refugee and Asylum Visas	t	f	6 years	Montenegro
+9	Special Purpose Visas	t	f	9 years	Montenegro
+1	Tourist Visas	f	f	9 years	Montserrat
+2	Business Visas	t	f	5 years	Montserrat
+3	Work Visas	t	f	9 years	Montserrat
+4	Student Visas	t	f	10 years	Montserrat
+5	Transit Visas	f	f	5 years	Montserrat
+6	Family and Dependent Visas	t	f	5 years	Montserrat
+7	Immigrant Visas	t	t	7 years	Montserrat
+8	Refugee and Asylum Visas	t	f	6 years	Montserrat
+9	Special Purpose Visas	t	f	9 years	Montserrat
+1	Tourist Visas	f	f	10 years	Morocco
 2	Business Visas	t	f	6 years	Morocco
-3	Work Visas	t	f	10 years	Morocco
-4	Student Visas	t	f	6 years	Morocco
-5	Transit Visas	f	f	6 years	Morocco
-6	Family and Dependent Visas	t	f	6 years	Morocco
-7	Immigrant Visas	t	t	9 years	Morocco
+3	Work Visas	t	f	6 years	Morocco
+4	Student Visas	t	f	5 years	Morocco
+5	Transit Visas	f	f	5 years	Morocco
+6	Family and Dependent Visas	t	f	7 years	Morocco
+7	Immigrant Visas	t	t	8 years	Morocco
 8	Refugee and Asylum Visas	t	f	9 years	Morocco
-9	Special Purpose Visas	t	f	9 years	Morocco
-1	Tourist Visas	f	f	10 years	Mozambique
-2	Business Visas	t	f	6 years	Mozambique
-3	Work Visas	t	f	7 years	Mozambique
-4	Student Visas	t	f	6 years	Mozambique
-5	Transit Visas	f	f	5 years	Mozambique
-6	Family and Dependent Visas	t	f	6 years	Mozambique
-7	Immigrant Visas	t	t	10 years	Mozambique
-8	Refugee and Asylum Visas	t	f	9 years	Mozambique
+9	Special Purpose Visas	t	f	10 years	Morocco
+1	Tourist Visas	f	f	9 years	Mozambique
+2	Business Visas	t	f	5 years	Mozambique
+3	Work Visas	t	f	10 years	Mozambique
+4	Student Visas	t	f	7 years	Mozambique
+5	Transit Visas	f	f	9 years	Mozambique
+6	Family and Dependent Visas	t	f	10 years	Mozambique
+7	Immigrant Visas	t	t	6 years	Mozambique
+8	Refugee and Asylum Visas	t	f	7 years	Mozambique
 9	Special Purpose Visas	t	f	5 years	Mozambique
 1	Tourist Visas	f	f	9 years	Myanmar
-2	Business Visas	t	f	7 years	Myanmar
-3	Work Visas	t	f	8 years	Myanmar
-4	Student Visas	t	f	9 years	Myanmar
-5	Transit Visas	f	f	9 years	Myanmar
-6	Family and Dependent Visas	t	f	8 years	Myanmar
-7	Immigrant Visas	t	t	10 years	Myanmar
-8	Refugee and Asylum Visas	t	f	9 years	Myanmar
-9	Special Purpose Visas	t	f	6 years	Myanmar
-1	Tourist Visas	f	f	9 years	Namibia
-2	Business Visas	t	f	7 years	Namibia
-3	Work Visas	t	f	9 years	Namibia
-4	Student Visas	t	f	6 years	Namibia
-5	Transit Visas	f	f	6 years	Namibia
+2	Business Visas	t	f	9 years	Myanmar
+3	Work Visas	t	f	7 years	Myanmar
+4	Student Visas	t	f	6 years	Myanmar
+5	Transit Visas	f	f	8 years	Myanmar
+6	Family and Dependent Visas	t	f	9 years	Myanmar
+7	Immigrant Visas	t	t	6 years	Myanmar
+8	Refugee and Asylum Visas	t	f	5 years	Myanmar
+9	Special Purpose Visas	t	f	8 years	Myanmar
+1	Tourist Visas	f	f	5 years	Namibia
+2	Business Visas	t	f	8 years	Namibia
+3	Work Visas	t	f	5 years	Namibia
+4	Student Visas	t	f	5 years	Namibia
+5	Transit Visas	f	f	5 years	Namibia
 6	Family and Dependent Visas	t	f	9 years	Namibia
-7	Immigrant Visas	t	t	10 years	Namibia
-8	Refugee and Asylum Visas	t	f	7 years	Namibia
-9	Special Purpose Visas	t	f	6 years	Namibia
-1	Tourist Visas	f	f	10 years	Nauru
-2	Business Visas	t	f	8 years	Nauru
-3	Work Visas	t	f	10 years	Nauru
-4	Student Visas	t	f	7 years	Nauru
-5	Transit Visas	f	f	10 years	Nauru
+7	Immigrant Visas	t	t	9 years	Namibia
+8	Refugee and Asylum Visas	t	f	6 years	Namibia
+9	Special Purpose Visas	t	f	8 years	Namibia
+1	Tourist Visas	f	f	9 years	Nauru
+2	Business Visas	t	f	10 years	Nauru
+3	Work Visas	t	f	9 years	Nauru
+4	Student Visas	t	f	9 years	Nauru
+5	Transit Visas	f	f	9 years	Nauru
 6	Family and Dependent Visas	t	f	8 years	Nauru
-7	Immigrant Visas	t	t	10 years	Nauru
-8	Refugee and Asylum Visas	t	f	6 years	Nauru
+7	Immigrant Visas	t	t	5 years	Nauru
+8	Refugee and Asylum Visas	t	f	10 years	Nauru
 9	Special Purpose Visas	t	f	9 years	Nauru
-1	Tourist Visas	f	f	9 years	Nepal
-2	Business Visas	t	f	9 years	Nepal
+1	Tourist Visas	f	f	7 years	Nepal
+2	Business Visas	t	f	8 years	Nepal
 3	Work Visas	t	f	9 years	Nepal
-4	Student Visas	t	f	5 years	Nepal
-5	Transit Visas	f	f	8 years	Nepal
-6	Family and Dependent Visas	t	f	7 years	Nepal
-7	Immigrant Visas	t	t	7 years	Nepal
-8	Refugee and Asylum Visas	t	f	7 years	Nepal
-9	Special Purpose Visas	t	f	9 years	Nepal
-1	Tourist Visas	f	f	8 years	Netherlands
-2	Business Visas	t	f	8 years	Netherlands
-3	Work Visas	t	f	9 years	Netherlands
-4	Student Visas	t	f	7 years	Netherlands
+4	Student Visas	t	f	7 years	Nepal
+5	Transit Visas	f	f	9 years	Nepal
+6	Family and Dependent Visas	t	f	6 years	Nepal
+7	Immigrant Visas	t	t	5 years	Nepal
+8	Refugee and Asylum Visas	t	f	6 years	Nepal
+9	Special Purpose Visas	t	f	10 years	Nepal
+1	Tourist Visas	f	f	7 years	Netherlands
+2	Business Visas	t	f	7 years	Netherlands
+3	Work Visas	t	f	6 years	Netherlands
+4	Student Visas	t	f	8 years	Netherlands
 5	Transit Visas	f	f	9 years	Netherlands
-6	Family and Dependent Visas	t	f	9 years	Netherlands
+6	Family and Dependent Visas	t	f	6 years	Netherlands
 7	Immigrant Visas	t	t	6 years	Netherlands
-8	Refugee and Asylum Visas	t	f	6 years	Netherlands
-9	Special Purpose Visas	t	f	8 years	Netherlands
-1	Tourist Visas	f	f	10 years	Nicaragua
-2	Business Visas	t	f	6 years	Nicaragua
-3	Work Visas	t	f	7 years	Nicaragua
+8	Refugee and Asylum Visas	t	f	9 years	Netherlands
+9	Special Purpose Visas	t	f	6 years	Netherlands
+1	Tourist Visas	f	f	8 years	Nicaragua
+2	Business Visas	t	f	10 years	Nicaragua
+3	Work Visas	t	f	10 years	Nicaragua
 4	Student Visas	t	f	5 years	Nicaragua
-5	Transit Visas	f	f	6 years	Nicaragua
+5	Transit Visas	f	f	9 years	Nicaragua
 6	Family and Dependent Visas	t	f	9 years	Nicaragua
-7	Immigrant Visas	t	t	10 years	Nicaragua
-8	Refugee and Asylum Visas	t	f	9 years	Nicaragua
-9	Special Purpose Visas	t	f	9 years	Nicaragua
-1	Tourist Visas	f	f	5 years	Niger
-2	Business Visas	t	f	9 years	Niger
-3	Work Visas	t	f	10 years	Niger
-4	Student Visas	t	f	9 years	Niger
-5	Transit Visas	f	f	10 years	Niger
-6	Family and Dependent Visas	t	f	5 years	Niger
-7	Immigrant Visas	t	t	7 years	Niger
+7	Immigrant Visas	t	t	7 years	Nicaragua
+8	Refugee and Asylum Visas	t	f	7 years	Nicaragua
+9	Special Purpose Visas	t	f	8 years	Nicaragua
+1	Tourist Visas	f	f	6 years	Niger
+2	Business Visas	t	f	8 years	Niger
+3	Work Visas	t	f	9 years	Niger
+4	Student Visas	t	f	10 years	Niger
+5	Transit Visas	f	f	8 years	Niger
+6	Family and Dependent Visas	t	f	6 years	Niger
+7	Immigrant Visas	t	t	5 years	Niger
 8	Refugee and Asylum Visas	t	f	6 years	Niger
-9	Special Purpose Visas	t	f	5 years	Niger
-1	Tourist Visas	f	f	8 years	Nigeria
-2	Business Visas	t	f	8 years	Nigeria
-3	Work Visas	t	f	7 years	Nigeria
-4	Student Visas	t	f	10 years	Nigeria
+9	Special Purpose Visas	t	f	10 years	Niger
+1	Tourist Visas	f	f	5 years	Nigeria
+2	Business Visas	t	f	9 years	Nigeria
+3	Work Visas	t	f	9 years	Nigeria
+4	Student Visas	t	f	6 years	Nigeria
 5	Transit Visas	f	f	9 years	Nigeria
-6	Family and Dependent Visas	t	f	10 years	Nigeria
-7	Immigrant Visas	t	t	5 years	Nigeria
-8	Refugee and Asylum Visas	t	f	6 years	Nigeria
-9	Special Purpose Visas	t	f	6 years	Nigeria
-1	Tourist Visas	f	f	7 years	Niue
+6	Family and Dependent Visas	t	f	5 years	Nigeria
+7	Immigrant Visas	t	t	8 years	Nigeria
+8	Refugee and Asylum Visas	t	f	9 years	Nigeria
+9	Special Purpose Visas	t	f	9 years	Nigeria
+1	Tourist Visas	f	f	5 years	Niue
 2	Business Visas	t	f	10 years	Niue
-3	Work Visas	t	f	5 years	Niue
-4	Student Visas	t	f	6 years	Niue
-5	Transit Visas	f	f	8 years	Niue
-6	Family and Dependent Visas	t	f	9 years	Niue
-7	Immigrant Visas	t	t	10 years	Niue
-8	Refugee and Asylum Visas	t	f	7 years	Niue
-9	Special Purpose Visas	t	f	6 years	Niue
-1	Tourist Visas	f	f	5 years	Norway
-2	Business Visas	t	f	8 years	Norway
-3	Work Visas	t	f	6 years	Norway
-4	Student Visas	t	f	9 years	Norway
-5	Transit Visas	f	f	8 years	Norway
+3	Work Visas	t	f	10 years	Niue
+4	Student Visas	t	f	10 years	Niue
+5	Transit Visas	f	f	5 years	Niue
+6	Family and Dependent Visas	t	f	5 years	Niue
+7	Immigrant Visas	t	t	6 years	Niue
+8	Refugee and Asylum Visas	t	f	6 years	Niue
+9	Special Purpose Visas	t	f	8 years	Niue
+1	Tourist Visas	f	f	7 years	Norway
+2	Business Visas	t	f	5 years	Norway
+3	Work Visas	t	f	10 years	Norway
+4	Student Visas	t	f	8 years	Norway
+5	Transit Visas	f	f	5 years	Norway
 6	Family and Dependent Visas	t	f	9 years	Norway
-7	Immigrant Visas	t	t	6 years	Norway
-8	Refugee and Asylum Visas	t	f	10 years	Norway
-9	Special Purpose Visas	t	f	5 years	Norway
+7	Immigrant Visas	t	t	7 years	Norway
+8	Refugee and Asylum Visas	t	f	5 years	Norway
+9	Special Purpose Visas	t	f	6 years	Norway
 1	Tourist Visas	f	f	8 years	Oman
-2	Business Visas	t	f	6 years	Oman
+2	Business Visas	t	f	7 years	Oman
 3	Work Visas	t	f	8 years	Oman
-4	Student Visas	t	f	8 years	Oman
-5	Transit Visas	f	f	6 years	Oman
-6	Family and Dependent Visas	t	f	9 years	Oman
-7	Immigrant Visas	t	t	7 years	Oman
+4	Student Visas	t	f	6 years	Oman
+5	Transit Visas	f	f	8 years	Oman
+6	Family and Dependent Visas	t	f	6 years	Oman
+7	Immigrant Visas	t	t	5 years	Oman
 8	Refugee and Asylum Visas	t	f	9 years	Oman
-9	Special Purpose Visas	t	f	10 years	Oman
+9	Special Purpose Visas	t	f	7 years	Oman
 1	Tourist Visas	f	f	5 years	Pakistan
-2	Business Visas	t	f	10 years	Pakistan
-3	Work Visas	t	f	5 years	Pakistan
-4	Student Visas	t	f	5 years	Pakistan
-5	Transit Visas	f	f	10 years	Pakistan
+2	Business Visas	t	f	7 years	Pakistan
+3	Work Visas	t	f	6 years	Pakistan
+4	Student Visas	t	f	7 years	Pakistan
+5	Transit Visas	f	f	9 years	Pakistan
 6	Family and Dependent Visas	t	f	6 years	Pakistan
-7	Immigrant Visas	t	t	6 years	Pakistan
-8	Refugee and Asylum Visas	t	f	8 years	Pakistan
+7	Immigrant Visas	t	t	8 years	Pakistan
+8	Refugee and Asylum Visas	t	f	5 years	Pakistan
 9	Special Purpose Visas	t	f	10 years	Pakistan
-1	Tourist Visas	f	f	10 years	Palau
-2	Business Visas	t	f	10 years	Palau
-3	Work Visas	t	f	7 years	Palau
-4	Student Visas	t	f	7 years	Palau
-5	Transit Visas	f	f	9 years	Palau
-6	Family and Dependent Visas	t	f	10 years	Palau
+1	Tourist Visas	f	f	7 years	Palau
+2	Business Visas	t	f	9 years	Palau
+3	Work Visas	t	f	9 years	Palau
+4	Student Visas	t	f	10 years	Palau
+5	Transit Visas	f	f	10 years	Palau
+6	Family and Dependent Visas	t	f	6 years	Palau
 7	Immigrant Visas	t	t	10 years	Palau
-8	Refugee and Asylum Visas	t	f	9 years	Palau
-9	Special Purpose Visas	t	f	5 years	Palau
-1	Tourist Visas	f	f	8 years	Panama
-2	Business Visas	t	f	6 years	Panama
+8	Refugee and Asylum Visas	t	f	8 years	Palau
+9	Special Purpose Visas	t	f	6 years	Palau
+1	Tourist Visas	f	f	9 years	Panama
+2	Business Visas	t	f	10 years	Panama
 3	Work Visas	t	f	7 years	Panama
-4	Student Visas	t	f	7 years	Panama
-5	Transit Visas	f	f	9 years	Panama
-6	Family and Dependent Visas	t	f	9 years	Panama
-7	Immigrant Visas	t	t	7 years	Panama
-8	Refugee and Asylum Visas	t	f	9 years	Panama
-9	Special Purpose Visas	t	f	5 years	Panama
-1	Tourist Visas	f	f	6 years	Paraguay
+4	Student Visas	t	f	9 years	Panama
+5	Transit Visas	f	f	8 years	Panama
+6	Family and Dependent Visas	t	f	6 years	Panama
+7	Immigrant Visas	t	t	9 years	Panama
+8	Refugee and Asylum Visas	t	f	8 years	Panama
+9	Special Purpose Visas	t	f	7 years	Panama
+1	Tourist Visas	f	f	5 years	Paraguay
 2	Business Visas	t	f	7 years	Paraguay
-3	Work Visas	t	f	7 years	Paraguay
-4	Student Visas	t	f	9 years	Paraguay
-5	Transit Visas	f	f	5 years	Paraguay
+3	Work Visas	t	f	8 years	Paraguay
+4	Student Visas	t	f	6 years	Paraguay
+5	Transit Visas	f	f	8 years	Paraguay
 6	Family and Dependent Visas	t	f	8 years	Paraguay
-7	Immigrant Visas	t	t	10 years	Paraguay
-8	Refugee and Asylum Visas	t	f	8 years	Paraguay
-9	Special Purpose Visas	t	f	10 years	Paraguay
+7	Immigrant Visas	t	t	7 years	Paraguay
+8	Refugee and Asylum Visas	t	f	5 years	Paraguay
+9	Special Purpose Visas	t	f	6 years	Paraguay
 1	Tourist Visas	f	f	8 years	Peru
-2	Business Visas	t	f	7 years	Peru
+2	Business Visas	t	f	9 years	Peru
 3	Work Visas	t	f	5 years	Peru
-4	Student Visas	t	f	5 years	Peru
-5	Transit Visas	f	f	9 years	Peru
+4	Student Visas	t	f	6 years	Peru
+5	Transit Visas	f	f	5 years	Peru
 6	Family and Dependent Visas	t	f	9 years	Peru
-7	Immigrant Visas	t	t	5 years	Peru
-8	Refugee and Asylum Visas	t	f	5 years	Peru
-9	Special Purpose Visas	t	f	6 years	Peru
-1	Tourist Visas	f	f	7 years	Philippines
-2	Business Visas	t	f	10 years	Philippines
-3	Work Visas	t	f	10 years	Philippines
-4	Student Visas	t	f	9 years	Philippines
-5	Transit Visas	f	f	8 years	Philippines
-6	Family and Dependent Visas	t	f	9 years	Philippines
-7	Immigrant Visas	t	t	10 years	Philippines
-8	Refugee and Asylum Visas	t	f	9 years	Philippines
+7	Immigrant Visas	t	t	7 years	Peru
+8	Refugee and Asylum Visas	t	f	8 years	Peru
+9	Special Purpose Visas	t	f	10 years	Peru
+1	Tourist Visas	f	f	9 years	Philippines
+2	Business Visas	t	f	5 years	Philippines
+3	Work Visas	t	f	9 years	Philippines
+4	Student Visas	t	f	8 years	Philippines
+5	Transit Visas	f	f	5 years	Philippines
+6	Family and Dependent Visas	t	f	10 years	Philippines
+7	Immigrant Visas	t	t	8 years	Philippines
+8	Refugee and Asylum Visas	t	f	10 years	Philippines
 9	Special Purpose Visas	t	f	5 years	Philippines
 1	Tourist Visas	f	f	6 years	Pitcairn
-2	Business Visas	t	f	8 years	Pitcairn
-3	Work Visas	t	f	5 years	Pitcairn
-4	Student Visas	t	f	6 years	Pitcairn
-5	Transit Visas	f	f	5 years	Pitcairn
+2	Business Visas	t	f	5 years	Pitcairn
+3	Work Visas	t	f	6 years	Pitcairn
+4	Student Visas	t	f	7 years	Pitcairn
+5	Transit Visas	f	f	7 years	Pitcairn
 6	Family and Dependent Visas	t	f	5 years	Pitcairn
-7	Immigrant Visas	t	t	9 years	Pitcairn
-8	Refugee and Asylum Visas	t	f	7 years	Pitcairn
-9	Special Purpose Visas	t	f	9 years	Pitcairn
-1	Tourist Visas	f	f	8 years	Poland
-2	Business Visas	t	f	9 years	Poland
-3	Work Visas	t	f	5 years	Poland
-4	Student Visas	t	f	7 years	Poland
-5	Transit Visas	f	f	5 years	Poland
-6	Family and Dependent Visas	t	f	7 years	Poland
-7	Immigrant Visas	t	t	6 years	Poland
-8	Refugee and Asylum Visas	t	f	6 years	Poland
-9	Special Purpose Visas	t	f	8 years	Poland
-1	Tourist Visas	f	f	5 years	Portugal
+7	Immigrant Visas	t	t	8 years	Pitcairn
+8	Refugee and Asylum Visas	t	f	8 years	Pitcairn
+9	Special Purpose Visas	t	f	5 years	Pitcairn
+1	Tourist Visas	f	f	5 years	Poland
+2	Business Visas	t	f	7 years	Poland
+3	Work Visas	t	f	8 years	Poland
+4	Student Visas	t	f	6 years	Poland
+5	Transit Visas	f	f	8 years	Poland
+6	Family and Dependent Visas	t	f	10 years	Poland
+7	Immigrant Visas	t	t	8 years	Poland
+8	Refugee and Asylum Visas	t	f	10 years	Poland
+9	Special Purpose Visas	t	f	6 years	Poland
+1	Tourist Visas	f	f	7 years	Portugal
 2	Business Visas	t	f	5 years	Portugal
 3	Work Visas	t	f	6 years	Portugal
 4	Student Visas	t	f	6 years	Portugal
-5	Transit Visas	f	f	5 years	Portugal
+5	Transit Visas	f	f	9 years	Portugal
 6	Family and Dependent Visas	t	f	7 years	Portugal
-7	Immigrant Visas	t	t	9 years	Portugal
-8	Refugee and Asylum Visas	t	f	8 years	Portugal
-9	Special Purpose Visas	t	f	5 years	Portugal
-1	Tourist Visas	f	f	8 years	Qatar
-2	Business Visas	t	f	5 years	Qatar
-3	Work Visas	t	f	9 years	Qatar
-4	Student Visas	t	f	7 years	Qatar
-5	Transit Visas	f	f	7 years	Qatar
+7	Immigrant Visas	t	t	7 years	Portugal
+8	Refugee and Asylum Visas	t	f	5 years	Portugal
+9	Special Purpose Visas	t	f	8 years	Portugal
+1	Tourist Visas	f	f	9 years	Qatar
+2	Business Visas	t	f	9 years	Qatar
+3	Work Visas	t	f	10 years	Qatar
+4	Student Visas	t	f	9 years	Qatar
+5	Transit Visas	f	f	5 years	Qatar
 6	Family and Dependent Visas	t	f	5 years	Qatar
-7	Immigrant Visas	t	t	8 years	Qatar
-8	Refugee and Asylum Visas	t	f	8 years	Qatar
-9	Special Purpose Visas	t	f	7 years	Qatar
-1	Tourist Visas	f	f	10 years	Romania
-2	Business Visas	t	f	8 years	Romania
+7	Immigrant Visas	t	t	6 years	Qatar
+8	Refugee and Asylum Visas	t	f	7 years	Qatar
+9	Special Purpose Visas	t	f	10 years	Qatar
+1	Tourist Visas	f	f	9 years	Romania
+2	Business Visas	t	f	10 years	Romania
 3	Work Visas	t	f	5 years	Romania
-4	Student Visas	t	f	9 years	Romania
-5	Transit Visas	f	f	7 years	Romania
-6	Family and Dependent Visas	t	f	5 years	Romania
-7	Immigrant Visas	t	t	5 years	Romania
-8	Refugee and Asylum Visas	t	f	10 years	Romania
+4	Student Visas	t	f	6 years	Romania
+5	Transit Visas	f	f	9 years	Romania
+6	Family and Dependent Visas	t	f	10 years	Romania
+7	Immigrant Visas	t	t	7 years	Romania
+8	Refugee and Asylum Visas	t	f	7 years	Romania
 9	Special Purpose Visas	t	f	6 years	Romania
-1	Tourist Visas	f	f	8 years	Russia
-2	Business Visas	t	f	6 years	Russia
-3	Work Visas	t	f	8 years	Russia
-4	Student Visas	t	f	7 years	Russia
-5	Transit Visas	f	f	8 years	Russia
-6	Family and Dependent Visas	t	f	10 years	Russia
-7	Immigrant Visas	t	t	8 years	Russia
-8	Refugee and Asylum Visas	t	f	5 years	Russia
-9	Special Purpose Visas	t	f	7 years	Russia
-1	Tourist Visas	f	f	8 years	Rwanda
-2	Business Visas	t	f	8 years	Rwanda
-3	Work Visas	t	f	9 years	Rwanda
-4	Student Visas	t	f	8 years	Rwanda
+1	Tourist Visas	f	f	6 years	Russia
+2	Business Visas	t	f	7 years	Russia
+3	Work Visas	t	f	10 years	Russia
+4	Student Visas	t	f	5 years	Russia
+5	Transit Visas	f	f	10 years	Russia
+6	Family and Dependent Visas	t	f	5 years	Russia
+7	Immigrant Visas	t	t	6 years	Russia
+8	Refugee and Asylum Visas	t	f	10 years	Russia
+9	Special Purpose Visas	t	f	10 years	Russia
+1	Tourist Visas	f	f	10 years	Rwanda
+2	Business Visas	t	f	9 years	Rwanda
+3	Work Visas	t	f	7 years	Rwanda
+4	Student Visas	t	f	10 years	Rwanda
 5	Transit Visas	f	f	7 years	Rwanda
-6	Family and Dependent Visas	t	f	8 years	Rwanda
+6	Family and Dependent Visas	t	f	5 years	Rwanda
 7	Immigrant Visas	t	t	8 years	Rwanda
-8	Refugee and Asylum Visas	t	f	7 years	Rwanda
-9	Special Purpose Visas	t	f	9 years	Rwanda
-1	Tourist Visas	f	f	10 years	Samoa
+8	Refugee and Asylum Visas	t	f	10 years	Rwanda
+9	Special Purpose Visas	t	f	7 years	Rwanda
+1	Tourist Visas	f	f	6 years	Samoa
 2	Business Visas	t	f	7 years	Samoa
-3	Work Visas	t	f	7 years	Samoa
-4	Student Visas	t	f	6 years	Samoa
-5	Transit Visas	f	f	6 years	Samoa
-6	Family and Dependent Visas	t	f	10 years	Samoa
-7	Immigrant Visas	t	t	10 years	Samoa
-8	Refugee and Asylum Visas	t	f	7 years	Samoa
-9	Special Purpose Visas	t	f	9 years	Samoa
-1	Tourist Visas	f	f	10 years	Senegal
-2	Business Visas	t	f	9 years	Senegal
-3	Work Visas	t	f	5 years	Senegal
-4	Student Visas	t	f	5 years	Senegal
-5	Transit Visas	f	f	9 years	Senegal
-6	Family and Dependent Visas	t	f	7 years	Senegal
-7	Immigrant Visas	t	t	9 years	Senegal
+3	Work Visas	t	f	6 years	Samoa
+4	Student Visas	t	f	10 years	Samoa
+5	Transit Visas	f	f	5 years	Samoa
+6	Family and Dependent Visas	t	f	8 years	Samoa
+7	Immigrant Visas	t	t	6 years	Samoa
+8	Refugee and Asylum Visas	t	f	6 years	Samoa
+9	Special Purpose Visas	t	f	5 years	Samoa
+1	Tourist Visas	f	f	7 years	Senegal
+2	Business Visas	t	f	5 years	Senegal
+3	Work Visas	t	f	8 years	Senegal
+4	Student Visas	t	f	7 years	Senegal
+5	Transit Visas	f	f	5 years	Senegal
+6	Family and Dependent Visas	t	f	6 years	Senegal
+7	Immigrant Visas	t	t	7 years	Senegal
 8	Refugee and Asylum Visas	t	f	5 years	Senegal
-9	Special Purpose Visas	t	f	8 years	Senegal
-1	Tourist Visas	f	f	9 years	Serbia
-2	Business Visas	t	f	9 years	Serbia
-3	Work Visas	t	f	8 years	Serbia
-4	Student Visas	t	f	8 years	Serbia
-5	Transit Visas	f	f	5 years	Serbia
-6	Family and Dependent Visas	t	f	10 years	Serbia
-7	Immigrant Visas	t	t	8 years	Serbia
-8	Refugee and Asylum Visas	t	f	8 years	Serbia
-9	Special Purpose Visas	t	f	6 years	Serbia
-1	Tourist Visas	f	f	9 years	Seychelles
-2	Business Visas	t	f	6 years	Seychelles
-3	Work Visas	t	f	7 years	Seychelles
-4	Student Visas	t	f	7 years	Seychelles
-5	Transit Visas	f	f	9 years	Seychelles
-6	Family and Dependent Visas	t	f	6 years	Seychelles
-7	Immigrant Visas	t	t	8 years	Seychelles
-8	Refugee and Asylum Visas	t	f	6 years	Seychelles
-9	Special Purpose Visas	t	f	5 years	Seychelles
-1	Tourist Visas	f	f	6 years	Singapore
-2	Business Visas	t	f	6 years	Singapore
-3	Work Visas	t	f	6 years	Singapore
+9	Special Purpose Visas	t	f	6 years	Senegal
+1	Tourist Visas	f	f	10 years	Serbia
+2	Business Visas	t	f	8 years	Serbia
+3	Work Visas	t	f	9 years	Serbia
+4	Student Visas	t	f	9 years	Serbia
+5	Transit Visas	f	f	10 years	Serbia
+6	Family and Dependent Visas	t	f	7 years	Serbia
+7	Immigrant Visas	t	t	9 years	Serbia
+8	Refugee and Asylum Visas	t	f	6 years	Serbia
+9	Special Purpose Visas	t	f	9 years	Serbia
+1	Tourist Visas	f	f	8 years	Seychelles
+2	Business Visas	t	f	8 years	Seychelles
+3	Work Visas	t	f	8 years	Seychelles
+4	Student Visas	t	f	8 years	Seychelles
+5	Transit Visas	f	f	10 years	Seychelles
+6	Family and Dependent Visas	t	f	10 years	Seychelles
+7	Immigrant Visas	t	t	7 years	Seychelles
+8	Refugee and Asylum Visas	t	f	7 years	Seychelles
+9	Special Purpose Visas	t	f	7 years	Seychelles
+1	Tourist Visas	f	f	5 years	Singapore
+2	Business Visas	t	f	10 years	Singapore
+3	Work Visas	t	f	9 years	Singapore
 4	Student Visas	t	f	7 years	Singapore
-5	Transit Visas	f	f	9 years	Singapore
-6	Family and Dependent Visas	t	f	6 years	Singapore
-7	Immigrant Visas	t	t	10 years	Singapore
-8	Refugee and Asylum Visas	t	f	9 years	Singapore
+5	Transit Visas	f	f	8 years	Singapore
+6	Family and Dependent Visas	t	f	10 years	Singapore
+7	Immigrant Visas	t	t	5 years	Singapore
+8	Refugee and Asylum Visas	t	f	7 years	Singapore
 9	Special Purpose Visas	t	f	10 years	Singapore
-1	Tourist Visas	f	f	10 years	Slovakia
-2	Business Visas	t	f	8 years	Slovakia
-3	Work Visas	t	f	9 years	Slovakia
-4	Student Visas	t	f	9 years	Slovakia
+1	Tourist Visas	f	f	8 years	Slovakia
+2	Business Visas	t	f	10 years	Slovakia
+3	Work Visas	t	f	10 years	Slovakia
+4	Student Visas	t	f	6 years	Slovakia
 5	Transit Visas	f	f	9 years	Slovakia
-6	Family and Dependent Visas	t	f	5 years	Slovakia
+6	Family and Dependent Visas	t	f	8 years	Slovakia
 7	Immigrant Visas	t	t	8 years	Slovakia
-8	Refugee and Asylum Visas	t	f	7 years	Slovakia
-9	Special Purpose Visas	t	f	9 years	Slovakia
+8	Refugee and Asylum Visas	t	f	5 years	Slovakia
+9	Special Purpose Visas	t	f	6 years	Slovakia
 1	Tourist Visas	f	f	8 years	Slovenia
 2	Business Visas	t	f	7 years	Slovenia
 3	Work Visas	t	f	7 years	Slovenia
-4	Student Visas	t	f	10 years	Slovenia
-5	Transit Visas	f	f	7 years	Slovenia
-6	Family and Dependent Visas	t	f	9 years	Slovenia
-7	Immigrant Visas	t	t	6 years	Slovenia
-8	Refugee and Asylum Visas	t	f	5 years	Slovenia
-9	Special Purpose Visas	t	f	6 years	Slovenia
-1	Tourist Visas	f	f	10 years	Somalia
-2	Business Visas	t	f	9 years	Somalia
-3	Work Visas	t	f	8 years	Somalia
-4	Student Visas	t	f	6 years	Somalia
-5	Transit Visas	f	f	9 years	Somalia
-6	Family and Dependent Visas	t	f	7 years	Somalia
-7	Immigrant Visas	t	t	8 years	Somalia
-8	Refugee and Asylum Visas	t	f	6 years	Somalia
-9	Special Purpose Visas	t	f	7 years	Somalia
-1	Tourist Visas	f	f	7 years	Spain
-2	Business Visas	t	f	7 years	Spain
-3	Work Visas	t	f	8 years	Spain
-4	Student Visas	t	f	5 years	Spain
-5	Transit Visas	f	f	7 years	Spain
-6	Family and Dependent Visas	t	f	9 years	Spain
-7	Immigrant Visas	t	t	7 years	Spain
-8	Refugee and Asylum Visas	t	f	6 years	Spain
+4	Student Visas	t	f	9 years	Slovenia
+5	Transit Visas	f	f	5 years	Slovenia
+6	Family and Dependent Visas	t	f	10 years	Slovenia
+7	Immigrant Visas	t	t	5 years	Slovenia
+8	Refugee and Asylum Visas	t	f	9 years	Slovenia
+9	Special Purpose Visas	t	f	10 years	Slovenia
+1	Tourist Visas	f	f	7 years	Somalia
+2	Business Visas	t	f	7 years	Somalia
+3	Work Visas	t	f	6 years	Somalia
+4	Student Visas	t	f	7 years	Somalia
+5	Transit Visas	f	f	5 years	Somalia
+6	Family and Dependent Visas	t	f	9 years	Somalia
+7	Immigrant Visas	t	t	7 years	Somalia
+8	Refugee and Asylum Visas	t	f	7 years	Somalia
+9	Special Purpose Visas	t	f	10 years	Somalia
+1	Tourist Visas	f	f	10 years	Spain
+2	Business Visas	t	f	9 years	Spain
+3	Work Visas	t	f	6 years	Spain
+4	Student Visas	t	f	8 years	Spain
+5	Transit Visas	f	f	6 years	Spain
+6	Family and Dependent Visas	t	f	10 years	Spain
+7	Immigrant Visas	t	t	10 years	Spain
+8	Refugee and Asylum Visas	t	f	8 years	Spain
 9	Special Purpose Visas	t	f	10 years	Spain
-1	Tourist Visas	f	f	8 years	Sudan
-2	Business Visas	t	f	6 years	Sudan
-3	Work Visas	t	f	6 years	Sudan
-4	Student Visas	t	f	8 years	Sudan
-5	Transit Visas	f	f	6 years	Sudan
-6	Family and Dependent Visas	t	f	8 years	Sudan
-7	Immigrant Visas	t	t	8 years	Sudan
-8	Refugee and Asylum Visas	t	f	6 years	Sudan
+1	Tourist Visas	f	f	9 years	Sudan
+2	Business Visas	t	f	10 years	Sudan
+3	Work Visas	t	f	7 years	Sudan
+4	Student Visas	t	f	6 years	Sudan
+5	Transit Visas	f	f	7 years	Sudan
+6	Family and Dependent Visas	t	f	10 years	Sudan
+7	Immigrant Visas	t	t	9 years	Sudan
+8	Refugee and Asylum Visas	t	f	9 years	Sudan
 9	Special Purpose Visas	t	f	8 years	Sudan
-1	Tourist Visas	f	f	7 years	Suriname
-2	Business Visas	t	f	9 years	Suriname
-3	Work Visas	t	f	7 years	Suriname
-4	Student Visas	t	f	7 years	Suriname
+1	Tourist Visas	f	f	8 years	Suriname
+2	Business Visas	t	f	7 years	Suriname
+3	Work Visas	t	f	6 years	Suriname
+4	Student Visas	t	f	6 years	Suriname
 5	Transit Visas	f	f	8 years	Suriname
-6	Family and Dependent Visas	t	f	6 years	Suriname
-7	Immigrant Visas	t	t	6 years	Suriname
-8	Refugee and Asylum Visas	t	f	8 years	Suriname
-9	Special Purpose Visas	t	f	9 years	Suriname
-1	Tourist Visas	f	f	10 years	Swaziland
-2	Business Visas	t	f	10 years	Swaziland
-3	Work Visas	t	f	7 years	Swaziland
+6	Family and Dependent Visas	t	f	10 years	Suriname
+7	Immigrant Visas	t	t	8 years	Suriname
+8	Refugee and Asylum Visas	t	f	7 years	Suriname
+9	Special Purpose Visas	t	f	8 years	Suriname
+1	Tourist Visas	f	f	9 years	Swaziland
+2	Business Visas	t	f	8 years	Swaziland
+3	Work Visas	t	f	5 years	Swaziland
 4	Student Visas	t	f	6 years	Swaziland
-5	Transit Visas	f	f	5 years	Swaziland
-6	Family and Dependent Visas	t	f	9 years	Swaziland
-7	Immigrant Visas	t	t	10 years	Swaziland
-8	Refugee and Asylum Visas	t	f	8 years	Swaziland
+5	Transit Visas	f	f	10 years	Swaziland
+6	Family and Dependent Visas	t	f	5 years	Swaziland
+7	Immigrant Visas	t	t	8 years	Swaziland
+8	Refugee and Asylum Visas	t	f	7 years	Swaziland
 9	Special Purpose Visas	t	f	10 years	Swaziland
-1	Tourist Visas	f	f	10 years	Sweden
-2	Business Visas	t	f	6 years	Sweden
-3	Work Visas	t	f	9 years	Sweden
-4	Student Visas	t	f	7 years	Sweden
+1	Tourist Visas	f	f	7 years	Sweden
+2	Business Visas	t	f	7 years	Sweden
+3	Work Visas	t	f	6 years	Sweden
+4	Student Visas	t	f	5 years	Sweden
 5	Transit Visas	f	f	9 years	Sweden
-6	Family and Dependent Visas	t	f	7 years	Sweden
-7	Immigrant Visas	t	t	7 years	Sweden
-8	Refugee and Asylum Visas	t	f	5 years	Sweden
+6	Family and Dependent Visas	t	f	10 years	Sweden
+7	Immigrant Visas	t	t	5 years	Sweden
+8	Refugee and Asylum Visas	t	f	7 years	Sweden
 9	Special Purpose Visas	t	f	7 years	Sweden
 1	Tourist Visas	f	f	6 years	Switzerland
-2	Business Visas	t	f	5 years	Switzerland
-3	Work Visas	t	f	7 years	Switzerland
-4	Student Visas	t	f	10 years	Switzerland
-5	Transit Visas	f	f	8 years	Switzerland
-6	Family and Dependent Visas	t	f	5 years	Switzerland
-7	Immigrant Visas	t	t	7 years	Switzerland
-8	Refugee and Asylum Visas	t	f	9 years	Switzerland
-9	Special Purpose Visas	t	f	9 years	Switzerland
-1	Tourist Visas	f	f	7 years	Syria
-2	Business Visas	t	f	10 years	Syria
-3	Work Visas	t	f	10 years	Syria
-4	Student Visas	t	f	5 years	Syria
-5	Transit Visas	f	f	8 years	Syria
-6	Family and Dependent Visas	t	f	10 years	Syria
-7	Immigrant Visas	t	t	5 years	Syria
-8	Refugee and Asylum Visas	t	f	8 years	Syria
-9	Special Purpose Visas	t	f	8 years	Syria
+2	Business Visas	t	f	10 years	Switzerland
+3	Work Visas	t	f	9 years	Switzerland
+4	Student Visas	t	f	8 years	Switzerland
+5	Transit Visas	f	f	6 years	Switzerland
+6	Family and Dependent Visas	t	f	10 years	Switzerland
+7	Immigrant Visas	t	t	10 years	Switzerland
+8	Refugee and Asylum Visas	t	f	10 years	Switzerland
+9	Special Purpose Visas	t	f	5 years	Switzerland
+1	Tourist Visas	f	f	8 years	Syria
+2	Business Visas	t	f	7 years	Syria
+3	Work Visas	t	f	6 years	Syria
+4	Student Visas	t	f	9 years	Syria
+5	Transit Visas	f	f	9 years	Syria
+6	Family and Dependent Visas	t	f	5 years	Syria
+7	Immigrant Visas	t	t	8 years	Syria
+8	Refugee and Asylum Visas	t	f	5 years	Syria
+9	Special Purpose Visas	t	f	6 years	Syria
 1	Tourist Visas	f	f	9 years	Taiwan
-2	Business Visas	t	f	6 years	Taiwan
+2	Business Visas	t	f	8 years	Taiwan
 3	Work Visas	t	f	9 years	Taiwan
-4	Student Visas	t	f	10 years	Taiwan
-5	Transit Visas	f	f	10 years	Taiwan
-6	Family and Dependent Visas	t	f	7 years	Taiwan
-7	Immigrant Visas	t	t	7 years	Taiwan
-8	Refugee and Asylum Visas	t	f	10 years	Taiwan
-9	Special Purpose Visas	t	f	10 years	Taiwan
-1	Tourist Visas	f	f	9 years	Tajikistan
-2	Business Visas	t	f	9 years	Tajikistan
-3	Work Visas	t	f	9 years	Tajikistan
+4	Student Visas	t	f	9 years	Taiwan
+5	Transit Visas	f	f	6 years	Taiwan
+6	Family and Dependent Visas	t	f	9 years	Taiwan
+7	Immigrant Visas	t	t	8 years	Taiwan
+8	Refugee and Asylum Visas	t	f	7 years	Taiwan
+9	Special Purpose Visas	t	f	5 years	Taiwan
+1	Tourist Visas	f	f	7 years	Tajikistan
+2	Business Visas	t	f	7 years	Tajikistan
+3	Work Visas	t	f	10 years	Tajikistan
 4	Student Visas	t	f	10 years	Tajikistan
-5	Transit Visas	f	f	6 years	Tajikistan
-6	Family and Dependent Visas	t	f	7 years	Tajikistan
+5	Transit Visas	f	f	9 years	Tajikistan
+6	Family and Dependent Visas	t	f	5 years	Tajikistan
 7	Immigrant Visas	t	t	8 years	Tajikistan
-8	Refugee and Asylum Visas	t	f	9 years	Tajikistan
-9	Special Purpose Visas	t	f	10 years	Tajikistan
-1	Tourist Visas	f	f	6 years	Tanzania
+8	Refugee and Asylum Visas	t	f	7 years	Tajikistan
+9	Special Purpose Visas	t	f	7 years	Tajikistan
+1	Tourist Visas	f	f	10 years	Tanzania
 2	Business Visas	t	f	9 years	Tanzania
-3	Work Visas	t	f	9 years	Tanzania
-4	Student Visas	t	f	5 years	Tanzania
+3	Work Visas	t	f	8 years	Tanzania
+4	Student Visas	t	f	9 years	Tanzania
 5	Transit Visas	f	f	10 years	Tanzania
-6	Family and Dependent Visas	t	f	9 years	Tanzania
-7	Immigrant Visas	t	t	7 years	Tanzania
-8	Refugee and Asylum Visas	t	f	6 years	Tanzania
+6	Family and Dependent Visas	t	f	10 years	Tanzania
+7	Immigrant Visas	t	t	9 years	Tanzania
+8	Refugee and Asylum Visas	t	f	8 years	Tanzania
 9	Special Purpose Visas	t	f	7 years	Tanzania
-1	Tourist Visas	f	f	10 years	Thailand
-2	Business Visas	t	f	8 years	Thailand
-3	Work Visas	t	f	7 years	Thailand
-4	Student Visas	t	f	8 years	Thailand
+1	Tourist Visas	f	f	6 years	Thailand
+2	Business Visas	t	f	10 years	Thailand
+3	Work Visas	t	f	10 years	Thailand
+4	Student Visas	t	f	5 years	Thailand
 5	Transit Visas	f	f	5 years	Thailand
-6	Family and Dependent Visas	t	f	9 years	Thailand
-7	Immigrant Visas	t	t	9 years	Thailand
-8	Refugee and Asylum Visas	t	f	10 years	Thailand
-9	Special Purpose Visas	t	f	10 years	Thailand
-1	Tourist Visas	f	f	6 years	Togo
+6	Family and Dependent Visas	t	f	7 years	Thailand
+7	Immigrant Visas	t	t	7 years	Thailand
+8	Refugee and Asylum Visas	t	f	6 years	Thailand
+9	Special Purpose Visas	t	f	9 years	Thailand
+1	Tourist Visas	f	f	10 years	Togo
 2	Business Visas	t	f	8 years	Togo
-3	Work Visas	t	f	8 years	Togo
-4	Student Visas	t	f	7 years	Togo
-5	Transit Visas	f	f	10 years	Togo
+3	Work Visas	t	f	5 years	Togo
+4	Student Visas	t	f	8 years	Togo
+5	Transit Visas	f	f	9 years	Togo
 6	Family and Dependent Visas	t	f	5 years	Togo
-7	Immigrant Visas	t	t	8 years	Togo
-8	Refugee and Asylum Visas	t	f	5 years	Togo
-9	Special Purpose Visas	t	f	5 years	Togo
-1	Tourist Visas	f	f	5 years	Tunisia
-2	Business Visas	t	f	5 years	Tunisia
-3	Work Visas	t	f	10 years	Tunisia
-4	Student Visas	t	f	7 years	Tunisia
-5	Transit Visas	f	f	10 years	Tunisia
-6	Family and Dependent Visas	t	f	9 years	Tunisia
+7	Immigrant Visas	t	t	10 years	Togo
+8	Refugee and Asylum Visas	t	f	7 years	Togo
+9	Special Purpose Visas	t	f	8 years	Togo
+1	Tourist Visas	f	f	6 years	Tunisia
+2	Business Visas	t	f	10 years	Tunisia
+3	Work Visas	t	f	8 years	Tunisia
+4	Student Visas	t	f	6 years	Tunisia
+5	Transit Visas	f	f	9 years	Tunisia
+6	Family and Dependent Visas	t	f	7 years	Tunisia
 7	Immigrant Visas	t	t	7 years	Tunisia
 8	Refugee and Asylum Visas	t	f	7 years	Tunisia
-9	Special Purpose Visas	t	f	8 years	Tunisia
-1	Tourist Visas	f	f	7 years	Turkey
-2	Business Visas	t	f	5 years	Turkey
-3	Work Visas	t	f	5 years	Turkey
-4	Student Visas	t	f	9 years	Turkey
-5	Transit Visas	f	f	5 years	Turkey
-6	Family and Dependent Visas	t	f	6 years	Turkey
-7	Immigrant Visas	t	t	8 years	Turkey
-8	Refugee and Asylum Visas	t	f	10 years	Turkey
-9	Special Purpose Visas	t	f	10 years	Turkey
-1	Tourist Visas	f	f	8 years	Turkmenistan
-2	Business Visas	t	f	10 years	Turkmenistan
-3	Work Visas	t	f	8 years	Turkmenistan
-4	Student Visas	t	f	8 years	Turkmenistan
-5	Transit Visas	f	f	7 years	Turkmenistan
+9	Special Purpose Visas	t	f	10 years	Tunisia
+1	Tourist Visas	f	f	9 years	Turkey
+2	Business Visas	t	f	8 years	Turkey
+3	Work Visas	t	f	6 years	Turkey
+4	Student Visas	t	f	8 years	Turkey
+5	Transit Visas	f	f	7 years	Turkey
+6	Family and Dependent Visas	t	f	8 years	Turkey
+7	Immigrant Visas	t	t	5 years	Turkey
+8	Refugee and Asylum Visas	t	f	8 years	Turkey
+9	Special Purpose Visas	t	f	7 years	Turkey
+1	Tourist Visas	f	f	9 years	Turkmenistan
+2	Business Visas	t	f	7 years	Turkmenistan
+3	Work Visas	t	f	5 years	Turkmenistan
+4	Student Visas	t	f	5 years	Turkmenistan
+5	Transit Visas	f	f	9 years	Turkmenistan
 6	Family and Dependent Visas	t	f	5 years	Turkmenistan
-7	Immigrant Visas	t	t	8 years	Turkmenistan
-8	Refugee and Asylum Visas	t	f	7 years	Turkmenistan
-9	Special Purpose Visas	t	f	5 years	Turkmenistan
-1	Tourist Visas	f	f	7 years	Tuvalu
-2	Business Visas	t	f	8 years	Tuvalu
+7	Immigrant Visas	t	t	7 years	Turkmenistan
+8	Refugee and Asylum Visas	t	f	9 years	Turkmenistan
+9	Special Purpose Visas	t	f	6 years	Turkmenistan
+1	Tourist Visas	f	f	10 years	Tuvalu
+2	Business Visas	t	f	10 years	Tuvalu
 3	Work Visas	t	f	8 years	Tuvalu
 4	Student Visas	t	f	9 years	Tuvalu
-5	Transit Visas	f	f	6 years	Tuvalu
-6	Family and Dependent Visas	t	f	7 years	Tuvalu
+5	Transit Visas	f	f	7 years	Tuvalu
+6	Family and Dependent Visas	t	f	9 years	Tuvalu
 7	Immigrant Visas	t	t	10 years	Tuvalu
-8	Refugee and Asylum Visas	t	f	10 years	Tuvalu
+8	Refugee and Asylum Visas	t	f	6 years	Tuvalu
 9	Special Purpose Visas	t	f	6 years	Tuvalu
-1	Tourist Visas	f	f	9 years	Uganda
-2	Business Visas	t	f	6 years	Uganda
-3	Work Visas	t	f	5 years	Uganda
-4	Student Visas	t	f	8 years	Uganda
-5	Transit Visas	f	f	6 years	Uganda
-6	Family and Dependent Visas	t	f	8 years	Uganda
-7	Immigrant Visas	t	t	7 years	Uganda
-8	Refugee and Asylum Visas	t	f	6 years	Uganda
-9	Special Purpose Visas	t	f	10 years	Uganda
-1	Tourist Visas	f	f	5 years	Ukraine
-2	Business Visas	t	f	8 years	Ukraine
-3	Work Visas	t	f	9 years	Ukraine
-4	Student Visas	t	f	7 years	Ukraine
+1	Tourist Visas	f	f	6 years	Uganda
+2	Business Visas	t	f	8 years	Uganda
+3	Work Visas	t	f	7 years	Uganda
+4	Student Visas	t	f	6 years	Uganda
+5	Transit Visas	f	f	8 years	Uganda
+6	Family and Dependent Visas	t	f	7 years	Uganda
+7	Immigrant Visas	t	t	5 years	Uganda
+8	Refugee and Asylum Visas	t	f	10 years	Uganda
+9	Special Purpose Visas	t	f	6 years	Uganda
+1	Tourist Visas	f	f	6 years	Ukraine
+2	Business Visas	t	f	10 years	Ukraine
+3	Work Visas	t	f	8 years	Ukraine
+4	Student Visas	t	f	5 years	Ukraine
 5	Transit Visas	f	f	8 years	Ukraine
-6	Family and Dependent Visas	t	f	7 years	Ukraine
-7	Immigrant Visas	t	t	9 years	Ukraine
-8	Refugee and Asylum Visas	t	f	5 years	Ukraine
-9	Special Purpose Visas	t	f	8 years	Ukraine
+6	Family and Dependent Visas	t	f	6 years	Ukraine
+7	Immigrant Visas	t	t	10 years	Ukraine
+8	Refugee and Asylum Visas	t	f	8 years	Ukraine
+9	Special Purpose Visas	t	f	7 years	Ukraine
 1	Tourist Visas	f	f	9 years	Uruguay
-2	Business Visas	t	f	8 years	Uruguay
-3	Work Visas	t	f	6 years	Uruguay
-4	Student Visas	t	f	10 years	Uruguay
-5	Transit Visas	f	f	7 years	Uruguay
-6	Family and Dependent Visas	t	f	10 years	Uruguay
-7	Immigrant Visas	t	t	9 years	Uruguay
-8	Refugee and Asylum Visas	t	f	6 years	Uruguay
-9	Special Purpose Visas	t	f	7 years	Uruguay
-1	Tourist Visas	f	f	6 years	Uzbekistan
-2	Business Visas	t	f	9 years	Uzbekistan
-3	Work Visas	t	f	5 years	Uzbekistan
-4	Student Visas	t	f	9 years	Uzbekistan
+2	Business Visas	t	f	5 years	Uruguay
+3	Work Visas	t	f	9 years	Uruguay
+4	Student Visas	t	f	8 years	Uruguay
+5	Transit Visas	f	f	10 years	Uruguay
+6	Family and Dependent Visas	t	f	9 years	Uruguay
+7	Immigrant Visas	t	t	8 years	Uruguay
+8	Refugee and Asylum Visas	t	f	10 years	Uruguay
+9	Special Purpose Visas	t	f	10 years	Uruguay
+1	Tourist Visas	f	f	8 years	Uzbekistan
+2	Business Visas	t	f	8 years	Uzbekistan
+3	Work Visas	t	f	10 years	Uzbekistan
+4	Student Visas	t	f	5 years	Uzbekistan
 5	Transit Visas	f	f	5 years	Uzbekistan
-6	Family and Dependent Visas	t	f	7 years	Uzbekistan
-7	Immigrant Visas	t	t	8 years	Uzbekistan
+6	Family and Dependent Visas	t	f	10 years	Uzbekistan
+7	Immigrant Visas	t	t	9 years	Uzbekistan
 8	Refugee and Asylum Visas	t	f	9 years	Uzbekistan
 9	Special Purpose Visas	t	f	7 years	Uzbekistan
-1	Tourist Visas	f	f	7 years	Venezuela
-2	Business Visas	t	f	6 years	Venezuela
-3	Work Visas	t	f	10 years	Venezuela
-4	Student Visas	t	f	7 years	Venezuela
+1	Tourist Visas	f	f	6 years	Venezuela
+2	Business Visas	t	f	9 years	Venezuela
+3	Work Visas	t	f	6 years	Venezuela
+4	Student Visas	t	f	5 years	Venezuela
 5	Transit Visas	f	f	5 years	Venezuela
-6	Family and Dependent Visas	t	f	10 years	Venezuela
+6	Family and Dependent Visas	t	f	9 years	Venezuela
 7	Immigrant Visas	t	t	5 years	Venezuela
-8	Refugee and Asylum Visas	t	f	6 years	Venezuela
-9	Special Purpose Visas	t	f	7 years	Venezuela
-1	Tourist Visas	f	f	9 years	Vietnam
-2	Business Visas	t	f	9 years	Vietnam
-3	Work Visas	t	f	9 years	Vietnam
-4	Student Visas	t	f	6 years	Vietnam
-5	Transit Visas	f	f	10 years	Vietnam
-6	Family and Dependent Visas	t	f	5 years	Vietnam
-7	Immigrant Visas	t	t	7 years	Vietnam
-8	Refugee and Asylum Visas	t	f	7 years	Vietnam
-9	Special Purpose Visas	t	f	9 years	Vietnam
-1	Tourist Visas	f	f	9 years	Yemen
-2	Business Visas	t	f	5 years	Yemen
+8	Refugee and Asylum Visas	t	f	8 years	Venezuela
+9	Special Purpose Visas	t	f	8 years	Venezuela
+1	Tourist Visas	f	f	6 years	Vietnam
+2	Business Visas	t	f	8 years	Vietnam
+3	Work Visas	t	f	6 years	Vietnam
+4	Student Visas	t	f	8 years	Vietnam
+5	Transit Visas	f	f	8 years	Vietnam
+6	Family and Dependent Visas	t	f	9 years	Vietnam
+7	Immigrant Visas	t	t	10 years	Vietnam
+8	Refugee and Asylum Visas	t	f	10 years	Vietnam
+9	Special Purpose Visas	t	f	8 years	Vietnam
+1	Tourist Visas	f	f	10 years	Yemen
+2	Business Visas	t	f	6 years	Yemen
 3	Work Visas	t	f	6 years	Yemen
 4	Student Visas	t	f	6 years	Yemen
-5	Transit Visas	f	f	8 years	Yemen
+5	Transit Visas	f	f	7 years	Yemen
 6	Family and Dependent Visas	t	f	6 years	Yemen
 7	Immigrant Visas	t	t	7 years	Yemen
-8	Refugee and Asylum Visas	t	f	7 years	Yemen
+8	Refugee and Asylum Visas	t	f	5 years	Yemen
 9	Special Purpose Visas	t	f	8 years	Yemen
-1	Tourist Visas	f	f	8 years	Zambia
-2	Business Visas	t	f	5 years	Zambia
-3	Work Visas	t	f	5 years	Zambia
-4	Student Visas	t	f	7 years	Zambia
-5	Transit Visas	f	f	7 years	Zambia
-6	Family and Dependent Visas	t	f	5 years	Zambia
-7	Immigrant Visas	t	t	5 years	Zambia
-8	Refugee and Asylum Visas	t	f	9 years	Zambia
-9	Special Purpose Visas	t	f	8 years	Zambia
-1	Tourist Visas	f	f	8 years	Zimbabwe
-2	Business Visas	t	f	10 years	Zimbabwe
-3	Work Visas	t	f	10 years	Zimbabwe
-4	Student Visas	t	f	6 years	Zimbabwe
-5	Transit Visas	f	f	6 years	Zimbabwe
-6	Family and Dependent Visas	t	f	8 years	Zimbabwe
+1	Tourist Visas	f	f	9 years	Zambia
+2	Business Visas	t	f	10 years	Zambia
+3	Work Visas	t	f	7 years	Zambia
+4	Student Visas	t	f	8 years	Zambia
+5	Transit Visas	f	f	8 years	Zambia
+6	Family and Dependent Visas	t	f	8 years	Zambia
+7	Immigrant Visas	t	t	6 years	Zambia
+8	Refugee and Asylum Visas	t	f	6 years	Zambia
+9	Special Purpose Visas	t	f	6 years	Zambia
+1	Tourist Visas	f	f	10 years	Zimbabwe
+2	Business Visas	t	f	5 years	Zimbabwe
+3	Work Visas	t	f	5 years	Zimbabwe
+4	Student Visas	t	f	9 years	Zimbabwe
+5	Transit Visas	f	f	8 years	Zimbabwe
+6	Family and Dependent Visas	t	f	5 years	Zimbabwe
 7	Immigrant Visas	t	t	8 years	Zimbabwe
 8	Refugee and Asylum Visas	t	f	8 years	Zimbabwe
-9	Special Purpose Visas	t	f	7 years	Zimbabwe
-1	Tourist Visas	f	f	8 years	USA
-2	Business Visas	t	f	10 years	USA
-3	Work Visas	t	f	5 years	USA
-4	Student Visas	t	f	10 years	USA
-5	Transit Visas	f	f	7 years	USA
-6	Family and Dependent Visas	t	f	8 years	USA
-7	Immigrant Visas	t	t	6 years	USA
-8	Refugee and Asylum Visas	t	f	8 years	USA
-9	Special Purpose Visas	t	f	7 years	USA
+9	Special Purpose Visas	t	f	10 years	Zimbabwe
+1	Tourist Visas	f	f	9 years	USA
+2	Business Visas	t	f	7 years	USA
+3	Work Visas	t	f	8 years	USA
+4	Student Visas	t	f	9 years	USA
+5	Transit Visas	f	f	5 years	USA
+6	Family and Dependent Visas	t	f	7 years	USA
+7	Immigrant Visas	t	t	9 years	USA
+8	Refugee and Asylum Visas	t	f	9 years	USA
+9	Special Purpose Visas	t	f	10 years	USA
 \.
 
 
@@ -23781,506 +24851,506 @@ COPY public.visa_categories (type, description, working_permit, residence_permit
 --
 
 COPY public.visas (id, type, passport, issue_date, inner_issuer, country) FROM stdin;
-1	8	1	2042-04-19	22	Iran
-2	9	2	2018-11-24	591	Palau
-3	5	3	2014-05-04	17	Macao
-4	5	4	1992-12-24	585	Denmark
-5	3	5	1990-11-04	637	Liberia
-6	5	6	1991-02-13	438	Kiribati
-7	5	7	1993-01-10	1191	Honduras
-8	8	8	1966-04-27	26	Kiribati
-9	2	9	1964-05-05	544	Finland
-10	5	10	1963-06-26	854	Chile
-11	8	11	1967-02-25	399	Gambia
-12	7	12	1967-05-22	32	Syria
-13	3	13	1963-08-01	278	Montserrat
-14	7	14	1967-01-06	265	Angola
-15	4	15	1963-05-01	539	Nauru
-16	9	16	1944-06-14	953	Azerbaijan
-17	5	17	1939-06-09	132	Laos
-18	9	18	1939-03-14	437	Hungary
-19	8	19	1942-08-12	731	Kenya
-20	5	20	1943-04-09	498	Mexico
-21	9	21	1941-10-07	96	Laos
-22	7	22	1941-08-09	977	Gabon
-23	2	23	1942-11-14	438	Kyrgyzstan
-24	9	24	1941-05-02	1025	Turkey
-25	8	25	1940-04-11	268	Latvia
-26	8	26	1937-05-19	88	Israel
-27	9	27	1938-05-25	635	Haiti
-28	1	28	1939-09-24	577	Albania
-29	1	29	1942-03-23	731	Ireland
-30	7	30	1937-12-10	1091	Poland
-31	3	31	1940-08-04	39	Bermuda
-32	3	32	1920-07-02	131	Sudan
-33	2	33	1915-01-10	497	Singapore
-34	2	34	1913-08-23	521	Romania
-35	2	35	1917-06-17	250	Austria
-36	2	36	1916-06-18	905	Gabon
-37	4	37	1914-03-28	1214	Pitcairn
-38	4	38	1917-01-18	222	Comoros
-39	8	39	1915-03-21	29	Philippines
-40	5	40	1916-08-05	698	Austria
-41	3	41	1916-02-18	652	Nicaragua
-42	8	42	1918-06-15	677	Zambia
-43	3	43	1918-08-18	1106	Montserrat
-44	2	44	1919-02-11	862	Oman
-45	4	45	1920-03-10	1109	Somalia
-46	4	46	1918-03-09	887	Belize
-47	7	47	1913-03-27	798	Libya
-48	7	48	1917-08-18	130	Maldives
-49	3	49	1915-07-05	880	Mali
-50	2	50	1912-02-06	1172	Brazil
-51	3	51	1918-06-04	381	Syria
-52	6	52	1918-06-27	49	Jamaica
-53	7	53	1919-04-07	549	Macedonia
-54	7	54	1913-04-26	719	Kiribati
-55	8	55	1918-02-02	1107	Moldova
-56	9	56	1913-03-27	496	Monaco
-57	7	57	1914-02-18	989	Gambia
-58	7	58	1917-02-11	338	Montserrat
-59	2	59	1919-12-17	132	Nauru
-60	1	60	1917-07-02	185	Georgia
-61	1	61	1918-06-05	54	Cameroon
-62	1	62	1919-12-18	520	Cambodia
-63	2	63	1913-07-01	469	Iraq
-64	1	64	1890-05-05	470	Angola
-65	9	65	1889-07-01	1071	Serbia
-66	4	66	1891-05-18	1196	Oman
-67	6	67	1892-07-21	520	Austria
-68	3	68	1889-10-03	964	Liberia
-69	6	69	1894-02-08	1154	Cambodia
-70	2	70	1892-10-07	101	Dominica
-71	3	71	1889-06-06	862	Morocco
-72	1	72	1887-09-05	482	Bangladesh
-73	7	73	1893-03-13	244	Croatia
-74	1	74	1894-03-28	1049	Uganda
-75	8	75	1887-01-08	668	Greenland
-76	8	76	1888-08-27	1213	Canada
-77	1	77	1888-05-17	790	Tuvalu
-78	8	78	1890-02-20	840	Mauritania
-79	4	79	1895-12-28	332	Algeria
-80	8	80	1895-11-01	367	Mexico
-81	8	81	1888-11-17	558	Eritrea
-82	2	82	1891-07-09	627	Netherlands
-83	2	83	1889-02-15	1083	Kyrgyzstan
-84	6	84	1893-09-24	446	Cyprus
-85	3	85	1889-03-12	442	Martinique
-86	9	86	1891-04-20	1035	Martinique
-87	5	87	1892-06-18	443	Djibouti
-88	5	88	1891-02-03	989	Bahrain
-89	5	89	1892-08-04	216	Lebanon
-90	5	90	1891-04-16	823	Switzerland
-91	7	91	1891-03-15	1027	Portugal
-92	5	92	1891-06-02	261	Finland
-93	8	93	1889-06-01	982	Botswana
-94	8	94	1892-01-16	738	Macedonia
-95	9	95	1894-10-16	404	Colombia
-96	3	96	1890-07-21	180	Somalia
-97	1	97	1889-02-27	396	Venezuela
-98	1	98	1891-11-04	1160	Norway
-99	6	99	1894-12-03	780	Bolivia
-100	1	100	1887-03-24	1171	Gibraltar
-101	9	101	1892-07-23	482	Sweden
-102	6	102	1889-07-02	1041	France
-103	2	103	1894-09-11	879	Sweden
-104	2	104	1888-04-27	43	Botswana
-105	5	105	1891-04-14	56	Hungary
-106	6	106	1894-05-09	845	Yemen
-107	2	107	1889-12-23	1023	Portugal
-108	6	108	1895-03-19	900	Brazil
-109	4	109	1887-09-02	1066	Niger
-110	9	110	1892-08-15	203	Maldives
-111	7	111	1892-02-11	559	Slovakia
-112	5	112	1889-04-10	1012	Venezuela
-113	3	113	1888-08-11	396	Mauritius
-114	2	114	1894-02-14	777	Oman
-115	8	115	1888-04-16	518	Maldives
-116	5	116	1893-05-14	1213	Pakistan
-117	5	117	1893-03-21	585	Panama
-118	5	118	1892-03-11	669	Barbados
-119	2	119	1893-11-19	1236	Chile
-120	8	120	1891-05-05	735	Madagascar
-121	4	121	1890-05-25	745	Bangladesh
-122	9	122	1892-04-26	349	Maldives
-123	8	123	1894-05-26	113	Dominica
-124	9	124	1890-12-17	92	China
-125	1	125	1889-12-08	364	Uzbekistan
-126	2	126	1892-06-01	224	Guinea
-127	8	127	1889-12-09	931	Aruba
-128	3	128	1869-04-02	505	Ethiopia
-129	9	129	1862-07-21	421	Syria
-130	4	130	1867-07-09	157	Albania
-131	9	131	1869-04-05	400	Jamaica
-132	2	132	1863-12-26	453	Brazil
-133	7	133	1866-05-22	813	Guatemala
-134	5	134	1868-05-01	306	Djibouti
-135	9	135	1862-07-21	396	Yemen
-136	9	136	1867-02-26	103	Yemen
-137	6	137	1868-04-10	1094	Tajikistan
-138	2	138	1866-02-08	680	Italy
-139	8	139	1862-05-27	790	Sudan
-140	8	140	1868-06-27	765	Benin
-141	3	141	1869-03-12	745	Ghana
-142	9	142	1863-12-10	972	Tanzania
-143	4	143	1870-11-24	561	India
-144	3	144	1865-04-05	440	Egypt
-145	9	145	1865-10-24	193	Niger
-146	6	146	1864-02-19	1138	Bulgaria
-147	2	147	1864-09-08	271	Laos
-148	6	148	1868-06-07	820	Haiti
-149	5	149	1868-12-07	875	Paraguay
-150	6	150	1863-08-25	461	Latvia
-151	9	151	1868-08-22	129	Bahrain
-152	4	152	1867-11-11	1056	Gabon
-153	3	153	1865-03-01	636	Mauritius
-154	2	154	1869-07-11	50	Sudan
-155	3	155	1867-09-11	8	Samoa
-156	2	156	1865-01-06	509	Malaysia
-157	2	157	1864-09-11	144	Curacao
-158	8	158	1868-10-21	147	Macao
-159	5	159	1863-02-10	1061	Kiribati
-160	6	160	1868-02-18	780	Lebanon
-161	4	161	1870-08-12	1238	Tunisia
-162	1	162	1864-10-16	204	Gibraltar
-163	9	163	1868-12-01	337	Cyprus
-164	7	164	1864-01-13	1094	Poland
-165	3	165	1862-02-18	281	Kyrgyzstan
-166	2	166	1868-10-07	1110	Bermuda
-167	5	167	1868-03-28	323	Turkey
-168	2	168	1863-11-08	243	Mexico
-169	2	169	1869-04-14	387	Bahamas
-170	7	170	1867-04-18	90	Barbados
-171	3	171	1866-05-19	451	Guatemala
-172	1	172	1868-03-08	1112	Namibia
-173	6	173	1864-02-23	322	Germany
-174	9	174	1867-10-06	303	Martinique
-175	5	175	1863-09-06	559	Botswana
-176	4	176	1862-07-18	570	Liechtenstein
-177	9	177	1863-08-15	291	Kiribati
-178	6	178	1868-03-26	1155	Jamaica
-179	3	179	1864-07-18	1152	Malta
-180	8	180	1863-03-24	977	Bhutan
-181	2	181	1867-07-04	1114	Denmark
-182	4	182	1864-09-21	144	Mali
-183	7	183	1867-07-13	900	Nauru
-184	7	184	1864-01-09	767	Macao
-185	6	185	1870-02-10	451	Jamaica
-186	7	186	1867-12-24	1082	Tajikistan
-187	2	187	1868-03-20	18	Slovenia
-188	7	188	1864-02-08	1134	Guyana
-189	1	189	1864-02-16	398	Martinique
-190	5	190	1864-01-20	1098	Laos
-191	6	191	1869-02-03	571	Italy
-192	4	192	1866-03-28	480	Ethiopia
-193	4	193	1868-11-12	813	Libya
-194	4	194	1867-07-11	1107	Portugal
-195	4	195	1868-03-16	290	Madagascar
-196	8	196	1869-01-11	728	Ecuador
-197	9	197	1865-01-05	750	Zambia
-198	2	198	1863-05-12	336	Guinea
-199	3	199	1863-10-13	902	Mozambique
-200	3	200	1867-04-28	1191	Bahrain
-201	3	201	1868-07-13	964	Slovenia
-202	3	202	1866-01-13	956	Burundi
-203	4	203	1869-07-27	400	Guatemala
-204	7	204	1865-01-12	969	Barbados
-205	1	205	1865-05-17	94	Brunei
-206	9	206	1865-02-25	767	Bolivia
-207	2	207	1865-11-27	244	Cuba
-208	2	208	1866-01-19	562	Comoros
-209	7	209	1869-09-20	973	Somalia
-210	7	210	1864-09-27	920	Ethiopia
-211	3	211	1868-12-16	913	Italy
-212	3	212	1867-12-14	473	Finland
-213	1	213	1868-01-04	1121	Turkmenistan
-214	3	214	1868-04-16	1233	Cameroon
-215	4	215	1870-06-26	1048	Malaysia
-216	2	216	1868-01-10	662	Afghanistan
-217	3	217	1865-02-23	222	Liberia
-218	8	218	1868-05-16	99	Senegal
-219	2	219	1868-03-11	1210	Paraguay
-220	3	220	1862-06-07	465	Malaysia
-221	4	221	1867-11-08	310	Ukraine
-222	5	222	1867-07-16	418	Suriname
-223	8	223	1868-12-12	883	Iceland
-224	4	224	1866-04-16	398	Slovenia
-225	6	225	1865-10-09	555	Ukraine
-226	7	226	1863-07-11	1010	Lebanon
-227	7	227	1865-11-14	1089	Gambia
-228	6	228	1867-09-05	849	Bangladesh
-229	2	229	1865-03-16	12	Nauru
-230	7	230	1867-04-18	735	Ghana
-231	3	231	1865-12-11	532	Swaziland
-232	6	232	1867-03-10	1000	Turkmenistan
-233	1	233	1868-10-21	588	Monaco
-234	4	234	1867-02-27	806	Togo
-235	8	235	1867-01-23	178	Latvia
-236	3	236	1864-08-25	735	Germany
-237	8	237	1862-07-27	686	Cameroon
-238	6	238	1864-06-02	875	Tanzania
-239	4	239	1864-05-23	1059	Algeria
-240	4	240	1866-12-06	679	Maldives
-241	8	241	1865-06-25	377	Fiji
-242	6	242	1866-12-11	917	Brunei
-243	5	243	1863-05-03	549	Italy
-244	2	244	1865-10-08	980	France
-245	1	245	1864-09-11	238	Cameroon
-246	8	246	1864-08-24	1165	Uruguay
-247	5	247	1869-08-15	201	Portugal
-248	1	248	1864-06-16	313	Mauritius
-249	5	249	1868-04-11	560	Maldives
-250	2	250	1867-12-27	37	Djibouti
-251	8	251	1868-12-23	791	Tuvalu
-252	6	252	1864-10-23	161	Afghanistan
-253	2	253	1863-09-27	803	Brazil
-254	8	254	1869-03-22	1085	Argentina
-255	5	255	1868-09-11	972	Slovenia
-256	9	256	1840-05-02	136	Iran
-257	3	257	1843-02-03	1155	Liechtenstein
-258	8	258	1845-12-03	697	Lesotho
-259	1	259	1839-02-26	539	Kenya
-260	1	260	1838-10-25	49	Cuba
-261	8	261	1838-09-11	546	Aruba
-262	7	262	1838-05-04	223	Cambodia
-263	3	263	1837-09-02	880	Madagascar
-264	6	264	1837-12-24	359	Taiwan
-265	7	265	1842-01-20	719	Malta
-266	4	266	1842-02-19	367	Maldives
-267	7	267	1842-11-22	21	Curacao
-268	9	268	1843-01-21	933	Gibraltar
-269	5	269	1838-05-01	1089	Iceland
-270	1	270	1840-12-10	636	Seychelles
-271	7	271	1841-12-12	494	Chile
-272	6	272	1840-11-24	973	Azerbaijan
-273	6	273	1842-05-13	132	Macao
-274	7	274	1844-12-19	1106	Liechtenstein
-275	8	275	1840-12-11	299	Cameroon
-276	8	276	1839-01-28	561	Thailand
-277	3	277	1839-10-09	570	Colombia
-278	7	278	1844-01-10	1187	Aruba
-279	3	279	1838-08-05	423	Tajikistan
-280	1	280	1839-06-25	472	Algeria
-281	2	281	1840-03-01	735	Kyrgyzstan
-282	8	282	1841-02-10	1089	Turkey
-283	9	283	1842-03-23	722	Nicaragua
-284	8	284	1840-10-03	570	Moldova
-285	5	285	1838-11-05	850	Uruguay
-286	8	286	1838-05-20	387	Togo
-287	8	287	1840-11-19	855	Oman
-288	8	288	1843-11-26	433	Argentina
-289	9	289	1842-01-15	346	Denmark
-290	6	290	1842-11-10	281	Dominica
-291	9	291	1841-02-23	1211	Mayotte
-292	3	292	1840-03-06	1206	Rwanda
-293	8	293	1841-10-17	1158	Algeria
-294	3	294	1839-05-23	207	Bolivia
-295	4	295	1839-02-15	118	Russia
-296	6	296	1840-12-14	130	Uganda
-297	1	297	1845-04-15	676	Bhutan
-298	4	298	1844-08-11	17	Lebanon
-299	1	299	1838-06-26	851	Martinique
-300	7	300	1839-05-14	973	Armenia
-301	4	301	1844-01-20	145	Nicaragua
-302	3	302	1843-04-14	45	Australia
-303	1	303	1844-01-21	1061	Colombia
-304	1	304	1840-11-22	804	Kiribati
-305	6	305	1840-06-12	974	Bulgaria
-306	1	306	1841-07-15	215	Mali
-307	8	307	1843-01-13	782	Italy
-308	3	308	1845-01-08	829	Laos
-309	1	309	1843-12-05	1250	Brunei
-310	1	310	1842-06-01	1214	Morocco
-311	5	311	1839-10-03	1023	Sweden
-312	6	312	1838-04-03	198	Ghana
-313	8	313	1840-09-22	499	Macedonia
-314	7	314	1840-04-06	556	Tanzania
-315	9	315	1844-10-10	1160	Malawi
-316	3	316	1842-09-20	1086	Chile
-317	2	317	1839-05-17	792	Seychelles
-318	4	318	1840-12-24	1112	Sweden
-319	4	319	1843-12-23	684	Bolivia
-320	3	320	1842-08-23	57	Indonesia
-321	4	321	1840-02-13	752	Benin
-322	6	322	1841-05-21	386	Sudan
-323	1	323	1842-05-12	520	Slovakia
-324	9	324	1839-09-25	711	Indonesia
-325	1	325	1841-05-06	573	Croatia
-326	3	326	1839-02-06	800	Jordan
-327	8	327	1841-07-09	704	Uganda
-328	3	328	1840-07-04	418	Cameroon
-329	4	329	1843-05-20	211	Liberia
-330	8	330	1840-10-15	840	Haiti
-331	8	331	1843-01-11	459	Liberia
-332	4	332	1842-05-01	428	Benin
-333	3	333	1842-08-11	221	Venezuela
-334	4	334	1838-01-19	573	Thailand
-335	7	335	1838-02-24	468	Swaziland
-336	8	336	1838-06-04	1206	USA
-337	8	337	1843-09-10	748	Bahrain
-338	9	338	1844-12-01	5	Argentina
-339	5	339	1839-11-25	974	Slovakia
-340	5	340	1840-06-06	778	Kazakhstan
-341	2	341	1844-02-27	959	Barbados
-342	3	342	1840-10-18	46	Bermuda
-343	6	343	1845-10-10	175	Uruguay
-344	6	344	1840-03-21	1193	Senegal
-345	7	345	1843-10-12	592	Pitcairn
-346	7	346	1842-11-07	845	Hungary
-347	3	347	1842-03-18	1181	Uganda
-348	5	348	1839-05-23	47	Honduras
-349	1	349	1840-06-25	869	Egypt
-350	1	350	1837-04-05	530	Austria
-351	9	351	1837-11-05	56	Philippines
-352	3	352	1838-12-10	45	Montenegro
-353	4	353	1843-11-27	388	Mauritius
-354	6	354	1843-10-10	832	Latvia
-355	1	355	1842-06-22	667	Uzbekistan
-356	4	356	1843-11-20	206	Senegal
-357	3	357	1841-04-06	196	Bahamas
-358	1	358	1842-03-03	13	Lebanon
-359	3	359	1843-07-01	639	Myanmar
-360	9	360	1843-09-08	783	Niue
-361	5	361	1841-04-10	480	Poland
-362	2	362	1842-09-16	780	Austria
-363	3	363	1840-01-25	335	Morocco
-364	7	364	1839-12-23	575	Mozambique
-365	5	365	1840-01-23	446	Egypt
-366	4	366	1842-12-05	590	Luxembourg
-367	6	367	1841-04-28	649	Yemen
-368	7	368	1838-11-23	633	Nauru
-369	8	369	1841-08-06	734	Pitcairn
-370	3	370	1839-11-02	540	Niger
-371	3	371	1841-06-03	627	Lithuania
-372	3	372	1838-02-20	713	Germany
-373	2	373	1840-06-10	525	Martinique
-374	3	374	1844-02-06	129	Namibia
-375	5	375	1845-12-24	26	Iceland
-376	7	376	1841-08-17	803	Botswana
-377	4	377	1845-09-02	1185	Honduras
-378	1	378	1845-10-18	1207	Kenya
-379	5	379	1841-06-28	902	Macedonia
-380	8	380	1838-05-02	1250	Armenia
-381	2	381	1838-11-27	410	Iran
-382	2	382	1841-12-15	476	Sudan
-383	4	383	1838-07-17	727	Nicaragua
-384	1	384	1838-09-11	582	Denmark
-385	9	385	1843-05-28	734	Estonia
-386	7	386	1840-05-08	276	Germany
-387	8	387	1838-01-15	1106	Peru
-388	1	388	1843-09-20	837	Haiti
-389	5	389	1845-06-27	335	Azerbaijan
-390	7	390	1840-07-07	1109	Djibouti
-391	7	391	1838-09-04	786	Egypt
-392	8	392	1840-10-13	168	Gibraltar
-393	3	393	1838-06-17	736	Japan
-394	1	394	1839-06-06	45	Iceland
-395	6	395	1839-04-09	956	Panama
-396	3	396	1839-05-08	855	Poland
-397	2	397	1841-08-18	899	Lebanon
-398	7	398	1839-03-05	573	Poland
-399	9	399	1841-06-19	384	Suriname
-400	7	400	1838-10-18	833	Bahamas
-401	3	401	1839-12-26	657	Cameroon
-402	9	402	1841-06-27	135	Comoros
-403	5	403	1842-06-06	614	Chile
-404	5	404	1838-01-05	120	Chad
-405	8	405	1845-05-11	805	Maldives
-406	1	406	1845-01-02	46	Laos
-407	2	407	1842-01-06	920	Seychelles
-408	8	408	1841-11-21	37	Guyana
-409	9	409	1838-05-17	479	Nigeria
-410	8	410	1842-04-04	1157	Slovakia
-411	3	411	1844-06-04	537	Cyprus
-412	9	412	1841-04-10	48	Macao
-413	2	413	1843-03-08	238	Malaysia
-414	5	414	1839-10-07	656	Liechtenstein
-415	3	415	1839-12-06	106	Mauritius
-416	8	416	1842-02-18	229	Samoa
-417	6	417	1839-10-16	466	Kosovo
-418	6	418	1841-03-11	870	Rwanda
-419	9	419	1843-09-14	61	Libya
-420	5	420	1840-10-13	152	Niger
-421	5	421	1843-07-07	588	Guatemala
-422	2	422	1843-02-21	80	Liechtenstein
-423	8	423	1845-05-16	779	Colombia
-424	1	424	1842-11-03	730	Ecuador
-425	3	425	1841-07-09	36	Moldova
-426	7	426	1837-05-25	1059	Colombia
-427	3	427	1840-03-03	58	Mexico
-428	8	428	1837-04-05	863	Taiwan
-429	7	429	1839-03-27	614	Bangladesh
-430	4	430	1837-08-11	469	Venezuela
-431	6	431	1840-01-12	1059	Cambodia
-432	9	432	1841-04-20	631	Niue
-433	1	433	1838-02-16	234	Netherlands
-434	1	434	1844-01-15	5	Ecuador
-435	7	435	1839-05-06	557	Chile
-436	3	436	1839-06-23	632	Niger
-437	3	437	1843-12-17	136	Uganda
-438	5	438	1837-11-28	730	Peru
-439	8	439	1844-11-13	776	Mozambique
-440	2	440	1839-07-09	1185	Montserrat
-441	5	441	1840-10-10	570	Belarus
-442	8	442	1842-03-14	629	Ethiopia
-443	1	443	1841-08-01	835	Australia
-444	7	444	1843-05-07	12	Colombia
-445	2	445	1841-02-25	969	Niger
-446	1	446	1840-07-20	635	Greenland
-447	2	447	1840-07-27	1132	Singapore
-448	1	448	1839-04-11	472	Sweden
-449	2	449	1837-05-17	413	Mayotte
-450	3	450	1842-03-21	96	Bahamas
-451	6	451	1838-12-27	560	Honduras
-452	9	452	1845-03-22	1110	Maldives
-453	6	453	1842-02-27	287	Mexico
-454	1	454	1843-02-02	148	Belize
-455	2	455	1843-04-08	194	Germany
-456	1	456	1838-08-19	872	Venezuela
-457	2	457	1839-07-12	136	Chad
-458	6	458	1840-01-11	479	Canada
-459	8	459	1841-08-10	856	Finland
-460	2	460	1844-09-22	516	Nauru
-461	6	461	1839-11-04	736	Fiji
-462	6	462	1844-10-09	296	Panama
-463	9	463	1845-04-20	940	Tunisia
-464	2	464	1837-04-07	287	Colombia
-465	2	465	1843-04-02	881	Kiribati
-466	3	466	1838-12-18	1008	Angola
-467	1	467	1844-08-14	859	Portugal
-468	2	468	1841-12-06	480	Bulgaria
-469	1	469	1839-07-20	856	Martinique
-470	4	470	1837-05-23	568	Gambia
-471	5	471	1840-12-19	208	Gibraltar
-472	6	472	1840-07-12	129	Spain
-473	8	473	1840-10-11	494	Samoa
-474	8	474	1842-10-11	94	Colombia
-475	9	475	1837-05-27	97	Tanzania
-476	2	476	1844-09-02	61	Liechtenstein
-477	1	477	1842-04-20	212	Philippines
-478	3	478	1842-09-22	1083	Montserrat
-479	8	479	1840-07-23	141	Liechtenstein
-480	6	480	1839-03-21	345	Peru
-481	2	481	1841-04-05	168	Fiji
-482	6	482	1840-04-19	92	Ghana
-483	9	483	1844-07-16	521	Russia
-484	2	484	1844-12-25	546	Jordan
-485	6	485	1843-06-01	413	Thailand
-486	3	486	1844-03-19	486	Mexico
-487	1	487	1844-10-24	341	Palau
-488	5	488	1843-11-27	1089	Ethiopia
-489	5	489	1838-01-16	26	Qatar
-490	3	490	1843-02-14	36	Afghanistan
-491	7	491	1844-08-23	1190	Malaysia
-492	1	492	1838-09-06	446	Belize
-493	4	493	1841-08-09	1099	Algeria
-494	8	494	1845-05-26	466	Bermuda
-495	8	495	1845-12-25	920	USA
-496	9	496	1841-09-05	280	Djibouti
-497	4	497	1839-09-17	599	Tajikistan
-498	2	498	1843-08-07	121	Chad
-499	1	499	1842-03-24	485	Niue
-500	3	500	1840-02-22	210	USA
+1	6	1	2011-09-03	1192	Tanzania
+2	2	2	1981-02-27	153	Pakistan
+3	2	3	1982-06-11	492	Croatia
+4	2	4	1956-01-26	798	Russia
+5	8	5	1957-10-27	420	Monaco
+6	1	6	1953-04-02	700	Senegal
+7	8	7	1955-03-19	1152	Lebanon
+8	9	8	1934-06-13	397	Pitcairn
+9	9	9	1934-10-28	1012	Mozambique
+10	1	10	1932-09-12	579	Malawi
+11	5	11	1931-11-01	638	Venezuela
+12	4	12	1928-03-18	1035	France
+13	4	13	1929-04-13	40	Benin
+14	2	14	1932-05-17	1191	China
+15	2	15	1931-05-04	479	Germany
+16	3	16	1906-02-01	1155	Colombia
+17	2	17	1905-05-23	283	Vietnam
+18	8	18	1909-01-23	333	Peru
+19	4	19	1906-08-06	1208	Peru
+20	6	20	1908-12-21	342	Tunisia
+21	9	21	1908-09-24	523	Nepal
+22	2	22	1910-12-05	414	Laos
+23	5	23	1908-03-25	996	Mayotte
+24	5	24	1905-02-16	649	Benin
+25	3	25	1908-04-13	190	Austria
+26	6	26	1909-04-07	847	Venezuela
+27	6	27	1908-07-18	852	Ghana
+28	8	28	1906-04-23	479	Sweden
+29	7	29	1904-03-10	709	Panama
+30	9	30	1903-12-11	224	Cameroon
+31	2	31	1905-10-07	522	Iceland
+32	4	32	1880-03-27	905	Hungary
+33	5	33	1881-08-15	95	Mauritius
+34	8	34	1883-12-14	742	Austria
+35	3	35	1883-11-06	809	Greece
+36	9	36	1880-09-12	683	Somalia
+37	5	37	1880-07-28	878	Ireland
+38	7	38	1884-12-09	1209	Bangladesh
+39	6	39	1884-11-01	49	Burundi
+40	2	40	1885-03-06	151	Namibia
+41	2	41	1882-10-13	225	Jamaica
+42	4	42	1880-09-10	66	Kiribati
+43	4	43	1882-09-25	1144	USA
+44	7	44	1884-11-18	1098	India
+45	1	45	1880-02-26	780	Guinea
+46	7	46	1882-05-25	1218	Angola
+47	6	47	1885-01-22	1113	Oman
+48	6	48	1885-10-19	827	Japan
+49	5	49	1881-05-03	367	Uganda
+50	8	50	1882-11-10	193	Lesotho
+51	7	51	1879-08-17	1146	Suriname
+52	2	52	1885-09-24	1155	Sweden
+53	3	53	1880-06-13	792	Bolivia
+54	2	54	1885-08-27	987	Guyana
+55	5	55	1884-06-20	719	Botswana
+56	6	56	1883-11-05	108	Macao
+57	6	57	1885-09-01	1129	Malaysia
+58	1	58	1881-02-25	1188	Ecuador
+59	3	59	1881-10-24	509	Seychelles
+60	8	60	1884-07-09	1061	China
+61	9	61	1883-12-09	1078	Zimbabwe
+62	6	62	1881-08-03	21	Laos
+63	3	63	1881-07-10	1065	Latvia
+64	1	64	1857-06-09	486	Libya
+65	9	65	1860-07-06	895	Bermuda
+66	2	66	1857-12-15	285	Jordan
+67	7	67	1856-03-13	430	Armenia
+68	1	68	1859-06-05	1102	Netherlands
+69	6	69	1855-10-03	551	USA
+70	2	70	1858-09-15	1002	Slovenia
+71	8	71	1855-01-16	276	Myanmar
+72	7	72	1856-07-04	661	Martinique
+73	3	73	1858-11-27	448	Peru
+74	4	74	1854-07-20	1042	Argentina
+75	7	75	1857-06-20	349	Turkmenistan
+76	3	76	1858-05-10	397	Sweden
+77	7	77	1861-07-28	158	Tuvalu
+78	7	78	1857-03-25	270	Niger
+79	6	79	1859-09-03	283	Syria
+80	5	80	1858-11-05	1126	Japan
+81	4	81	1853-03-13	100	Samoa
+82	6	82	1858-01-09	153	Belgium
+83	1	83	1857-12-02	938	Gabon
+84	4	84	1860-04-28	917	Montenegro
+85	5	85	1855-04-08	922	Mozambique
+86	6	86	1859-10-15	389	Togo
+87	4	87	1857-07-02	1186	Mayotte
+88	5	88	1859-03-26	693	Bermuda
+89	3	89	1856-04-14	177	Uganda
+90	2	90	1859-10-05	333	Martinique
+91	1	91	1857-11-11	358	Vietnam
+92	2	92	1859-06-15	1224	Bahrain
+93	1	93	1856-03-02	64	Lithuania
+94	1	94	1858-07-13	879	Panama
+95	9	95	1858-08-26	268	Hungary
+96	1	96	1857-09-03	140	Cuba
+97	1	97	1858-01-14	320	Botswana
+98	6	98	1858-02-16	36	Malawi
+99	8	99	1857-07-04	713	Austria
+100	6	100	1858-01-26	125	Luxembourg
+101	5	101	1855-05-21	711	Kiribati
+102	8	102	1858-03-11	186	Turkmenistan
+103	7	103	1856-12-20	1067	Angola
+104	7	104	1858-05-02	905	Uganda
+105	1	105	1857-08-18	372	Brazil
+106	8	106	1858-06-05	128	Niger
+107	6	107	1858-11-15	329	Lebanon
+108	6	108	1861-05-08	801	Moldova
+109	7	109	1853-11-05	858	Cambodia
+110	1	110	1856-03-23	218	Samoa
+111	1	111	1856-07-02	110	Haiti
+112	9	112	1854-04-23	1133	Eritrea
+113	7	113	1853-05-17	822	Kenya
+114	7	114	1856-08-09	287	Azerbaijan
+115	8	115	1858-08-09	643	Chile
+116	6	116	1858-12-21	569	Nigeria
+117	9	117	1859-05-16	1088	Brazil
+118	6	118	1859-04-10	460	Belgium
+119	4	119	1855-12-09	1192	Aruba
+120	9	120	1857-01-22	861	Ireland
+121	1	121	1859-03-11	64	Sweden
+122	9	122	1859-10-23	170	Japan
+123	1	123	1854-11-12	627	France
+124	4	124	1859-12-02	207	Morocco
+125	6	125	1859-03-21	1069	Serbia
+126	2	126	1853-11-17	763	Peru
+127	2	127	1857-05-15	1051	Niger
+128	1	128	1835-12-24	937	Honduras
+129	6	129	1829-02-25	411	Chile
+130	6	130	1834-07-22	369	Slovenia
+131	5	131	1829-08-11	731	Seychelles
+132	8	132	1834-02-16	1173	Yemen
+133	9	133	1830-12-26	587	Kiribati
+134	6	134	1835-10-05	384	Burundi
+135	6	135	1833-04-09	1064	Estonia
+136	9	136	1835-05-19	3	Niue
+137	7	137	1829-10-15	626	Samoa
+138	5	138	1831-08-10	14	Tanzania
+139	6	139	1834-12-18	1179	France
+140	3	140	1831-03-23	1025	Ireland
+141	1	141	1834-12-10	347	Bangladesh
+142	2	142	1832-02-12	287	Mongolia
+143	9	143	1836-10-02	292	Nauru
+144	7	144	1835-02-21	516	Lithuania
+145	2	145	1832-07-20	771	Finland
+146	4	146	1831-11-13	500	Comoros
+147	9	147	1836-05-03	415	Gabon
+148	1	148	1830-07-28	638	Guatemala
+149	6	149	1832-04-07	1078	Mauritius
+150	3	150	1832-04-21	112	Poland
+151	3	151	1830-02-21	851	Colombia
+152	2	152	1832-06-01	635	Morocco
+153	3	153	1833-04-12	591	Syria
+154	3	154	1831-04-22	430	Cameroon
+155	1	155	1832-12-27	346	Guyana
+156	7	156	1829-07-02	789	Venezuela
+157	6	157	1834-11-14	811	Luxembourg
+158	2	158	1833-10-28	401	Russia
+159	6	159	1830-03-14	771	Cyprus
+160	6	160	1834-01-20	559	Swaziland
+161	9	161	1829-06-20	1222	Georgia
+162	5	162	1835-11-27	65	Armenia
+163	8	163	1832-04-25	637	Algeria
+164	2	164	1829-03-02	599	Benin
+165	1	165	1829-05-03	245	Nauru
+166	7	166	1835-09-02	926	Estonia
+167	9	167	1835-08-18	522	Ukraine
+168	2	168	1835-06-07	135	Austria
+169	4	169	1831-11-17	182	Kiribati
+170	9	170	1832-01-01	1127	Gibraltar
+171	4	171	1834-05-28	886	Ecuador
+172	9	172	1831-11-14	1196	France
+173	3	173	1828-02-25	1194	Israel
+174	5	174	1832-07-19	774	Uganda
+175	3	175	1832-09-09	1197	Russia
+176	6	176	1831-04-28	368	Jamaica
+177	9	177	1835-11-24	147	Thailand
+178	7	178	1831-04-14	643	Israel
+179	9	179	1836-11-03	326	Uruguay
+180	1	180	1834-01-09	550	Slovakia
+181	4	181	1830-12-14	695	Dominica
+182	7	182	1831-05-09	24	Belize
+183	5	183	1828-07-08	1074	Comoros
+184	5	184	1829-11-24	949	Lebanon
+185	5	185	1836-12-27	599	Chile
+186	7	186	1832-07-20	117	Tuvalu
+187	8	187	1831-01-03	627	Moldova
+188	1	188	1830-08-19	713	Switzerland
+189	6	189	1831-12-13	573	Syria
+190	3	190	1828-11-16	388	Mauritius
+191	5	191	1830-11-15	640	Portugal
+192	4	192	1833-10-01	1239	India
+193	5	193	1834-04-25	30	Uzbekistan
+194	2	194	1832-12-13	23	Mongolia
+195	3	195	1832-07-26	902	Macao
+196	9	196	1832-07-21	613	Egypt
+197	1	197	1832-10-25	197	Malawi
+198	2	198	1831-07-18	1049	Singapore
+199	7	199	1829-11-25	1204	Bahamas
+200	2	200	1832-09-03	247	Seychelles
+201	1	201	1830-01-21	111	Kosovo
+202	1	202	1831-10-07	620	Iraq
+203	8	203	1835-01-26	922	Mauritania
+204	4	204	1831-02-28	380	Bangladesh
+205	6	205	1833-09-21	698	Senegal
+206	8	206	1835-09-23	511	Samoa
+207	5	207	1834-05-16	712	Senegal
+208	7	208	1834-08-28	1079	Fiji
+209	5	209	1836-09-08	7	Afghanistan
+210	7	210	1830-10-16	510	Zimbabwe
+211	4	211	1831-03-28	613	Mayotte
+212	2	212	1830-03-02	1012	Serbia
+213	4	213	1830-04-19	587	Tajikistan
+214	4	214	1836-03-02	604	Cyprus
+215	1	215	1830-10-18	249	Lithuania
+216	1	216	1833-08-15	954	Portugal
+217	7	217	1831-06-19	667	Taiwan
+218	8	218	1831-09-23	472	Libya
+219	6	219	1833-02-20	881	Croatia
+220	2	220	1836-12-02	1117	Zimbabwe
+221	5	221	1835-02-16	216	Nicaragua
+222	2	222	1831-08-04	627	Latvia
+223	7	223	1836-07-24	930	Barbados
+224	7	224	1831-12-14	929	Venezuela
+225	6	225	1834-08-07	36	Indonesia
+226	8	226	1831-04-07	413	Finland
+227	7	227	1831-02-15	370	Macedonia
+228	5	228	1832-02-21	108	Bahrain
+229	9	229	1834-11-11	88	China
+230	5	230	1835-08-11	876	Bangladesh
+231	2	231	1833-05-19	247	Sweden
+232	5	232	1833-07-15	292	Mauritania
+233	8	233	1834-01-11	1212	Montserrat
+234	6	234	1832-01-07	834	Romania
+235	2	235	1835-03-16	469	Lebanon
+236	9	236	1834-07-23	318	Nauru
+237	1	237	1829-10-10	503	Slovakia
+238	1	238	1833-12-04	1137	France
+239	6	239	1832-05-08	177	Monaco
+240	2	240	1834-07-14	220	Bahamas
+241	2	241	1833-05-23	127	Pakistan
+242	7	242	1832-07-14	850	Barbados
+243	2	243	1829-02-13	1077	Gibraltar
+244	9	244	1835-02-26	795	Sudan
+245	9	245	1830-05-11	662	Togo
+246	1	246	1834-04-08	1003	France
+247	4	247	1832-04-24	795	Bolivia
+248	7	248	1830-06-19	297	Sudan
+249	7	249	1834-02-06	7	Cuba
+250	7	250	1833-10-21	569	Mauritius
+251	9	251	1833-02-04	1149	Ghana
+252	9	252	1830-02-14	343	Nauru
+253	5	253	1832-09-13	426	Oman
+254	9	254	1832-05-09	612	Iraq
+255	7	255	1832-10-01	66	Montenegro
+256	9	256	1805-01-18	333	Japan
+257	4	257	1806-12-12	1200	Syria
+258	6	258	1805-05-22	385	Germany
+259	6	259	1807-06-24	620	Aruba
+260	7	260	1809-11-04	1221	Tanzania
+261	7	261	1805-01-08	1113	Peru
+262	6	262	1809-03-01	770	Bolivia
+263	4	263	1807-06-17	174	Germany
+264	7	264	1805-07-28	291	Ethiopia
+265	1	265	1807-03-14	159	Vietnam
+266	5	266	1809-10-08	58	Brunei
+267	1	267	1806-11-04	213	France
+268	3	268	1807-01-04	398	Iraq
+269	4	269	1804-03-22	1025	Bahrain
+270	6	270	1807-07-22	31	Germany
+271	4	271	1806-10-09	204	Belgium
+272	8	272	1807-07-20	666	Mauritius
+273	5	273	1811-04-22	390	Samoa
+274	6	274	1810-09-02	72	Guatemala
+275	1	275	1807-01-24	208	Nepal
+276	8	276	1809-08-18	899	Namibia
+277	9	277	1804-04-22	234	Tajikistan
+278	5	278	1805-01-09	1189	Cameroon
+279	7	279	1804-11-25	1209	Ethiopia
+280	4	280	1804-03-11	208	USA
+281	7	281	1806-09-07	937	Senegal
+282	1	282	1804-03-04	235	Latvia
+283	3	283	1803-06-06	791	Bahamas
+284	1	284	1803-05-24	1165	Canada
+285	8	285	1807-09-05	264	Myanmar
+286	4	286	1809-04-13	27	Ghana
+287	7	287	1806-10-23	643	Yemen
+288	8	288	1809-09-06	358	Mayotte
+289	6	289	1807-08-20	1082	Myanmar
+290	1	290	1806-06-16	253	Slovenia
+291	5	291	1809-04-12	992	Yemen
+292	7	292	1806-06-12	635	China
+293	8	293	1810-08-22	161	Mongolia
+294	4	294	1809-05-09	63	Barbados
+295	3	295	1809-07-26	1188	Montserrat
+296	9	296	1807-09-06	936	Comoros
+297	7	297	1804-10-20	1213	Angola
+298	5	298	1810-05-10	34	Aruba
+299	5	299	1804-01-17	851	Brunei
+300	7	300	1805-12-13	411	Turkmenistan
+301	1	301	1806-12-15	1106	Ireland
+302	6	302	1809-11-15	289	Martinique
+303	1	303	1807-06-05	481	Gabon
+304	6	304	1806-01-11	942	Turkmenistan
+305	5	305	1803-02-28	484	Mali
+306	7	306	1806-12-06	231	Mali
+307	3	307	1805-10-21	1090	Iceland
+308	4	308	1811-10-08	451	Chile
+309	8	309	1809-11-01	512	Belarus
+310	6	310	1806-02-26	54	Seychelles
+311	4	311	1808-09-24	848	Belarus
+312	6	312	1811-12-25	116	Hungary
+313	3	313	1807-06-21	1096	Comoros
+314	1	314	1804-06-23	725	Ethiopia
+315	5	315	1804-11-18	920	Australia
+316	2	316	1806-01-11	223	Moldova
+317	2	317	1806-09-11	680	Cuba
+318	6	318	1808-01-09	516	Moldova
+319	8	319	1807-03-26	483	Belgium
+320	4	320	1809-11-14	185	Iran
+321	7	321	1805-04-26	617	France
+322	5	322	1808-01-14	155	Hungary
+323	2	323	1803-01-16	593	Dominica
+324	9	324	1803-12-03	581	Bhutan
+325	4	325	1805-05-10	78	Comoros
+326	7	326	1806-04-10	697	Portugal
+327	7	327	1804-03-22	91	Yemen
+328	2	328	1807-02-14	602	Indonesia
+329	7	329	1806-05-13	661	Oman
+330	6	330	1805-06-23	72	Turkey
+331	5	331	1805-05-07	526	Vietnam
+332	5	332	1809-08-15	758	Dominica
+333	8	333	1808-03-24	1141	Afghanistan
+334	9	334	1810-08-09	393	Syria
+335	7	335	1811-09-25	566	Nepal
+336	5	336	1805-12-15	99	Comoros
+337	8	337	1803-11-02	197	Ukraine
+338	4	338	1810-12-23	728	Albania
+339	4	339	1805-06-13	532	Russia
+340	1	340	1809-06-18	1078	Ecuador
+341	1	341	1804-11-26	1208	Kosovo
+342	6	342	1808-02-05	874	Burundi
+343	9	343	1809-07-08	349	Kiribati
+344	5	344	1809-05-07	186	Georgia
+345	9	345	1808-06-21	340	Romania
+346	5	346	1807-11-27	1167	Niger
+347	2	347	1804-05-09	693	Estonia
+348	7	348	1808-06-28	863	Mongolia
+349	8	349	1808-10-13	1224	Sudan
+350	5	350	1804-04-02	1235	Djibouti
+351	5	351	1804-04-13	1198	Peru
+352	7	352	1809-12-04	1154	Greece
+353	2	353	1807-09-20	612	Pakistan
+354	8	354	1809-05-25	220	Botswana
+355	8	355	1811-08-23	613	Benin
+356	8	356	1808-03-14	1152	Pakistan
+357	7	357	1809-01-22	757	Colombia
+358	4	358	1805-01-25	189	Zambia
+359	8	359	1808-01-28	201	Zimbabwe
+360	7	360	1805-05-07	536	Austria
+361	1	361	1806-05-12	661	Malta
+362	2	362	1808-10-03	847	Sudan
+363	4	363	1809-01-04	16	Laos
+364	5	364	1807-05-26	518	Senegal
+365	8	365	1805-05-08	57	Lebanon
+366	2	366	1805-10-01	1114	Tuvalu
+367	1	367	1807-12-17	1037	Liberia
+368	3	368	1806-08-08	105	Macedonia
+369	2	369	1806-09-17	927	Bangladesh
+370	6	370	1811-08-11	566	Honduras
+371	4	371	1808-02-09	165	Turkmenistan
+372	2	372	1808-06-12	1121	Mexico
+373	8	373	1807-05-19	1137	Honduras
+374	9	374	1807-10-03	618	Palau
+375	4	375	1810-10-05	410	Mexico
+376	1	376	1809-12-07	500	Mali
+377	5	377	1807-07-24	1118	Ukraine
+378	5	378	1806-10-18	478	Poland
+379	6	379	1806-01-18	491	Aruba
+380	2	380	1811-01-06	985	Bermuda
+381	1	381	1806-08-11	289	Kiribati
+382	2	382	1809-03-23	182	Mexico
+383	6	383	1807-04-23	359	Vietnam
+384	8	384	1806-11-14	1137	Libya
+385	3	385	1810-06-23	942	Kosovo
+386	1	386	1805-02-27	1208	Azerbaijan
+387	4	387	1804-08-06	1178	Estonia
+388	7	388	1808-07-12	1111	Niger
+389	5	389	1809-01-09	1098	Ghana
+390	5	390	1805-11-23	276	Belarus
+391	5	391	1805-06-16	928	Thailand
+392	4	392	1803-06-01	513	Armenia
+393	9	393	1804-06-10	2	Comoros
+394	9	394	1804-06-05	1102	Colombia
+395	6	395	1804-06-09	1040	Nauru
+396	3	396	1811-03-27	750	Austria
+397	4	397	1804-08-05	747	Bahrain
+398	3	398	1807-03-02	1144	Chile
+399	4	399	1803-06-01	251	Afghanistan
+400	5	400	1805-10-26	992	Belgium
+401	4	401	1809-08-22	224	France
+402	6	402	1810-10-14	15	Cuba
+403	3	403	1810-10-15	852	Curacao
+404	6	404	1808-09-22	91	Tanzania
+405	2	405	1810-08-16	332	Spain
+406	3	406	1808-09-02	514	Latvia
+407	1	407	1809-09-12	185	Monaco
+408	6	408	1807-09-11	435	Samoa
+409	4	409	1810-12-17	796	Macedonia
+410	8	410	1808-08-25	1117	Bhutan
+411	6	411	1805-04-21	770	Samoa
+412	8	412	1806-08-17	1250	Brunei
+413	7	413	1806-03-03	681	Laos
+414	6	414	1809-11-06	460	Lithuania
+415	5	415	1810-05-15	139	Croatia
+416	6	416	1810-02-27	223	Haiti
+417	2	417	1806-01-09	459	Palau
+418	5	418	1804-01-22	380	Suriname
+419	7	419	1808-04-15	369	Swaziland
+420	6	420	1805-08-26	1079	Jamaica
+421	1	421	1805-11-21	975	Romania
+422	4	422	1805-03-07	102	Tuvalu
+423	3	423	1808-01-16	9	Greenland
+424	4	424	1805-05-25	47	Cambodia
+425	2	425	1806-01-17	9	Curacao
+426	2	426	1807-07-18	941	Bahamas
+427	1	427	1805-12-01	394	Botswana
+428	6	428	1808-11-19	1151	Liechtenstein
+429	1	429	1809-07-09	100	Honduras
+430	5	430	1811-11-13	1175	Nicaragua
+431	3	431	1809-01-17	770	Estonia
+432	3	432	1809-08-11	766	Suriname
+433	6	433	1808-03-17	72	Bolivia
+434	5	434	1807-04-14	494	Kazakhstan
+435	8	435	1805-05-17	432	Tanzania
+436	5	436	1809-08-15	1149	Liechtenstein
+437	9	437	1806-08-05	421	Philippines
+438	3	438	1808-11-06	1182	Russia
+439	7	439	1805-08-27	936	Benin
+440	7	440	1803-09-03	1183	Cambodia
+441	1	441	1809-07-28	145	Jamaica
+442	2	442	1808-05-14	622	Bahamas
+443	1	443	1809-02-22	847	Swaziland
+444	5	444	1807-05-16	649	Montserrat
+445	4	445	1808-06-11	1250	Belgium
+446	9	446	1804-07-06	1158	Barbados
+447	8	447	1803-12-20	190	Greece
+448	6	448	1806-03-26	1213	Hungary
+449	5	449	1809-08-20	416	Azerbaijan
+450	1	450	1810-12-10	801	Lebanon
+451	5	451	1805-03-26	224	Afghanistan
+452	2	452	1808-05-16	7	Estonia
+453	1	453	1807-11-19	876	Armenia
+454	2	454	1806-07-11	328	Hungary
+455	6	455	1805-04-26	276	Estonia
+456	4	456	1807-08-05	386	Singapore
+457	4	457	1809-05-17	231	Lithuania
+458	6	458	1810-04-26	994	Venezuela
+459	2	459	1811-11-27	145	Albania
+460	9	460	1808-10-16	312	Nauru
+461	9	461	1807-06-26	1043	Georgia
+462	2	462	1807-11-25	646	Samoa
+463	9	463	1808-02-14	653	Bahamas
+464	3	464	1808-01-05	36	Uzbekistan
+465	7	465	1806-12-11	736	Norway
+466	9	466	1805-02-20	933	Bahrain
+467	5	467	1804-10-11	68	Ireland
+468	7	468	1805-03-17	767	Dominica
+469	9	469	1806-12-17	627	Libya
+470	1	470	1810-09-24	53	Chile
+471	8	471	1806-08-02	521	Slovenia
+472	8	472	1807-04-24	69	Zambia
+473	2	473	1803-09-20	253	Botswana
+474	5	474	1806-12-01	340	Afghanistan
+475	5	475	1804-03-23	881	Martinique
+476	1	476	1806-06-16	1182	Guinea
+477	4	477	1807-11-11	913	Kiribati
+478	5	478	1804-03-02	15	Kazakhstan
+479	4	479	1807-08-19	626	Bahrain
+480	2	480	1808-06-27	280	Mayotte
+481	6	481	1804-07-08	844	Yemen
+482	7	482	1809-09-18	859	Fiji
+483	4	483	1807-10-22	1005	Tunisia
+484	5	484	1805-04-20	310	Lesotho
+485	9	485	1809-03-01	464	China
+486	2	486	1809-11-01	615	Tanzania
+487	6	487	1808-11-04	290	Zimbabwe
+488	5	488	1806-10-22	343	Uzbekistan
+489	4	489	1804-10-13	140	Niger
+490	9	490	1808-11-24	664	Kazakhstan
+491	7	491	1804-06-22	575	Malaysia
+492	7	492	1806-06-01	808	Macedonia
+493	5	493	1807-12-05	695	Iraq
+494	7	494	1811-08-13	459	Oman
+495	1	495	1808-09-04	839	Guyana
+496	6	496	1806-07-07	705	Honduras
+497	3	497	1809-03-17	586	Oman
+498	4	498	1810-11-14	580	Cambodia
+499	7	499	1806-07-06	621	Rwanda
+500	9	500	1810-02-26	693	Turkey
 \.
 
 
@@ -24539,10 +25609,38 @@ CREATE TRIGGER check_for_cycle BEFORE INSERT OR UPDATE ON public.educational_cer
 
 
 --
+-- Name: birth_certificates verify_birth_certificate_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_birth_certificate_issue_date BEFORE INSERT ON public.birth_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
+
+
+--
 -- Name: birth_certificates verify_birth_certificate_issuer; Type: TRIGGER; Schema: public; Owner: admin
 --
 
 CREATE TRIGGER verify_birth_certificate_issuer BEFORE INSERT ON public.birth_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_birth_certificate_issuer();
+
+
+--
+-- Name: birth_certificates verify_birth_certificate_parents; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_birth_certificate_parents BEFORE INSERT ON public.birth_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_birth_certificate_parents();
+
+
+--
+-- Name: birth_certificates verify_birth_certificate_parents_cycle; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_birth_certificate_parents_cycle BEFORE INSERT ON public.birth_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_birth_certificate_parents_cycle();
+
+
+--
+-- Name: death_certificates verify_death_certificate_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_death_certificate_issue_date BEFORE INSERT ON public.death_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
 
 
 --
@@ -24557,6 +25655,13 @@ CREATE TRIGGER verify_death_certificate_issuer BEFORE INSERT ON public.death_cer
 --
 
 CREATE TRIGGER verify_divorce_certificate_date BEFORE INSERT ON public.divorce_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_divorce_certificate_date();
+
+
+--
+-- Name: divorce_certificates verify_divorce_certificate_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_divorce_certificate_issue_date BEFORE INSERT ON public.divorce_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
 
 
 --
@@ -24595,6 +25700,13 @@ CREATE TRIGGER verify_driver_license_issuer BEFORE INSERT ON public.drivers_lice
 
 
 --
+-- Name: drivers_licences verify_drivers_licence_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_drivers_licence_issue_date BEFORE INSERT ON public.drivers_licences FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
+
+
+--
 -- Name: educational_certificates verify_educational_certificate_birth_date; Type: TRIGGER; Schema: public; Owner: admin
 --
 
@@ -24613,6 +25725,13 @@ CREATE TRIGGER verify_educational_certificate_date BEFORE INSERT ON public.educa
 --
 
 CREATE TRIGGER verify_educational_certificate_death_date BEFORE INSERT ON public.educational_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_educational_certificate_death_date();
+
+
+--
+-- Name: educational_certificates verify_educational_certificate_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_educational_certificate_issue_date BEFORE INSERT ON public.educational_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
 
 
 --
@@ -24637,6 +25756,13 @@ CREATE TRIGGER verify_educational_certificate_prerequisites BEFORE INSERT ON pub
 
 
 --
+-- Name: international_passports verify_international_passport_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_international_passport_issue_date BEFORE INSERT ON public.international_passports FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
+
+
+--
 -- Name: international_passports verify_international_passport_issuer; Type: TRIGGER; Schema: public; Owner: admin
 --
 
@@ -24655,6 +25781,13 @@ CREATE TRIGGER verify_international_passport_number BEFORE INSERT ON public.inte
 --
 
 CREATE TRIGGER verify_marriage_certificate_date BEFORE INSERT ON public.marriage_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_marriage_certificate_date();
+
+
+--
+-- Name: marriage_certificates verify_marriage_certificate_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_marriage_certificate_issue_date BEFORE INSERT ON public.marriage_certificates FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
 
 
 --
@@ -24686,6 +25819,13 @@ CREATE TRIGGER verify_passport_death_date BEFORE INSERT ON public.passports FOR 
 
 
 --
+-- Name: passports verify_passport_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_passport_issue_date BEFORE INSERT ON public.passports FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
+
+
+--
 -- Name: passports verify_passport_issuer; Type: TRIGGER; Schema: public; Owner: admin
 --
 
@@ -24697,6 +25837,13 @@ CREATE TRIGGER verify_passport_issuer BEFORE INSERT ON public.passports FOR EACH
 --
 
 CREATE TRIGGER verify_passport_number BEFORE INSERT ON public.passports FOR EACH ROW EXECUTE FUNCTION public.verify_passport_number();
+
+
+--
+-- Name: visas verify_visa_issue_date; Type: TRIGGER; Schema: public; Owner: admin
+--
+
+CREATE TRIGGER verify_visa_issue_date BEFORE INSERT ON public.visas FOR EACH ROW EXECUTE FUNCTION public.verify_certificate_issue_date();
 
 
 --

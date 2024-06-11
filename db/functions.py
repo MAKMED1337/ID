@@ -2,6 +2,7 @@ import re
 from typing import Any
 
 from sqlalchemy import ColumnExpressionArgument, func, select, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 document_tables = {
@@ -85,7 +86,7 @@ async def invalidate_document(db: AsyncSession, document_type: int, id: int) -> 
 
 # This code is a freaking mess, help meeeeeeeeeeeeeeeeeeeeeeeeee!!!
 # There is a possibilty that this code has an SQL injection
-async def new_document(db: AsyncSession, document_type: int, j: dict[str, Any]) -> None:
+async def new_document(db: AsyncSession, document_type: int, j: dict[str, Any]) -> str | None:
     def is_valid(s: str) -> bool:
         pattern = re.compile(r'^[A-Za-z_]+$')
         return bool(s) and bool(pattern.match(s))
@@ -98,4 +99,10 @@ async def new_document(db: AsyncSession, document_type: int, j: dict[str, Any]) 
 
     values = ', '.join([':' + key for key in j])
     stmt = f'INSERT INTO {table} ({', '.join(j.keys())}) VALUES ({values})'  # noqa: S608, I'm literally not sure about this noqa
-    result = await db.execute(text(stmt), j)
+    try:
+        await db.execute(text(stmt), j)
+        await db.commit()
+        return None
+    except IntegrityError as e:
+        await db.rollback()
+        return e.args[0].split('DETAIL:')[1].strip()

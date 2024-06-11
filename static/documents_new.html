@@ -130,16 +130,20 @@
             };
             try {
                 data = await fetchData(url, params);
-                alert('Success');
-                location.href = `office.html?office=${officeId}`;
-                return;
+                if (data === null) {
+                    alert('Success');
+                    location.href = `office.html?office=${officeId}`;
+                    return;
+                }
+
+                alert(data);
             } catch (error) {
                 if (error.message == 403) {
                     alert('You do not have access to this document from this office');
                     location.href = `office.html?office=${officeId}`;
                     return;
                 } else {
-                    alert('Invalid data, try again');
+                    alert('Something went wrong.');
                 }
                 return;
             }
