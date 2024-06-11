@@ -5,28 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documents Lookup</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
     <script src="helper.js"></script>
     <script src="documents.js"></script>
 </head>
 
 <body>
+    <button class="back-button" onclick="window.history.back()">Go Back</button>
+    <br><br>
     <input type="text" id="intInput" placeholder="ID">
     <button id="submitButton">Search</button>
     <script>

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <style>
         body,
         html {
@@ -13,46 +14,6 @@
             justify-content: center;
             align-items: center;
             background-color: #f0f0f0;
-        }
-
-        #formContainer {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: left;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .form-group label {
-            margin-right: 10px;
-            flex: 1;
-            text-align: right;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="password"] {
-            flex: 2;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        #form input[type="submit"] {
-            padding: 10px 20px;
-            cursor: pointer;
-            align-self: center;
         }
     </style>
     <script src="helper.js"></script>
@@ -100,11 +61,22 @@
                 form.appendChild(formGroup);
             }
 
+            const formGroup = document.createElement('div');
+            formGroup.className = 'form-group';
+
+            const back = document.createElement('button');
+            back.textContent = 'Go Back';
+            back.type = 'button';
+            back.setAttribute('class', 'back-button');
+            back.onclick = () => { window.history.back(); };
+            formGroup.appendChild(back);
+
             const submit = document.createElement('input');
             submit.type = 'submit';
             submit.value = 'New';
-            form.appendChild(submit);
+            formGroup.appendChild(submit);
 
+            form.appendChild(formGroup);
             formContainer.appendChild(form);
         });
 
