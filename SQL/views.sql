@@ -29,110 +29,105 @@ SELECT
     issue_date
 FROM public.marriage_certificates AS mar_cert ORDER BY issue_date DESC;
 
-
 CREATE OR REPLACE VIEW divorce_certificates_view AS
 SELECT
-    id,
-    divorce_id,
+    id AS "ID",
+    divorce_id AS "Divorce ID",
     (
         SELECT marriage_id FROM divorces WHERE id = div_cert.divorce_id
-    ),
+    ) AS "Marriage ID",
     (
         SELECT person1 FROM marriages WHERE id = (
             SELECT marriage_id FROM divorces WHERE id = div_cert.divorce_id
         )
-    ) AS first_person,
+    ) AS "First Person",
     (
         SELECT person2 FROM marriages WHERE id = (
             SELECT marriage_id FROM divorces WHERE id = div_cert.divorce_id
         )
-    ) AS second_person,
+    ) AS "Second Person",
     (
         SELECT marriage_date FROM marriages WHERE id = (
             SELECT marriage_id FROM divorces WHERE id = div_cert.divorce_id
         )
-    ),
+    ) AS "Date of Marriage",
     (
         SELECT divorce_date FROM divorces WHERE id = div_cert.divorce_id
     ),
-    issue_date,
-    issuer
+    issue_date AS "Date of Issue",
+    issuer AS "Issuer"
 FROM divorce_certificates div_cert ORDER BY issue_date DESC;
 
 -- view for birth certificates
 CREATE OR REPLACE VIEW birth_certificates_view AS
 SELECT
     id,
-    person_id,
+    person,
     (
-        SELECT name FROM people WHERE id = birth_cert.person_id
-    ) AS person_name,
+        SELECT name FROM people WHERE id = birth_cert.person
+    ) AS "Person's Name",
     (
-        SELECT birth_date FROM people WHERE id = birth_cert.person_id
-    ) AS birth_date,
+        SELECT date_of_birth FROM people WHERE id = birth_cert.person
+    ) AS "Date of Birth",
+    city_of_birth AS "City of Birth",
+    country_of_birth AS "Country of Birth",
     (
-        SELECT birth_place FROM people WHERE id = birth_cert.person_id
-    ) AS birth_place,
+        SELECT father FROM people WHERE id = birth_cert.person
+    ) AS "Father's Name",
     (
-        SELECT father FROM people WHERE id = birth_cert.person_id
-    ) AS father,
+        SELECT mother FROM people WHERE id = birth_cert.person
+    ) AS "Mother's Name",
     (
-        SELECT mother FROM people WHERE id = birth_cert.person_id
-    ) AS mother,
-    (
-        SELECT birth_date FROM birth_certificates  WHERE id = birth_cert.id
-    ) AS date_of_issue
-FROM birth_certificates birth_cert ORDER BY date_of_issue DESC;
+        SELECT issue_date FROM birth_certificates WHERE id = birth_cert.id
+    ) AS "Date of Issue"
+FROM birth_certificates birth_cert ORDER BY 6 DESC;
 
 -- view for death certificates
 CREATE OR REPLACE VIEW death_certificates_view AS
 SELECT
-    id,
-    person_id,
+    id AS "ID",
+    person AS "Person ID",
     (
-        SELECT name FROM people WHERE id = death_cert.person_id
-    ) AS person_name,
+        SELECT name FROM people WHERE id = death_cert.person
+    ) AS "Name",
     (
-        SELECT death_date FROM people WHERE id = death_cert.person_id
-    ) AS death_date,
+        SELECT surname FROM people WHERE id = death_cert.person
+    ) AS "Surname",
     (
-        SELECT death_place FROM people WHERE id = death_cert.person_id
-    ) AS death_place,
-    (
-        SELECT father FROM people WHERE id = death_cert.person_id
-    ) AS father,
-    (
-        SELECT mother FROM people WHERE id = death_cert.person_id
-    ) AS mother,
-    (
-        SELECT death_date FROM death_certificates  WHERE id = death_cert.id
-    ) AS date_of_issue
-FROM death_certificates death_cert ORDER BY date_of_issue DESC;
+        SELECT date_of_death FROM people WHERE id = death_cert.person
+    ) AS "Date of Death",
+    issue_date AS "Date of Issue"
+FROM death_certificates death_cert ORDER BY 6 DESC;
 
 -- view for drivers licences
 CREATE OR REPLACE VIEW drivers_licences_view AS
 SELECT
-    id,
-    person_id,
+    id AS "ID",
+    person AS "Person ID",
     (
-        SELECT name FROM people WHERE id = drivers_licence.person_id
-    ) AS person_name,
+        SELECT name FROM people WHERE id = drivers_licence.person
+    ) AS "Name",
     (
-        SELECT birth_date FROM people WHERE id = drivers_licence.person_id
-    ) AS birth_date,
+        SELECT surname FROM people WHERE id = drivers_licence.person
+    ) AS "Surname",
     (
-        SELECT birth_place FROM people WHERE id = drivers_licence.person_id
-    ) AS birth_place,
+        SELECT date_of_birth FROM people WHERE id = drivers_licence.person
+    ) AS "Date of Birth",
+    issue_date AS "Date of Issue",
+    expiration_date AS "Expiration Date"
+FROM drivers_licences drivers_licence ORDER BY "Date of Issue" DESC;
+
+CREATE OR REPLACE VIEW visa_view AS
+SELECT
+    id AS "ID",
     (
-        SELECT father FROM people WHERE id = drivers_licence.person_id
-    ) AS father,
+        SELECT series || id FROM international_passports WHERE id = visa.passport
+    ) AS "Passport ID",
     (
-        SELECT mother FROM people WHERE id = drivers_licence.person_id
-    ) AS mother,
-    (
-        SELECT issue_date FROM drivers_licences WHERE id = drivers_licence.id
-    ) AS date_of_issue,
-    (
-        SELECT expiration_date FROM drivers_licences WHERE id = drivers_licence.id
-    ) AS expiration_date
-FROM drivers_licences drivers_licence ORDER BY date_of_issue DESC;
+        SELECT description FROM visa_categories WHERE id = visa.type
+    ) AS "Visa Category",
+    issue_date AS "Date of Issue",
+    issue_date + (
+        SELECT duration FROM visa_categories WHERE type = visa.type
+    ) AS "Expiration Date"
+FROM visas visa ORDER BY "Date of Issue" DESC;

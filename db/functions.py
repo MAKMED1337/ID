@@ -8,11 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 document_tables = {
     1: 'international_passports',
     2: 'marriage_certificates_view',
-    3: 'visas',
-    4: 'birth_certificates',
-    5: 'death_certificates',
+    3: 'visas_view',
+    4: 'birth_certificates_view',
+    5: 'death_certificates_view',
     6: 'divorce_certificates_view',
-    7: 'drivers_licences',
+    7: 'drivers_licences_view',
     8: 'passports',
     9: 'educational_certificates_view',
 }
