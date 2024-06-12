@@ -9,7 +9,7 @@ from .functions import select_all
 
 
 class EducationalCertificates(Base):
-    __tablename__ = 'educational_certificates'
+    __tablename__ = 'educational_certificates_view'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     issuer: Mapped[int]

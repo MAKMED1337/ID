@@ -9,7 +9,7 @@ from .international_passports import InternationalPassports
 
 
 class Visas(Base):
-    __tablename__ = 'visas'
+    __tablename__ = 'visas_view'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     type: Mapped[int]

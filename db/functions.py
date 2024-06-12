@@ -56,7 +56,7 @@ async def get_marriage_certificates(db: AsyncSession, user_id: int) -> list[dict
 # This is the wrong place to do so, but ...
 async def get_birth_certificates(db: AsyncSession, user_id: int) -> list[dict]:
     assert type(user_id) == int  # noqa: E721, S101, at least some check for stupidity
-    return await select_all(db, text('birth_certificates'), text(f'person = {user_id}'))
+    return await select_all(db, text('birth_certificates_view'), text(f'person = {user_id}'))
 
 
 # This is the wrong place to do so, but ...
