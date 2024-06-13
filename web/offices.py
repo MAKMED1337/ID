@@ -86,5 +86,8 @@ async def new_document(
         j['inner_issuer'] = office
     else:
         j['issuer'] = office
-    j['issue_date'] = datetime.now(UTC)
+
+    if document_id != 10:
+        j['issue_date'] = datetime.now(UTC)
+
     return await new_document_db(db, document_id, j)

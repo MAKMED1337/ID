@@ -22,7 +22,7 @@
             h1.innerText = documentInfo.name;
             document.body.appendChild(h1);
 
-            const table = await createTableFromFetch(documentInfo.url, documentInfo.fields.map(x => x[0]));
+            const table = await createTableFromFetch(documentInfo.url, documentInfo.view);
             document.body.appendChild(table);
         }
     </script>

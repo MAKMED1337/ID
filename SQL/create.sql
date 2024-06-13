@@ -120,8 +120,8 @@ CREATE  TABLE "public".passports (
 	sex                  char(1)  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	passport_owner       bigint  NOT NULL  ,
-	lost                 boolean  NOT NULL  ,
-	invalidated          boolean  NOT NULL  ,
+	lost                 boolean DEFAULT FALSE  NOT NULL  ,
+	invalidated          boolean DEFAULT FALSE  NOT NULL  ,
 	CONSTRAINT pk_id_cards PRIMARY KEY ( id )
  );
 
@@ -204,8 +204,8 @@ CREATE  TABLE "public".international_passports (
 	sex                  char(1)  NOT NULL  ,
 	passport_owner       bigint  NOT NULL  ,
 	country              varchar  NOT NULL  ,
-	lost                 boolean  NOT NULL  ,
-	invalidated          boolean  NOT NULL  ,
+	lost                 boolean DEFAULT FALSE  NOT NULL  ,
+	invalidated          boolean DEFAULT FALSE  NOT NULL  ,
 	series               char(2)  NOT NULL  ,
 	CONSTRAINT pk_international_passports PRIMARY KEY ( id )
  );

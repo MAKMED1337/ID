@@ -120,8 +120,8 @@ CREATE  TABLE "public".passports (
 	sex                  char(1)  NOT NULL  ,
 	issuer               integer  NOT NULL  ,
 	passport_owner       bigint  NOT NULL  ,
-	lost                 boolean  NOT NULL  ,
-	invalidated          boolean  NOT NULL  ,
+	lost                 boolean DEFAULT FALSE  NOT NULL  ,
+	invalidated          boolean DEFAULT FALSE  NOT NULL  ,
 	CONSTRAINT pk_id_cards PRIMARY KEY ( id )
  );
 
@@ -204,8 +204,8 @@ CREATE  TABLE "public".international_passports (
 	sex                  char(1)  NOT NULL  ,
 	passport_owner       bigint  NOT NULL  ,
 	country              varchar  NOT NULL  ,
-	lost                 boolean  NOT NULL  ,
-	invalidated          boolean  NOT NULL  ,
+	lost                 boolean DEFAULT FALSE  NOT NULL  ,
+	invalidated          boolean DEFAULT FALSE  NOT NULL  ,
 	series               char(2)  NOT NULL  ,
 	CONSTRAINT pk_international_passports PRIMARY KEY ( id )
  );
@@ -1109,10 +1109,10 @@ SELECT
     city_of_birth AS "City of Birth",
     country_of_birth AS "Country of Birth",
     (
-        SELECT father FROM people WHERE id = birth_cert.person
+        SELECT name FROM people WHERE id = birth_cert.father
     ) AS "Father's Name",
     (
-        SELECT mother FROM people WHERE id = birth_cert.person
+        SELECT name FROM people WHERE id = birth_cert.mother
     ) AS "Mother's Name",
     (
         SELECT issue_date FROM birth_certificates WHERE id = birth_cert.id
@@ -1141,6 +1141,7 @@ CREATE OR REPLACE VIEW drivers_licences_view AS
 SELECT
     id AS "ID",
     person AS "Person ID",
+    type AS "Type",
     (
         SELECT name FROM people WHERE id = drivers_licence.person
     ) AS "Name",
@@ -1161,45 +1162,25 @@ SELECT
         SELECT series || id FROM international_passports WHERE id = visa.passport
     ) AS "Passport ID",
     (
-        SELECT description FROM visa_categories WHERE id = visa.type
+        SELECT description FROM visa_categories WHERE type = visa.type AND country = visa.country
     ) AS "Visa Category",
     issue_date AS "Date of Issue",
     issue_date + (
-        SELECT duration FROM visa_categories WHERE type = visa.type
+        SELECT duration FROM visa_categories WHERE type = visa.type AND country = visa.country
     ) AS "Expiration Date"
 FROM visas visa ORDER BY "Date of Issue" DESC;
 
-CREATE OR REPLACE RULE insert_birth_certificates AS
-    ON INSERT TO birth_certificates_view
-    DO INSTEAD INSERT INTO birth_certificates (person, city_of_birth, country_of_birth, issue_date) VALUES (NEW.person, NEW."City of Birth", NEW."Country of Birth", NOW());
-
-CREATE OR REPLACE RULE insert_death_certificates AS
-    ON INSERT TO death_certificates_view
-    DO INSTEAD INSERT INTO death_certificates (person, issue_date) VALUES (NEW."Person ID", NOW());
-
-CREATE OR REPLACE RULE insert_drivers_licences AS
-    ON INSERT TO drivers_licences_view
-    DO INSTEAD INSERT INTO drivers_licences (person, issue_date, expiration_date) VALUES (NEW."Person ID", NOW(), NEW."Expiration Date");
-
 CREATE OR REPLACE RULE insert_educational_certificates AS
     ON INSERT TO educational_certificates_view
-    DO INSTEAD 
+    DO INSTEAD
     INSERT INTO educational_certificates (holder, kind, issuer, issue_date)
     VALUES (
-        NEW.holder, 
-        (SELECT id FROM educational_certificates_types WHERE name = NEW."Level of Education"), 
-        (SELECT id FROM educational_instances WHERE name = NEW."Issuer Instance"), 
+        NEW.holder,
+        (SELECT id FROM educational_certificates_types WHERE name = NEW."Level of Education"),
+        (SELECT id FROM educational_instances WHERE name = NEW."Issuer Instance"),
         NOW()
     );
-
-CREATE OR REPLACE RULE insert_marriage_certificates AS
-    ON INSERT TO marriage_certificates_view
-    DO INSTEAD INSERT INTO marriage_certificates (marriage_id, issuer, issue_date) VALUES ((SELECT id FROM marriages WHERE person1 = NEW."First Person" AND person2 = NEW."Second Person"), NEW."Issuer", NOW());
 
 CREATE OR REPLACE RULE insert_divorce_certificates AS
     ON INSERT TO divorce_certificates_view
     DO INSTEAD INSERT INTO divorce_certificates (divorce_id, issuer, issue_date) VALUES ((SELECT id FROM divorces WHERE marriage_id = NEW."Marriage ID"), NEW."Issuer", NOW());
-
-CREATE OR REPLACE RULE insert_visa AS
-    ON INSERT TO visa_view
-    DO INSTEAD INSERT INTO visas (passport, type, issue_date) VALUES ((SELECT id FROM international_passports WHERE id = RIGHT(NEW."Passport ID",-2)::bigint), (SELECT type FROM visa_categories WHERE description = NEW."Visa Category"), NOW());

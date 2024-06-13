@@ -55,8 +55,7 @@
 
             const url = `/offices/${officeId}/documents/${documentType}/find`;
 
-            let table = createTable(documentInfo.fields.map(x => snakeToTitle(x[0])));
-            document.body.appendChild(table);
+            let table = null;
 
             submitButton.onclick = async () => {
                 const params = {
@@ -71,7 +70,18 @@
                     location.href = `office.html?office=${officeId}`;
                     return;
                 }
-                fillTable(table, documentInfo.fields.map(x => x[0]), data === null ? [] : [data], true);
+
+                if (data === null) {
+                    alert('Nothing was found');
+                    return;
+                }
+
+                let keys = Object.keys(data);
+                if (table === null) {
+                    table = createTable(keys.map(x => snakeToTitle(x)));
+                    document.body.appendChild(table);
+                }
+                fillTable(table, keys, data === null ? [] : [data], true);
             }
         }
     </script>
